@@ -1,3 +1,4 @@
 exports.index = function(req, res){
-  res.render('index', { title: 'Route Separation Example' });
+  console.log(req.user._json.repositories);
+  res.render('index', { title: 'Home', user: req.user });
 };
