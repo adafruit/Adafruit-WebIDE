@@ -4,13 +4,14 @@ var express = require('express'),
     util = require('util'),
     BitbucketStrategy = require('passport-bitbucket').Strategy,
     site = require('./controllers/site'),
+    editor = require('./controllers/editor'),
     user = require('./controllers/user');
 
 //TODO
 //https://github.com/mikeal/request (OAuth Signing)
 
-var BITBUCKET_CONSUMER_KEY = "";
-var BITBUCKET_CONSUMER_SECRET = "";
+var BITBUCKET_CONSUMER_KEY = "c7XXD9UtX3DWMF3Aa4";
+var BITBUCKET_CONSUMER_SECRET = "UpFuYfDcWEGdR9KW5gbe5gatbhnGDSSp";
 
 // Passport session setup.
 //   To support persistent login sessions, Passport needs to be able to
@@ -26,7 +27,6 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(obj, done) {
   done(null, obj);
 });
-
 
 // Use the BitbucketStrategy within Passport.
 //   Strategies in passport require a `verify` function, which accept
@@ -45,12 +45,16 @@ passport.use(new BitbucketStrategy({
       // represent the logged-in user.  In a typical application, you would want
       // to associate the Bitbucket account with a user record in your database,
       // and return that user instead.
+      profile.token = token;
+      profile.token_secret = tokenSecret;
+      profile.consumer_key = BITBUCKET_CONSUMER_KEY;
+      profile.consumer_secret = BITBUCKET_CONSUMER_SECRET;
       return done(null, profile);
     });
   }
 ));
 
-app.set('view engine', 'ejs');
+app.set('view engine', 'jade');
 app.set('views', __dirname + '/views');
 app.use(express.logger());
 app.use(express.cookieParser('keyboard cat'));
@@ -63,6 +67,8 @@ app.use(app.router);
 app.use(express.static(__dirname + '/public'));
 
 app.get('/', ensureAuthenticated, site.index);
+app.get('/editor/filesystem', editor.filesystem);
+app.get('/editor/:repository', editor.index);
 
 app.get('/login', user.login);
 app.get('/logout', user.logout);

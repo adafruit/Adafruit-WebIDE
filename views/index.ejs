@@ -1,9 +1,0 @@
-<% if (!user) { %>
-  <h4>Welcome! Please log in.</h4>
-  <a href="/auth/bitbucket">Login with Bitbucket</a>
-<% } else { %>
-  <h2>Hello, <%= user.username %>.</h2>
-  <%   user._json.repositories.forEach(function(repository) { %>
-    <%= repository.name %>
-  <% }); %>
-<% } %>

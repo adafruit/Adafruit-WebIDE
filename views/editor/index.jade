@@ -1,0 +1,11 @@
+extends ../layout
+
+block content
+  #navigator
+  input(type="hidden", name="repository", value="#{repository}")
+  #editor
+  script(src="/javascripts/ace/ace.js")
+  script(src="/javascripts/ace/keybinding-vim.js")
+  script(src="/javascripts/ace/keybinding-emacs.js")
+  script(src="/javascripts/jquery.jstree.js")
+  script(src="/javascripts/editor.js")
