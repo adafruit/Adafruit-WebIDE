@@ -17,3 +17,13 @@ exports.filesystem = function(req, res){
   });
   
 };
+
+exports.file = function(req, res){
+  //TODO this is clearly, very, very insecure :)
+  var path = req.query.path;
+  //console.log(path);
+  fs_helper.open_file(path, function(results) {
+    res.send(results);
+  });
+  
+};

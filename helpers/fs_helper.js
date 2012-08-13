@@ -43,7 +43,7 @@ exports.read_or_generate_key = function(cb) {
 
 function build_file_structure(path, cb) {
   var filter = ['.git'];
-  
+
   var walk = function(dir, done) {
     var results = [];
     fs.readdir(dir, function(err, list) {
@@ -54,6 +54,7 @@ function build_file_structure(path, cb) {
         if (!file) return done(null, results);
 
         full_path = dir + '/' + file;
+        relative_path = full_path.replace(__dirname + "/", '');
         fs.stat(full_path, function(err, stat) {
           if (stat && stat.isDirectory()) {
             if (filter.indexOf(file) === -1) {
@@ -67,7 +68,7 @@ function build_file_structure(path, cb) {
               next();
             }
           } else {
-            results.push({data: file});
+            results.push({data: file, attr: {"id": relative_path}});
             next();
           }
         });
@@ -81,9 +82,6 @@ function build_file_structure(path, cb) {
   });
 }
 
-
-
-
 exports.read_repository = function(repository, cb) {
   
   var repository_path = __dirname + "/../repositories/" + repository;
@@ -91,3 +89,9 @@ exports.read_repository = function(repository, cb) {
     cb(results);
   });
 };
+
+exports.open_file = function(path, cb) {
+  fs.readFile(__dirname + '/' + path, 'ascii', function(err,data){
+    cb(data);
+  });
+}

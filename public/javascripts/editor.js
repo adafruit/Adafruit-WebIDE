@@ -4,7 +4,7 @@ $(function () {
   editor.getSession().setMode("ace/mode/javascript");
 
   $('#navigator').jstree({
-"json_data" : {
+    "json_data" : {
       // This tree is ajax enabled - as this is most common, and maybe a bit more complex
       // All the options are almost the same as jQuery's AJAX (read the docs)
       "ajax" : {
@@ -23,19 +23,39 @@ $(function () {
         }
       }
     },
+    "core": {
+      "animation": 100
+    },
     "themes" : {
-      "theme" : "default",
+      "theme" : "apple",
       "dots" : false,
       "icons" : false
     },
-    "plugins" : [ "themes", "json_data" ]
-  }).bind("select_node.jstree", function (e, data) {
-    alert(data.rslt.obj.data("id"));
-  });
+    "plugins" : [ "themes", "json_data", "ui" ]
+  }).bind("select_node.jstree", function (event, data) {
+      // `data.rslt.obj` is the jquery extended node that was clicked
+      //console.log(data);
 
+      //directory
+      if (!data.rslt.obj.attr("id")) {
+        data.inst.toggle_node();
+      } else {
+        openFile(data.rslt.obj.attr("id"), editor);
+      }
+    });
 
-  //$.get('/editor/', function(data) {
-  //  $('.result').html(data);
-    //alert('Load was performed.');
-  //});
 });
+
+function openFile(path, editor) {
+  var EditSession = require("ace/edit_session").EditSession;
+  var UndoManager = require("ace/undomanager").UndoManager;
+  var url = '/editor/file?path=' + path;
+  $.get(url, function(data) {
+    var session = new EditSession(data);
+    session.setUndoManager(new UndoManager());
+    session.setMode("ace/mode/python");
+    editor.setSession(session);
+    
+    //alert('Load was performed.');
+  });
+}

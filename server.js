@@ -35,7 +35,7 @@ passport.deserializeUser(function(obj, done) {
 passport.use(new BitbucketStrategy({
     consumerKey: BITBUCKET_CONSUMER_KEY,
     consumerSecret: BITBUCKET_CONSUMER_SECRET,
-    callbackURL: "http://127.0.0.1:3001/auth/bitbucket/callback"
+    callbackURL: "http://127.0.0.1:3000/auth/bitbucket/callback"
   },
   function(token, tokenSecret, profile, done) {
     // asynchronous verification, for effect...
@@ -68,6 +68,7 @@ app.use(express.static(__dirname + '/public'));
 
 app.get('/', ensureAuthenticated, site.index);
 app.get('/editor/filesystem', editor.filesystem);
+app.get('/editor/file', editor.file);
 app.get('/editor/:repository', editor.index);
 
 app.get('/login', user.login);
@@ -96,8 +97,8 @@ app.get('/auth/bitbucket/callback',
     res.redirect('/');
   });
 
-app.listen(3001);
-console.log('listening on port 3001');
+app.listen(3000);
+console.log('listening on port 3000');
 
 // Simple route middleware to ensure user is authenticated.
 //   Use this route middleware on any resource that needs to be protected.  If
