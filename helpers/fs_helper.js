@@ -40,6 +40,15 @@ exports.read_or_generate_key = function(cb) {
   });
 };
 
+exports.check_for_repository = function(repository, cb) {
+  fs.stat('../repositories/' + repository, function(err, stat) {
+    if (stat && stat.isDirectory()) {
+      cb(true);
+    } else {
+      cb(false);
+    }
+  });
+};
 
 function build_file_structure(path, cb) {
   var filter = ['.git'];

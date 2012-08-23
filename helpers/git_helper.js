@@ -7,8 +7,10 @@ exports.cloneAdafruitLibraries = function(cb) {
   });
 };
 
-exports.cloneRepository = function(profile, cb) {
-  git.clone("../repositories", 'https://jwcooper@bitbucket.org/jwcooper/raspeditor.git', function(output) {
+exports.clone_repository = function(repository, cb) {
+  var clone_path = "git@bitbucket.org:jwcooper/" + repository + ".git";
+  console.log(clone_path);
+  git.clone(__dirname + "/../repositories", clone_path, function(output) {
     console.log(output);
     cb();
   });

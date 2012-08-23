@@ -5,10 +5,8 @@ var express = require('express'),
     BitbucketStrategy = require('passport-bitbucket').Strategy,
     site = require('./controllers/site'),
     editor = require('./controllers/editor'),
-    user = require('./controllers/user');
-
-//TODO
-//https://github.com/mikeal/request (OAuth Signing)
+    user = require('./controllers/user'),
+    jsDAV = require("jsdav/lib/jsdav");
 
 var BITBUCKET_CONSUMER_KEY = "c7XXD9UtX3DWMF3Aa4";
 var BITBUCKET_CONSUMER_SECRET = "UpFuYfDcWEGdR9KW5gbe5gatbhnGDSSp";
@@ -40,11 +38,6 @@ passport.use(new BitbucketStrategy({
   function(token, tokenSecret, profile, done) {
     // asynchronous verification, for effect...
     process.nextTick(function () {
-      
-      // To keep the example simple, the user's Bitbucket profile is returned to
-      // represent the logged-in user.  In a typical application, you would want
-      // to associate the Bitbucket account with a user record in your database,
-      // and return that user instead.
       profile.token = token;
       profile.token_secret = tokenSecret;
       profile.consumer_key = BITBUCKET_CONSUMER_KEY;
@@ -53,6 +46,15 @@ passport.use(new BitbucketStrategy({
     });
   }
 ));
+
+app.use(function(req, res, next) {
+  console.log(req.path);
+  if (req.path.indexOf("/filesystem") != -1) {
+    davServer.exec(req, res);
+  } else {
+    next();
+  }
+});
 
 app.set('view engine', 'jade');
 app.set('views', __dirname + '/views');
@@ -67,9 +69,9 @@ app.use(app.router);
 app.use(express.static(__dirname + '/public'));
 
 app.get('/', ensureAuthenticated, site.index);
-app.get('/editor/filesystem', editor.filesystem);
-app.get('/editor/file', editor.file);
-app.get('/editor/:repository', editor.index);
+//app.get('/editor/filesystem', editor.filesystem);
+//app.get('/editor/file', editor.file);
+app.get('/editor', editor.index);
 
 app.get('/login', user.login);
 app.get('/logout', user.logout);
@@ -94,10 +96,10 @@ app.get('/auth/bitbucket',
 app.get('/auth/bitbucket/callback',
   passport.authenticate('bitbucket', { failureRedirect: '/login' }),
   function(req, res) {
-    res.redirect('/');
+    res.redirect('/editor');
   });
 
-app.listen(3000);
+var server = app.listen(3000);
 console.log('listening on port 3000');
 
 // Simple route middleware to ensure user is authenticated.
@@ -109,3 +111,16 @@ function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
   res.redirect('/login');
 }
+
+
+var jsDAV_Tree_Filesystem = require("jsdav/lib/DAV/tree/filesystem").jsDAV_Tree_Filesystem;
+jsDAV.debugMode = true;
+var davServer = jsDAV.mount({
+  path: __dirname + "/repositories",
+  mount: '/filesystem',
+  plugins: ["browser", "codesearch", "tree", "filelist", "filesearch", "locks", "mount", "temporaryfilefilter"],
+  server: server,
+  standalone: false,
+  tree: new jsDAV_Tree_Filesystem(__dirname + "/repositories")
+});
+
