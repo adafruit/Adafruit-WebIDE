@@ -8,6 +8,19 @@
     handle_navigator_actions();
   };
 
+  occEditor.populate_editor = function(path) {
+    var EditSession = require("ace/edit_session").EditSession;
+    var UndoManager = require("ace/undomanager").UndoManager;
+
+    function handler(err, data) {
+      var session = new EditSession(data);
+      session.setUndoManager(new UndoManager());
+      session.setMode("ace/mode/python");
+      editor.setSession(session);
+    }
+    davFS.read(path, handler);
+  };
+
 
   occEditor.populate_navigator = function(path) {
     path = path || '/filesystem';
@@ -37,6 +50,16 @@
 
   };
 
+  function open_file(path) {
+
+
+    $.get(url, function(data) {
+
+      
+      //alert('Load was performed.');
+    });
+  }
+
   function handle_navigator_actions() {
     $(document).on('click', '.navigator-item', function(event) {
       event.preventDefault();
@@ -44,7 +67,7 @@
       if (file.type === 'directory') {
         occEditor.populate_navigator(file.path);
       } else {
-
+        occEditor.populate_editor(file.path);
       }
       
     });

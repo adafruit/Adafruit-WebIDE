@@ -62,6 +62,21 @@ $.fn.filterNode = function(name) {
     });
   };
 
+  davFS.read = function(path, cb) {
+    var options = {
+      url: path,
+      type: "GET",
+      dataType: "html"
+    };
+    options.header = {
+      'Content-type': 'text/xml; charset=UTF-8'
+    };
+    _request(options, function(err, data, jqXHR) {
+      if (err) cb(err, null);
+      else cb(null, data);
+    });
+  };
+
   davFS.write = function(path, content, cb) {
     var options = {
       url: path,
