@@ -4,9 +4,13 @@
   occEditor.init = function(id) {
     editor = ace.edit("editor");
     editor.setTheme("ace/theme/twilight");
-    editor.getSession().setMode("ace/mode/javascript");
+    editor.getSession().setMode("ace/mode/python");
+
     occEditor.populate_navigator();
+    occEditor.populate_editor_bar();
+
     handle_navigator_actions();
+    handle_editor_bar_actions();
   };
 
   occEditor.populate_editor = function(path) {
@@ -22,6 +26,17 @@
     davFS.read(path, handler);
   };
 
+  occEditor.populate_editor_bar = function() {
+    var $editor_bar = $('#editor-bar');
+
+    function editor_bar_actions(event, data) {
+      console.log(data);
+    }
+
+    $('<p></p>').html('<i class="icon-edit"></i> Open a file to the left to edit, and run.').appendTo($editor_bar);
+    
+    $(document).on('file_open', editor_bar_actions);
+  };
 
   occEditor.populate_navigator = function(path) {
     path = path || '/filesystem';
@@ -39,7 +54,8 @@
           }
         }
         if (i > 0) {
-          $("<li class='navigator-item'></li>")
+          item.id = i + "-item";
+          $("<li id='" + i + "-item' class='navigator-item'></li>")
           .data( "file", item )
           .append("<a href=''>" + item.name + "</a><i class='icon-chevron-right'></i>")
           .appendTo(ul);
@@ -51,6 +67,10 @@
 
   };
 
+  function handle_editor_bar_actions() {
+
+  }
+
   function handle_navigator_actions() {
     $(document).on('click touchstart', '.navigator-item', function(event) {
       event.preventDefault();
@@ -58,6 +78,9 @@
       if (file.type === 'directory') {
         occEditor.populate_navigator(file.path);
       } else {
+        $(document).trigger('file_open', file);
+        $('.filesystem li').removeClass('file-open');
+        $(this).addClass('file-open');
         occEditor.populate_editor(file.path);
       }
       
