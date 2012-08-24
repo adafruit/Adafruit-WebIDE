@@ -35,6 +35,7 @@ $.fn.filterNode = function(name) {
         var collection = $(result).filterNode('d:collection');
 
         item.path = result_path;
+        item.parent_path = temp_array.slice(0, temp_array.length - 2).join('/');
 
         if (collection.length) {
           item.type = 'directory';

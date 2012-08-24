@@ -66,9 +66,10 @@
         if (i === 0) {
           //console.log("item.name", item.name);
           if (item.name === 'filesystem') {
+            $('#navigator-top p').html('');
             $('#navigator-folder p').text('All Repositories');
           } else {
-            $('#navigator-top p').data("file", item).html("<a href='' class='navigator-item'><i class='icon-chevron-left'></i> " + item.name + "</a>");
+            $('#navigator-top p').addClass('navigator-item-back').data("file", item).html("<a href=''><i class='icon-chevron-left'></i> " + item.name + "</a>");
             $('#navigator-folder p').text(item.name);
           }
         }
@@ -102,6 +103,13 @@
         occEditor.populate_editor(file);
       }
       
+    });
+
+    $(document).on('click touchstart', '.navigator-item-back', function(event) {
+      event.preventDefault();
+      var file = $(this).data('file');
+      console.log(file);
+      occEditor.populate_navigator(file.parent_path);
     });
   }
 
