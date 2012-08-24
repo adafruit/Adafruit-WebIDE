@@ -6,7 +6,7 @@ var express = require('express'),
     site = require('./controllers/site'),
     editor = require('./controllers/editor'),
     user = require('./controllers/user'),
-    jsDAV = require("jsDAV/lib/jsDAV"),
+    jsDAV = require("jsDAV/lib/jsdav"),
     fs = require('fs'),
     path = require('path');
 
