@@ -6,10 +6,19 @@ var express = require('express'),
     site = require('./controllers/site'),
     editor = require('./controllers/editor'),
     user = require('./controllers/user'),
-    jsDAV = require("jsdav/lib/jsdav");
+    jsDAV = require("jsdav/lib/jsdav"),
+    fs = require('fs'),
+    path = require('path');
 
 var BITBUCKET_CONSUMER_KEY = "c7XXD9UtX3DWMF3Aa4";
 var BITBUCKET_CONSUMER_SECRET = "UpFuYfDcWEGdR9KW5gbe5gatbhnGDSSp";
+
+var exists = path.existsSync('./repositories');
+if (!exists) {
+  fs.mkdirSync('./repositories', 0755);
+  console.log('created repositories folder');
+}
+
 
 // Passport session setup.
 //   To support persistent login sessions, Passport needs to be able to
