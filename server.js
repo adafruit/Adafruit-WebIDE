@@ -9,12 +9,16 @@ var express = require('express'),
     jsDAV = require("jsDAV/lib/jsdav"),
     fs = require('fs'),
     path = require('path'),
-    git_helper = require('./helpers/git_helper');
+    git_helper = require('./helpers/git_helper'),
+    request_helper = require('./helpers/request_helper');
 
 var davServer;
 
 var BITBUCKET_CONSUMER_KEY = "c7XXD9UtX3DWMF3Aa4";
 var BITBUCKET_CONSUMER_SECRET = "UpFuYfDcWEGdR9KW5gbe5gatbhnGDSSp";
+
+var ADAFRUIT_REPOSITORY = "Adafruit-Raspberry-Pi-Python-Code";
+var ADAFRUIT_REPOSITORY_REMOTE = 'git://github.com/adafruit/Adafruit-Raspberry-Pi-Python-Code.git';
 
 
 // Passport session setup.
@@ -48,13 +52,27 @@ passport.use(new BitbucketStrategy({
       profile.token_secret = tokenSecret;
       profile.consumer_key = BITBUCKET_CONSUMER_KEY;
       profile.consumer_secret = BITBUCKET_CONSUMER_SECRET;
-      return done(null, profile);
+      console.log(profile);
+
+      //TODO REFACTOR THIS MESS
+      request_helper.list_repositories(profile, function(err, list) {
+        var exists = list.some(function(repository) {
+          return (repository.name === ADAFRUIT_REPOSITORY);
+        });
+        if (!exists) {
+          request_helper.create_repository(profile, ADAFRUIT_REPOSITORY, function(er, cb) {
+            return done(null, profile);
+          });
+        } else {
+          return done(null, profile);
+        }
+      });
+
     });
   }
 ));
 
 app.use(function(req, res, next) {
-  console.log(req.path);
   if (req.path.indexOf("/filesystem") != -1) {
     davServer.exec(req, res);
   } else {
@@ -130,7 +148,7 @@ function serverInitialization(app) {
     console.log('created repositories folder');
   }
 
-  git_helper.clone_adafruit_libraries(function() {
+  git_helper.clone_adafruit_libraries(ADAFRUIT_REPOSITORY, ADAFRUIT_REPOSITORY_REMOTE, function() {
     var server = start_server();
     mount_dav(server);
   });
