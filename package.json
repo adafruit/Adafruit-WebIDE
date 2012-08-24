@@ -10,6 +10,6 @@
     "jade": "0.x",
     "request": "2.x",
     "gitty": "0.x",
-    "jsDAV": "0.x"
+    "jsDAV": "git://github.com/mikedeboer/jsDAV.git"
   }
 }
