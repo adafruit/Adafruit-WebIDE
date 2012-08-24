@@ -15,12 +15,11 @@ Install npm, if not already installed:
 
 On the Raspberry PI:
 
-    sudo apt-get install node npm libxml2-dev
+    sudo apt-get install node npm
     mkdir ~/tmp
     npm config set tmp ~/tmp
     git clone git@github.com:adafruit/OccEditor.git
     cd OccEditor
-    export NODE_PATH="/usr/bin/node"
     npm install
     node server.js
 

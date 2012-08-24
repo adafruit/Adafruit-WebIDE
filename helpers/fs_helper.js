@@ -1,7 +1,6 @@
 var path = require('path'),
     fs = require('fs'),
     util = require('util'),
-    readdirp = require('readdirp'),
     exec = require('child_process').exec;
 
 exports.has_ssh_key = function has_ssh_key(cb) {
