@@ -96,7 +96,13 @@
 }
 
 #editor-bar p {
-  padding: 10px;
+  padding: 10px 10px 10px 20px;
+}
+
+#editor-bar p.editor-bar-actions a {
+  color: #E4E5E7;
+  text-decoration: none;
+  margin-right: 20px;
 }
 
 #editor {

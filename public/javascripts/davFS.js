@@ -1,3 +1,5 @@
+//This rudimentary WebDav client was inspired by http://debris.demon.nl/projects/davclient.js/doc/README.html (Thanks!)
+
 $.fn.filterNode = function(name) {
       return this.find('*').filter(function() {
         return this.nodeName === name;

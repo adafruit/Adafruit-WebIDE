@@ -1,5 +1,18 @@
+//Ace mode setup code derived from: https://github.com/ajaxorg/ace/tree/master/demo (Thanks!)
+
 (function( occEditor, $, undefined ) {
   var editor, modes = [];
+
+  var templates = {
+    "editor_bar_init":              '<p><i class="icon-edit"></i> Open a file to the left, to edit and run.</p>',
+    "editor_bar_interpreted_file":  '<p class="editor-bar-actions">' +
+                                      '<a href="" class="run-file"><i class="icon-play"></i> Run</a>' +
+                                      '<a href="" class="save-file"><i class="icon-save"></i> Save</a>' +
+                                    '</p>',
+     "editor_bar_file":             '<p class="editor-bar-actions">' +
+                                      '<a href="" class="save-file"><i class="icon-save"></i> Save</a>' +
+                                    '</p>'
+  };
 
   occEditor.init = function(id) {
     editor = ace.edit("editor");
@@ -23,7 +36,7 @@
 
       var file_mode = getModeFromPath(file.path);
       session.setMode(file_mode.mode);
-      
+
       editor.setSession(session);
     }
     davFS.read(file.path, handler);
@@ -33,10 +46,14 @@
     var $editor_bar = $('#editor-bar');
 
     function editor_bar_actions(event, data) {
-      
+      console.log(data);
+      if (data.extension === 'py' || data.extension === 'rb') {
+        $editor_bar.html(templates.editor_bar_interpreted_file);
+      } else {
+        $editor_bar.html(templates.editor_bar_file);
+      }
     }
-
-    $('<p></p>').html('<i class="icon-edit"></i> Open a file to the left, to edit and run.').appendTo($editor_bar);
+    $editor_bar.html(templates.editor_bar_init);
     
     $(document).on('file_open', editor_bar_actions);
   };
@@ -162,3 +179,7 @@
   }
 
 }( window.occEditor = window.occEditor || {}, jQuery ));
+
+$(function () {
+  occEditor.init();
+});
