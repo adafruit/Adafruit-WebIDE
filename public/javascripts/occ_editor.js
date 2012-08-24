@@ -6,7 +6,7 @@
   var templates = {
     "editor_bar_init":              '<p><i class="icon-edit"></i> Open a file to the left, to edit and run.</p>',
     "editor_bar_interpreted_file":  '<p class="editor-bar-actions">' +
-                                      '<a href="" class="run-file"><i class="icon-play"></i> Run</a>' +
+                                      '<a href="" class="run-file"><i class="icon-play"></i> Save and Run</a>' +
                                       '<a href="" class="save-file"><i class="icon-save"></i> Save</a>' +
                                     '</p>',
      "editor_bar_file":             '<p class="editor-bar-actions">' +
@@ -87,7 +87,24 @@
   };
 
   function handle_editor_bar_actions() {
+    function save_file(event) {
+      event.preventDefault();
+      var file = $('.file-open').data('file');
+      var editor_content = editor.getSession().getDocument().getValue();
 
+      function save_callback(err, status) {
+        //TODO Handle save Notification
+        console.log(err);
+        console.log(status);
+      }
+
+      davFS.write(file.path, editor_content, save_callback);
+    }
+
+    function run_file() {
+
+    }
+    $(document).on('click touchstart', '.save-file', save_file);
   }
 
   function handle_navigator_actions() {
