@@ -6,7 +6,7 @@ var express = require('express'),
     site = require('./controllers/site'),
     editor = require('./controllers/editor'),
     user = require('./controllers/user'),
-    jsDAV = require("jsdav/lib/jsdav"),
+    jsDAV = require("jsDAV/lib/jsDAV"),
     fs = require('fs'),
     path = require('path');
 
@@ -122,7 +122,7 @@ function ensureAuthenticated(req, res, next) {
 }
 
 
-var jsDAV_Tree_Filesystem = require("jsdav/lib/DAV/tree/filesystem").jsDAV_Tree_Filesystem;
+var jsDAV_Tree_Filesystem = require("jsDAV/lib/DAV/tree/filesystem").jsDAV_Tree_Filesystem;
 jsDAV.debugMode = true;
 var davServer = jsDAV.mount({
   path: __dirname + "/repositories",
