@@ -3,8 +3,15 @@ var fs_helper = require('../helpers/fs_helper'),
 
 exports.index = function(req, res){
   //var repository = req.params.repository;
-
-  res.render('editor/index');
+  fs_helper.check_for_repository('/Adafruit-Raspberry-Pi-Python-Code', function(err, status) {
+    if (!err && status) {
+      res.render('editor/index');
+    }else {
+      git_helper.cloneAdafruitLibraries(function() {
+        res.render('editor/index');
+      });
+    }
+  });
 };
 
 exports.filesystem = function(req, res){
@@ -23,5 +30,4 @@ exports.file = function(req, res) {
   fs_helper.open_file(path, function(results) {
     res.send(results);
   });
-  
 };

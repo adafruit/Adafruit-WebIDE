@@ -1,7 +1,7 @@
 var git = require('gitty');
 
 exports.cloneAdafruitLibraries = function(cb) {
-  git.clone("../repositories", 'git://github.com/adafruit/Adafruit-Raspberry-Pi-Python-Code.git', function(output) {
+  git.clone(__dirname + "/../repositories", 'git://github.com/adafruit/Adafruit-Raspberry-Pi-Python-Code.git', function(output) {
     console.log(output);
     cb();
   });

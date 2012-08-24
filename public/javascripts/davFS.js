@@ -6,6 +6,12 @@ $.fn.filterNode = function(name) {
 (function( davFS, $, undefined ) {
   //Public Methods
   davFS.listDir = function(path, cb) {
+    function filter(name) {
+      var filter_list = ['.git'];
+      if ($.inArray(name, filter_list) === -1) return false;
+      else return true;
+    }
+
     path = path || '/filesystem/';
     var options = {
       url: path,
@@ -17,13 +23,29 @@ $.fn.filterNode = function(name) {
       'Content-type': 'text/xml; charset=UTF-8'
     };
     _request(options, function(err, data, jqXHR) {
+      var list = [], item = {};
       //console.log(data);
-      var list = [];
-      $(data).filterNode("d:href").each(function(i, result) {
-        var result_path = $(result).text();
-        var filename = result_path.replace(path, '').replace(/\//g, '');
-        list.push({name: filename, path: result_path});
+      $(data).filterNode("d:response").each(function(i, result) {
+        var item ={};
+
+        var result_path = $(result).filterNode('d:href').text();
+        var temp_array = result_path.split('/');
+        var collection = $(result).filterNode('d:collection');
+
+        item.path = result_path;
+
+        if (collection.length) {
+          item.type = 'directory';
+          item.name = temp_array[temp_array.length - 2];
+        } else {
+          item.type = 'file';
+          item.name = temp_array[temp_array.length - 1];
+        }
+        if (!filter(item.name)) {
+          list.push(item);
+        }
       });
+      //console.log(list);
       cb(null, list);
     });
   };

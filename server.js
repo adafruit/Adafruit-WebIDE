@@ -15,7 +15,7 @@ var BITBUCKET_CONSUMER_SECRET = "UpFuYfDcWEGdR9KW5gbe5gatbhnGDSSp";
 
 var exists = path.existsSync('./repositories');
 if (!exists) {
-  fs.mkdirSync('./repositories', 0755);
+  fs.mkdirSync('./repositories', 0777);
   console.log('created repositories folder');
 }
 

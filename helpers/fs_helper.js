@@ -43,9 +43,9 @@ exports.read_or_generate_key = function(cb) {
 exports.check_for_repository = function(repository, cb) {
   fs.stat('../repositories/' + repository, function(err, stat) {
     if (stat && stat.isDirectory()) {
-      cb(true);
+      cb(null, true);
     } else {
-      cb(false);
+      cb(null, false);
     }
   });
 };

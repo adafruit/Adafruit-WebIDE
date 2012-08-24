@@ -5,7 +5,50 @@
     editor = ace.edit("editor");
     editor.setTheme("ace/theme/twilight");
     editor.getSession().setMode("ace/mode/javascript");
+    handle_navigator_actions();
   };
+
+
+  occEditor.populate_navigator = function(path) {
+    path = path || '/filesystem';
+    function populateFileSystem(err, list) {
+      var ul = $(".filesystem").html('');
+      $.each(list, function(i, item) {
+        if (i === 0) {
+          console.log("item.name", item.name);
+          if (item.name === 'filesystem') {
+            $('#navigator-folder p').text('All Repositories');
+          } else {
+            //$('#navigator-top p').text('All Repositories');
+            $('#navigator-top p').data("file", item).html("<i class='icon-chevron-left'></i><a href='' class='navigator-item'>" + item.name + "</a>");
+            $('#navigator-folder p').text(item.name);
+          }
+        }
+        if (i > 0) {
+          $("<li></li>")
+          .data( "file", item )
+          .append("<a href='' class='navigator-item'>" + item.name + "</a><i class='icon-chevron-right'></i>")
+          .appendTo(ul);
+        }
+      });
+    }
+
+    davFS.listDir(path, populateFileSystem);
+
+  };
+
+  function handle_navigator_actions() {
+    $(document).on('click', '.navigator-item', function(event) {
+      event.preventDefault();
+      var file = $(this).parent().data('file');
+      if (file.type === 'directory') {
+        occEditor.populate_navigator(file.path);
+      } else {
+
+      }
+      
+    });
+  }
 
   function getModeFromPath(path) {
       var mode = modesByName.text;
