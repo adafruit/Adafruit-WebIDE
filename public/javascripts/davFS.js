@@ -40,6 +40,7 @@ $.fn.filterNode = function(name) {
         } else {
           item.type = 'file';
           item.name = temp_array[temp_array.length - 1];
+          item.extension = item.name.split('.').pop();
         }
         if (!filter(item.name)) {
           list.push(item);

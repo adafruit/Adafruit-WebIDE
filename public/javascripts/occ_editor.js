@@ -13,27 +13,30 @@
     handle_editor_bar_actions();
   };
 
-  occEditor.populate_editor = function(path) {
+  occEditor.populate_editor = function(file) {
     var EditSession = require("ace/edit_session").EditSession;
     var UndoManager = require("ace/undomanager").UndoManager;
 
     function handler(err, data) {
       var session = new EditSession(data);
       session.setUndoManager(new UndoManager());
-      session.setMode("ace/mode/python");
+
+      var file_mode = getModeFromPath(file.path);
+      session.setMode(file_mode.mode);
+      
       editor.setSession(session);
     }
-    davFS.read(path, handler);
+    davFS.read(file.path, handler);
   };
 
   occEditor.populate_editor_bar = function() {
     var $editor_bar = $('#editor-bar');
 
     function editor_bar_actions(event, data) {
-      console.log(data);
+      
     }
 
-    $('<p></p>').html('<i class="icon-edit"></i> Open a file to the left to edit, and run.').appendTo($editor_bar);
+    $('<p></p>').html('<i class="icon-edit"></i> Open a file to the left, to edit and run.').appendTo($editor_bar);
     
     $(document).on('file_open', editor_bar_actions);
   };
@@ -44,11 +47,10 @@
       var ul = $(".filesystem").html('');
       $.each(list, function(i, item) {
         if (i === 0) {
-          console.log("item.name", item.name);
+          //console.log("item.name", item.name);
           if (item.name === 'filesystem') {
             $('#navigator-folder p').text('All Repositories');
           } else {
-            //$('#navigator-top p').text('All Repositories');
             $('#navigator-top p').data("file", item).html("<a href='' class='navigator-item'><i class='icon-chevron-left'></i> " + item.name + "</a>");
             $('#navigator-folder p').text(item.name);
           }
@@ -64,7 +66,6 @@
     }
 
     davFS.listDir(path, populateFileSystem);
-
   };
 
   function handle_editor_bar_actions() {
@@ -81,7 +82,7 @@
         $(document).trigger('file_open', file);
         $('.filesystem li').removeClass('file-open');
         $(this).addClass('file-open');
-        occEditor.populate_editor(file.path);
+        occEditor.populate_editor(file);
       }
       
     });
