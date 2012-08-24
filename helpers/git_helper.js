@@ -1,9 +1,16 @@
-var git = require('gitty');
+var git = require('gitty'),
+    fs_helper = require('./fs_helper');
 
-exports.cloneAdafruitLibraries = function(cb) {
-  git.clone(__dirname + "/../repositories", 'git://github.com/adafruit/Adafruit-Raspberry-Pi-Python-Code.git', function(output) {
-    console.log(output);
-    cb();
+exports.clone_adafruit_libraries = function(cb) {
+  fs_helper.check_for_repository('Adafruit-Raspberry-Pi-Python-Code', function(err, status) {
+    if (!err && !status) {
+    git.clone(__dirname + "/../repositories", 'git://github.com/adafruit/Adafruit-Raspberry-Pi-Python-Code.git', function(output) {
+      console.log(output);
+      cb();
+    });
+    } else {
+      cb();
+    }
   });
 };
 

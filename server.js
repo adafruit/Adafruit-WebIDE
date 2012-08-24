@@ -8,16 +8,13 @@ var express = require('express'),
     user = require('./controllers/user'),
     jsDAV = require("jsDAV/lib/jsdav"),
     fs = require('fs'),
-    path = require('path');
+    path = require('path'),
+    git_helper = require('./helpers/git_helper');
+
+var davServer;
 
 var BITBUCKET_CONSUMER_KEY = "c7XXD9UtX3DWMF3Aa4";
 var BITBUCKET_CONSUMER_SECRET = "UpFuYfDcWEGdR9KW5gbe5gatbhnGDSSp";
-
-var exists = path.existsSync('./repositories');
-if (!exists) {
-  fs.mkdirSync('./repositories', 0777);
-  console.log('created repositories folder');
-}
 
 
 // Passport session setup.
@@ -108,8 +105,8 @@ app.get('/auth/bitbucket/callback',
     res.redirect('/editor');
   });
 
-var server = app.listen(3000);
-console.log('listening on port 3000');
+serverInitialization(app);
+
 
 // Simple route middleware to ensure user is authenticated.
 //   Use this route middleware on any resource that needs to be protected.  If
@@ -122,14 +119,39 @@ function ensureAuthenticated(req, res, next) {
 }
 
 
-var jsDAV_Tree_Filesystem = require("jsDAV/lib/DAV/tree/filesystem").jsDAV_Tree_Filesystem;
-jsDAV.debugMode = true;
-var davServer = jsDAV.mount({
-  path: __dirname + "/repositories",
-  mount: '/filesystem',
-  plugins: ["browser", "codesearch", "tree", "filelist", "filesearch", "locks", "mount", "temporaryfilefilter"],
-  server: server,
-  standalone: false,
-  tree: new jsDAV_Tree_Filesystem(__dirname + "/repositories")
-});
+
+
+
+function serverInitialization(app) {
+
+  var exists = path.existsSync('./repositories');
+  if (!exists) {
+    fs.mkdirSync('./repositories', 0777);
+    console.log('created repositories folder');
+  }
+
+  git_helper.clone_adafruit_libraries(function() {
+    var server = start_server();
+    mount_dav(server);
+  });
+}
+
+function start_server() {
+  console.log('listening on port 3000');
+  return app.listen(3000);
+}
+
+function mount_dav(server) {
+  var jsDAV_Tree_Filesystem = require("jsDAV/lib/DAV/tree/filesystem").jsDAV_Tree_Filesystem;
+  jsDAV.debugMode = true;
+  davServer = jsDAV.mount({
+    path: __dirname + "/repositories",
+    mount: '/filesystem',
+    plugins: ["browser", "codesearch", "tree", "filelist", "filesearch", "locks", "mount", "temporaryfilefilter"],
+    server: server,
+    standalone: false,
+    tree: new jsDAV_Tree_Filesystem(__dirname + "/repositories")
+  });
+  console.log('webdav filesystem mounted');
+}
 

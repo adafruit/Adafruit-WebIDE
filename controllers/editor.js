@@ -2,16 +2,7 @@ var fs_helper = require('../helpers/fs_helper'),
     git_helper = require('../helpers/git_helper');
 
 exports.index = function(req, res){
-  //var repository = req.params.repository;
-  fs_helper.check_for_repository('/Adafruit-Raspberry-Pi-Python-Code', function(err, status) {
-    if (!err && status) {
-      res.render('editor/index');
-    }else {
-      git_helper.cloneAdafruitLibraries(function() {
-        res.render('editor/index');
-      });
-    }
-  });
+  res.render('editor/index');
 };
 
 exports.filesystem = function(req, res){
