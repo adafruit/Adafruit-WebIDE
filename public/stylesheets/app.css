@@ -14,9 +14,26 @@
   border: 1px solid #8F8F8F;
 }
 
+#navigator-top {
+  background-color: #2A5CB7;
+}
+
 #navigator-top p {
   margin: 0;
-  background-color: #2A5CB7;
+  color: #E4E5E7;
+  font-size: 12px;
+  line-height: 12px;
+  cursor: pointer;
+
+}
+
+#navigator-top p a {
+  display: inline-block;
+  width: 100%;
+  color: #E4E5E7;
+  text-decoration: none;
+  padding: 10px;
+  border-bottom: 1px solid #8F8F8F;
 }
 
 #navigator-folder {
@@ -38,12 +55,14 @@
   list-style-type: none;
   padding: 10px 10px 10px 0;
   border-bottom: 1px solid #909090;
+  cursor: pointer;
 }
 
 #navigator ul li a {
   padding-left: 10px;
   color: #343637;
   font-weight: bold;
+  text-decoration: none;
 }
 
 #navigator ul li i {
@@ -51,10 +70,28 @@
   color: #343637;
 }
 
-#editor {
+#editor-wrapper {
   position:absolute;
   left: 300px;
   right: 0;
   top: 40px;
   bottom: 0;
+}
+
+#editor-bar {
+  height: 40px;
+  background-color: #323334;
+  border-top: 1px solid #8F8F8F;
+  border-right: 1px solid #8F8F8F;
+}
+
+#editor {
+  position:absolute;
+  left: 0;
+  right: 0;  
+  top: 40px;
+  bottom: 0; 
+  border-top: 1px solid #8F8F8F;
+  border-right: 1px solid #8F8F8F;
+  border-bottom: 1px solid #8F8F8F;
 }

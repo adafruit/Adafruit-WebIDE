@@ -5,6 +5,7 @@
     editor = ace.edit("editor");
     editor.setTheme("ace/theme/twilight");
     editor.getSession().setMode("ace/mode/javascript");
+    occEditor.populate_navigator();
     handle_navigator_actions();
   };
 
@@ -33,14 +34,14 @@
             $('#navigator-folder p').text('All Repositories');
           } else {
             //$('#navigator-top p').text('All Repositories');
-            $('#navigator-top p').data("file", item).html("<i class='icon-chevron-left'></i><a href='' class='navigator-item'>" + item.name + "</a>");
+            $('#navigator-top p').data("file", item).html("<a href='' class='navigator-item'><i class='icon-chevron-left'></i> " + item.name + "</a>");
             $('#navigator-folder p').text(item.name);
           }
         }
         if (i > 0) {
-          $("<li></li>")
+          $("<li class='navigator-item'></li>")
           .data( "file", item )
-          .append("<a href='' class='navigator-item'>" + item.name + "</a><i class='icon-chevron-right'></i>")
+          .append("<a href=''>" + item.name + "</a><i class='icon-chevron-right'></i>")
           .appendTo(ul);
         }
       });
@@ -50,20 +51,10 @@
 
   };
 
-  function open_file(path) {
-
-
-    $.get(url, function(data) {
-
-      
-      //alert('Load was performed.');
-    });
-  }
-
   function handle_navigator_actions() {
-    $(document).on('click', '.navigator-item', function(event) {
+    $(document).on('click touchstart', '.navigator-item', function(event) {
       event.preventDefault();
-      var file = $(this).parent().data('file');
+      var file = $(this).data('file');
       if (file.type === 'directory') {
         occEditor.populate_navigator(file.path);
       } else {
