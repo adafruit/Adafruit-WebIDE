@@ -22,3 +22,11 @@ exports.clone_repository = function(profile, repository, cb) {
     cb();
   });
 };
+
+exports.update_remote = function(profile, repository, cb) {
+  var remote_url = "git@bitbucket.org:" + profile.username + "/" + repository + ".git";
+  git.remote.update(__dirname + "/../repositories/" + repository, "origin", remote_url, function(output) {
+    console.log(output);
+    cb(output);
+  });
+};

@@ -9,7 +9,7 @@
     "passport-bitbucket": "0.x",
     "jade": "0.x",
     "request": "2.x",
-    "gitty": "0.x",
+    "gitty": "git://github.com/jwcooper/Gitty.git",
     "jsDAV": "git://github.com/mikedeboer/jsDAV.git"
   }
 }

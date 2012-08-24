@@ -52,7 +52,6 @@ passport.use(new BitbucketStrategy({
       profile.token_secret = tokenSecret;
       profile.consumer_key = BITBUCKET_CONSUMER_KEY;
       profile.consumer_secret = BITBUCKET_CONSUMER_SECRET;
-      console.log(profile);
 
       //TODO REFACTOR THIS MESS
       request_helper.list_repositories(profile, function(err, list) {
@@ -60,11 +59,18 @@ passport.use(new BitbucketStrategy({
           return (repository.name === ADAFRUIT_REPOSITORY);
         });
         if (!exists) {
-          request_helper.create_repository(profile, ADAFRUIT_REPOSITORY, function(er, cb) {
-            return done(null, profile);
+          request_helper.create_repository(profile, ADAFRUIT_REPOSITORY, function(err, response) {
+            console.log("created adafruit repository in bitbucket");
+            git_helper.update_remote(profile, ADAFRUIT_REPOSITORY, function(err, response) {
+              console.log("updated remote for adafruit repository");
+              return done(null, profile);
+            });
+
           });
         } else {
-          return done(null, profile);
+          git_helper.update_remote(profile, ADAFRUIT_REPOSITORY, function(err, response) {
+            return done(null, profile);
+          });
         }
       });
 
