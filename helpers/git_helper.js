@@ -55,8 +55,11 @@ exports.push = function push(repository, remote, branch, cb) {
   });
 };
 
-exports.commit_push_and_save = function(repository, file, cb) {
+exports.commit_push_and_save = function(file, cb) {
   var that = this;
+  var path_array = file.path.split('/');
+  var repository = path_array[2];
+
   that.add(repository, file.name, function(err, status) {
     var commit_message = "Modified " + file.name;
     that.commit(repository, commit_message,  function(err, status) {

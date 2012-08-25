@@ -25,6 +25,7 @@
 
     handle_navigator_actions();
     handle_editor_bar_actions();
+    handle_program_output();
   };
 
   occEditor.populate_editor = function(file) {
@@ -104,9 +105,30 @@
     }
 
     function run_file() {
+      event.preventDefault();
+      var file = $('.file-open').data('file');
+      var editor_content = editor.getSession().getDocument().getValue();
 
+      function save_run_callback(err, status) {
+        //TODO Handle save Notification
+        console.log(err);
+        console.log(status);
+        socket.emit('commit-run-file', { file: file});
+      }
+
+      davFS.write(file.path, editor_content, save_run_callback);
     }
     $(document).on('click touchstart', '.save-file', save_file);
+    $(document).on('click touchstart', '.run-file', run_file);
+  }
+
+  function handle_program_output() {
+    socket.on('program-output', function(data) {
+      console.log(data);
+    });
+    socket.on('program-exit', function(data) {
+      console.log(data);
+    });    
   }
 
   function handle_navigator_actions() {

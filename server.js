@@ -11,7 +11,8 @@ var express = require('express'),
     fs = require('fs'),
     path = require('path'),
     git_helper = require('./helpers/git_helper'),
-    request_helper = require('./helpers/request_helper');
+    request_helper = require('./helpers/request_helper'),
+    exec_helper = require('./helpers/exec_helper');
 
 var davServer;
 
@@ -177,11 +178,17 @@ function socket_listeners() {
     socket.on('commit-file', function (data) {
       //TODO...clean this up, and check for errors
       //console.log(data.file.path);
-      var path_array = data.file.path.split('/');
-      var repository = path_array[2];
+
       //console.log(repository);
-      git_helper.commit_push_and_save(repository, data.file, function(err, status) {
+      git_helper.commit_push_and_save(data.file, function(err, status) {
         socket.emit('commit-file-complete', {message: "Save was successful"});
+      });
+    });
+
+    socket.on('commit-run-file', function(data) {
+      git_helper.commit_push_and_save(data.file, function(err, status) {
+        socket.emit('commit-file-complete', {message: "Save was successful"});
+        exec_helper.execute_program(data.file, socket);
       });
     });
   });
