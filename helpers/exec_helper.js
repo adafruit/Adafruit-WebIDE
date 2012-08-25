@@ -15,7 +15,7 @@ function execute_python(file, socket) {
   var prog = spawn('python', [file]);
 
   prog.stdout.on('data', function(data) {
-    socket.emit('program-output', {output: data});
+    socket.emit('program-output', {output: data.toString()});
   });
 
   prog.on('exit', function(code) {
