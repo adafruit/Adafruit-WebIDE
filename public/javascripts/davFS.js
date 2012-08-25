@@ -35,14 +35,16 @@ $.fn.filterNode = function(name) {
         var collection = $(result).filterNode('d:collection');
 
         item.path = result_path;
-        item.parent_path = temp_array.slice(0, temp_array.length - 2).join('/');
+        
 
         if (collection.length) {
           item.type = 'directory';
           item.name = temp_array[temp_array.length - 2];
+          item.parent_path = temp_array.slice(0, temp_array.length - 2).join('/');
         } else {
           item.type = 'file';
           item.name = temp_array[temp_array.length - 1];
+          item.parent_path = temp_array.slice(0, temp_array.length - 1).join('/');
           item.extension = item.name.split('.').pop();
         }
         if (!filter(item.name)) {

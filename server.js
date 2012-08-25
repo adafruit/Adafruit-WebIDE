@@ -1,5 +1,6 @@
 var express = require('express'),
     app = express(),
+    io = require('socket.io'),
     passport = require('passport'),
     util = require('util'),
     BitbucketStrategy = require('passport-bitbucket').Strategy,
@@ -101,7 +102,7 @@ app.use(express.static(__dirname + '/public'));
 app.get('/', ensureAuthenticated, site.index);
 //app.get('/editor/filesystem', editor.filesystem);
 //app.get('/editor/file', editor.file);
-app.get('/editor', editor.index);
+app.get('/editor', ensureAuthenticated, editor.index);
 
 app.get('/login', user.login);
 app.get('/logout', user.logout);
@@ -121,7 +122,7 @@ app.get('/auth/bitbucket',
 // GET /auth/bitbucket/callback
 //   Use passport.authenticate() as route middleware to authenticate the
 //   request.  If authentication fails, the user will be redirected back to the
-//   login page.  Otherwise, the primary route function function will be called,
+//   login page.  Otherwise, the primary route function function will be calsled,
 //   which, in this example, will redirect the user to the home page.
 app.get('/auth/bitbucket/callback',
   passport.authenticate('bitbucket', { failureRedirect: '/login' }),
@@ -130,6 +131,8 @@ app.get('/auth/bitbucket/callback',
   });
 
 serverInitialization(app);
+
+
 
 
 // Simple route middleware to ensure user is authenticated.
@@ -156,14 +159,35 @@ function serverInitialization(app) {
 
   git_helper.clone_adafruit_libraries(ADAFRUIT_REPOSITORY, ADAFRUIT_REPOSITORY_REMOTE, function() {
     var server = start_server();
+    socket_listeners();
     mount_dav(server);
   });
 }
 
 function start_server() {
   console.log('listening on port 3000');
-  return app.listen(3000);
+  server = require('http').createServer(app);
+  io = io.listen(server);
+  return server.listen(3000);
 }
+
+function socket_listeners() {
+  io.sockets.on('connection', function (socket) {
+    socket.emit('news', { hello: 'world' });
+    socket.on('commit-file', function (data) {
+      //TODO...clean this up, and check for errors
+      //console.log(data.file.path);
+      var path_array = data.file.path.split('/');
+      var repository = path_array[2];
+      //console.log(repository);
+      git_helper.commit_push_and_save(repository, data.file, function(err, status) {
+        socket.emit('commit-file-complete', {message: "Save was successful"});
+      });
+    });
+  });
+}
+
+
 
 function mount_dav(server) {
   var jsDAV_Tree_Filesystem = require("jsDAV/lib/DAV/tree/filesystem").jsDAV_Tree_Filesystem;

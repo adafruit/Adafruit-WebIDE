@@ -1,7 +1,8 @@
 //Ace mode setup code derived from: https://github.com/ajaxorg/ace/tree/master/demo (Thanks!)
 
 (function( occEditor, $, undefined ) {
-  var editor, modes = [];
+  var editor, modes = [],
+      socket = io.connect('http://localhost');
 
   var templates = {
     "editor_bar_init":              '<p><i class="icon-edit"></i> Open a file to the left, to edit and run.</p>',
@@ -96,6 +97,7 @@
         //TODO Handle save Notification
         console.log(err);
         console.log(status);
+        socket.emit('commit-file', { file: file});
       }
 
       davFS.write(file.path, editor_content, save_callback);
