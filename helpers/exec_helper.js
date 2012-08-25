@@ -15,7 +15,11 @@ function execute_python(file, socket) {
   var prog = spawn('python', [file]);
 
   prog.stdout.on('data', function(data) {
-    socket.emit('program-output', {output: data.toString()});
+    socket.emit('program-stdout', {output: data.toString()});
+  });
+
+  prog.stderr.on('data', function(data) {
+    socket.emit('program-stderr', {output: data.toString()});
   });
 
   prog.on('exit', function(code) {
@@ -28,8 +32,12 @@ function execute_ruby(file, socket) {
 
   prog.stdout.on('data', function(data) {
     console.log(data.toString());
-    socket.emit('program-output', {output: data.toString()});
+    socket.emit('program-stdout', {output: data.toString()});
   });
+
+  prog.stderr.on('data', function(data) {
+    socket.emit('program-stderr', {output: data.toString()});
+  });  
 
   prog.on('exit', function(code) {
     console.log(code);

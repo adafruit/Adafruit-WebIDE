@@ -123,9 +123,12 @@
   }
 
   function handle_program_output() {
-    socket.on('program-output', function(data) {
+    socket.on('program-stdout', function(data) {
       console.log(data);
     });
+    socket.on('program-stderr', function(data) {
+      console.log(data);
+    });    
     socket.on('program-exit', function(data) {
       console.log(data);
     });    
