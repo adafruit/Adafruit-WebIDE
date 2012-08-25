@@ -186,9 +186,9 @@ function socket_listeners() {
     });
 
     socket.on('commit-run-file', function(data) {
+      exec_helper.execute_program(data.file, socket);
       git_helper.commit_push_and_save(data.file, function(err, status) {
         socket.emit('commit-file-complete', {message: "Save was successful"});
-        exec_helper.execute_program(data.file, socket);
       });
     });
   });
