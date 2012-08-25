@@ -24,11 +24,11 @@ function execute_python(file, socket) {
 }
 
 function execute_ruby(file, socket) {
-  var prog = spawn('python ' + file);
+  var prog = spawn('ruby', [file]);
 
   prog.stdout.on('data', function(data) {
-    console.log(data);
-    socket.emit('program-output', {output: data});
+    console.log(data.toString());
+    socket.emit('program-output', {output: data.toString()});
   });
 
   prog.on('exit', function(code) {
