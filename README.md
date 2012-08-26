@@ -41,6 +41,9 @@ TODO
 - git pull adafruit git repo?
 - resizable left-nav?
 - file tree for advanced users
+- security...especially with running the ruby and python code
+- security...chroot the node process
+- simpler installation?
 
 
 SCREENSHOTS
