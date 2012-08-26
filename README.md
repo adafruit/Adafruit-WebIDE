@@ -22,6 +22,8 @@ On the Raspberry PI:
     cd OccEditor
     npm install
     node server.js
+    or
+    sudo node server.js (to use I2C, etc)
 
 Browser:
 
