@@ -27,7 +27,7 @@ On the Raspberry PI:
 
 Browser:
 
-    http://127.0.0.1:3000
+    http://raspberrypi.local:3000
 
 TODO
 ====
