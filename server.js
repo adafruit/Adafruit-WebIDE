@@ -45,8 +45,8 @@ passport.deserializeUser(function(obj, done) {
 passport.use(new BitbucketStrategy({
     consumerKey: BITBUCKET_CONSUMER_KEY,
     consumerSecret: BITBUCKET_CONSUMER_SECRET,
-    callbackURL: "http://raspberrypi.local:3000/auth/bitbucket/callback"
-    //callbackURL: "http://127.0.0.1:3000/auth/bitbucket/callback"
+    //callbackURL: "http://raspberrypi.local:3000/auth/bitbucket/callback"
+    callbackURL: "http://127.0.0.1:3000/auth/bitbucket/callback"
   },
   function(token, tokenSecret, profile, done) {
     // asynchronous verification, for effect...

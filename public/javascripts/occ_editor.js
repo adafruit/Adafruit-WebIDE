@@ -105,7 +105,7 @@
       davFS.write(file.path, editor_content, save_callback);
     }
 
-    function run_file() {
+    function run_file(event) {
       event.preventDefault();
       var file = $('.file-open').data('file');
       var editor_content = editor.getSession().getDocument().getValue();
