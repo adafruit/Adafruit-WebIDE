@@ -32,6 +32,16 @@ Browser:
 TODO
 ====
 - Loads of stuff
+- Clone or Create repositories
+- Create "Projects"
+- Create files
+- Persistent sessions
+- how to handle adding to known_hosts
+- generate ssh key, and add to bitbucket
+- git pull adafruit git repo?
+- resizable left-nav?
+- file tree for advanced users
+
 
 SCREENSHOTS
 ===========
