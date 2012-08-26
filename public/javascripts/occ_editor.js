@@ -2,8 +2,8 @@
 
 (function( occEditor, $, undefined ) {
   var editor, modes = [],
-      socket = io.connect('http://localhost');
-      //socket = io.connect('http://raspberrypi.local');
+      //socket = io.connect('http://localhost');
+      socket = io.connect('http://raspberrypi.local');
 
   var templates = {
     "editor_bar_init":              '<p><i class="icon-edit"></i> Open a file to the left, to edit and run.</p>',
@@ -49,7 +49,7 @@
     var $editor_bar = $('#editor-bar');
 
     function editor_bar_actions(event, data) {
-      console.log(data);
+      //console.log(data);
       if (data.extension === 'py' || data.extension === 'rb') {
         $editor_bar.html(templates.editor_bar_interpreted_file);
       } else {
@@ -97,8 +97,8 @@
 
       function save_callback(err, status) {
         //TODO Handle save Notification
-        console.log(err);
-        console.log(status);
+        //console.log(err);
+        //console.log(status);
         socket.emit('commit-file', { file: file});
       }
 
@@ -112,8 +112,8 @@
 
       function save_run_callback(err, status) {
         //TODO Handle save Notification
-        console.log(err);
-        console.log(status);
+        //console.log(err);
+        //console.log(status);
         socket.emit('commit-run-file', { file: file});
       }
 
@@ -141,18 +141,20 @@
     socket.on('program-stdout', function(data) {
       show_editor_output();
       $('#editor-output div pre').append(data.output);
-      $("#editor-output ").animate({ scrollTop: $(document).height() }, "slow");
-      console.log(data);
+      $("#editor-output").animate({ scrollTop: $(document).height() }, "slow");
+      //console.log(data);
     });
     socket.on('program-stderr', function(data) {
       show_editor_output();
       $('#editor-output div pre').append(data.output);
-      $("#editor-output ").animate({ scrollTop: $(document).height() }, "slow");
-      console.log(data);
+      $("#editor-output").animate({ scrollTop: $(document).height() }, "slow");
+      //console.log(data);
     });
     socket.on('program-exit', function(data) {
       show_editor_output();
-      console.log(data);
+      $('#editor-output div pre').append("code: " + data.code);
+      $("#editor-output").animate({ scrollTop: $(document).height() }, "slow");
+      //console.log(data);
     });
 
     /*
@@ -162,10 +164,7 @@
     function handle_dragbar_mousedown(event) {
       event.preventDefault();
       dragging = true;
-      console.log('dragging');
       var $editor = $('#editor-output-wrapper');
-      console.log($editor.outerHeight());
-      console.log($editor.offset().top);
       var ghostbar = $('<div>',
                       {id:'ghostbar',
                        css: {
@@ -180,17 +179,15 @@
     }
 
     function handle_dragbar_mouseup(event) {
-      console.log(event);
-      console.log(event.pageY+2);
       var bottom = $(document).height() - event.pageY;
-      console.log($(document).height() - event.pageY);
-       if (dragging) {
-         $('#editor').css("bottom", bottom + 3);
-         $('#editor-output').css("height", bottom);
-         $('#ghostbar').remove();
-         $(document).unbind('mousemove');
-         dragging = false;
-       }
+
+      if (dragging) {
+        $('#editor').css("bottom", bottom + 3);
+        $('#editor-output').css("height", bottom);
+        $('#ghostbar').remove();
+        $(document).unbind('mousemove');
+        dragging = false;
+      }
     }
 
     $('#dragbar').mousedown(handle_dragbar_mousedown);
@@ -215,7 +212,7 @@
     $(document).on('click touchstart', '.navigator-item-back', function(event) {
       event.preventDefault();
       var file = $(this).data('file');
-      console.log(file);
+      //console.log(file);
       occEditor.populate_navigator(file.parent_path);
     });
   }
