@@ -2,7 +2,8 @@
 
 (function( occEditor, $, undefined ) {
   var editor, modes = [],
-      socket = io.connect('http://raspberrypi.local');
+      socket = io.connect('http://localhost');
+      //socket = io.connect('http://raspberrypi.local');
 
   var templates = {
     "editor_bar_init":              '<p><i class="icon-edit"></i> Open a file to the left, to edit and run.</p>',
@@ -123,15 +124,77 @@
   }
 
   function handle_program_output() {
+    var i = 0;
+    var dragging = false;
+    var editor_output_visible = false;
+
+    function show_editor_output() {
+      if (!editor_output_visible) {
+        editor_output_visible = true;
+        $('#editor-output').height('150px');
+        $('#dragbar').show();
+        $('#editor-output div').css('padding', '10px');
+        $('#editor').css('bottom', '153px');
+      }
+    }
+
     socket.on('program-stdout', function(data) {
+      show_editor_output();
+      $('#editor-output div pre').append(data.output);
+      $("#editor-output ").animate({ scrollTop: $(document).height() }, "slow");
       console.log(data);
     });
     socket.on('program-stderr', function(data) {
+      show_editor_output();
+      $('#editor-output div pre').append(data.output);
+      $("#editor-output ").animate({ scrollTop: $(document).height() }, "slow");
       console.log(data);
-    });    
+    });
     socket.on('program-exit', function(data) {
+      show_editor_output();
       console.log(data);
-    });    
+    });
+
+    /*
+     * pane resize inspired by...
+     * http://stackoverflow.com/questions/6219031/how-can-i-resize-a-div-by-dragging-just-one-side-of-it
+    */
+    function handle_dragbar_mousedown(event) {
+      event.preventDefault();
+      dragging = true;
+      console.log('dragging');
+      var $editor = $('#editor-output-wrapper');
+      console.log($editor.outerHeight());
+      console.log($editor.offset().top);
+      var ghostbar = $('<div>',
+                      {id:'ghostbar',
+                       css: {
+                              top: $editor.offset().top,
+                              left: $editor.offset().left,
+                              width: $editor.width()
+                             }
+                      }).appendTo('body');
+      $(document).mousemove(function(event){
+        ghostbar.css("top",event.pageY+2);
+      });
+    }
+
+    function handle_dragbar_mouseup(event) {
+      console.log(event);
+      console.log(event.pageY+2);
+      var bottom = $(document).height() - event.pageY;
+      console.log($(document).height() - event.pageY);
+       if (dragging) {
+         $('#editor').css("bottom", bottom + 3);
+         $('#editor-output').css("height", bottom);
+         $('#ghostbar').remove();
+         $(document).unbind('mousemove');
+         dragging = false;
+       }
+    }
+
+    $('#dragbar').mousedown(handle_dragbar_mousedown);
+    $(document).mouseup(handle_dragbar_mouseup);
   }
 
   function handle_navigator_actions() {
