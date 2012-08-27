@@ -12,9 +12,17 @@
                                       '<a href="" class="run-file"><i class="icon-play"></i> Save and Run</a>' +
                                       '<a href="" class="save-file"><i class="icon-save"></i> Save</a>' +
                                     '</p>',
-     "editor_bar_file":             '<p class="editor-bar-actions">' +
+    "editor_bar_file":              '<p class="editor-bar-actions">' +
                                       '<a href="" class="save-file"><i class="icon-save"></i> Save</a>' +
-                                    '</p>'
+                                    '</p>',
+    "create_clone_repository":      'Clone a repository by pasting in the full git ssh url found at Bitbucket or Github.<br/><br/>' +
+                                    '<span class="small">Example Read-Only: git://github.com/adafruit/Adafruit-Raspberry-Pi-Python-Code.git</span><br/>' +
+                                    '<span class="small">Example Read-Write: git@bitbucket.org:adafruit/adafruit-raspberry-pi-python-code.git</span><br/><br/>' +
+                                    'This will also push the latest version of this repository to your Bitbucket account.<br/><br/>' +
+                                    '<form id="clone-repository-form" method="post" action="/create/repository">' +
+                                      '<label for="repository-url">Remote Repository URL:</label>' +
+                                      '<input name="repository-url" type="text">' +
+                                    '</form>'
   };
 
   occEditor.init = function(id) {
@@ -65,30 +73,60 @@
   occEditor.populate_navigator = function(path) {
     path = path || '/filesystem';
     function populateFileSystem(err, list) {
-      var ul = $(".filesystem").html('');
-      $.each(list, function(i, item) {
-        if (i === 0) {
-          //console.log("item.name", item.name);
-          if (item.name === 'filesystem') {
-            $('#navigator-top p').html('');
-            $('#navigator-folder p').text('All Repositories');
-          } else {
-            $('#navigator-top p').addClass('navigator-item-back').data("file", item).html("<a href=''><i class='icon-chevron-left'></i> " + item.name + "</a>");
-            $('#navigator-folder p').text(item.name);
-          }
-        }
-        if (i > 0) {
-          item.id = i + "-item";
-          $("<li id='" + i + "-item' class='navigator-item'></li>")
-          .data( "file", item )
-          .append("<a href=''>" + item.name + "</a><i class='icon-chevron-right'></i>")
-          .appendTo(ul);
-        }
-      });
+      build_navigator_top(list[0]);
+      build_navigator_list(list);
+      build_navigator_bottom(list[0]);
     }
 
     davFS.listDir(path, populateFileSystem);
   };
+
+  function build_navigator_top(item) {
+    var ul = $(".filesystem").html('');
+    //console.log("item.name", item.name);
+    if (item.name === 'filesystem') {
+      $('#navigator-top p').html('');
+      $('#navigator-folder p').text('All Repositories');
+    } else {
+      var title = "";
+      if (item.parent_name === 'filesystem') {
+        title = "All Repositories";
+      } else {
+        title = item.parent_name;
+      }
+      $('#navigator-top p').addClass('navigator-item-back').data("file", item).html("<a href=''><i class='icon-chevron-left'></i> " + title + "</a>");
+      $('#navigator-folder p').text(item.name);
+    }
+  }
+
+  function build_navigator_list(list) {
+    var ul = $(".filesystem").html('');
+    $.each(list, function(i, item) {
+      if (i > 0) {
+        item.id = i + "-item";
+        $("<li id='" + i + "-item' class='navigator-item'></li>")
+        .data( "file", item )
+        .append("<a href=''>" + item.name + "</a><i class='icon-chevron-right'></i>")
+        .appendTo(ul);
+      }
+    });
+  }
+
+  function build_navigator_bottom(item) {
+    //console.log(item);
+    var $link = $('.navigator-item-create a');
+    var $create_modal = $('#create-modal');
+    if (item.name === 'filesystem') {
+      $link.text('+ Clone Repository');
+      $('h3', $create_modal).text("Clone Repository");
+      $('.modal-body p', $create_modal).html(templates.create_clone_repository);
+      $('.modal-submit', $create_modal).text('Clone Repository');
+    } else if (item.parent_name === 'filesystem') {
+      $link.text('+ Create Project Folder');
+    } else {
+      $link.text('+ Create New File');
+    }
+  }
 
   function handle_editor_bar_actions() {
     function save_file(event) {
@@ -197,7 +235,7 @@
   }
 
   function handle_navigator_actions() {
-    $(document).on('click touchstart', '.navigator-item', function(event) {
+    function navigator_item_selected(event) {
       event.preventDefault();
       var file = $(this).data('file');
       if (file.type === 'directory') {
@@ -208,14 +246,55 @@
         $(this).addClass('file-open');
         occEditor.populate_editor(file);
       }
-      
-    });
+    }
 
-    $(document).on('click touchstart', '.navigator-item-back', function(event) {
+    function navigator_back_selected(event) {
       event.preventDefault();
       var file = $(this).data('file');
       //console.log(file);
       occEditor.populate_navigator(file.parent_path);
+    }
+
+    function navigator_create_selected(event) {
+      event.preventDefault();
+      $('#create-modal').modal('show');
+    }
+
+    function create_modal_submit(event) {
+      event.preventDefault();
+      var $form = $('#create-modal form');
+
+      if ($form.attr('id') === "clone-repository-form") {
+        clone_repository($form);
+      }
+
+    }
+    //clicking a file or folder in the list.
+    $(document).on('click touchstart', '.navigator-item', navigator_item_selected);
+    $(document).on('click touchstart', '.navigator-item-back', navigator_back_selected);
+    $(document).on('click touchstart', '.navigator-item-create', navigator_create_selected);
+    $(document).on('click touchstart', '#create-modal .modal-submit', create_modal_submit);
+  }
+
+  function clone_repository($form) {
+    function handler(err, data, jqXHR) {
+      console.log(err);
+      console.log(data);
+      console.log(jqXHR);
+    }
+
+    var request = $.ajax({
+      url: $form.attr('action'),
+      type: $form.attr('method'),
+      dataType: 'html',
+      data: $form.serialize(),
+      beforeSend: function(xhr) {
+        //TODO
+      }
+    }).success(function(data, textStatus, jqXHR) {
+      handler(null, data, jqXHR);
+    }).fail(function(jqXHR, textStatus) {
+      handler(textStatus, null, jqXHR);
     });
   }
 

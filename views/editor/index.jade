@@ -8,7 +8,7 @@ block content
       p
     ul.filesystem
     #navigator-bottom
-      p 
+      p.navigator-item-create
         a + Clone Repository
   #editor-wrapper
     #editor-bar
@@ -18,6 +18,15 @@ block content
       #editor-output
         #pre-wrapper
           pre
+  #create-modal(class="modal hide fade")
+    .modal-header
+      button.close(type="button", data-dismiss-"modal", aria-hidden="true") &times;
+      h3#create-modal-label
+    .modal-body
+      p
+    .modal-footer
+      button.btn(data-dismiss="modal", aria-hidden="true") Close
+      button.btn.btn-primary.modal-submit Save
   script(src="/javascripts/ace/ace.js")
   script(src="/socket.io/socket.io.js")
   script(src="/javascripts/ace/keybinding-vim.js")
