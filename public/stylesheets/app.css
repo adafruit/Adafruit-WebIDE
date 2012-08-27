@@ -12,8 +12,8 @@
   width: 298px;
   top: 40px;
   bottom: 0;
-  background-color: #B4B4B4;
-  border: 1px solid #8F8F8F;
+  background-color: #EDEDED;
+  border: 1px solid #EDEDED;
 }
 
 #navigator-top {
@@ -24,7 +24,7 @@
   margin: 0;
   color: #E4E5E7;
   font-size: 13px;
-  line-height: 14px;
+  line-height: 13px;
   cursor: pointer;
 
 }
@@ -34,8 +34,8 @@
   width: 100%;
   color: #E4E5E7;
   text-decoration: none;
-  padding: 12px;
-  border-bottom: 1px solid #8F8F8F;
+  padding: 14px 12px 11px 12px;
+  border-bottom: 1px solid #EDEDED;
 }
 
 #navigator-folder {
@@ -51,6 +51,8 @@
 
 #navigator ul {
   margin: 0;
+  background-color: #B4B4B4;
+  border: 1px solid #999999;
 }
 
 #navigator ul li {
@@ -58,6 +60,10 @@
   padding: 10px 10px 10px 0;
   border-bottom: 1px solid #909090;
   cursor: pointer;
+}
+
+#navigator ul li:last-child {
+  border-bottom: none;
 }
 
 #navigator ul li.file-open {
@@ -71,20 +77,20 @@
   text-decoration: none;
 }
 
+#navigator ul li.file-open a, #navigator ul li.file-open i  {
+  color: #EDEDED;
+}
+
 #navigator ul li i {
   float: right;
   color: #343637;
 }
 
 #navigator-bottom {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 40px;
+
   background-color: #625E5E;
   width: 298px;
-  border-top: 1px solid #8F8F8F;
+  border-top: 1px solid #EDEDED;
 }
 
 #navigator-bottom p {
@@ -112,8 +118,8 @@
 #editor-bar {
   height: 40px;
   background-color: #323334;
-  border-top: 1px solid #8F8F8F;
-  border-right: 1px solid #8F8F8F;
+  border-top: 1px solid #EDEDED;
+  border-right: 1px solid #EDEDED;
   color: #E4E5E7;
   font-size: 16px;
 }
@@ -134,8 +140,8 @@
   right: 0;  
   top: 40px;
   bottom: 0;
-  border-top: 1px solid #8F8F8F;
-  border-right: 1px solid #8F8F8F;
+  border-top: 1px solid #EDEDED;
+  border-right: 1px solid #EDEDED;
 }
 
 #editor-output-wrapper {
@@ -177,14 +183,14 @@
   background-color: #1A1A1A;
   width:100%;
   height: 1px;
-  border-top: 1px solid #8F8F8F;
-  border-bottom: 1px solid #8F8F8F;
+  border-top: 1px solid #EDEDED;
+  border-bottom: 1px solid #EDEDED;
   cursor: row-resize;
 }
 #ghostbar{
   height: 1px;
-  border-top: 1px solid #8F8F8F;
-  border-bottom: 1px solid #8F8F8F;
+  border-top: 1px solid #EDEDED;
+  border-bottom: 1px solid #EDEDED;
   background-color: #1A1A1A;
   opacity:0.5;
   position:absolute;
