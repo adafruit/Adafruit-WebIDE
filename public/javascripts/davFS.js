@@ -41,10 +41,12 @@ $.fn.filterNode = function(name) {
           item.type = 'directory';
           item.name = temp_array[temp_array.length - 2];
           item.parent_path = temp_array.slice(0, temp_array.length - 2).join('/');
+          item.parent_name = temp_array[temp_array.length - 3];
         } else {
           item.type = 'file';
           item.name = temp_array[temp_array.length - 1];
           item.parent_path = temp_array.slice(0, temp_array.length - 1).join('/');
+          item.parent_name = temp_array[temp_array.length - 2];
           item.extension = item.name.split('.').pop();
         }
         if (!filter(item.name)) {
