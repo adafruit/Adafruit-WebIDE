@@ -105,6 +105,14 @@
   text-decoration: none;
 }
 
+#create-modal .modal-body p .small {
+  font-size: 12px;
+}
+
+#create-modal .modal-body input {
+  width: 97%;
+}
+
 /* Editor Section */
 
 #editor-wrapper {
