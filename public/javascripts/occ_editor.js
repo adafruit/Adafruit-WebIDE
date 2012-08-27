@@ -2,6 +2,7 @@
 
 (function( occEditor, $, undefined ) {
   var editor, modes = [],
+      //socket = io.connect('http://76.17.224.82');
       //socket = io.connect('http://localhost');
       socket = io.connect('http://raspberrypi.local');
 
@@ -18,7 +19,7 @@
 
   occEditor.init = function(id) {
     editor = ace.edit("editor");
-    editor.setTheme("ace/theme/twilight");
+    editor.setTheme("ace/theme/merbivore_soft");
     editor.getSession().setMode("ace/mode/python");
 
     occEditor.populate_navigator();
@@ -152,7 +153,7 @@
     });
     socket.on('program-exit', function(data) {
       show_editor_output();
-      $('#editor-output div pre').append("code: " + data.code);
+      $('#editor-output div pre').append("code: " + data.code + '\n');
       $("#editor-output").animate({ scrollTop: $(document).height() }, "slow");
       //console.log(data);
     });
@@ -186,6 +187,7 @@
         $('#editor-output').css("height", bottom);
         $('#ghostbar').remove();
         $(document).unbind('mousemove');
+        editor.resize();
         dragging = false;
       }
     }
