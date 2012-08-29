@@ -55,8 +55,11 @@
 
 #navigator ul {
   margin: 0;
+  width: 100%;
+  height: auto;
   background-color: #B4B4B4;
   border: 1px solid #999999;
+  overflow: auto;
 }
 
 #navigator ul li {
@@ -64,6 +67,7 @@
   padding: 10px 10px 10px 0;
   border-bottom: 1px solid #909090;
   cursor: pointer;
+
 }
 
 #navigator ul li:last-child {
