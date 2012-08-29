@@ -1,4 +1,5 @@
 var git = require('gitty'),
+    url = require('url'),
     fs_helper = require('./fs_helper');
 
 exports.clone_adafruit_libraries = function(adafruit_repository, remote, cb) {
@@ -14,12 +15,12 @@ exports.clone_adafruit_libraries = function(adafruit_repository, remote, cb) {
   });
 };
 
-exports.clone_repository = function(profile, repository, cb) {
-  var clone_path = "git@bitbucket.org:" + profile.username + "/" + repository + ".git";
-  console.log(clone_path);
-  git.clone(__dirname + "/../repositories", clone_path, function(output) {
-    console.log(output);
-    cb();
+exports.clone_repository = function(profile, repository_path, cb) {
+  var repository_url = url.parse(repository_path);
+
+  console.log("cloning", repository_path);
+  git.clone(__dirname + "/../repositories", repository_url.href, function(output) {
+    cb(output.error, output.message);
   });
 };
 

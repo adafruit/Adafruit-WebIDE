@@ -46,7 +46,7 @@ passport.use(new BitbucketStrategy({
     consumerKey: BITBUCKET_CONSUMER_KEY,
     consumerSecret: BITBUCKET_CONSUMER_SECRET,
     callbackURL: "http://raspberrypi.local:3000/auth/bitbucket/callback"
-    //callbackURL: "http://127.0.0.1:3000/auth/bitbucket/callback"
+    //callbackURL: "http://76.17.224.82:3000/auth/bitbucket/callback"
   },
   function(token, tokenSecret, profile, done) {
     // asynchronous verification, for effect...
@@ -104,7 +104,9 @@ app.use(express.static(__dirname + '/public'));
 app.get('/', ensureAuthenticated, site.index);
 //app.get('/editor/filesystem', editor.filesystem);
 //app.get('/editor/file', editor.file);
-app.get('/editor', ensureAuthenticated, editor.index);
+app.get('/editor', editor.index);
+
+app.post('/create/repository', editor.create_repository);
 
 app.get('/login', user.login);
 app.get('/logout', user.logout);

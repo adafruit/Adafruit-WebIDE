@@ -18,10 +18,10 @@
     "create_clone_repository":      'Clone a repository by pasting in the full git ssh url found at Bitbucket or Github.<br/><br/>' +
                                     '<span class="small">Example Read-Only: git://github.com/adafruit/Adafruit-Raspberry-Pi-Python-Code.git</span><br/>' +
                                     '<span class="small">Example Read-Write: git@bitbucket.org:adafruit/adafruit-raspberry-pi-python-code.git</span><br/><br/>' +
-                                    'This will also push the latest version of this repository to your Bitbucket account.<br/><br/>' +
+                                    'This will also push the latest version of this repository to your Bitbucket account, if it doesn\'t already exist.<br/><br/>' +
                                     '<form id="clone-repository-form" method="post" action="/create/repository">' +
-                                      '<label for="repository-url">Remote Repository URL:</label>' +
-                                      '<input name="repository-url" type="text">' +
+                                      '<label for="repository_url">Remote Repository URL:</label>' +
+                                      '<input name="repository_url" type="text">' +
                                     '</form>'
   };
 
@@ -278,6 +278,15 @@
 
   function clone_repository($form) {
     function handler(err, data, jqXHR) {
+      $('.modal-submit').removeClass('disabled');
+      if (jqXHR.status === 200) {
+        console.log('here');
+        $('#create-modal').modal('hide');
+        occEditor.populate_navigator();
+        occEditor.populate_editor_bar();
+      } else {
+        $('#clone-repository-form').prepend('<span class="error">' + jqXHR.responseText + '</span>');
+      }
       console.log(err);
       console.log(data);
       console.log(jqXHR);
@@ -289,10 +298,10 @@
       dataType: 'html',
       data: $form.serialize(),
       beforeSend: function(xhr) {
-        //TODO
+        $('.modal-submit').addClass('disabled');
       }
     }).success(function(data, textStatus, jqXHR) {
-      handler(null, data, jqXHR);
+      handler(null, textStatus, jqXHR);
     }).fail(function(jqXHR, textStatus) {
       handler(textStatus, null, jqXHR);
     });

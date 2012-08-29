@@ -1,3 +1,7 @@
+.error {
+  color: red;
+}
+
 #container {
   padding-top: 40px;
   width: 100%;
