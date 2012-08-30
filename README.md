@@ -32,9 +32,9 @@ Browser:
 TODO
 ====
 - Loads of stuff
-- Clone or Create repositories
-- Create "Projects"
-- Create files
+- Clone or Create repositories (this is partially working, need to create repository in bitbucket, and update remote yet)
+- Create "Projects" (completed)
+- Create Files (completed)
 - Persistent sessions
 - how to handle adding to known_hosts
 - generate ssh key, and add to bitbucket
