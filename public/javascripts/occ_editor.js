@@ -2,9 +2,9 @@
 
 (function( occEditor, $, undefined ) {
   var editor, modes = [],
-      //socket = io.connect('http://76.17.224.82');
+      socket = io.connect('http://76.17.224.82');
       //socket = io.connect('http://localhost');
-      socket = io.connect('http://raspberrypi.local');
+      //socket = io.connect('http://raspberrypi.local');
 
   var templates = {
     "editor_bar_init":              '<p><i class="icon-edit"></i> Open a file to the left, to edit and run.</p>',
