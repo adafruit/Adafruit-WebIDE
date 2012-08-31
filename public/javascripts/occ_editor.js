@@ -10,10 +10,10 @@
     "editor_bar_init":              '<p><i class="icon-edit"></i> Open a file to the left, to edit and run.</p>',
     "editor_bar_interpreted_file":  '<p class="editor-bar-actions">' +
                                       '<a href="" class="run-file"><i class="icon-play"></i> Save and Run</a>' +
-                                      '<a href="" class="save-file"><i class="icon-save"></i> Save</a>' +
+                                      '<a href="" class="save-file"><i class="icon-cloud"></i> Save</a>' +
                                     '</p>',
     "editor_bar_file":              '<p class="editor-bar-actions">' +
-                                      '<a href="" class="save-file"><i class="icon-save"></i> Save</a>' +
+                                      '<a href="" class="save-file"><i class="icon-cloud"></i> Save</a>' +
                                     '</p>',
     "create_clone_repository":      'Clone a repository by pasting in the full git ssh url found at Bitbucket or Github.<br/><br/>' +
                                     '<span class="small">Example Read-Only: git://github.com/adafruit/Adafruit-Raspberry-Pi-Python-Code.git</span><br/>' +
@@ -23,17 +23,21 @@
                                       '<label for="repository_url">Remote Repository URL:</label>' +
                                       '<input name="repository_url" type="text">' +
                                     '</form>',
-    "create_project_folder":        '<form id="create-project-form">' +
-                                      '<label for="folder_name">Project Name:</label>' +
-                                      '<input name="folder_name" type="text">' +
-                                      '<button class="btn btn-mini create-cancel" type="button">Cancel</button>' +
-                                      '<input class="btn btn-mini create-save" type="submit" text="Save" />' +
+    "create_project_folder":        '<form class="create-form" id="create-project-form">' +
+                                      '<a href="" class="create-cancel"><i class="icon-remove-sign"></i></a>' +
+                                      '<label for="folder_name">+ Create Project Folder</label>' +
+                                      '<div class="create-input-wrapper">' +
+                                        '<a class="create-save" href="">Submit</a>' +
+                                        '<input name="folder_name" placeholder="Project Name" type="text">' +
+                                      '</div>' +
                                     '</form>',
-    "create_file_folder":        '<form id="create-file-form">' +
-                                      '<label for="file_name">File Name:</label>' +
-                                      '<input name="file_name" type="text">' +
-                                      '<button class="btn btn-mini create-cancel" type="button">Cancel</button>' +
-                                      '<input class="btn btn-mini create-save" type="submit" text="Save" />' +
+    "create_file_folder":        '<form class="create-form" id="create-file-form">' +
+                                      '<a href="" class="create-cancel"><i class="icon-remove-sign"></i></a>' +
+                                      '<label for="file_name">+ Create File Folder</label>' +
+                                      '<div class="create-input-wrapper">' +
+                                        '<a class="create-save" href="">Submit</a>' +
+                                        '<input name="file_name" placeholder="File Name" type="text">' +
+                                      '</div>' +
                                     '</form>'
   };
 
@@ -367,6 +371,8 @@
     $(document).on('click touchstart', '#create-project-form .create-cancel', create_cancel);
     $(document).on('click touchstart', '#create-file-form .create-save', create_file);
     $(document).on('click touchstart', '#create-file-form .create-cancel', create_cancel);
+    $(document).on('submit', '#create-project-form', create_folder);
+    $(document).on('submit', '#create-file-form', create_file);
   }
 
   function clone_repository($form) {
