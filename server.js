@@ -12,9 +12,12 @@ var express = require('express'),
     path = require('path'),
     git_helper = require('./helpers/git_helper'),
     request_helper = require('./helpers/request_helper'),
-    exec_helper = require('./helpers/exec_helper');
+    exec_helper = require('./helpers/exec_helper'),
+    nStore = require('nstore'),
+    nStoreSession = require('nStoreSession/lib/nstore-session');
 
 var davServer;
+console.log(__dirname);
 
 var BITBUCKET_CONSUMER_KEY = "c7XXD9UtX3DWMF3Aa4";
 var BITBUCKET_CONSUMER_SECRET = "UpFuYfDcWEGdR9KW5gbe5gatbhnGDSSp";
@@ -31,11 +34,20 @@ var ADAFRUIT_REPOSITORY_REMOTE = 'git://github.com/adafruit/Adafruit-Raspberry-P
 //   have a database of user records, the complete Bitbucket profile is
 //   serialized and deserialized.
 passport.serializeUser(function(user, done) {
-  done(null, user);
+  var users = nStore.new(__dirname + '/users.db', function () {
+    users.save('user', user, function(err) {
+      done(null, user);
+    });
+  });
 });
 
 passport.deserializeUser(function(obj, done) {
-  done(null, obj);
+  var users = nStore.new(__dirname + '/users.db', function () {
+    users.get("user", function (err, doc, key) {
+        //if (err) { throw err; }
+        done(null, doc);
+    });
+  });
 });
 
 // Use the BitbucketStrategy within Passport.
@@ -92,19 +104,27 @@ app.use(function(req, res, next) {
 app.set('view engine', 'jade');
 app.set('views', __dirname + '/views');
 app.use(express.logger());
-app.use(express.cookieParser('keyboard cat'));
+app.use(express.static(__dirname + '/public'));
+//session & cookie
+//var sessionStore = new express.session.MemoryStore({reapInterval: 60000 * 10});
+app.use(express.cookieParser());
+app.use(express.session({
+  store: new nStoreSession(),
+  key: 'sid',
+  secret: 'cat nap'
+}));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
-app.use(express.session());
+
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(app.router);
-app.use(express.static(__dirname + '/public'));
+
 
 app.get('/', ensureAuthenticated, site.index);
 //app.get('/editor/filesystem', editor.filesystem);
 //app.get('/editor/file', editor.file);
-app.get('/editor', editor.index);
+app.get('/editor', ensureAuthenticated, editor.index);
 
 app.post('/create/repository', editor.create_repository);
 
@@ -145,6 +165,8 @@ serverInitialization(app);
 //   the request will proceed.  Otherwise, the user will be redirected to the
 //   login page.
 function ensureAuthenticated(req, res, next) {
+  console.log(req.session);
+  console.log(req.isAuthenticated());
   if (req.isAuthenticated()) { return next(); }
   res.redirect('/login');
 }
