@@ -35,15 +35,15 @@ var ADAFRUIT_REPOSITORY_REMOTE = 'git://github.com/adafruit/Adafruit-Raspberry-P
 //   serialized and deserialized.
 passport.serializeUser(function(user, done) {
   var users = nStore.new(__dirname + '/users.db', function () {
-    users.save('user', user, function(err) {
-      done(null, user);
+    users.save(user.username, user, function(err) {
+      done(null, user.username);
     });
   });
 });
 
 passport.deserializeUser(function(obj, done) {
   var users = nStore.new(__dirname + '/users.db', function () {
-    users.get("user", function (err, doc, key) {
+    users.get(obj, function (err, doc, key) {
         //if (err) { throw err; }
         done(null, doc);
     });
