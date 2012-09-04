@@ -1,5 +1,6 @@
 var git = require('gitty'),
     url = require('url'),
+    path = require('path'),
     fs_helper = require('./fs_helper'),
     request_helper = require('./request_helper');
 
@@ -18,7 +19,10 @@ exports.clone_adafruit_libraries = function(adafruit_repository, remote, cb) {
 
 exports.clone_update_remote_push = function(profile, repository_url, cb) {
   var that = this;
-  var repository_name = repository_url.match(/\/(.*?).git/)[1];
+  console.log(profile);
+  var repository_name = path.basename(repository_url, '.git');
+  console.log(repository_name);
+  console.log(repository_url);
 
   request_helper.list_repositories(profile, function(err, list) {
     var exists = list.some(function(repository) {
