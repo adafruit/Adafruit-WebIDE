@@ -12,7 +12,7 @@
     "socket.io": "0.x",
     "gitty": "git://github.com/jwcooper/Gitty.git",
     "jsDAV": "git://github.com/mikedeboer/jsDAV.git",
-    "nstore": "0.x",
-    "nStoreSession": "git://github.com/jwcooper/nstore-session.git"
+    "connect-redis": "0.x",
+    "redis": "0.x"
   }
 }
