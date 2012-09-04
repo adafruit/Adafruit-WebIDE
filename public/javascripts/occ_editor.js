@@ -146,13 +146,20 @@
     var editor_content = editor.getSession().getDocument().getValue();
 
     occEditor.save_edited_files(file, editor_content);
+    $('.save-file').html('<i class="icon-ok"></i> Saved').delay(100).fadeOut().fadeIn('slow');
+    setTimeout(function() {
+      $(document).trigger('file_open', file);
+    }, 1500);
   };
 
   occEditor.save_edited_files = function(file, content) {
+    //$('.save-file').html('<i class="icon-cloud"></i> Saving').fadeOut('fast').fadeIn('fast');
     function save_callback(err, status) {
       //TODO Handle save Notification
       //console.log(err);
       //console.log(status);
+
+      //$('.save-file i').removeClass('icon-cloud').addClass('icon-ok');
       socket.emit('commit-file', { file: file});
     }
 
@@ -214,14 +221,13 @@
       var file = $('.file-open').data('file');
       var editor_content = editor.getSession().getDocument().getValue();
 
-      function save_run_callback(err, status) {
-        //TODO Handle save Notification
+      function run_callback(err, status) {
         //console.log(err);
         //console.log(status);
         socket.emit('run-file', { file: file});
       }
 
-      davFS.write(file.path, editor_content, save_run_callback);
+      davFS.write(file.path, editor_content, run_callback);
     }
     $(document).on('click touchstart', '.save-file', occEditor.save_file);
     $(document).on('click touchstart', '.run-file', run_file);
