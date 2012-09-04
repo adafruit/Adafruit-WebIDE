@@ -1,5 +1,6 @@
 var express = require('express'),
     app = express(),
+    util = require('util'),
     io = require('socket.io'),
     passport = require('passport'),
     util = require('util'),
@@ -13,14 +14,12 @@ var express = require('express'),
     git_helper = require('./helpers/git_helper'),
     request_helper = require('./helpers/request_helper'),
     exec_helper = require('./helpers/exec_helper'),
-    nStore = require('nstore'),
-    nStoreSession = require('nStoreSession/lib/nstore-session');
+    RedisStore = require('connect-redis')(express),
+    redis = require("redis"),
+    client = redis.createClient();
 
 var davServer;
 console.log(__dirname);
-
-var BITBUCKET_CONSUMER_KEY = "c7XXD9UtX3DWMF3Aa4";
-var BITBUCKET_CONSUMER_SECRET = "UpFuYfDcWEGdR9KW5gbe5gatbhnGDSSp";
 
 var ADAFRUIT_REPOSITORY = "Adafruit-Raspberry-Pi-Python-Code";
 var ADAFRUIT_REPOSITORY_REMOTE = 'git://github.com/adafruit/Adafruit-Raspberry-Pi-Python-Code.git';
@@ -33,68 +32,79 @@ var ADAFRUIT_REPOSITORY_REMOTE = 'git://github.com/adafruit/Adafruit-Raspberry-P
 //   the user by ID when deserializing.  However, since this example does not
 //   have a database of user records, the complete Bitbucket profile is
 //   serialized and deserialized.
-passport.serializeUser(function(user, done) {
-  var users = nStore.new(__dirname + '/users.db', function () {
-    users.save(user.username, user, function(err) {
-      done(null, user.username);
-    });
-  });
-});
 
-passport.deserializeUser(function(obj, done) {
-  var users = nStore.new(__dirname + '/users.db', function () {
-    users.get(obj, function (err, doc, key) {
-        //if (err) { throw err; }
-        done(null, doc);
-    });
-  });
-});
 
 // Use the BitbucketStrategy within Passport.
 //   Strategies in passport require a `verify` function, which accept
 //   credentials (in this case, a token, tokenSecret, and Bitbucket profile),
 //   and invoke a callback with a user object.
-passport.use(new BitbucketStrategy({
-    consumerKey: BITBUCKET_CONSUMER_KEY,
-    consumerSecret: BITBUCKET_CONSUMER_SECRET,
-    callbackURL: "http://raspberrypi.local:3000/auth/bitbucket/callback"
-    //callbackURL: "http://76.17.224.82:3000/auth/bitbucket/callback"
-  },
-  function(token, tokenSecret, profile, done) {
-    // asynchronous verification, for effect...
-    process.nextTick(function () {
-      profile.token = token;
-      profile.token_secret = tokenSecret;
-      profile.consumer_key = BITBUCKET_CONSUMER_KEY;
-      profile.consumer_secret = BITBUCKET_CONSUMER_SECRET;
+function setup_passport(consumer_key, consumer_secret) {
+  passport.serializeUser(function(user, done) {
+    console.log("serializeUser");
+    console.log(user);
+    client.set(user.username, JSON.stringify(user));
+    done(null, user.username);
+  });
 
-      //TODO REFACTOR THIS MESS
-      request_helper.list_repositories(profile, function(err, list) {
-        var exists = list.some(function(repository) {
-          return (repository.name === ADAFRUIT_REPOSITORY);
-        });
-        git_helper.clone_adafruit_libraries(ADAFRUIT_REPOSITORY, ADAFRUIT_REPOSITORY_REMOTE, function() {
-          if (!exists) {
-            request_helper.create_repository(profile, ADAFRUIT_REPOSITORY, function(err, response) {
-              console.log("created adafruit repository in bitbucket");
+  passport.deserializeUser(function(obj, done) {
+    console.log("deserializeUser");
+    console.log(obj);
+    client.get(obj, function(err, reply) {
+      //console.log(JSON.parse(reply));
+      done(null, JSON.parse(reply));
+    });
+  });
+
+  passport.use(new BitbucketStrategy({
+      consumerKey: consumer_key,
+      consumerSecret: consumer_secret,
+      callbackURL: "http://raspberrypi.local:3000/auth/bitbucket/callback"
+      //callbackURL: "http://76.17.224.82:3000/auth/bitbucket/callback"
+    },
+    function(token, tokenSecret, profile, done) {
+      // asynchronous verification, for effect...
+      process.nextTick(function () {
+        profile.token = token;
+        profile.token_secret = tokenSecret;
+        profile.consumer_key = consumer_key;
+        profile.consumer_secret = consumer_secret;
+
+        //TODO REFACTOR THIS MESS
+        request_helper.list_repositories(profile, function(err, list) {
+          var exists = list.some(function(repository) {
+            return (repository.name === ADAFRUIT_REPOSITORY);
+          });
+          git_helper.clone_adafruit_libraries(ADAFRUIT_REPOSITORY, ADAFRUIT_REPOSITORY_REMOTE, function() {
+            if (!exists) {
+              request_helper.create_repository(profile, ADAFRUIT_REPOSITORY, function(err, response) {
+                console.log("created adafruit repository in bitbucket");
+                git_helper.update_remote(profile, ADAFRUIT_REPOSITORY, function(err, response) {
+                  console.log("updated remote for adafruit repository");
+                  return done(null, profile);
+                });
+
+              });
+            } else {
               git_helper.update_remote(profile, ADAFRUIT_REPOSITORY, function(err, response) {
-                console.log("updated remote for adafruit repository");
                 return done(null, profile);
               });
-
-            });
-          } else {
-            git_helper.update_remote(profile, ADAFRUIT_REPOSITORY, function(err, response) {
-              return done(null, profile);
-            });
-          }
+            }
+          });
         });
+
       });
+    }
+  ));
+}
 
-    });
+//need to setup passport on server startup, if the bitbucket oauth is already setup
+client.hgetall('bitbucket_oauth', function (err, bitbucket) {
+  if (bitbucket) {
+    setup_passport(bitbucket.consumer_key, bitbucket.consumer_secret);
   }
-));
+});
 
+//redirect anything with /filesystem in the url to the WebDav server.
 app.use(function(req, res, next) {
   if (req.path.indexOf("/filesystem") != -1) {
     davServer.exec(req, res);
@@ -107,17 +117,14 @@ app.set('view engine', 'jade');
 app.set('views', __dirname + '/views');
 app.use(express.logger());
 app.use(express.static(__dirname + '/public'));
-//session & cookie
-//var sessionStore = new express.session.MemoryStore({reapInterval: 60000 * 10});
 app.use(express.cookieParser());
 app.use(express.session({
-  store: new nStoreSession(),
+  store: new RedisStore(),
   key: 'sid',
   secret: 'cat nap'
 }));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
-
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(app.router);
@@ -128,9 +135,11 @@ app.get('/', ensureAuthenticated, site.index);
 //app.get('/editor/file', editor.file);
 app.get('/editor', ensureAuthenticated, editor.index);
 
-app.post('/create/repository', editor.create_repository);
+app.post('/create/repository', ensureAuthenticated, editor.create_repository);
 
-app.get('/login', user.login);
+app.get('/setup', user.setup);
+app.post('/setup', user.submit_setup);
+app.get('/login', ensureOauth, user.login);
 app.get('/logout', user.logout);
 
 // GET /auth/bitbucket
@@ -169,13 +178,29 @@ serverInitialization(app);
 function ensureAuthenticated(req, res, next) {
   console.log(req.session);
   console.log(req.isAuthenticated());
-  if (req.isAuthenticated()) { return next(); }
-  res.redirect('/login');
+  if (req.isAuthenticated()) {
+    return next();
+  }
+
+  client.hgetall('bitbucket_oauth', function (err, bitbucket) {
+    if (!bitbucket) {
+      res.redirect('/setup');
+    } else {
+      res.redirect('/login');
+    }
+  });
 }
 
-
-
-
+function ensureOauth(req, res, next) {
+  client.hgetall('bitbucket_oauth', function (err, bitbucket) {
+    if (!bitbucket) {
+      res.redirect('/setup');
+    } else {
+      setup_passport(bitbucket.consumer_key, bitbucket.consumer_secret);
+      return next();
+    }
+  });
+}
 
 function serverInitialization(app) {
 

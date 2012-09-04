@@ -110,7 +110,7 @@
 
     function editor_bar_actions(event, data) {
       //console.log(data);
-      if (data.extension === 'py' || data.extension === 'rb') {
+      if (data.extension === 'py' || data.extension === 'rb' || data.extension === 'js') {
         $editor_bar.html(templates.editor_bar_interpreted_file);
       } else {
         $editor_bar.html(templates.editor_bar_file);
