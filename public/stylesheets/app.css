@@ -6,6 +6,7 @@
   padding-top: 40px;
   width: 100%;
   height: 100%;
+  background-color: #f1f1f1;
 }
 
 /* File Navigator Section */
@@ -233,7 +234,7 @@ transition: none;
   word-wrap: break-word;       /* Internet Explorer 5.5+ */
 }
 
-#dragbar{
+#dragbar {
   display: none;
   background-color: #1A1A1A;
   width:100%;
@@ -242,13 +243,48 @@ transition: none;
   border-bottom: 1px solid #EDEDED;
   cursor: row-resize;
 }
-#ghostbar{
+#ghostbar {
   height: 1px;
   border-top: 1px solid #EDEDED;
   border-bottom: 1px solid #EDEDED;
   background-color: #1A1A1A;
-  opacity:0.5;
-  position:absolute;
+  opacity: 0.5;
+  position: absolute;
   cursor: row-resize;
-  z-index:999
-}​
+  z-index: 999;
+}
+
+#setup-wrapper {
+  width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+#setup-content h3 {
+  font-size: 16px;
+}
+
+#setup-content p {
+  margin-bottom: 15px;
+}
+
+#setup-content .bitbucket-signup {
+  margin-bottom: 5px;
+}
+
+#setup-content form {
+}
+
+#setup-content form .control-group {
+  width: 450px;
+  margin-left: 100px;
+}
+
+#setup-content form label {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+#setup-content form input[type='text'] {
+  width: 350px;
+}
