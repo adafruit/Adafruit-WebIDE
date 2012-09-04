@@ -45,7 +45,8 @@
     editor = ace.edit("editor");
     editor.setTheme("ace/theme/merbivore_soft");
     editor.getSession().setMode("ace/mode/python");
-    occEditor.initialize_commands(editor);
+    occEditor.init_commands(editor);
+    occEditor.init_events(editor);
     occEditor.populate_navigator();
     occEditor.populate_editor_bar();
 
@@ -54,7 +55,7 @@
     handle_program_output();
   };
 
-  occEditor.initialize_commands = function(editor) {
+  occEditor.init_commands = function(editor) {
     var commands = editor.commands;
     commands.addCommand({
         name: "save",
@@ -65,7 +66,16 @@
     });
   };
 
-  occEditor.populate_editor = function(file) {
+  occEditor.init_events = function(editor) {
+    editor.on('change', function() {
+      var editor_content = editor.getSession().getDocument().getValue();
+      var $file_element = $('.filesystem li.file-open');
+      $file_element.data('content', editor_content).addClass('edited');
+      $('a', $file_element).css('font-style', 'italic').text($file_element.data('file').name + '*');
+    });
+  };
+
+  occEditor.populate_editor = function(file, content) {
     var EditSession = require("ace/edit_session").EditSession;
     var UndoManager = require("ace/undomanager").UndoManager;
 
@@ -78,7 +88,21 @@
 
       editor.setSession(session);
     }
-    davFS.read(file.path, handler);
+    if (content) {
+      //file has already been opened in this session, and edited
+      handler(null, content);
+    } else {
+      davFS.read(file.path, handler);
+    }
+    
+  };
+
+  occEditor.clear_editor = function() {
+    var EditSession = require("ace/edit_session").EditSession;
+    var UndoManager = require("ace/undomanager").UndoManager;
+    var session = new EditSession('');
+    session.setUndoManager(new UndoManager());
+    editor.setSession(session);
   };
 
   occEditor.populate_editor_bar = function() {
@@ -104,6 +128,7 @@
       build_navigator_list(list);
       build_navigator_bottom(list[0]);
       handle_navigator_scroll();
+      occEditor.clear_editor();
     }
 
     davFS.listDir(path, populateFileSystem);
@@ -114,9 +139,15 @@
       event.preventDefault();
     }
 
-    var file = $('.file-open').data('file');
+    var file = $('.filesystem li.file-open').data('file');
+    //reset from italic file
+    $('.filesystem li.file-open a').css('font-style', 'normal').text(file.name);
     var editor_content = editor.getSession().getDocument().getValue();
 
+    occEditor.save_edited_files(file, editor_content);
+  };
+
+  occEditor.save_edited_files = function(file, content) {
     function save_callback(err, status) {
       //TODO Handle save Notification
       //console.log(err);
@@ -124,7 +155,7 @@
       socket.emit('commit-file', { file: file});
     }
 
-    davFS.write(file.path, editor_content, save_callback);
+    davFS.write(file.path, content, save_callback);
   };
 
   function build_navigator_top(item) {
@@ -286,21 +317,47 @@
   }
 
   function handle_navigator_actions() {
+    //when we open a file in the same project, let's save it in the file_list...
+    function backup_open_file() {
+
+    }
+
+    function alert_changed_file() {
+      var $edited_elements = $('.filesystem  li.edited');
+      if ($('.filesystem li.edited').length > 0) {
+        var result = confirm("You have unsaved files in this project.  Would you like to save them?");
+        if (result) {
+          $edited_elements.each(function() {
+            var file = $(this).data('file');
+            var content = $(this).data('content');
+            occEditor.save_edited_files(file, content);
+          });
+        } else {
+          //do nothing, they didn't want to save
+        }
+      }
+    }
+
     function navigator_item_selected(event) {
       event.preventDefault();
-      var file = $(this).data('file');
+      var file = $(this).data('file'), content;
       if (file.type === 'directory') {
+        alert_changed_file();
         occEditor.populate_navigator(file.path);
       } else {
         $(document).trigger('file_open', file);
         $('.filesystem li').removeClass('file-open');
         $(this).addClass('file-open');
-        occEditor.populate_editor(file);
+        if ($(this).hasClass('edited')) {
+          content = $(this).data('content');
+        }
+        occEditor.populate_editor(file, content);
       }
     }
 
     function navigator_back_selected(event) {
       event.preventDefault();
+      alert_changed_file();
       var file = $(this).data('file');
       //console.log(file);
       occEditor.populate_navigator(file.parent_path);
