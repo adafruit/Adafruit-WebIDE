@@ -73,20 +73,22 @@ passport.use(new BitbucketStrategy({
         var exists = list.some(function(repository) {
           return (repository.name === ADAFRUIT_REPOSITORY);
         });
-        if (!exists) {
-          request_helper.create_repository(profile, ADAFRUIT_REPOSITORY, function(err, response) {
-            console.log("created adafruit repository in bitbucket");
+        git_helper.clone_adafruit_libraries(ADAFRUIT_REPOSITORY, ADAFRUIT_REPOSITORY_REMOTE, function() {
+          if (!exists) {
+            request_helper.create_repository(profile, ADAFRUIT_REPOSITORY, function(err, response) {
+              console.log("created adafruit repository in bitbucket");
+              git_helper.update_remote(profile, ADAFRUIT_REPOSITORY, function(err, response) {
+                console.log("updated remote for adafruit repository");
+                return done(null, profile);
+              });
+
+            });
+          } else {
             git_helper.update_remote(profile, ADAFRUIT_REPOSITORY, function(err, response) {
-              console.log("updated remote for adafruit repository");
               return done(null, profile);
             });
-
-          });
-        } else {
-          git_helper.update_remote(profile, ADAFRUIT_REPOSITORY, function(err, response) {
-            return done(null, profile);
-          });
-        }
+          }
+        });
       });
 
     });
@@ -183,11 +185,9 @@ function serverInitialization(app) {
     console.log('created repositories folder');
   }
 
-  git_helper.clone_adafruit_libraries(ADAFRUIT_REPOSITORY, ADAFRUIT_REPOSITORY_REMOTE, function() {
-    var server = start_server();
-    socket_listeners();
-    mount_dav(server);
-  });
+  var server = start_server();
+  socket_listeners();
+  mount_dav(server);
 }
 
 function start_server() {
@@ -210,11 +210,11 @@ function socket_listeners() {
       });
     });
 
-    socket.on('commit-run-file', function(data) {
+    socket.on('run-file', function(data) {
       exec_helper.execute_program(data.file, socket);
-      git_helper.commit_push_and_save(data.file, function(err, status) {
-        socket.emit('commit-file-complete', {message: "Save was successful"});
-      });
+      //git_helper.commit_push_and_save(data.file, function(err, status) {
+      //  socket.emit('commit-file-complete', {message: "Save was successful"});
+      //});
     });
   });
 }
@@ -223,7 +223,7 @@ function socket_listeners() {
 
 function mount_dav(server) {
   var jsDAV_Tree_Filesystem = require("jsDAV/lib/DAV/tree/filesystem").jsDAV_Tree_Filesystem;
-  jsDAV.debugMode = true;
+  //jsDAV.debugMode = true;
   davServer = jsDAV.mount({
     path: __dirname + "/repositories",
     mount: '/filesystem',

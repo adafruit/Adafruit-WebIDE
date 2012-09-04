@@ -9,7 +9,7 @@
   var templates = {
     "editor_bar_init":              '<p><i class="icon-edit"></i> Open a file to the left, to edit and run.</p>',
     "editor_bar_interpreted_file":  '<p class="editor-bar-actions">' +
-                                      '<a href="" class="run-file"><i class="icon-play"></i> Save and Run</a>' +
+                                      '<a href="" class="run-file"><i class="icon-play"></i> Run</a>' +
                                       '<a href="" class="save-file"><i class="icon-cloud"></i> Save</a>' +
                                     '</p>',
     "editor_bar_file":              '<p class="editor-bar-actions">' +
@@ -45,13 +45,24 @@
     editor = ace.edit("editor");
     editor.setTheme("ace/theme/merbivore_soft");
     editor.getSession().setMode("ace/mode/python");
-
+    occEditor.initialize_commands(editor);
     occEditor.populate_navigator();
     occEditor.populate_editor_bar();
 
     handle_navigator_actions();
     handle_editor_bar_actions();
     handle_program_output();
+  };
+
+  occEditor.initialize_commands = function(editor) {
+    var commands = editor.commands;
+    commands.addCommand({
+        name: "save",
+        bindKey: {win: "Ctrl-S", mac: "Command-S"},
+        exec: function() {
+          occEditor.save_file();
+        }
+    });
   };
 
   occEditor.populate_editor = function(file) {
@@ -96,6 +107,24 @@
     }
 
     davFS.listDir(path, populateFileSystem);
+  };
+
+  occEditor.save_file = function(event) {
+    if (event) {
+      event.preventDefault();
+    }
+
+    var file = $('.file-open').data('file');
+    var editor_content = editor.getSession().getDocument().getValue();
+
+    function save_callback(err, status) {
+      //TODO Handle save Notification
+      //console.log(err);
+      //console.log(status);
+      socket.emit('commit-file', { file: file});
+    }
+
+    davFS.write(file.path, editor_content, save_callback);
   };
 
   function build_navigator_top(item) {
@@ -146,20 +175,7 @@
   }
 
   function handle_editor_bar_actions() {
-    function save_file(event) {
-      event.preventDefault();
-      var file = $('.file-open').data('file');
-      var editor_content = editor.getSession().getDocument().getValue();
 
-      function save_callback(err, status) {
-        //TODO Handle save Notification
-        //console.log(err);
-        //console.log(status);
-        socket.emit('commit-file', { file: file});
-      }
-
-      davFS.write(file.path, editor_content, save_callback);
-    }
 
     function run_file(event) {
       event.preventDefault();
@@ -170,12 +186,12 @@
         //TODO Handle save Notification
         //console.log(err);
         //console.log(status);
-        socket.emit('commit-run-file', { file: file});
+        socket.emit('run-file', { file: file});
       }
 
       davFS.write(file.path, editor_content, save_run_callback);
     }
-    $(document).on('click touchstart', '.save-file', save_file);
+    $(document).on('click touchstart', '.save-file', occEditor.save_file);
     $(document).on('click touchstart', '.run-file', run_file);
   }
 

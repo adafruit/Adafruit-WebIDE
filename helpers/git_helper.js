@@ -57,32 +57,32 @@ exports.clone_repository = function(profile, repository_path, cb) {
 exports.update_remote = function(profile, repository, cb) {
   var remote_url = "ssh://git@bitbucket.org/" + profile.username + "/" + repository.toLowerCase() + ".git";
   git.remote.update(__dirname + "/../repositories/" + repository, "origin", remote_url, function(output) {
-    console.log(output);
+    //console.log(output);
     cb(output);
   });
 };
 
 exports.add = function add(repository, file, cb) {
   var repository_path = __dirname + "/../repositories/" + repository;
-  git.add(repository_path, [file], function(obj) {
-    console.log(obj);
-    cb();
+  git.add(repository_path, [file], function(output) {
+    //console.log(obj);
+    cb(output.errors, output.added);
   });
 };
 
 exports.commit = function commit(repository, message, cb) {
   var repository_path = __dirname + "/../repositories/" + repository;
   git.commit(repository_path, message, function(obj) {
-    console.log(obj);
-    cb();
+    //console.log(obj);
+    cb(obj.error, obj.message);
   });
 };
 
 exports.push = function push(repository, remote, branch, cb) {
   var repository_path = __dirname + "/../repositories/" + repository;
   git.push(repository_path, remote, branch, function(obj) {
-    console.log(obj);
-    cb();
+    //console.log(obj);
+    cb(obj.error, obj.message);
   });
 };
 
@@ -90,11 +90,15 @@ exports.commit_push_and_save = function(file, cb) {
   var that = this;
   var path_array = file.path.split('/');
   var repository = path_array[2];
+  var file_path = path_array.slice(3).join('/');
 
-  that.add(repository, file.name, function(err, status) {
+  that.add(repository, file_path, function(err, status) {
+    console.log("added", err, status);
     var commit_message = "Modified " + file.name;
     that.commit(repository, commit_message,  function(err, status) {
+      console.log("committed", err, status);
       that.push(repository, "origin", "master", function(err, status) {
+        console.log("pushed", err, status);
         cb(status);
       });
     });
