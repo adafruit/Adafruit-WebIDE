@@ -140,6 +140,7 @@
     }
 
     var file = $('.filesystem li.file-open').data('file');
+    $('.filesystem li.file-open').removeClass('edited');
     //reset from italic file
     $('.filesystem li.file-open a').css('font-style', 'normal').text(file.name);
     var editor_content = editor.getSession().getDocument().getValue();
@@ -330,6 +331,7 @@
           $edited_elements.each(function() {
             var file = $(this).data('file');
             var content = $(this).data('content');
+            $(this).removeClass('edited');
             occEditor.save_edited_files(file, content);
           });
         } else {
