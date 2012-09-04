@@ -32,15 +32,13 @@ Browser:
 TODO
 ====
 - Loads of stuff
-- Clone or Create repositories (this is partially working, need to create repository in bitbucket, and update remote yet)
-- Create "Projects" (completed)
-- Create Files (completed)
-- Persistent sessions
+- rename folders/files
+- delete folders/files
 - how to handle adding to known_hosts
 - generate ssh key, and add to bitbucket
 - git pull adafruit git repo?
 - resizable left-nav?
-- file tree for advanced users
+- file tree for advanced users?
 - security...especially with running the ruby and python code
 - security...chroot the node process
 - simpler installation?
