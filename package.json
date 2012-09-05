@@ -12,6 +12,7 @@
     "socket.io": "0.x",
     "gitty": "git://github.com/jwcooper/Gitty.git",
     "jsDAV": "git://github.com/mikedeboer/jsDAV.git",
+    "connect": "2.x",
     "connect-redis": "0.x",
     "redis": "0.x"
   }
