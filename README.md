@@ -21,20 +21,18 @@ Browser:
 
     http://raspberrypi.local:3000
 
-TODO
-====
-- Loads of stuff
-- merge latest adafruit repo changes
-- basic command line access
-- rename folders/files
-- delete folders/files
-- how to handle adding to known_hosts
-- generate ssh key, and add to bitbucket
-- resizable left-nav?
-- file tree for advanced users?
-- security...especially with running the ruby and python code
-- security...chroot the node process
-- simpler installation?
+TODO:
+Add ability to rename, and delete folders and files.
+Basic Command Line access, ability to submit commands. (discussions probably further needed)
+Add bitbucket to known_hosts at server startup
+Generate SSH Key, and use Bitbucket API to add it to account?
+Security (xss, chroot, etc)
+simpler installation
+
+Nice to have:
+Resizable left-navigator
+File Tree for advanced users
+vim/emacs modes in editor
 
 
 SCREENSHOTS
