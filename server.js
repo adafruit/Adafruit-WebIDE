@@ -16,14 +16,11 @@ var express = require('express'),
     exec_helper = require('./helpers/exec_helper'),
     RedisStore = require('connect-redis')(express),
     redis = require("redis"),
-    client = redis.createClient();
+    client = redis.createClient(),
+    config = require('./config');
 
 var davServer;
 console.log(__dirname);
-
-var ADAFRUIT_REPOSITORY = "Adafruit-Raspberry-Pi-Python-Code";
-var ADAFRUIT_REPOSITORY_REMOTE = 'git://github.com/adafruit/Adafruit-Raspberry-Pi-Python-Code.git';
-
 
 // Passport session setup.
 //   To support persistent login sessions, Passport needs to be able to
@@ -40,15 +37,15 @@ var ADAFRUIT_REPOSITORY_REMOTE = 'git://github.com/adafruit/Adafruit-Raspberry-P
 //   and invoke a callback with a user object.
 function setup_passport(consumer_key, consumer_secret) {
   passport.serializeUser(function(user, done) {
-    console.log("serializeUser");
-    console.log(user);
+    //console.log("serializeUser");
+    //console.log(user);
     client.set(user.username, JSON.stringify(user));
     done(null, user.username);
   });
 
   passport.deserializeUser(function(obj, done) {
-    console.log("deserializeUser");
-    console.log(obj);
+    //console.log("deserializeUser");
+    //console.log(obj);
     client.get(obj, function(err, reply) {
       //console.log(JSON.parse(reply));
       done(null, JSON.parse(reply));
@@ -72,21 +69,26 @@ function setup_passport(consumer_key, consumer_secret) {
         //TODO REFACTOR THIS MESS
         request_helper.list_repositories(profile, function(err, list) {
           var exists = list.some(function(repository) {
-            return (repository.name === ADAFRUIT_REPOSITORY);
+            return (repository.name === config.adafruit.repository);
           });
-          git_helper.clone_adafruit_libraries(ADAFRUIT_REPOSITORY, ADAFRUIT_REPOSITORY_REMOTE, function() {
+          git_helper.clone_adafruit_libraries(config.adafruit.repository, config.adafruit.remote, function() {
             if (!exists) {
-              request_helper.create_repository(profile, ADAFRUIT_REPOSITORY, function(err, response) {
+              request_helper.create_repository(profile, config.adafruit.repository, function(err, response) {
                 console.log("created adafruit repository in bitbucket");
-                git_helper.update_remote(profile, ADAFRUIT_REPOSITORY, function(err, response) {
+                git_helper.update_remote(profile, config.adafruit.repository, function(err, response) {
                   console.log("updated remote for adafruit repository");
-                  return done(null, profile);
+                  git_helper.add_remote(config.adafruit.repository, config.adafruit.remote_name, config.adafruit.remote, function(err, response) {
+                    console.log("added remote for adafruit repository");
+                    return done(null, profile);
+                  });
                 });
 
               });
             } else {
-              git_helper.update_remote(profile, ADAFRUIT_REPOSITORY, function(err, response) {
-                return done(null, profile);
+              git_helper.update_remote(profile, config.adafruit.repository, function(err, response) {
+                git_helper.add_remote(config.adafruit.repository, "adaremote", config.adafruit.remote, function(err, response) {
+                  return done(null, profile);
+                });
               });
             }
           });
