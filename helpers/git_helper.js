@@ -62,7 +62,14 @@ exports.update_remote = function(profile, repository, cb) {
   var remote_url = "ssh://git@bitbucket.org/" + profile.username + "/" + repository.toLowerCase() + ".git";
   git.remote.update(__dirname + "/../repositories/" + repository, "origin", remote_url, function(output) {
     //console.log(output);
-    cb(output);
+    cb(output.error, output.message);
+  });
+};
+
+exports.add_remote = function(repository, remote_name, remote_url, cb) {
+  git.remote.add(__dirname + "/../repositories/" + repository, remote_name, remote_url, function(output) {
+    //console.log(output);
+    cb(output.error, output.message);
   });
 };
 
@@ -85,6 +92,14 @@ exports.commit = function commit(repository, message, cb) {
 exports.push = function push(repository, remote, branch, cb) {
   var repository_path = __dirname + "/../repositories/" + repository;
   git.push(repository_path, remote, branch, function(obj) {
+    //console.log(obj);
+    cb(obj.error, obj.message);
+  });
+};
+
+exports.pull = function push(repository, remote, branch, cb) {
+  var repository_path = __dirname + "/../repositories/" + repository;
+  git.pull(repository_path, remote, branch, function(obj) {
     //console.log(obj);
     cb(obj.error, obj.message);
   });
