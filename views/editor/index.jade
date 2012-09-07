@@ -2,6 +2,7 @@ extends ../layout
 
 block content
   #navigator
+    input(type="hidden", name="username", value="#{profile.username}")
     #navigator-top
       p
     #navigator-folder
@@ -29,6 +30,9 @@ block content
       button.btn.btn-primary.modal-submit Save
   script(src="/javascripts/ace/ace.js")
   script(src="/socket.io/socket.io.js")
+  script(src="/term.js")
+  script(src="/options.js")
+  script(src="/tty.js")
   script(src="/javascripts/ace/keybinding-vim.js")
   script(src="/javascripts/ace/keybinding-emacs.js")
   //script(src="/javascripts/jquery.jstree.js")

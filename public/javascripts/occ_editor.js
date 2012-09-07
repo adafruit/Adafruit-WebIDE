@@ -3,16 +3,21 @@
 (function( occEditor, $, undefined ) {
   var editor, modes = [],
       //socket = io.connect('http://76.17.224.82');
-      //socket = io.connect('http://localhost');
+      //socket = io.connect('http://127.0.0.1:3000');
       socket = io.connect('http://raspberrypi.local');
 
   var templates = {
-    "editor_bar_init":              '<p><i class="icon-edit"></i> Open a file to the left, to edit and run.</p>',
+    "editor_bar_init":              '<p class="editor-bar-actions">' +
+                                      '<a href="" class="open-terminal"><i class="icon-list-alt"></i> Terminal</a>' +
+                                      '<i class="icon-edit"></i> Open a file to the left, to edit and run.' +
+                                    '</p>',
     "editor_bar_interpreted_file":  '<p class="editor-bar-actions">' +
+                                      '<a href="" class="open-terminal"><i class="icon-list-alt"></i> Terminal</a>' +
                                       '<a href="" class="run-file"><i class="icon-play"></i> Run</a>' +
                                       '<a href="" class="save-file"><i class="icon-cloud"></i> Save</a>' +
                                     '</p>',
     "editor_bar_file":              '<p class="editor-bar-actions">' +
+                                      '<a href="" class="open-terminal"><i class="icon-list-alt"></i> Terminal</a>' +
                                       '<a href="" class="save-file"><i class="icon-cloud"></i> Save</a>' +
                                     '</p>',
     "create_clone_repository":      'Clone a repository by pasting in the full git ssh url found at Bitbucket or Github.<br/><br/>' +
@@ -170,7 +175,8 @@
     var ul = $(".filesystem").html('');
     //console.log("item.name", item.name);
     if (item.name === 'filesystem') {
-      $('#navigator-top p').html('');
+      var username = $('input[name="username"]').val();
+      $('#navigator-top p').addClass('navigator-item-back').html("<a href=''>" + username + "</a><a href='' class='navigator-settings'><i class='icon-cog'></i></a>");
       $('#navigator-folder p').text('All Repositories');
     } else {
       var title = "";
@@ -179,7 +185,7 @@
       } else {
         title = item.parent_name;
       }
-      $('#navigator-top p').addClass('navigator-item-back').data("file", item).html("<a href=''><i class='icon-chevron-left'></i> " + title + "</a>");
+      $('#navigator-top p').addClass('navigator-item-back').data("file", item).html("<a href=''><i class='icon-chevron-left'></i> " + title + "</a><a href='' class='navigator-settings'><i class='icon-cog'></i></a>");
       $('#navigator-folder p').text(item.name);
     }
   }
@@ -229,6 +235,20 @@
 
       davFS.write(file.path, editor_content, run_callback);
     }
+
+    function open_terminal(event) {
+      event.preventDefault();
+      
+      new tty.Window();
+
+      var maskHeight = $(window).height();
+      var maskWidth = $(window).width();
+      var windowTop =  (maskHeight  - $('.window').height())/2;
+      var windowLeft = (maskWidth - $('.window').width())/2;
+      $('.window').css({ top: windowTop, left: windowLeft, position:"absolute"}).show();
+    }
+
+    $(document).on('click touchstart', '.open-terminal', open_terminal);
     $(document).on('click touchstart', '.save-file', occEditor.save_file);
     $(document).on('click touchstart', '.run-file', run_file);
   }
@@ -560,4 +580,5 @@
 
 $(function () {
   occEditor.init();
+  tty.open();
 });

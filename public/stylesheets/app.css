@@ -35,16 +35,17 @@
   font-size: 13px;
   line-height: 13px;
   cursor: pointer;
-
+  padding: 14px 12px 12px 12px;
+  border-bottom: 1px solid #EDEDED;
 }
 
 #navigator-top p a {
-  display: inline-block;
-  width: 100%;
   color: #E4E5E7;
   text-decoration: none;
-  padding: 14px 12px 11px 12px;
-  border-bottom: 1px solid #EDEDED;
+}
+
+#navigator-top p a.navigator-settings {
+  float: right;
 }
 
 #navigator-folder {

@@ -1,4 +1,5 @@
 var express = require('express'),
+    tty = require('tty.js'),
     app = express(),
     util = require('util'),
     io = require('socket.io'),
@@ -57,6 +58,7 @@ function setup_passport(consumer_key, consumer_secret) {
       consumerSecret: consumer_secret,
       callbackURL: "http://raspberrypi.local:3000/auth/bitbucket/callback"
       //callbackURL: "http://76.17.224.82:3000/auth/bitbucket/callback"
+      //callbackURL: "http://127.0.0.1:3001/auth/bitbucket/callback"
     },
     function(token, tokenSecret, profile, done) {
       // asynchronous verification, for effect...
@@ -119,6 +121,7 @@ app.set('view engine', 'jade');
 app.set('views', __dirname + '/views');
 app.use(express.logger());
 app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/node_modules/tty.js/static'));
 app.use(express.cookieParser());
 app.use(express.session({
   store: new RedisStore(),
@@ -219,14 +222,16 @@ function serverInitialization(app) {
 
 function start_server() {
   console.log('listening on port 3000');
+
   server = require('http').createServer(app);
   io = io.listen(server);
+  new tty.Server(config.term, app, server, io);
+
   return server.listen(3000);
 }
 
 function socket_listeners() {
   io.sockets.on('connection', function (socket) {
-    socket.emit('news', { hello: 'world' });
     socket.on('commit-file', function (data) {
       //TODO...clean this up, and check for errors
       //console.log(data.file.path);
