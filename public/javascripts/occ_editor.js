@@ -241,20 +241,26 @@
     function run_file(event) {
       event.preventDefault();
       var file = $('.file-open').data('file');
-      console.log(folder);
       var editor_content = editor.getSession().getDocument().getValue();
 
       function run_callback(err, status) {
         //console.log(err);
         //console.log(status);
         //socket.emit('run-file', { file: file});
-      var cwd = '/';
-      var win = new tty.Window(null, cwd);
-      tty.on('open window', function(){
-        tty.on('tab-ready', function() {
-          win.tabs[0].sendString("ls");
+        var win = new tty.Window(null, occEditor.cwd());
+        tty.on('open tab', function(){
+          tty.on('tab-ready', function() {
+            tty.off('open tab');
+            tty.off('tab-ready');
+            win.tabs[0].sendString("python " + file.name);
+          });
         });
-      });
+
+        var maskHeight = $(window).height();
+        var maskWidth = $(window).width();
+        var windowTop =  (maskHeight  - $('.window').height())/2;
+        var windowLeft = (maskWidth - $('.window').width())/2;
+        $('.window').css({ top: windowTop, left: windowLeft, position:"absolute"}).show();
       }
 
       davFS.write(file.path, editor_content, run_callback);
@@ -262,10 +268,6 @@
 
     function open_terminal(event) {
       event.preventDefault();
-
-      var cwd;
-
-      //console.log(occEditor.cwd());
 
       var win = new tty.Window(null, occEditor.cwd());
       tty.on('open tab', function(){
