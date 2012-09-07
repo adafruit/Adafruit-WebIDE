@@ -23,6 +23,9 @@ Browser:
 
 TODO:
 -Add ability to rename, and delete folders and files.
+-Setup git config
+    git config --global user.email "you@example.com"
+    git config --global user.name "Your Name"
 -Basic Command Line access, ability to submit commands. (discussions probably further needed)
 -Add bitbucket to known_hosts at server startup
 -Generate SSH Key, and use Bitbucket API to add it to account?

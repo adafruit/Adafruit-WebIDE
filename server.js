@@ -232,6 +232,8 @@ function start_server() {
 
 function socket_listeners() {
   io.sockets.on('connection', function (socket) {
+    socket.emit('cwd-init', {dirname: __dirname + '/repositories'});
+
     socket.on('commit-file', function (data) {
       //TODO...clean this up, and check for errors
       //console.log(data.file.path);

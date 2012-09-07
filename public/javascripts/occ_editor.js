@@ -2,9 +2,8 @@
 
 (function( occEditor, $, undefined ) {
   var editor, modes = [],
-      //socket = io.connect('http://76.17.224.82');
-      //socket = io.connect('http://127.0.0.1:3000');
-      socket = io.connect('http://raspberrypi.local');
+      socket = io.connect(),
+      dirname;
 
   var templates = {
     "editor_bar_init":              '<p class="editor-bar-actions">' +
@@ -46,6 +45,18 @@
                                     '</form>'
   };
 
+  occEditor.path = null;
+
+  occEditor.cwd = function() {
+    var cwd;
+    if (!occEditor.path) {
+      occEditor.path = '';
+    }
+    //console.log(occEditor.path);
+    //console.log(dirname);
+    return dirname + occEditor.path.replace('/filesystem', '');
+  };
+
   occEditor.init = function(id) {
     editor = ace.edit("editor");
     editor.setTheme("ace/theme/merbivore_soft");
@@ -77,6 +88,10 @@
       var $file_element = $('.filesystem li.file-open');
       $file_element.data('content', editor_content).addClass('edited');
       $('a', $file_element).css('font-style', 'italic').text($file_element.data('file').name + '*');
+    });
+
+    socket.on('cwd-init', function(data) {
+      dirname = data.dirname;
     });
   };
 
@@ -127,6 +142,7 @@
   };
 
   occEditor.populate_navigator = function(path) {
+    occEditor.path = path;
     path = path || '/filesystem';
     function populateFileSystem(err, list) {
       build_navigator_top(list[0]);
@@ -225,12 +241,20 @@
     function run_file(event) {
       event.preventDefault();
       var file = $('.file-open').data('file');
+      console.log(folder);
       var editor_content = editor.getSession().getDocument().getValue();
 
       function run_callback(err, status) {
         //console.log(err);
         //console.log(status);
-        socket.emit('run-file', { file: file});
+        //socket.emit('run-file', { file: file});
+      var cwd = '/';
+      var win = new tty.Window(null, cwd);
+      tty.on('open window', function(){
+        tty.on('tab-ready', function() {
+          win.tabs[0].sendString("ls");
+        });
+      });
       }
 
       davFS.write(file.path, editor_content, run_callback);
@@ -238,8 +262,19 @@
 
     function open_terminal(event) {
       event.preventDefault();
-      
-      new tty.Window();
+
+      var cwd;
+
+      //console.log(occEditor.cwd());
+
+      var win = new tty.Window(null, occEditor.cwd());
+      tty.on('open tab', function(){
+        tty.on('tab-ready', function() {
+          tty.off('open tab');
+          tty.off('tab-ready');
+          win.tabs[0].sendString("ls");
+        });
+      });
 
       var maskHeight = $(window).height();
       var maskWidth = $(window).width();
