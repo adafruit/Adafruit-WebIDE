@@ -8,10 +8,12 @@ $.fn.filterNode = function(name) {
 (function( davFS, $, undefined ) {
   //Public Methods
   davFS.listDir = function(path, cb) {
-    function filter(name) {
-      var filter_list = ['.git'];
-      if ($.inArray(name, filter_list) === -1) return false;
-      else return true;
+    function filter(item) {
+      console.log(item);
+      var filter_list = ['.git', 'DS_Store', 'pyc'];
+      if ($.inArray(item.name, filter_list) !== -1) return true;
+      if ($.inArray(item.extension, filter_list) !== -1) return true;
+      return false;
     }
 
     path = path || '/filesystem/';
@@ -49,7 +51,7 @@ $.fn.filterNode = function(name) {
           item.parent_name = temp_array[temp_array.length - 2];
           item.extension = item.name.split('.').pop();
         }
-        if (!filter(item.name)) {
+        if (!filter(item)) {
           list.push(item);
         }
       });
