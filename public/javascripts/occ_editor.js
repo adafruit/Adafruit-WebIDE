@@ -9,15 +9,18 @@
     "editor_bar_init":              '<p class="editor-bar-actions">' +
                                       '<a href="" class="open-terminal"><i class="icon-list-alt"></i> Terminal</a>' +
                                       '<i class="icon-edit"></i> Open a file to the left, to edit and run.' +
+                                      '<span class="connection-state"></span>' +
                                     '</p>',
     "editor_bar_interpreted_file":  '<p class="editor-bar-actions">' +
                                       '<a href="" class="open-terminal"><i class="icon-list-alt"></i> Terminal</a>' +
                                       '<a href="" class="run-file"><i class="icon-play"></i> Run</a>' +
                                       '<a href="" class="save-file"><i class="icon-cloud"></i> Save</a>' +
+                                      '<span class="connection-state"></span>' +
                                     '</p>',
     "editor_bar_file":              '<p class="editor-bar-actions">' +
                                       '<a href="" class="open-terminal"><i class="icon-list-alt"></i> Terminal</a>' +
                                       '<a href="" class="save-file"><i class="icon-cloud"></i> Save</a>' +
+                                      '<span class="connection-state"></span>' +
                                     '</p>',
     "create_clone_repository":      'Clone a repository by pasting in the full git ssh url found at Bitbucket or Github.<br/><br/>' +
                                     '<span class="small">Example Read-Only: git://github.com/adafruit/Adafruit-Raspberry-Pi-Python-Code.git</span><br/>' +
@@ -90,6 +93,12 @@
       $('a', $file_element).css('font-style', 'italic').text($file_element.data('file').name + '*');
     });
 
+    socket.on('connect', function () {
+      $('.connection-state').removeClass('disconnected').addClass('connected').text('connected');
+    });
+    socket.on('disconnect', function () {
+      $('.connection-state').removeClass('connected').addClass('disconnected').text('disconnected');
+    });
     socket.on('cwd-init', function(data) {
       dirname = data.dirname;
     });
@@ -187,12 +196,31 @@
     davFS.write(file.path, content, save_callback);
   };
 
+  occEditor.open_terminal = function(path, command) {
+    var win = new tty.Window(null, path);
+    tty.on('open tab', function(){
+      tty.on('tab-ready', function() {
+        tty.off('open tab');
+        tty.off('tab-ready');
+        if (command) {
+          win.tabs[0].sendString(command);
+        }
+      });
+    });
+
+    var maskHeight = $(window).height();
+    var maskWidth = $(window).width();
+    var windowTop =  (maskHeight  - $('.window').height())/2;
+    var windowLeft = (maskWidth - $('.window').width())/2;
+    $('.window').css({ top: windowTop, left: windowLeft, position:"absolute"}).show();
+  };
+
   function build_navigator_top(item) {
     var ul = $(".filesystem").html('');
     //console.log("item.name", item.name);
     if (item.name === 'filesystem') {
       var username = $('input[name="username"]').val();
-      $('#navigator-top p').addClass('navigator-item-back').html("<a href=''>" + username + "</a><a href='' class='navigator-settings'><i class='icon-cog'></i></a>");
+      $('#navigator-top p').addClass('navigator-item-back').html("<a href=''><i class='icon-bolt'></i> " + username + "</a><a href='' class='navigator-settings'><i class='icon-cog'></i></a>");
       $('#navigator-folder p').text('All Repositories');
     } else {
       var title = "";
@@ -246,21 +274,17 @@
       function run_callback(err, status) {
         //console.log(err);
         //console.log(status);
-        //socket.emit('run-file', { file: file});
-        var win = new tty.Window(null, occEditor.cwd());
-        tty.on('open tab', function(){
-          tty.on('tab-ready', function() {
-            tty.off('open tab');
-            tty.off('tab-ready');
-            win.tabs[0].sendString("python " + file.name);
-          });
-        });
+        var command;
+        if (file.extension === 'py') {
+          command = "python ";
+        } else if (file.extension === 'rb') {
+          command = "ruby ";
+        } else if (file.extension === 'js') {
+          command = "node ";
+        }
+        command += file.name;
 
-        var maskHeight = $(window).height();
-        var maskWidth = $(window).width();
-        var windowTop =  (maskHeight  - $('.window').height())/2;
-        var windowLeft = (maskWidth - $('.window').width())/2;
-        $('.window').css({ top: windowTop, left: windowLeft, position:"absolute"}).show();
+        occEditor.open_terminal(occEditor.cwd(), command);
       }
 
       davFS.write(file.path, editor_content, run_callback);
@@ -269,20 +293,7 @@
     function open_terminal(event) {
       event.preventDefault();
 
-      var win = new tty.Window(null, occEditor.cwd());
-      tty.on('open tab', function(){
-        tty.on('tab-ready', function() {
-          tty.off('open tab');
-          tty.off('tab-ready');
-          win.tabs[0].sendString("ls");
-        });
-      });
-
-      var maskHeight = $(window).height();
-      var maskWidth = $(window).width();
-      var windowTop =  (maskHeight  - $('.window').height())/2;
-      var windowLeft = (maskWidth - $('.window').width())/2;
-      $('.window').css({ top: windowTop, left: windowLeft, position:"absolute"}).show();
+      occEditor.open_terminal(occEditor.cwd(), null);
     }
 
     $(document).on('click touchstart', '.open-terminal', open_terminal);
@@ -381,8 +392,24 @@
   }
 
   function handle_navigator_actions() {
-    //when we open a file in the same project, let's save it in the file_list...
-    function backup_open_file() {
+    var settings_enabled = false;
+    function navigator_toggle_settings(event) {
+      if (event) {
+        event.preventDefault();
+      }
+      var icon_class;
+
+      if (settings_enabled) {
+        settings_enabled = false;
+        icon_class = "icon-chevron-right";
+      } else {
+        settings_enabled = true;
+        icon_class = "icon-minus-sign";
+      }
+
+      $('.navigator-item i').each(function() {
+        $(this).attr('class', icon_class);
+      });
 
     }
 
@@ -405,6 +432,8 @@
 
     function navigator_item_selected(event) {
       event.preventDefault();
+      settings_enabled = false;
+
       var file = $(this).data('file'), content;
       if (file.type === 'directory') {
         alert_changed_file();
@@ -422,6 +451,12 @@
 
     function navigator_back_selected(event) {
       event.preventDefault();
+      //clicked the settings link
+      if (event.target.className === 'icon-cog') {
+        return;
+      }
+
+      settings_enabled = false;
       alert_changed_file();
       var file = $(this).data('file');
       //console.log(file);
@@ -504,6 +539,7 @@
     $(document).on('click touchstart', '.navigator-item', navigator_item_selected);
     $(document).on('click touchstart', '.navigator-item-back', navigator_back_selected);
     $(document).on('click touchstart', '.navigator-item-create', navigator_create_selected);
+    $(document).on('click touchstart', '.navigator-settings', navigator_toggle_settings);
     $(document).on('click touchstart', '#create-modal .modal-submit', create_modal_submit);
     $(document).on('click touchstart', '#create-project-form .create-save', create_folder);
     $(document).on('click touchstart', '#create-project-form .create-cancel', create_cancel);

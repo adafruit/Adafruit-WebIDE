@@ -35,7 +35,7 @@
   font-size: 13px;
   line-height: 13px;
   cursor: pointer;
-  padding: 14px 12px 12px 12px;
+  padding: 13px 12px 12px 12px;
   border-bottom: 1px solid #EDEDED;
 }
 
@@ -97,6 +97,10 @@
 #navigator ul li i {
   float: right;
   color: #343637;
+}
+
+#navigator ul li i.icon-minus-sign {
+  color: #D31E34;
 }
 
 #navigator-bottom {
@@ -193,6 +197,16 @@ transition: none;
   color: #E4E5E7;
   text-decoration: none;
   margin-right: 20px;
+}
+
+.editor-bar-actions .connected {
+  float: right;
+  color: #55BD59;
+}
+
+.editor-bar-actions .disconnected {
+  float: right;
+  color: #D31E34;
 }
 
 #editor {
