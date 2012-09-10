@@ -220,7 +220,7 @@
     //console.log("item.name", item.name);
     if (item.name === 'filesystem') {
       var username = $('input[name="username"]').val();
-      $('#navigator-top p').addClass('navigator-item-back').html("<a href=''><i class='icon-bolt'></i> " + username + "</a><a href='' class='navigator-settings'><i class='icon-cog'></i></a>");
+      $('#navigator-top p').addClass('navigator-item-back').html("<a href=''><i class='icon-user'></i> " + username + "</a><a href='' class='navigator-settings'><i class='icon-cog'></i></a>");
       $('#navigator-folder p').text('All Repositories');
     } else {
       var title = "";
@@ -484,7 +484,7 @@
 
       settings_enabled = false;
       alert_changed_file();
-      var file = $(this).data('file');
+      var file = $(this).parent().data('file');
       //console.log(file);
       occEditor.populate_navigator(file.parent_path);
     }
@@ -571,7 +571,7 @@
     }
     //clicking a file or folder in the list.
     $(document).on('click touchstart', '.navigator-item', navigator_item_selected);
-    $(document).on('click touchstart', '.navigator-item-back', navigator_back_selected);
+    $(document).on('click touchstart', '.navigator-item-back a:first-child', navigator_back_selected);
     $(document).on('click touchstart', '.navigator-item-create', navigator_create_selected);
     $(document).on('click touchstart', '.navigator-settings', navigator_toggle_settings);
     $(document).on('click touchstart', '#create-modal .modal-submit', create_modal_submit);
