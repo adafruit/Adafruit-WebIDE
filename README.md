@@ -30,6 +30,8 @@ TODO:
 - Figure out bitbucket consumer key and secret on multi-user level
 - Change active/inactive state of navigator-settings
 - Auth for Terminal access
+- Add Logout button
+- Style Login Page
 - Better Commit messages?
 - Setup git config
     git config --global user.email "you@example.com"
