@@ -22,20 +22,22 @@ Browser:
     http://raspberrypi.local:3000
 
 TODO:
--Add ability to rename, and delete folders and files.
--Setup git config
+- Add ability to rename, and delete folders and files.
+- Queue up git requests...
+- Better Commit messages?
+- Setup git config
     git config --global user.email "you@example.com"
     git config --global user.name "Your Name"
--Basic Command Line access, ability to submit commands. (discussions probably further needed)
--Add bitbucket to known_hosts at server startup
--Generate SSH Key, and use Bitbucket API to add it to account?
--Security (xss, chroot, etc)
--simpler installation
+- Basic Command Line access, ability to submit commands. (discussions probably further needed)
+- Add bitbucket to known_hosts at server startup
+- Generate SSH Key, and use Bitbucket API to add it to account?
+- Security (xss, chroot, etc)
+- simpler installation
 
 Nice to have:
--Resizable left-navigator
--File Tree for advanced users
--vim/emacs modes in editor
+- Resizable left-navigator
+- File Tree for advanced users
+- vim/emacs modes in editor
 
 
 SCREENSHOTS
