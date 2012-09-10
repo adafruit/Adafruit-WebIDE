@@ -50,6 +50,7 @@ exports.clone_update_remote_push = function(profile, repository_url, cb) {
 };
 
 exports.clone_repository = function(profile, repository_path, cb) {
+  console.log(repository_path);
   var repository_url = url.parse(repository_path);
 
   console.log("cloning", repository_path);
@@ -161,10 +162,17 @@ exports.remove_commit_push = function(item, cb) {
 };
 
 exports.commit_push_and_save = function(file, cb) {
-  var self = this;
-  var path_array = file.path.split('/');
-  var repository = path_array[2];
-  var file_path = path_array.slice(3).join('/');
+  var self = this,
+      path_array, repository, file_path;
+  if (!file.repository) {
+    path_array = file.path.split('/');
+    repository = path_array[2];
+    file_path = path_array.slice(3).join('/');
+  } else {
+    repository = file.repository;
+    file_path = file.path;
+  }
+
 
   self.add(repository, file_path, function(err, status) {
     console.log("added", err, status);

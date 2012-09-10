@@ -1,6 +1,7 @@
 var path = require('path'),
     fs = require('fs'),
     util = require('util'),
+    config = require('../config/config');
     exec = require('child_process').exec;
 
 exports.has_ssh_key = function has_ssh_key(cb) {
@@ -102,4 +103,22 @@ exports.open_file = function(path, cb) {
   fs.readFile(__dirname + '/' + path, 'ascii', function(err,data){
     cb(data);
   });
-}
+};
+
+exports.create_project_readme = function(cb) {
+  var source = __dirname + '/../config/README.md';
+  var destination = __dirname + '/../repositories/' + config.defaults.repository + '/' + config.defaults.readme;
+  var file = {repository: config.defaults.repository, path: config.defaults.readme, name: config.defaults.readme};
+
+  fs.lstat(destination, function(err, stat) {
+    if (stat) cb("README already exists", file); //file exists
+
+    var is = fs.createReadStream(source);
+    var os = fs.createWriteStream(destination);
+    util.pump(is, os, function(err) {
+      console.log(err);
+      cb(err, file);
+    });
+
+  });
+};

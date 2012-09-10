@@ -13,12 +13,13 @@ var express = require('express'),
     fs = require('fs'),
     path = require('path'),
     git_helper = require('./helpers/git_helper'),
+    fs_helper = require('./helpers/fs_helper'),
     request_helper = require('./helpers/request_helper'),
     exec_helper = require('./helpers/exec_helper'),
     RedisStore = require('connect-redis')(express),
     redis = require("redis"),
     client = redis.createClient(),
-    config = require('./config');
+    config = require('./config/config');
 
 var davServer;
 console.log(__dirname);
@@ -68,20 +69,23 @@ function setup_passport(consumer_key, consumer_secret) {
         profile.consumer_key = consumer_key;
         profile.consumer_secret = consumer_secret;
 
+        var project_repository = 'git@bitbucket.org:' + profile.username + '/my-pi-projects.git';
+
         //TODO REFACTOR THIS MESS
         request_helper.list_repositories(profile, function(err, list) {
           var exists = list.some(function(repository) {
-            return (repository.name === config.adafruit.repository);
+            return (repository.name.toLowerCase() === config.defaults.repository.toLowerCase());
           });
           git_helper.clone_adafruit_libraries(config.adafruit.repository, config.adafruit.remote, function() {
             if (!exists) {
-              request_helper.create_repository(profile, config.adafruit.repository, function(err, response) {
-                console.log("created adafruit repository in bitbucket");
-                git_helper.update_remote(profile, config.adafruit.repository, function(err, response) {
-                  console.log("updated remote for adafruit repository");
-                  git_helper.add_remote(config.adafruit.repository, config.adafruit.remote_name, config.adafruit.remote, function(err, response) {
-                    console.log("added remote for adafruit repository");
-                    git_helper.push(config.adafruit.repository, "origin", "master", function(err, response) {
+              request_helper.create_repository(profile, config.defaults.repository, function(err, response) {
+                git_helper.clone_repository(profile, project_repository, function(err, response) {
+                  console.log("created personal repository in bitbucket");
+                  fs_helper.create_project_readme(function(err, file) {
+                    if (err) console.log(err);
+                    console.log(file);
+
+                    git_helper.commit_push_and_save(file, function(err, response) {
                       return done(null, profile);
                     });
                   });
@@ -89,9 +93,13 @@ function setup_passport(consumer_key, consumer_secret) {
 
               });
             } else {
-              git_helper.update_remote(profile, config.adafruit.repository, function(err, response) {
-                git_helper.add_remote(config.adafruit.repository, "adaremote", config.adafruit.remote, function(err, response) {
-                  git_helper.push(config.adafruit.repository, "origin", "master", function(err, response) {
+              git_helper.clone_repository(profile, project_repository, function(err, response) {
+                console.log(err, response);
+                fs_helper.create_project_readme(function(err, file) {
+                  console.log(file);
+                  if (err) console.log(err);
+
+                  git_helper.commit_push_and_save(file, function(err, response) {
                     return done(null, profile);
                   });
                 });
