@@ -22,11 +22,11 @@
 }
 
 .connection-state.connected {
-  color: #55BD59;
+  color: #74a927;
 }
 
 .connection-state.disconnected {
-  color: #D31E34;
+  color: #bb1142;
 }
 
 /* File Navigator Section */
@@ -125,7 +125,7 @@
 }
 
 #navigator ul li i.icon-minus-sign {
-  color: #D31E34;
+  color: #bb1142;
 }
 
 #navigator-bottom {
