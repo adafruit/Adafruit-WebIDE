@@ -141,15 +141,19 @@ exports.remove_commit_push = function(item, cb) {
 
   if (item.type === 'directory') {
     self.remove_recursive(repository, item_path, function(err, status) {
-
-      console.log(obj);
+      var commit_message = "Removed " + item.name;
+      self.commit(repository, commit_message,  function(err, status) {
+        self.push(repository, "origin", "master", function(err, status) {
+          //console.log(obj);
+        });
+      });
     });
   } else {
     self.remove(repository, item_path, function(err, status) {
       var commit_message = "Removed " + item.name;
       self.commit(repository, commit_message,  function(err, status) {
         self.push(repository, "origin", "master", function(err, status) {
-      //console.log(obj);
+          //console.log(obj);
         });
       });
     });
