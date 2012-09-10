@@ -24,6 +24,7 @@ Browser:
 TODO:
 - Add ability to rename, and delete folders and files.
 - Queue up git requests...
+- Open project README when editor opened
 - Remove settings COG in adafruit repository
 - Change /repositories to /repositories/username
 - Figure out bitbucket consumer key and secret on multi-user level
@@ -43,6 +44,10 @@ Nice to have:
 - Resizable left-navigator
 - File Tree for advanced users
 - vim/emacs modes in editor
+- API Integration
+- Maintain state of editor open project and file
+- History and back button
+- Allow external links #Link and use icon-external-link
 
 
 SCREENSHOTS
