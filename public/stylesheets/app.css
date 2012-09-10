@@ -34,7 +34,6 @@
   color: #E4E5E7;
   font-size: 13px;
   line-height: 13px;
-  cursor: pointer;
   padding: 13px 12px 12px 12px;
   border-bottom: 1px solid #EDEDED;
 }
@@ -44,8 +43,14 @@
   text-decoration: none;
 }
 
+#navigator-top p a:hover {
+  color: #b4b4b4;
+}
+
 #navigator-top p a.navigator-settings {
   float: right;
+  padding-top: 1px;
+  font-size: 16px;
 }
 
 #navigator-folder {
@@ -83,6 +88,10 @@
   background-color: #8D8D8D;
 }
 
+#navigator ul li:hover {
+  background-color: #A3A3A3;
+}
+
 #navigator ul li a {
   padding-left: 10px;
   color: #343637;
@@ -104,7 +113,6 @@
 }
 
 #navigator-bottom {
-
   background-color: #625E5E;
   width: 298px;
   border-top: 1px solid #EDEDED;
@@ -120,6 +128,10 @@
 #navigator-bottom p a {
   color: #E4E5E7;
   text-decoration: none;
+}
+
+#navigator-bottom p:hover a {
+  color: #b4b4b4;
 }
 
 #create-modal .modal-body p .small {
@@ -197,6 +209,10 @@ transition: none;
   color: #E4E5E7;
   text-decoration: none;
   margin-right: 20px;
+}
+
+#editor-bar p.editor-bar-actions a:hover {
+  color: #b4b4b4;
 }
 
 .editor-bar-actions .connected {
