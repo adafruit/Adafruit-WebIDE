@@ -18,7 +18,7 @@ exports.clone_adafruit_libraries = function(adafruit_repository, remote, cb) {
 };
 
 exports.clone_update_remote_push = function(profile, repository_url, cb) {
-  var that = this;
+  var self = this;
   console.log(profile);
   var repository_name = path.basename(repository_url, '.git');
   console.log(repository_name);
@@ -32,11 +32,11 @@ exports.clone_update_remote_push = function(profile, repository_url, cb) {
       //TODO need better error handling eventually
       request_helper.create_repository(profile, repository_name, function(err, response) {
         console.log("created repository in bitbucket: " + repository_name);
-        that.clone_repository(profile, repository_url, function(err, results) {
+        self.clone_repository(profile, repository_url, function(err, results) {
           console.log("clone repository locally: " + repository_name);
-          that.update_remote(profile, repository_name, function(err, response) {
+          self.update_remote(profile, repository_name, function(err, response) {
             console.log("updated remote for repository: " + repository_name);
-            that.push(repository_name, "origin", "master", function(err, response) {
+            self.push(repository_name, "origin", "master", function(err, response) {
               console.log("git push for repository: " + repository_name);
               cb(null, true);
             });
@@ -73,10 +73,33 @@ exports.add_remote = function(repository, remote_name, remote_url, cb) {
   });
 };
 
-exports.add = function add(repository, file, cb) {
+exports.add = function add(repository, files, cb) {
+  if (!Array.isArray(files)) {
+    files = [files];
+  }
   var repository_path = __dirname + "/../repositories/" + repository;
-  git.add(repository_path, [file], function(output) {
-    //console.log(obj);
+  git.add(repository_path, files, function(output) {
+    //console.log(output);
+    cb(output.errors, output.added);
+  });
+};
+
+exports.remove = function remove(repository, files, cb) {
+  if (!Array.isArray(files)) {
+    files = [files];
+  }
+  var repository_path = __dirname + "/../repositories/" + repository;
+  git.remove(repository_path, files, function(output) {
+    console.log(output);
+    cb(output.errors, output.added);
+  });
+};
+
+exports.remove_recursive = function remove_recursive(repository, path, cb) {
+  var repository_path = __dirname + "/../repositories/" + repository;
+
+  git.remove_recursive(repository_path, path, function(output) {
+    console.log(output);
     cb(output.errors, output.added);
   });
 };
@@ -105,18 +128,46 @@ exports.pull = function push(repository, remote, branch, cb) {
   });
 };
 
+
+exports.remove_commit_push = function(item, cb) {
+  var self = this;
+  console.log(item);
+  var path_array = item.path.split('/');
+  var repository = path_array[2];
+  var item_path = path_array.slice(3).join('/');
+  console.log(item_path);
+  console.log(repository);
+
+
+  if (item.type === 'directory') {
+    self.remove_recursive(repository, item_path, function(err, status) {
+
+      console.log(obj);
+    });
+  } else {
+    self.remove(repository, item_path, function(err, status) {
+      var commit_message = "Removed " + item.name;
+      self.commit(repository, commit_message,  function(err, status) {
+        self.push(repository, "origin", "master", function(err, status) {
+      //console.log(obj);
+        });
+      });
+    });
+  }
+};
+
 exports.commit_push_and_save = function(file, cb) {
-  var that = this;
+  var self = this;
   var path_array = file.path.split('/');
   var repository = path_array[2];
   var file_path = path_array.slice(3).join('/');
 
-  that.add(repository, file_path, function(err, status) {
+  self.add(repository, file_path, function(err, status) {
     console.log("added", err, status);
     var commit_message = "Modified " + file.name;
-    that.commit(repository, commit_message,  function(err, status) {
+    self.commit(repository, commit_message,  function(err, status) {
       console.log("committed", err, status);
-      that.push(repository, "origin", "master", function(err, status) {
+      self.push(repository, "origin", "master", function(err, status) {
         console.log("pushed", err, status);
         cb(status);
       });
