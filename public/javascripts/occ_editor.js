@@ -8,7 +8,7 @@
   var templates = {
     "editor_bar_init":              '<p class="editor-bar-actions">' +
                                       '<a href="" class="open-terminal"><i class="icon-list-alt"></i> Terminal</a>' +
-                                      '<i class="icon-edit"></i> Open a file to the left, to edit and run.' +
+                                      '<i class="icon-edit"></i> Open a file to the left to edit and run.' +
                                     '</p>',
     "editor_bar_interpreted_file":  '<p class="editor-bar-actions">' +
                                       '<a href="" class="open-terminal"><i class="icon-list-alt"></i> Terminal</a>' +
@@ -93,10 +93,10 @@
     });
 
     socket.on('connect', function () {
-      $('.connection-state').removeClass('disconnected').addClass('connected').text('connected');
+      $('.connection-state').removeClass('disconnected').addClass('connected').text('Connected');
     });
     socket.on('disconnect', function () {
-      $('.connection-state').removeClass('connected').addClass('disconnected').text('disconnected');
+      $('.connection-state').removeClass('connected').addClass('disconnected').text('Disconnected');
     });
     socket.on('cwd-init', function(data) {
       dirname = data.dirname;
