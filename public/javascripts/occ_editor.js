@@ -9,18 +9,17 @@
     "editor_bar_init":              '<p class="editor-bar-actions">' +
                                       '<a href="" class="open-terminal"><i class="icon-list-alt"></i> Terminal</a>' +
                                       '<i class="icon-edit"></i> Open a file to the left, to edit and run.' +
-                                      '<span class="connection-state"></span>' +
                                     '</p>',
     "editor_bar_interpreted_file":  '<p class="editor-bar-actions">' +
                                       '<a href="" class="open-terminal"><i class="icon-list-alt"></i> Terminal</a>' +
                                       '<a href="" class="run-file"><i class="icon-play"></i> Run</a>' +
                                       '<a href="" class="save-file"><i class="icon-cloud"></i> Save</a>' +
-                                      '<span class="connection-state"></span>' +
                                     '</p>',
+    "editor_bar_copy_link":     '<a href="" class="copy-project"><i class="icon-copy"></i> Copy this project to My Pi Projects</a>',
+    "editor_bar_tutorial_link":     '<a href="" class="open-tutorial" target="_blank"><i class="icon-copy"></i> Tutorial</a>',
     "editor_bar_file":              '<p class="editor-bar-actions">' +
                                       '<a href="" class="open-terminal"><i class="icon-list-alt"></i> Terminal</a>' +
                                       '<a href="" class="save-file"><i class="icon-cloud"></i> Save</a>' +
-                                      '<span class="connection-state"></span>' +
                                     '</p>',
     "create_clone_repository":      'Clone a repository by pasting in the full git ssh url found at Bitbucket or Github.<br/><br/>' +
                                     '<span class="small">Example Read-Only: git://github.com/adafruit/Adafruit-Raspberry-Pi-Python-Code.git</span><br/>' +
