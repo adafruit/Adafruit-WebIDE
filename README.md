@@ -24,6 +24,11 @@ Browser:
 TODO:
 - Add ability to rename, and delete folders and files.
 - Queue up git requests...
+- Remove settings COG in adafruit repository
+- Change /repositories to /repositories/username
+- Figure out bitbucket consumer key and secret on multi-user level
+- Change active/inactive state of navigator-settings
+- Auth for Terminal access
 - Better Commit messages?
 - Setup git config
     git config --global user.email "you@example.com"
