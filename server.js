@@ -81,7 +81,9 @@ function setup_passport(consumer_key, consumer_secret) {
                   console.log("updated remote for adafruit repository");
                   git_helper.add_remote(config.adafruit.repository, config.adafruit.remote_name, config.adafruit.remote, function(err, response) {
                     console.log("added remote for adafruit repository");
-                    return done(null, profile);
+                    git_helper.push(config.adafruit.repository, "origin", "master", function(err, response) {
+                      return done(null, profile);
+                    });
                   });
                 });
 
@@ -89,7 +91,9 @@ function setup_passport(consumer_key, consumer_secret) {
             } else {
               git_helper.update_remote(profile, config.adafruit.repository, function(err, response) {
                 git_helper.add_remote(config.adafruit.repository, "adaremote", config.adafruit.remote, function(err, response) {
-                  return done(null, profile);
+                  git_helper.push(config.adafruit.repository, "origin", "master", function(err, response) {
+                    return done(null, profile);
+                  });
                 });
               });
             }
@@ -233,6 +237,12 @@ function start_server() {
 function socket_listeners() {
   io.sockets.on('connection', function (socket) {
     socket.emit('cwd-init', {dirname: __dirname + '/repositories'});
+
+    socket.on('git-delete', function(data) {
+      git_helper.remove_commit_push(data.file, function(err, status) {
+        socket.emit('git-delete-complete', {message: ""});
+      });
+    });
 
     socket.on('commit-file', function (data) {
       //TODO...clean this up, and check for errors
