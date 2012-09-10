@@ -16,7 +16,7 @@
                                       '<a href="" class="save-file"><i class="icon-cloud"></i> Save</a>' +
                                     '</p>',
     "editor_bar_copy_link":     '<a href="" class="copy-project"><i class="icon-copy"></i> Copy this project to My Pi Projects</a>',
-    "editor_bar_tutorial_link":     '<a href="" class="open-tutorial" target="_blank"><i class="icon-copy"></i> Tutorial</a>',
+    "editor_bar_tutorial_link":     '<a href="" class="open-tutorial" target="_blank"><i class="icon-book"></i> Project Guide Available</a>',
     "editor_bar_file":              '<p class="editor-bar-actions">' +
                                       '<a href="" class="open-terminal"><i class="icon-list-alt"></i> Terminal</a>' +
                                       '<a href="" class="save-file"><i class="icon-cloud"></i> Save</a>' +
@@ -67,6 +67,7 @@
     occEditor.init_events(editor);
     occEditor.populate_navigator();
     occEditor.populate_editor_bar();
+    occEditor.open_readme();
 
     handle_navigator_actions();
     handle_editor_bar_actions();
@@ -108,6 +109,8 @@
     var UndoManager = require("ace/undomanager").UndoManager;
 
     function handler(err, data) {
+      file.data = data;
+      $(document).trigger('file_open', file);
       var session = new EditSession(data);
       session.setUndoManager(new UndoManager());
 
@@ -136,12 +139,17 @@
   occEditor.populate_editor_bar = function() {
     var $editor_bar = $('#editor-bar');
 
-    function editor_bar_actions(event, data) {
-      //console.log(data);
-      if (data.extension === 'py' || data.extension === 'rb' || data.extension === 'js') {
+    function editor_bar_actions(event, file) {
+      if (file.extension === 'py' || file.extension === 'rb' || file.extension === 'js') {
         $editor_bar.html(templates.editor_bar_interpreted_file);
       } else {
         $editor_bar.html(templates.editor_bar_file);
+      }
+
+      var als_link = file.data.match(/ALS Guide:[ ]?(.*)$/mi);
+      if (als_link && als_link[1] && als_link[1].indexOf("learn.adafruit.com") !== -1) {
+        var $tutorial_link = $(templates.editor_bar_tutorial_link).attr('href', als_link[1]);
+        $tutorial_link.appendTo($('.editor-bar-actions'));
       }
     }
     $editor_bar.html(templates.editor_bar_init);
@@ -161,6 +169,13 @@
     }
 
     davFS.listDir(path, populateFileSystem);
+  };
+
+  occEditor.open_readme = function() {
+    var file = {
+      path: '/filesystem/my-pi-projects/README.md'
+    };
+    occEditor.populate_editor(file);
   };
 
   occEditor.save_file = function(event) {
@@ -464,7 +479,6 @@
         alert_changed_file();
         occEditor.populate_navigator(file.path);
       } else {
-        $(document).trigger('file_open', file);
         $('.filesystem li').removeClass('file-open');
         $(this).addClass('file-open');
         if ($(this).hasClass('edited')) {
