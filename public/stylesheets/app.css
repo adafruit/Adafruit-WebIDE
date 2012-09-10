@@ -227,6 +227,11 @@ transition: none;
   margin-right: 20px;
 }
 
+#editor-bar p.editor-bar-actions .open-tutorial {
+  float: right;
+  margin-right: 10px;
+}
+
 #editor-bar p.editor-bar-actions a:hover {
   color: #b4b4b4;
 }
