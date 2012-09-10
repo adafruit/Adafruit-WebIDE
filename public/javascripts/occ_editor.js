@@ -430,11 +430,37 @@
       }
     }
 
+    function navigator_delete_item($item) {
+      var file = $item.data('file');
+      var parent_path = file.parent_path;
+
+      if (file.type === 'directory') {
+        davFS.remove(file.path, function(err, status) {
+          socket.emit('git-delete', { file: file});
+       });
+      } else {
+        davFS.remove(file.path, function(err, status) {
+          socket.emit('git-delete', { file: file});
+        });
+      }
+
+      $item.remove();
+      handle_navigator_scroll();
+    }
+
     function navigator_item_selected(event) {
       event.preventDefault();
-      settings_enabled = false;
 
       var file = $(this).data('file'), content;
+
+      //user clicked on delete file or folder
+      if (event.target.className === 'icon-minus-sign') {
+        navigator_delete_item($(this));
+        return;
+      }
+
+      settings_enabled = false;
+
       if (file.type === 'directory') {
         alert_changed_file();
         occEditor.populate_navigator(file.path);
@@ -515,7 +541,6 @@
         occEditor.populate_navigator(parent_folder.path);
         occEditor.populate_editor_bar();
       }
-
     }
 
     function create_folder(event) {
@@ -523,8 +548,13 @@
       var $create_wrapper = $('.navigator-item-create');
       var folder_name = $('input[name="folder_name"]').val();
       var parent_folder = $('.navigator-item-back').data("file");
+      var path = parent_folder.path + folder_name;
+      var item = {path: path, name: folder_name, type: "file"};
 
-      davFS.mkDir(parent_folder.path + folder_name, create_fs_response);
+      davFS.mkDir(path, function(err, status) {
+        socket.emit('commit-file', { file: item });
+        create_fs_response(err, status);
+      });
     }
 
     function create_file() {
@@ -532,8 +562,12 @@
       var $create_wrapper = $('.navigator-item-create');
       var file_name = $('input[name="file_name"]').val();
       var parent_folder = $('.navigator-item-back').data("file");
+      var path = parent_folder.path + file_name;
 
-      davFS.write(parent_folder.path + file_name, '', create_fs_response);
+      davFS.write(parent_folder.path + file_name, '', function(err, status) {
+        socket.emit('commit-file', { file: {path: path, name: file_name, type: "file"}});
+        create_fs_response(err, status);
+      });
     }
     //clicking a file or folder in the list.
     $(document).on('click touchstart', '.navigator-item', navigator_item_selected);
