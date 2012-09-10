@@ -10,7 +10,8 @@
                                       '<a href="" class="open-terminal"><i class="icon-list-alt"></i> Terminal</a>' +
                                       '<i class="icon-edit"></i> Open a file to the left to edit and run.' +
                                     '</p>',
-    "editor_bar_blank":              '<p class="editor-bar-actions">' +
+    "editor_bar_blank":             '<p class="editor-bar-actions">' +
+                                      '<a href="" class="open-terminal"><i class="icon-list-alt"></i> Terminal</a>' +
                                     '</p>',
     "editor_bar_interpreted_file":  '<p class="editor-bar-actions">' +
                                       '<a href="" class="open-terminal"><i class="icon-list-alt"></i> Terminal</a>' +
@@ -165,7 +166,6 @@
         if (is_adafruit_project(file.path)) {
           $editor_bar.html(templates.editor_bar_blank);
           var $copy_link = $(templates.editor_bar_copy_link).attr('href', file.path);
-          console.log($copy_link);
           $copy_link.appendTo($('.editor-bar-actions'));
         }
       }
@@ -338,7 +338,20 @@
       occEditor.open_terminal(occEditor.cwd(), null);
     }
 
+    function copy_project(event) {
+      event.preventDefault();
+      var source = $(this).attr('href');
+      var path_array = source.split('/');
+      var directory = path_array[path_array.length - 2];
+      var destination = '/filesystem/my-pi-projects/' + directory;
+      
+      davFS.copy(source, destination, true, function(err, status) {
+        socket.emit('commit-file', { file: {path: destination, name: directory}, message: "Copied to my-pi-projects " + directory});
+      });
+    }
+
     $(document).on('click touchstart', '.open-terminal', open_terminal);
+    $(document).on('click touchstart', '.copy-project', copy_project);
     $(document).on('click touchstart', '.save-file', occEditor.save_file);
     $(document).on('click touchstart', '.run-file', run_file);
   }
