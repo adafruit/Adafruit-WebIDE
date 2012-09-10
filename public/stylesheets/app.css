@@ -9,8 +9,24 @@
   background-color: #f1f1f1;
 }
 
+/* Top Nav Bar */
+
 .navbar .brand {
   padding-left: 10px;
+}
+
+
+.connection-state {
+  float: right;
+  padding-top: 15px;
+}
+
+.connection-state.connected {
+  color: #55BD59;
+}
+
+.connection-state.disconnected {
+  color: #D31E34;
 }
 
 /* File Navigator Section */
@@ -113,7 +129,7 @@
 }
 
 #navigator-bottom {
-  background-color: #625E5E;
+  background-color: #323334;
   width: 298px;
   border-top: 1px solid #EDEDED;
 }
@@ -215,15 +231,6 @@ transition: none;
   color: #b4b4b4;
 }
 
-.editor-bar-actions .connected {
-  float: right;
-  color: #55BD59;
-}
-
-.editor-bar-actions .disconnected {
-  float: right;
-  color: #D31E34;
-}
 
 #editor {
   position: absolute;
