@@ -10,12 +10,14 @@
                                       '<a href="" class="open-terminal"><i class="icon-list-alt"></i> Terminal</a>' +
                                       '<i class="icon-edit"></i> Open a file to the left to edit and run.' +
                                     '</p>',
+    "editor_bar_blank":              '<p class="editor-bar-actions">' +
+                                    '</p>',
     "editor_bar_interpreted_file":  '<p class="editor-bar-actions">' +
                                       '<a href="" class="open-terminal"><i class="icon-list-alt"></i> Terminal</a>' +
                                       '<a href="" class="run-file"><i class="icon-play"></i> Run</a>' +
                                       '<a href="" class="save-file"><i class="icon-cloud"></i> Save</a>' +
                                     '</p>',
-    "editor_bar_copy_link":     '<a href="" class="copy-project"><i class="icon-copy"></i> Copy this project to My Pi Projects</a>',
+    "editor_bar_copy_link":         '<a href="" class="copy-project"><i class="icon-copy"></i> Copy this project to My Pi Projects</a>',
     "editor_bar_tutorial_link":     '<a href="" class="open-tutorial" target="_blank"><i class="icon-book"></i> Project Guide Available</a>',
     "editor_bar_file":              '<p class="editor-bar-actions">' +
                                       '<a href="" class="open-terminal"><i class="icon-list-alt"></i> Terminal</a>' +
@@ -134,22 +136,46 @@
     var session = new EditSession('');
     session.setUndoManager(new UndoManager());
     editor.setSession(session);
+    //reset editor bar as well
+    $('#editor-bar').html(templates.editor_bar_init);
   };
 
   occEditor.populate_editor_bar = function() {
     var $editor_bar = $('#editor-bar');
 
+    function is_adafruit_project(path) {
+      var adafruit_root = "/filesystem/Adafruit-Raspberry-Pi-Python-Code/";
+      return (path.indexOf(adafruit_root) !== -1 && path !== adafruit_root);
+    }
+
+    function is_script(extension) {
+      return (extension === 'py' || extension === 'rb' || extension === 'js');
+    }
+
     function editor_bar_actions(event, file) {
-      if (file.extension === 'py' || file.extension === 'rb' || file.extension === 'js') {
-        $editor_bar.html(templates.editor_bar_interpreted_file);
-      } else {
-        $editor_bar.html(templates.editor_bar_file);
+      if (file.extension) {
+        if (is_script(file.extension)) {
+          $editor_bar.html(templates.editor_bar_interpreted_file);
+        } else {
+          $editor_bar.html(templates.editor_bar_file);
+        }
       }
 
-      var als_link = file.data.match(/ALS Guide:[ ]?(.*)$/mi);
-      if (als_link && als_link[1] && als_link[1].indexOf("learn.adafruit.com") !== -1) {
-        var $tutorial_link = $(templates.editor_bar_tutorial_link).attr('href', als_link[1]);
-        $tutorial_link.appendTo($('.editor-bar-actions'));
+      if (file.path) {
+        if (is_adafruit_project(file.path)) {
+          $editor_bar.html(templates.editor_bar_blank);
+          var $copy_link = $(templates.editor_bar_copy_link).attr('href', file.path);
+          console.log($copy_link);
+          $copy_link.appendTo($('.editor-bar-actions'));
+        }
+      }
+
+      if (file.data) {
+        var als_link = file.data.match(/ALS Guide:[ ]?(.*)$/mi);
+        if (als_link && als_link[1] && als_link[1].indexOf("learn.adafruit.com") !== -1) {
+          var $tutorial_link = $(templates.editor_bar_tutorial_link).attr('href', als_link[1]);
+          $tutorial_link.appendTo($('.editor-bar-actions'));
+        }
       }
     }
     $editor_bar.html(templates.editor_bar_init);
@@ -165,8 +191,10 @@
       build_navigator_list(list);
       build_navigator_bottom(list[0]);
       handle_navigator_scroll();
-      occEditor.clear_editor();
     }
+
+    occEditor.clear_editor();
+    $(document).trigger('file_open', {path: path});
 
     davFS.listDir(path, populateFileSystem);
   };
