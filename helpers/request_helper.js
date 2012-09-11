@@ -19,7 +19,7 @@ exports.post_ssh_key = function(profile, cb) {
     }, function (e, r, body) {
       console.log(r.statusCode);
       console.log(body);
-      cb (body);
+      cb (e, body);
     });
   });
 
