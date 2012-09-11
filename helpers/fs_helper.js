@@ -5,7 +5,7 @@ var path = require('path'),
     exec = require('child_process').exec;
 
 exports.has_ssh_key = function has_ssh_key(cb) {
-  path.exists(process.env['HOME'] + '/.ssh/id_rsa.pub', function(exists) {
+  path.exists(process.env['HOME'] + '/.ssh/id_rsa_bitbucket.pub', function(exists) {
     if (exists) {
       cb(true);
     } else {
@@ -15,26 +15,52 @@ exports.has_ssh_key = function has_ssh_key(cb) {
 };
 
 exports.generate_ssh_key = function(cb) {
-  path.exists(process.env['HOME'] + '/.ssh/id_rsa.pub', function(exists) {
+  var self = this;
+  self.has_ssh_key(function(exists) {
     if (exists) {
       cb();
     } else {
       //TODO generate key
-      exec("ssh-keygen -b 1024 -N '' -f ~/.ssh/id_dsa -t dsa -q");
-      cb();
+      exec("ssh-keygen -b 2048 -N '' -f ~/.ssh/id_rsa_bitbucket -t rsa -q", function(err, stdout, stderr) {
+        //console.log(err, stdout, stderr);
+        self.append_to_ssh_config(function() {
+          cb();
+        });
+      });
+    }
+  });
+};
+
+exports.append_to_ssh_config = function append_to_ssh_config(cb) {
+  var ssh_config_file = process.env['HOME'] + '/.ssh/config';
+  var identity_info = "IdentityFile ~/.ssh/id_rsa_bitbucket";
+  path.exists(ssh_config_file, function(exists) {
+    if (exists) {
+      var file = fs.createWriteStream(ssh_config_file, {'flags': 'a'});
+      file.write(identity_info, function() {
+        cb();
+      });
+    } else {
+      fs.writeFile(ssh_config_file, identity_info, function(err) {
+        if(err) console.log(err);
+        cb();
+      });
     }
   });
 };
 
 exports.read_or_generate_key = function(cb) {
-  this.has_ssh_key(function(has_key) {
+  var self = this;
+  self.has_ssh_key(function(has_key) {
     if (has_key) {
-      fs.readFile(process.env['HOME'] + '/.ssh/id_rsa.pub', 'ascii', function(err,data){
+      fs.readFile(process.env['HOME'] + '/.ssh/id_rsa_bitbucket.pub', 'ascii', function(err,data){
         cb(data);
       });
     } else {
-      generate_ssh_key(function() {
-
+      self.generate_ssh_key(function() {
+        fs.readFile(process.env['HOME'] + '/.ssh/id_rsa_bitbucket.pub', 'ascii', function(err,data){
+          cb(data);
+        });
       });
     }
   });
