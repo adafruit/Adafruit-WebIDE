@@ -33,7 +33,7 @@ exports.generate_ssh_key = function(cb) {
 
 exports.append_to_ssh_config = function append_to_ssh_config(cb) {
   var ssh_config_file = process.env['HOME'] + '/.ssh/config';
-  var identity_info = "IdentityFile ~/.ssh/id_rsa_bitbucket";
+  var identity_info = "Host bitbucket.org \r\n\tHostName bitbucket.org\r\n\tPreferredAuthentications publickey\r\n\tIdentityFile ~/.ssh/id_rsa_bitbucket";
   path.exists(ssh_config_file, function(exists) {
     if (exists) {
       var file = fs.createWriteStream(ssh_config_file, {'flags': 'a'});
