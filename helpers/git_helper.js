@@ -54,9 +54,13 @@ exports.clone_repository = function(profile, repository_path, cb) {
   var repository_url = url.parse(repository_path);
 
   console.log("cloning", repository_path);
-  git.clone(__dirname + "/../repositories", repository_url.href, function(output) {
-    cb(output.error, output.message);
+  request_helper.post_ssh_key(profile, function(err, response) {
+    console.log(err, response);
+    git.clone(__dirname + "/../repositories", repository_url.href, function(output) {
+      cb(output.error, output.message);
+    });
   });
+
 };
 
 exports.update_remote = function(profile, repository, cb) {
