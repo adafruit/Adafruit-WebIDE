@@ -30,10 +30,19 @@ block content
         div.control-group
           label(for="key", class="control-label") Key:
           div.controls
-            input(type="text", name="key")
+            input(type="text", name="key", value=consumer_key)
         div.control-group
           label(for="secret", class="control-label") Secret:
           div.controls
-            input(type="text", name="secret")
+            input(type="text", name="secret", value=consumer_secret)
+        p Add your Full Name and Email to attach to saved files at Bitbucket (git config)
+        div.control-group
+          label(for="name", class="control-label") Full Name:
+          div.controls
+            input(type="text", name="name", value=name)
+        div.control-group
+          label(for="email", class="control-label") Email:
+          div.controls
+            input(type="text", name="email", value=email)        
         p
-          input(type="submit", class="btn btn-primary", name="Submit")
+          input(type="submit", class="btn btn-primary btn-large", name="Submit")
