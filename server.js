@@ -59,7 +59,7 @@ function setup_passport(consumer_key, consumer_secret) {
       consumerSecret: consumer_secret,
       callbackURL: "http://raspberrypi.local:3000/auth/bitbucket/callback"
       //callbackURL: "http://76.17.224.82:3000/auth/bitbucket/callback"
-      //callbackURL: "http://127.0.0.1:3001/auth/bitbucket/callback"
+      //callbackURL: "http://127.0.0.1:3000/auth/bitbucket/callback"
     },
     function(token, tokenSecret, profile, done) {
       // asynchronous verification, for effect...
@@ -71,40 +71,42 @@ function setup_passport(consumer_key, consumer_secret) {
 
         var project_repository = 'git@bitbucket.org:' + profile.username + '/my-pi-projects.git';
 
-        //TODO REFACTOR THIS MESS
-        request_helper.list_repositories(profile, function(err, list) {
-          var exists = list.some(function(repository) {
-            return (repository.name.toLowerCase() === config.defaults.repository.toLowerCase());
-          });
-          git_helper.clone_adafruit_libraries(config.adafruit.repository, config.adafruit.remote, function() {
-            if (!exists) {
-              request_helper.create_repository(profile, config.defaults.repository, function(err, response) {
+        //TODO REFACTOR THIS MESS - it shouldn't even be here...
+        git_helper.set_config(function() {
+          request_helper.list_repositories(profile, function(err, list) {
+            var exists = list.some(function(repository) {
+              return (repository.name.toLowerCase() === config.defaults.repository.toLowerCase());
+            });
+            git_helper.clone_adafruit_libraries(config.adafruit.repository, config.adafruit.remote, function() {
+              if (!exists) {
+                request_helper.create_repository(profile, config.defaults.repository, function(err, response) {
+                  git_helper.clone_repository(profile, project_repository, function(err, response) {
+                    console.log("created personal repository in bitbucket");
+                    fs_helper.create_project_readme(function(err, file) {
+                      if (err) console.log(err);
+                      console.log(file);
+
+                      git_helper.commit_push_and_save(file, function(err, response) {
+                        return done(null, profile);
+                      });
+                    });
+                  });
+
+                });
+              } else {
                 git_helper.clone_repository(profile, project_repository, function(err, response) {
-                  console.log("created personal repository in bitbucket");
+                  console.log(err, response);
                   fs_helper.create_project_readme(function(err, file) {
-                    if (err) console.log(err);
                     console.log(file);
+                    if (err) console.log(err);
 
                     git_helper.commit_push_and_save(file, function(err, response) {
                       return done(null, profile);
                     });
                   });
                 });
-
-              });
-            } else {
-              git_helper.clone_repository(profile, project_repository, function(err, response) {
-                console.log(err, response);
-                fs_helper.create_project_readme(function(err, file) {
-                  console.log(file);
-                  if (err) console.log(err);
-
-                  git_helper.commit_push_and_save(file, function(err, response) {
-                    return done(null, profile);
-                  });
-                });
-              });
-            }
+              }
+            });
           });
         });
 
@@ -279,7 +281,7 @@ function mount_dav(server) {
   davServer = jsDAV.mount({
     path: __dirname + "/repositories",
     mount: '/filesystem',
-    plugins: ["browser", "codesearch", "tree", "filelist", "filesearch", "locks", "mount", "temporaryfilefilter"],
+    plugins: ["codesearch", "tree", "filelist", "filesearch", "locks", "mount", "temporaryfilefilter"],
     server: server,
     standalone: false,
     tree: new jsDAV_Tree_Filesystem(__dirname + "/repositories")
