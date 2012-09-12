@@ -28,8 +28,7 @@ exports.setup = function(req, res) {
         locals.name = user.name;
         locals.email = user.email;
       }
-
-      console.log(locals);
+      
       res.render('users/setup', locals);
     });
   });
