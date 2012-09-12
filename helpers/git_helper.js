@@ -88,6 +88,7 @@ exports.set_config = function(cb) {
     } else {
       console.log('git config is invalid');
       client.hgetall('user', function (err, user) {
+        console.log("set_config user", user);
         git.config("user.email", user.email, function(err, email) {
           git.config("user.name", user.name, function(err, name) {
             console.log("git config set", email, name);
