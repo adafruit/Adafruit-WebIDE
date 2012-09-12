@@ -16,7 +16,7 @@ exports.setup = function(req, res) {
       var locals = {
         consumer_key: "",
         consumer_secret: "",
-        full_name: "",
+        name: "",
         email: ""
       };
       if (bitbucket) {
