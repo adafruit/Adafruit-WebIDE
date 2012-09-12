@@ -611,7 +611,7 @@
       });
     }
 
-    function create_file() {
+    function create_file(event) {
       event.preventDefault();
       var $create_wrapper = $('.navigator-item-create');
       var file_name = $('input[name="file_name"]').val();
