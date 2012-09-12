@@ -2,6 +2,8 @@ var git = require('gitty'),
     url = require('url'),
     path = require('path'),
     fs_helper = require('./fs_helper'),
+    redis = require("redis"),
+    client = redis.createClient(),
     request_helper = require('./request_helper');
 
 exports.clone_adafruit_libraries = function(adafruit_repository, remote, cb) {
@@ -59,6 +61,40 @@ exports.clone_repository = function(profile, repository_path, cb) {
     git.clone(__dirname + "/../repositories", repository_url.href, function(output) {
       cb(output.error, output.message);
     });
+  });
+
+};
+
+exports.validate_config = function validate_config(cb) {
+  git.config("user.email", null, function(email) {
+    git.config("user.name", null, function(name) {
+      console.log(email, name);
+      if (name && email) {
+        cb(true);
+      } else {
+        cb(false);
+      }
+    });
+  });
+};
+
+exports.set_config = function(cb) {
+  var self = this;
+  self.validate_config(function(is_valid) {
+    if (is_valid) {
+      console.log('git config is valid');
+      cb();
+    } else {
+      console.log('git config is invalid');
+      client.hgetall('user', function (err, user) {
+        git.config("user.email", user.email, function(email) {
+          git.config("user.name", user.name, function(name) {
+            console.log("git config set", email, name);
+            cb();
+          });
+        });
+      });
+    }
   });
 
 };
