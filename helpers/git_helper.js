@@ -66,8 +66,9 @@ exports.clone_repository = function(profile, repository_path, cb) {
 };
 
 exports.validate_config = function validate_config(cb) {
-  git.config("user.email", null, function(email) {
-    git.config("user.name", null, function(name) {
+  git.config("user.email", null, function(err, email) {
+    git.config("user.name", null, function(err, name) {
+      if (err) console.log("validate_config err", err);
       console.log(email, name);
       if (name && email) {
         cb(true);
@@ -87,8 +88,8 @@ exports.set_config = function(cb) {
     } else {
       console.log('git config is invalid');
       client.hgetall('user', function (err, user) {
-        git.config("user.email", user.email, function(email) {
-          git.config("user.name", user.name, function(name) {
+        git.config("user.email", user.email, function(err, email) {
+          git.config("user.name", user.name, function(err, name) {
             console.log("git config set", email, name);
             cb();
           });
