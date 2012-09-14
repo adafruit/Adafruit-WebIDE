@@ -24,6 +24,7 @@
                                       '<a href="" class="open-terminal"><i class="icon-list-alt"></i> Terminal</a>' +
                                       '<a href="" class="save-file"><i class="icon-cloud"></i> Save</a>' +
                                     '</p>',
+    "update_link":                  '<a href="" class="editor-update-link" target="_blank"><i class="icon-download"></i> Editor Update Available</a>',
     "create_clone_repository":      'Clone a repository by pasting in the full git ssh url found at Bitbucket or Github.<br/><br/>' +
                                     '<span class="small">Example Read-Only: git://github.com/adafruit/Adafruit-Raspberry-Pi-Python-Code.git</span><br/>' +
                                     '<span class="small">Example Read-Write: git@bitbucket.org:adafruit/adafruit-raspberry-pi-python-code.git</span><br/><br/>' +
@@ -74,7 +75,8 @@
 
     handle_navigator_actions();
     handle_editor_bar_actions();
-    handle_program_output();
+    //handle_program_output();
+    handle_update_action();
   };
 
   occEditor.init_commands = function(editor) {
@@ -98,12 +100,25 @@
 
     socket.on('connect', function () {
       $('.connection-state').removeClass('disconnected').addClass('connected').text('Connected');
+      occEditor.check_for_updates();
     });
     socket.on('disconnect', function () {
       $('.connection-state').removeClass('connected').addClass('disconnected').text('Disconnected');
     });
     socket.on('cwd-init', function(data) {
       dirname = data.dirname;
+    });
+  };
+
+  occEditor.check_for_updates = function() {
+    socket.emit('editor-check-updates');
+
+    socket.on('editor-update-status', function(data) {
+      if (data.has_update) {
+        $('.update-wrapper').html(templates.update_link);
+      } else {
+        $('.update-wrapper').html('');
+      }
     });
   };
 
@@ -354,6 +369,18 @@
     $(document).on('click touchstart', '.copy-project', copy_project);
     $(document).on('click touchstart', '.save-file', occEditor.save_file);
     $(document).on('click touchstart', '.run-file', run_file);
+  }
+
+  function handle_update_action() {
+    function update_editor() {
+      event.preventDefault();
+      socket.emit('editor-update');
+    }
+
+    socket.on('editor-update', function() {
+
+    });
+    $(document).on('click touchstart', '.editor-update-link', update_editor);
   }
 
   function handle_program_output() {

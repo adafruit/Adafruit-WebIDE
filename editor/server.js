@@ -12,6 +12,7 @@ var express = require('express'),
     jsDAV = require("jsDAV/lib/jsdav"),
     fs = require('fs'),
     path = require('path'),
+    updater = require('./helpers/updater'),
     git_helper = require('./helpers/git_helper'),
     fs_helper = require('./helpers/fs_helper'),
     request_helper = require('./helpers/request_helper'),
@@ -269,6 +270,10 @@ function socket_listeners() {
       //git_helper.commit_push_and_save(data.file, function(err, status) {
       //  socket.emit('commit-file-complete', {message: "Save was successful"});
       //});
+    });
+
+    socket.on('editor-check-updates', function() {
+      updater.check_for_updates(socket);
     });
   });
 }

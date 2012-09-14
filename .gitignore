@@ -4,5 +4,5 @@ node_modules
 repositories
 users.db
 
-*.tar.bz2
+*.tar.gz
 __MACOSX

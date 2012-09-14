@@ -1,11 +1,40 @@
 var exec = require('child_process').exec,
   fs = require ('fs'),
-  request = require('request');
+  request = require('request'),
+  config = require('../config/config');
 
-//archive with:
-//git archive monitor | gzip > editor.tar.gz
+exports.check_for_updates = function check_for_updates(socket) {
+  var self = this;
+  self.get_version_info(function(err, version, update_url, update_notes) {
+    //console.log(err);
+    var has_update = false;
+    if (config.editor.version !== version) {
+      console.log("Update available");
+      has_update = true;
+    } else {
+      has_update = false;
+    }
 
-function download_archive(cb) {
+    socket.emit('editor-update-status', {has_update: has_update, url: update_url, notes: update_notes});
+  });
+};
+
+exports.get_version_info = function(cb) {
+  request(config.editor.version_url, function (err, response, body) {
+    if (!err && response.statusCode == 200) {
+      var version_info = body.split('\n');
+      cb(null, version_info[0], version_info[1], version_info[2]);
+    } else {
+      cb(err);
+    }
+  });
+};
+
+exports.update = function (cb) {
+
+};
+
+function download_archive(update_url, cb) {
   var download = request('https://dl.dropbox.com/s/wfg79l5f4old9pc/editor.tar.gz?dl=1');
   download.pipe(fs.createWriteStream(__dirname + '/../../editor.tar.gz'));
   download.on('error', function (e) {
@@ -35,4 +64,5 @@ function execute(file) {
   });
 }
 
+//this.check_for_updates();
 //this.execute_program();

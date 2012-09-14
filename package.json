@@ -1,0 +1,9 @@
+{
+  "name": "AdafruitWebIDEMonitor",
+  "description": "simple raspberry pi editing environment",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "forever-monitor": ""
+  }
+}
