@@ -223,9 +223,9 @@ function ensureOauth(req, res, next) {
 
 function serverInitialization(app) {
 
-  var exists = path.existsSync('./repositories');
+  var exists = path.existsSync(__dirname + "/../repositories");
   if (!exists) {
-    fs.mkdirSync('./repositories', 0777);
+    fs.mkdirSync(__dirname + "/../repositories", 0777);
     console.log('created repositories folder');
   }
 
@@ -279,12 +279,12 @@ function mount_dav(server) {
   var jsDAV_Tree_Filesystem = require("jsDAV/lib/DAV/tree/filesystem").jsDAV_Tree_Filesystem;
   //jsDAV.debugMode = true;
   davServer = jsDAV.mount({
-    path: __dirname + "/repositories",
+    path: __dirname + "/../repositories",
     mount: '/filesystem',
     plugins: ["codesearch", "tree", "filelist", "filesearch", "locks", "mount", "temporaryfilefilter"],
     server: server,
     standalone: false,
-    tree: new jsDAV_Tree_Filesystem(__dirname + "/repositories")
+    tree: new jsDAV_Tree_Filesystem(__dirname + "/../repositories")
   });
   console.log('webdav filesystem mounted');
 }

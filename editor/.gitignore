@@ -3,6 +3,3 @@
 node_modules
 repositories
 users.db
-
-*.tar.bz2
-__MACOSX

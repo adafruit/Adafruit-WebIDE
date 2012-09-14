@@ -1,0 +1,20 @@
+{
+  "name": "raspeditor",
+  "description": "simple raspberry pi editing environment",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "express": "3.x",
+    "passport": "0.x",
+    "passport-bitbucket": "0.x",
+    "jade": "0.x",
+    "request": "2.x",
+    "socket.io": "0.x",
+    "gitty": "git://github.com/jwcooper/Gitty.git",
+    "jsDAV": "git://github.com/mikedeboer/jsDAV.git",
+    "connect": "2.x",
+    "connect-redis": "1.x",
+    "redis": "0.x",
+    "tty.js": "git://github.com/jwcooper/tty.js.git"
+  }
+}
