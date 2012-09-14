@@ -69,7 +69,7 @@ function execute_update(update_url, cb) {
 
 function extract_upate(file) {
   var child = exec('tar -zxvf ' + file + ' -C ' + __dirname + '/../../', function (err, stdout, stderr) {
-      if (err || stderr) cb(err || stderr, false);
+      if (err) cb(err, false);
       cb(null, stdout);
   });
 }
