@@ -36,7 +36,7 @@ exports.update = function (socket) {
     if (err) {
       socket.emit('editor-update-complete', {editor_update_success: false, notes: update_notes});
     } else {
-      self.execute_update(update_url, function(err, status) {
+      execute_update(update_url, function(err, status) {
         setTimeout(function() {
           //allow for server restart time
           socket.emit('editor-update-complete', {editor_update_success: true, notes: update_notes});
