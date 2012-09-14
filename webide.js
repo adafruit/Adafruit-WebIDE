@@ -1,0 +1,23 @@
+var forever = require('forever-monitor');
+
+var child = new (forever.Monitor)('server.js', {
+  silent: false,
+  killTree: true,
+  minUptime: 5000,
+  watch: true,
+  sourceDir: 'editor',
+  //watchIgnoreDotFiles: '.foreverignore',
+  //'logFile': 'logs/forever.log',
+  //'outFile': 'logs/stdout.log',
+  //'errFile': 'logs/stderr.log'
+});
+
+child.on('exit', function () {
+  console.log('server exited');
+});
+
+child.on('error', function (err) {
+  console.log(err);
+});
+
+child.start();
