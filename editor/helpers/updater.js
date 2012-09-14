@@ -71,7 +71,8 @@ exports.update = function (socket) {
 };
 
 function create_lock_file(cb) {
-  fs.writeFile('update.lock', '', function (err) {
+  fs.writeFile(__dirname + '/update.lock', '', function (err) {
+    console.log('created lock file');
     if (err) cb(err);
     else cb(null);
   });
