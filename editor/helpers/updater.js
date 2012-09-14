@@ -1,10 +1,23 @@
 var exec = require('child_process').exec,
   fs = require ('fs'),
+  path = require('path'),
   request = require('request'),
   config = require('../config/config');
 
+  fs.exists || (fs.exists = path.exists);
+
 exports.check_for_updates = function check_for_updates(socket) {
   var self = this;
+
+  path.exists(__dirname + '/update.lock', function(exists) {
+    if (exists) {
+      socket.emit('editor-update-complete');
+      fs.unlink(__dirname + '/update.lock', function (err) {
+        console.log('successfully deleted update.lock file');
+      });
+    }
+  });
+          
   self.get_version_info(function(err, version, update_url, update_notes) {
     //console.log(err);
     var has_update = false;
@@ -20,6 +33,7 @@ exports.check_for_updates = function check_for_updates(socket) {
 };
 
 exports.get_version_info = function(cb) {
+  console.log('get_version_info');
   request(config.editor.version_url, function (err, response, body) {
     if (!err && response.statusCode == 200) {
       var version_info = body.split('\n');
@@ -33,41 +47,54 @@ exports.get_version_info = function(cb) {
 exports.update = function (socket) {
   var self = this;
   socket = socket;
+  console.log('update');
   self.get_version_info(function(err, version, update_url, update_notes) {
     if (err) {
       socket.emit('editor-update-complete', {editor_update_success: false, notes: update_notes});
     } else {
-      execute_update(update_url, socket, function(err, status) {
-        socket.emit('editor-update-restart-start');
-        setTimeout(function() {
-          //allow for server restart time
-          console.log("update complete", err, status);
-          socket.emit('editor-update-restart-end');
-          socket.emit('editor-update-complete', {editor_update_success: true, notes: update_notes});
-        }, 5000);
+      create_lock_file(function(err) {
+        if (err) {
+          socket.emit('editor-update-complete', {editor_update_success: false, notes: update_notes});
+        } else {
+          execute_update(update_url, socket, function(err, status) {
+            //server restarting here...check for lock when re-connect
+          });
+        }
       });
     }
   });
 };
 
+function create_lock_file(cb) {
+  fs.writeFile('update.lock', '', function (err) {
+    if (err) cb(err);
+    else cb(null);
+  });
+}
+
 function download_archive(update_url, socket, cb) {
   socket.emit('editor-update-download-start');
+  console.log('download start');
   var download = request(update_url);
   download.pipe(fs.createWriteStream(__dirname + '/../../editor.tar.gz'));
   download.on('error', function (e) {
     cb(e);
   });
   download.on('end', function () {
+    console.log('end download');
     socket.emit('editor-update-download-end');
     cb();
   });
 }
 
 function execute_update(update_url, socket, cb) {
+  console.log('execute_update');
   download_archive(update_url, socket, function() {
+    console.log('download response');
     var editor_zip = __dirname + "/../../editor.tar.gz";
     console.log(editor_zip);
     extract_upate(editor_zip, socket, function(err, status) {
+      console.log('extract update response');
       cb(err, status);
     });
   });
@@ -75,10 +102,12 @@ function execute_update(update_url, socket, cb) {
 
 function extract_upate(file, socket, cb) {
   socket.emit('editor-update-unpack-start');
+  console.log('extract update');
   var child = exec('tar -zxvf ' + file + ' -C ' + __dirname + '/../../', function (err, stdout, stderr) {
     socket.emit('editor-update-unpack-end');
-    if (err || stderr) cb(err || stderr, false);
-    cb(null, stdout);
+    console.log('err', err);
+    if (err) cb(err, false);
+    else cb(null, stdout);
   });
 }
 
