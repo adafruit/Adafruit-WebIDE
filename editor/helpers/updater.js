@@ -30,8 +30,20 @@ exports.get_version_info = function(cb) {
   });
 };
 
-exports.update = function (cb) {
-
+exports.update = function (socket) {
+  var self = this;
+  self.get_version_info(function(err, version, update_url, update_notes) {
+    if (err) {
+      socket.emit('editor-update-complete', {editor_update_success: false, notes: update_notes});
+    } else {
+      self.execute_update(update_url, function(err, status) {
+        setTimeout(function() {
+          //allow for server restart time
+          socket.emit('editor-update-complete', {editor_update_success: true, notes: update_notes});
+        }, 5000);
+      });
+    }
+  });
 };
 
 function download_archive(update_url, cb) {
@@ -41,26 +53,24 @@ function download_archive(update_url, cb) {
     cb(e);
   });
   download.on('end', function () {
-      return cb();
+    cb();
   });
 }
 
-exports.execute_program = function execute_program() {
-  download_archive(function() {
+function execute_update(update_url, cb) {
+  download_archive(update_url, function() {
     var editor_zip = __dirname + "/../../editor.tar.gz";
     console.log(editor_zip);
-    execute(editor_zip);
+    extract_upate(editor_zip, function(err, status) {
+      cb(err, status);
+    });
   });
-};
+}
 
-function execute(file) {
-  var child = exec('tar -zxvf ' + file + ' -C ' + __dirname + '/../../',
-    function (error, stdout, stderr) {
-      console.log('stdout: ' + stdout);
-      console.log('stderr: ' + stderr);
-      if (error !== null) {
-        console.log('exec error: ' + error);
-      }
+function extract_upate(file) {
+  var child = exec('tar -zxvf ' + file + ' -C ' + __dirname + '/../../', function (err, stdout, stderr) {
+      if (err || stderr) cb(err || stderr, false);
+      cb(null, stdout);
   });
 }
 

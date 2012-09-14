@@ -275,6 +275,10 @@ function socket_listeners() {
     socket.on('editor-check-updates', function() {
       updater.check_for_updates(socket);
     });
+
+    socket.on('editor-update', function() {
+      updater.update(socket);
+    });
   });
 }
 
