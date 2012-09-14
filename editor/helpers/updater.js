@@ -2,6 +2,9 @@ var exec = require('child_process').exec,
   fs = require ('fs'),
   request = require('request');
 
+//archive with:
+//git archive monitor | gzip > editor.tar.gz
+
 function download_archive(cb) {
   var download = request('https://dl.dropbox.com/s/wfg79l5f4old9pc/editor.tar.gz?dl=1');
   download.pipe(fs.createWriteStream(__dirname + '/../../editor.tar.gz'));
