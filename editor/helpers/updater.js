@@ -47,7 +47,7 @@ exports.update = function (socket) {
 };
 
 function download_archive(update_url, cb) {
-  var download = request('https://dl.dropbox.com/s/wfg79l5f4old9pc/editor.tar.gz?dl=1');
+  var download = request(update_url);
   download.pipe(fs.createWriteStream(__dirname + '/../../editor.tar.gz'));
   download.on('error', function (e) {
     cb(e);
