@@ -32,13 +32,17 @@ exports.get_version_info = function(cb) {
 
 exports.update = function (socket) {
   var self = this;
+  socket = socket;
   self.get_version_info(function(err, version, update_url, update_notes) {
     if (err) {
       socket.emit('editor-update-complete', {editor_update_success: false, notes: update_notes});
     } else {
-      execute_update(update_url, function(err, status) {
+      execute_update(update_url, socket, function(err, status) {
+        socket.emit('editor-update-restart-start');
         setTimeout(function() {
           //allow for server restart time
+          console.log("update complete", err, status);
+          socket.emit('editor-update-restart-end');
           socket.emit('editor-update-complete', {editor_update_success: true, notes: update_notes});
         }, 5000);
       });
@@ -46,31 +50,35 @@ exports.update = function (socket) {
   });
 };
 
-function download_archive(update_url, cb) {
+function download_archive(update_url, socket, cb) {
+  socket.emit('editor-update-download-start');
   var download = request(update_url);
   download.pipe(fs.createWriteStream(__dirname + '/../../editor.tar.gz'));
   download.on('error', function (e) {
     cb(e);
   });
   download.on('end', function () {
+    socket.emit('editor-update-download-end');
     cb();
   });
 }
 
-function execute_update(update_url, cb) {
-  download_archive(update_url, function() {
+function execute_update(update_url, socket, cb) {
+  download_archive(update_url, socket, function() {
     var editor_zip = __dirname + "/../../editor.tar.gz";
     console.log(editor_zip);
-    extract_upate(editor_zip, function(err, status) {
+    extract_upate(editor_zip, socket, function(err, status) {
       cb(err, status);
     });
   });
 }
 
-function extract_upate(file) {
+function extract_upate(file, socket, cb) {
+  socket.emit('editor-update-unpack-start');
   var child = exec('tar -zxvf ' + file + ' -C ' + __dirname + '/../../', function (err, stdout, stderr) {
-      if (err) cb(err, false);
-      cb(null, stdout);
+    socket.emit('editor-update-unpack-end');
+    if (err || stderr) cb(err || stderr, false);
+    cb(null, stdout);
   });
 }
 

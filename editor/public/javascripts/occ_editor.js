@@ -380,6 +380,7 @@
     socket.on('editor-update-complete', function(data) {
       console.log(data);
     });
+    
     $(document).on('click touchstart', '.editor-update-link', update_editor);
   }
 
