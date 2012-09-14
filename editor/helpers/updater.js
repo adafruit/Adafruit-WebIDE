@@ -9,11 +9,12 @@ var exec = require('child_process').exec,
 exports.check_for_updates = function check_for_updates(socket) {
   var self = this;
 
-  path.exists(__dirname + '/update.lock', function(exists) {
+  console.log('check_for_updates');
+  fs.exists(__dirname + '/update.lock', function(exists) {
+    console.log(__dirname + '/update.lock', exists);
     if (exists) {
-      socket.emit('editor-update-complete');
-      fs.unlink(__dirname + '/update.lock', function (err) {
-        console.log('successfully deleted update.lock file');
+      socket.emit('editor-update-complete', {editor_update_success: true});
+      remove_lock_file(function (err) {
       });
     }
   });
@@ -50,11 +51,15 @@ exports.update = function (socket) {
   console.log('update');
   self.get_version_info(function(err, version, update_url, update_notes) {
     if (err) {
-      socket.emit('editor-update-complete', {editor_update_success: false, notes: update_notes});
+      remove_lock_file(function (err) {
+        socket.emit('editor-update-complete', {editor_update_success: false, notes: update_notes});
+      });
     } else {
       create_lock_file(function(err) {
         if (err) {
-          socket.emit('editor-update-complete', {editor_update_success: false, notes: update_notes});
+          remove_lock_file(function (err) {
+            socket.emit('editor-update-complete', {editor_update_success: false, notes: update_notes});
+          });
         } else {
           execute_update(update_url, socket, function(err, status) {
             //server restarting here...check for lock when re-connect
@@ -69,6 +74,13 @@ function create_lock_file(cb) {
   fs.writeFile('update.lock', '', function (err) {
     if (err) cb(err);
     else cb(null);
+  });
+}
+
+function remove_lock_file(cb) {
+  fs.unlink(__dirname + '/update.lock', function (err) {
+    console.log('successfully deleted update.lock file');
+    cb();
   });
 }
 
