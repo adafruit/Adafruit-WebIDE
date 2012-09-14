@@ -13,8 +13,8 @@ exports.check_for_updates = function check_for_updates(socket) {
   fs.exists(__dirname + '/update.lock', function(exists) {
     console.log(__dirname + '/update.lock', exists);
     if (exists) {
-      socket.emit('editor-update-complete', {editor_update_success: true});
       remove_lock_file(function (err) {
+        socket.emit('editor-update-complete', {editor_update_success: true});
       });
     }
   });

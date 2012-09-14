@@ -375,10 +375,31 @@
     function update_editor() {
       event.preventDefault();
       socket.emit('editor-update');
+      $('.connection-state').text('Updating');
     }
 
+    socket.on('editor-update-download-start', function() {
+      $('.connection-state').text('Downloading');
+    });
+
+    socket.on('editor-update-download-end', function() {
+      //console.log(data);
+    });
+
+    socket.on('editor-update-unpack-start', function() {
+      $('.connection-state').text('Unpacking');
+    });
+
+    socket.on('editor-update-unpack-end', function() {
+      $('.connection-state').text('Restarting');
+    });
+
     socket.on('editor-update-complete', function(data) {
-      console.log(data);
+      $('.connection-state').text('Update Complete');
+
+      setTimeout(function() {
+        $('.connection-state').text('Connected');
+      }, 3000);
     });
     
     $(document).on('click touchstart', '.editor-update-link', update_editor);
