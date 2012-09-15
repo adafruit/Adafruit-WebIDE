@@ -206,6 +206,7 @@
     occEditor.path = path;
     path = path || '/filesystem';
     function populateFileSystem(err, list) {
+      console.log(list);
       build_navigator_top(list[0]);
       build_navigator_list(list);
       build_navigator_bottom(list[0]);
@@ -278,7 +279,7 @@
 
   function build_navigator_top(item) {
     var ul = $(".filesystem").html('');
-    //console.log("item.name", item.name);
+    //console.log("item", item);
     if (item.name === 'filesystem') {
       var username = $('input[name="username"]').val();
       $('#navigator-top p').addClass('navigator-item-back').html("<a href=''><i class='icon-user'></i> " + username + "</a><a href='' class='navigator-settings'><i class='icon-cog'></i></a>");

@@ -23,7 +23,9 @@ var express = require('express'),
     config = require('./config/config');
 
 var davServer;
+var REPOSITORY_PATH = path.resolve(__dirname + "/../repositories");
 console.log(__dirname);
+console.log("REPOSITORY_PATH", REPOSITORY_PATH);
 
 // Passport session setup.
 //   To support persistent login sessions, Passport needs to be able to
@@ -224,9 +226,9 @@ function ensureOauth(req, res, next) {
 
 function serverInitialization(app) {
 
-  var exists = path.existsSync(__dirname + "/../repositories");
+  var exists = path.existsSync(REPOSITORY_PATH);
   if (!exists) {
-    fs.mkdirSync(__dirname + "/../repositories", 0777);
+    fs.mkdirSync(REPOSITORY_PATH, 0777);
     console.log('created repositories folder');
   }
 
@@ -247,7 +249,7 @@ function start_server() {
 
 function socket_listeners() {
   io.sockets.on('connection', function (socket) {
-    socket.emit('cwd-init', {dirname: __dirname + '/repositories'});
+    socket.emit('cwd-init', {dirname: __dirname + '/../repositories'});
 
     socket.on('git-delete', function(data) {
       git_helper.remove_commit_push(data.file, function(err, status) {
@@ -288,12 +290,12 @@ function mount_dav(server) {
   var jsDAV_Tree_Filesystem = require("jsDAV/lib/DAV/tree/filesystem").jsDAV_Tree_Filesystem;
   //jsDAV.debugMode = true;
   davServer = jsDAV.mount({
-    path: __dirname + "/../repositories",
+    path: REPOSITORY_PATH,
     mount: '/filesystem',
     plugins: ["codesearch", "tree", "filelist", "filesearch", "locks", "mount", "temporaryfilefilter"],
     server: server,
     standalone: false,
-    tree: new jsDAV_Tree_Filesystem(__dirname + "/../repositories")
+    tree: new jsDAV_Tree_Filesystem(REPOSITORY_PATH)
   });
   console.log('webdav filesystem mounted');
 }

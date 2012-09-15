@@ -6,10 +6,12 @@ var git = require('gitty'),
     client = redis.createClient(),
     request_helper = require('./request_helper');
 
+var REPOSITORY_PATH = path.resolve(__dirname + "/../../repositories");
+
 exports.clone_adafruit_libraries = function(adafruit_repository, remote, cb) {
   fs_helper.check_for_repository(adafruit_repository, function(err, status) {
     if (!err && !status) {
-    git.clone(__dirname + "/../../repositories", remote, function(output) {
+    git.clone(REPOSITORY_PATH, remote, function(output) {
       console.log(output);
       cb();
     });
@@ -21,7 +23,7 @@ exports.clone_adafruit_libraries = function(adafruit_repository, remote, cb) {
 
 exports.clone_update_remote_push = function(profile, repository_url, cb) {
   var self = this;
-  console.log(profile);
+  //console.log(profile);
   var repository_name = path.basename(repository_url, '.git');
   console.log(repository_name);
   console.log(repository_url);
@@ -58,7 +60,7 @@ exports.clone_repository = function(profile, repository_path, cb) {
   console.log("cloning", repository_path);
   request_helper.post_ssh_key(profile, function(err, response) {
     console.log(err, response);
-    git.clone(__dirname + "/../../repositories", repository_url.href, function(output) {
+    git.clone(REPOSITORY_PATH, repository_url.href, function(output) {
       cb(output.error, output.message);
     });
   });
@@ -103,14 +105,14 @@ exports.set_config = function(cb) {
 
 exports.update_remote = function(profile, repository, cb) {
   var remote_url = "ssh://git@bitbucket.org/" + profile.username + "/" + repository.toLowerCase() + ".git";
-  git.remote.update(__dirname + "/../../repositories/" + repository, "origin", remote_url, function(output) {
+  git.remote.update(REPOSITORY_PATH + repository, "origin", remote_url, function(output) {
     //console.log(output);
     cb(output.error, output.message);
   });
 };
 
 exports.add_remote = function(repository, remote_name, remote_url, cb) {
-  git.remote.add(__dirname + "/../../repositories/" + repository, remote_name, remote_url, function(output) {
+  git.remote.add(REPOSITORY_PATH + repository, remote_name, remote_url, function(output) {
     //console.log(output);
     cb(output.error, output.message);
   });
@@ -120,7 +122,7 @@ exports.add = function add(repository, files, cb) {
   if (!Array.isArray(files)) {
     files = [files];
   }
-  var repository_path = __dirname + "/../../repositories/" + repository;
+  var repository_path = REPOSITORY_PATH + repository;
   git.add(repository_path, files, function(output) {
     //console.log(output);
     cb(output.errors, output.added);
@@ -131,7 +133,7 @@ exports.remove = function remove(repository, files, cb) {
   if (!Array.isArray(files)) {
     files = [files];
   }
-  var repository_path = __dirname + "/../../repositories/" + repository;
+  var repository_path = REPOSITORY_PATH + repository;
   git.remove(repository_path, files, function(output) {
     console.log(output);
     cb(output.errors, output.added);
@@ -139,7 +141,7 @@ exports.remove = function remove(repository, files, cb) {
 };
 
 exports.remove_recursive = function remove_recursive(repository, path, cb) {
-  var repository_path = __dirname + "/../../repositories/" + repository;
+  var repository_path = REPOSITORY_PATH + repository;
 
   git.remove_recursive(repository_path, path, function(output) {
     console.log(output);
@@ -148,7 +150,7 @@ exports.remove_recursive = function remove_recursive(repository, path, cb) {
 };
 
 exports.commit = function commit(repository, message, cb) {
-  var repository_path = __dirname + "/../../repositories/" + repository;
+  var repository_path = REPOSITORY_PATH + repository;
   git.commit(repository_path, message, function(obj) {
     //console.log(obj);
     cb(obj.error, obj.message);
@@ -156,7 +158,7 @@ exports.commit = function commit(repository, message, cb) {
 };
 
 exports.push = function push(repository, remote, branch, cb) {
-  var repository_path = __dirname + "/../../repositories/" + repository;
+  var repository_path = REPOSITORY_PATH + repository;
   git.push(repository_path, remote, branch, function(obj) {
     //console.log(obj);
     cb(obj.error, obj.message);
@@ -164,7 +166,7 @@ exports.push = function push(repository, remote, branch, cb) {
 };
 
 exports.pull = function push(repository, remote, branch, cb) {
-  var repository_path = __dirname + "/../../repositories/" + repository;
+  var repository_path = REPOSITORY_PATH + repository;
   git.pull(repository_path, remote, branch, function(obj) {
     //console.log(obj);
     cb(obj.error, obj.message);
