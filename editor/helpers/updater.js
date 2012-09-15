@@ -114,11 +114,15 @@ function execute_update(update_url, socket, cb) {
 }
 
 function extract_upate(file, socket, cb) {
+  var command = 'tar -zxvf ' + file + ' -C ' + __dirname + '/../../';
   socket.emit('editor-update-unpack-start');
   console.log('extract update');
+  console.log(command);
   var child = exec('tar -zxvf ' + file + ' -C ' + __dirname + '/../../', function (err, stdout, stderr) {
     socket.emit('editor-update-unpack-end');
     console.log('err', err);
+    console.log('stderr', stderr);
+    console.log('stdout', stdout);
     if (err) cb(err, false);
     else cb(null, stdout);
   });
