@@ -401,12 +401,12 @@
     });
 
     socket.on('editor-update-complete', function(data) {
-      $('.connection-state').text('Update Complete');
+      $('.connection-state').text('Update Complete, Refreshing Browser');
       updating = false;
 
       setTimeout(function() {
-        $('.connection-state').text('Connected');
-      }, 3000);
+        location.reload(true);
+      }, 2000);
     });
     
     $(document).on('click touchstart', '.editor-update-link', update_editor);
