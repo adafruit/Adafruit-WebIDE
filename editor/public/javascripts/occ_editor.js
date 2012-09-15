@@ -3,7 +3,7 @@
 (function( occEditor, $, undefined ) {
   var editor, modes = [],
       socket = io.connect(),
-      dirname;
+      dirname, updating = false;
 
   var templates = {
     "editor_bar_init":              '<p class="editor-bar-actions">' +
@@ -103,7 +103,11 @@
       occEditor.check_for_updates();
     });
     socket.on('disconnect', function () {
-      $('.connection-state').removeClass('connected').addClass('disconnected').text('Disconnected');
+      if (updating) {
+        $('.connection-state').text('Restarting');
+      } else {
+        $('.connection-state').removeClass('connected').addClass('disconnected').text('Disconnected');
+      }
     });
     socket.on('cwd-init', function(data) {
       dirname = data.dirname;
@@ -376,6 +380,7 @@
       event.preventDefault();
       socket.emit('editor-update');
       $('.connection-state').text('Updating');
+      updating = true;
     }
 
     socket.on('editor-update-download-start', function() {
@@ -396,6 +401,7 @@
 
     socket.on('editor-update-complete', function(data) {
       $('.connection-state').text('Update Complete');
+      updating = false;
 
       setTimeout(function() {
         $('.connection-state').text('Connected');
