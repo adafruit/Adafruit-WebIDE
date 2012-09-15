@@ -16,6 +16,10 @@ child.on('exit', function () {
   console.log('server exited');
 });
 
+child.on('watch:restart', function (details) {
+  console.log(details);
+});
+
 child.on('error', function (err) {
   console.log(err);
 });

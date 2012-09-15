@@ -10,8 +10,8 @@ exports.check_for_updates = function check_for_updates(socket) {
   var self = this;
 
   console.log('check_for_updates');
-  fs.exists(__dirname + '/update.lock', function(exists) {
-    console.log(__dirname + '/update.lock', exists);
+  fs.exists(__dirname + '/../../update.lock', function(exists) {
+    console.log(__dirname + '/../../update.lock', exists);
     if (exists) {
       remove_lock_file(function (err) {
         socket.emit('editor-update-complete', {editor_update_success: true});
@@ -71,7 +71,7 @@ exports.update = function (socket) {
 };
 
 function create_lock_file(cb) {
-  fs.writeFile(__dirname + '/update.lock', '', function (err) {
+  fs.writeFile(__dirname + '/../../update.lock', '', function (err) {
     console.log('created lock file');
     if (err) cb(err);
     else cb(null);
@@ -79,7 +79,7 @@ function create_lock_file(cb) {
 }
 
 function remove_lock_file(cb) {
-  fs.unlink(__dirname + '/update.lock', function (err) {
+  fs.unlink(__dirname + '/../../update.lock', function (err) {
     console.log('successfully deleted update.lock file');
     cb();
   });
