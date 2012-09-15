@@ -2,7 +2,7 @@
 
 (function( occEditor, $, undefined ) {
   var editor, modes = [],
-      socket = io.connect(),
+      socket = io.connect(null, {'reconnection limit': 2000, 'max reconnection attempts': 30}),
       dirname, updating = false;
 
   var templates = {
