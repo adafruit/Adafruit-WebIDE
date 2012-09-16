@@ -5,7 +5,7 @@ var child = new (forever.Monitor)('server.js', {
   killTree: true,
   minUptime: 5000,
   watch: true,
-  sourceDir: 'editor',
+  sourceDir: 'editor'
   //watchIgnoreDotFiles: '.foreverignore',
   //'logFile': 'logs/forever.log',
   //'outFile': 'logs/stdout.log',
@@ -23,5 +23,5 @@ child.on('watch:restart', function (details) {
 child.on('error', function (err) {
   console.log(err);
 });
-
+console.log("Starting the Adafruit WebIDE...");
 child.start();

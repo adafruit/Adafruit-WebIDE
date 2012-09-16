@@ -80,6 +80,7 @@
   };
 
   occEditor.init_commands = function(editor) {
+    editor_startup("Initializing Editor Commands");
     var commands = editor.commands;
     commands.addCommand({
         name: "save",
@@ -91,6 +92,7 @@
   };
 
   occEditor.init_events = function(editor) {
+    editor_startup("Initializing Editor Events");
     editor.on('change', function() {
       var editor_content = editor.getSession().getDocument().getValue();
       var $file_element = $('.filesystem li.file-open');
@@ -127,6 +129,7 @@
   };
 
   occEditor.populate_editor = function(file, content) {
+
     var EditSession = require("ace/edit_session").EditSession;
     var UndoManager = require("ace/undomanager").UndoManager;
 
@@ -140,6 +143,8 @@
       session.setMode(file_mode.mode);
 
       editor.setSession(session);
+
+      editor_startup("Populating Editor");
     }
     if (content) {
       //file has already been opened in this session, and edited
@@ -161,6 +166,7 @@
   };
 
   occEditor.populate_editor_bar = function() {
+    editor_startup("Populating Editor Bar");
     var $editor_bar = $('#editor-bar');
 
     function is_adafruit_project(path) {
@@ -203,6 +209,7 @@
   };
 
   occEditor.populate_navigator = function(path) {
+    editor_startup("Populating Navigator");
     occEditor.path = path;
     path = path || '/filesystem';
     function populateFileSystem(err, list) {
@@ -211,15 +218,16 @@
       build_navigator_list(list);
       build_navigator_bottom(list[0]);
       handle_navigator_scroll();
+      editor_startup("Navigator Populated", true);
     }
 
     occEditor.clear_editor();
     $(document).trigger('file_open', {path: path});
-
     davFS.listDir(path, populateFileSystem);
   };
 
   occEditor.open_readme = function() {
+    editor_startup("Opening Readme");
     var file = {
       path: '/filesystem/my-pi-projects/README.md'
     };
@@ -679,6 +687,7 @@
         create_fs_response(err, status);
       });
     }
+
     //clicking a file or folder in the list.
     $(document).on('click touchstart', '.navigator-item', navigator_item_selected);
     $(document).on('click touchstart', '.navigator-item-back a:first-child', navigator_back_selected);
@@ -692,6 +701,16 @@
     $(document).on('submit', '#create-project-form', create_folder);
     $(document).on('submit', '#create-file-form', create_file);
   }
+
+
+  function editor_startup(string, is_complete) {
+    $('.connection-state').html(string);
+
+    if (is_complete) {
+      $('#editor-container').show();
+    }
+    //$('#editor-startup').append($('<p>' + string + '</p>'));
+  }  
 
   function clone_repository($form) {
     function handler(err, data, jqXHR) {

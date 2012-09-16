@@ -9,6 +9,16 @@
   background-color: #f1f1f1;
 }
 
+#editor-container {
+  display: none;
+}
+
+#editor-startup {
+  height: 100%;
+  padding: 20px 0 0 20px;
+  background-color: white;
+}
+
 /* Top Nav Bar */
 
 .navbar .brand {
