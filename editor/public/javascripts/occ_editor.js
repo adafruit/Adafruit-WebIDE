@@ -217,8 +217,9 @@
       build_navigator_top(list[0]);
       build_navigator_list(list);
       build_navigator_bottom(list[0]);
-      handle_navigator_scroll();
       editor_startup("Navigator Populated", true);
+      
+      handle_navigator_scroll();
     }
 
     occEditor.clear_editor();
@@ -704,12 +705,12 @@
 
 
   function editor_startup(string, is_complete) {
-    $('.connection-state').html(string);
-
+    //$('.connection-state').html(string);
+    $('#editor-startup').append($('<p>' + string + '</p>'));
     if (is_complete) {
+      $('#editor-startup').hide();
       $('#editor-container').show();
     }
-    //$('#editor-startup').append($('<p>' + string + '</p>'));
   }  
 
   function clone_repository($form) {
