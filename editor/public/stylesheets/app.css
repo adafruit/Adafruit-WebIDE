@@ -60,6 +60,29 @@
   text-decoration: none;
 }
 
+/* Login page */
+#login-wrapper {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: #f1f1f1;
+  padding-top: 200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+#login-wrapper img {
+  margin: 0 auto;
+  display: block;
+  padding-bottom: 10px;
+}
+
+#login-wrapper .login-help {
+  padding-top: 5px;
+  font-size: 12px;
+}
+
 /* File Navigator Section */
 
 #navigator {
