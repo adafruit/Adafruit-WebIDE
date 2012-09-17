@@ -6,7 +6,7 @@ var git = require('gitty'),
     client = redis.createClient(),
     request_helper = require('./request_helper');
 
-var REPOSITORY_PATH = path.resolve(__dirname + "/../../repositories");
+var REPOSITORY_PATH = path.resolve(__dirname + "/../../repositories") + "/";
 
 exports.clone_adafruit_libraries = function(adafruit_repository, remote, cb) {
   fs_helper.check_for_repository(adafruit_repository, function(err, status) {
@@ -151,6 +151,7 @@ exports.remove_recursive = function remove_recursive(repository, path, cb) {
 
 exports.commit = function commit(repository, message, cb) {
   var repository_path = REPOSITORY_PATH + repository;
+  console.log(repository_path);
   git.commit(repository_path, message, function(obj) {
     //console.log(obj);
     cb(obj.error, obj.message);
@@ -216,7 +217,6 @@ exports.commit_push_and_save = function(file, cb) {
     repository = file.repository;
     file_path = file.path;
   }
-
 
   self.add(repository, file_path, function(err, status) {
     console.log("added", err, status);
