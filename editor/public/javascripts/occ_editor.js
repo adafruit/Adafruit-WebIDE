@@ -137,7 +137,7 @@
     socket.on('editor-update-status', function(data) {
       if (data.has_update) {
         var update_link = $(templates.update_link).append(" (v" + data.version + ")");
-        $('.update-wrapper').html(update_link);
+        $('.update-wrapper').data('update', data).html(update_link);
       } else {
         $('.update-wrapper').html('');
       }
@@ -155,8 +155,10 @@
       var session = new EditSession(data);
       session.setUndoManager(new UndoManager());
 
-      var file_mode = getModeFromPath(file.path);
-      session.setMode(file_mode.mode);
+      if (file.path) {
+        var file_mode = getModeFromPath(file.path);
+        session.setMode(file_mode.mode);
+      }
 
       editor.setSession(session);
 
@@ -404,11 +406,17 @@
   }
 
   function handle_update_action() {
+    function load_update_notes() {
+      var update_data = $('.update-wrapper').data('update');
+      occEditor.populate_editor({name: "notes.md", path: "notes.md"}, update_data.notes);
+    }
+
     function update_editor() {
       event.preventDefault();
       socket.emit('editor-update');
       $('.connection-state').text('Updating');
       updating = true;
+      load_update_notes();
     }
 
     socket.on('editor-update-download-start', function() {
@@ -433,7 +441,7 @@
 
       setTimeout(function() {
         location.reload(true);
-      }, 2000);
+      }, 1500);
     });
     
     $(document).on('click touchstart', '.editor-update-link', update_editor);
