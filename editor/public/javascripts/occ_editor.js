@@ -136,7 +136,8 @@
 
     socket.on('editor-update-status', function(data) {
       if (data.has_update) {
-        $('.update-wrapper').html(templates.update_link);
+        var update_link = $(templates.update_link).append(" (v" + data.version + ")");
+        $('.update-wrapper').html(update_link);
       } else {
         $('.update-wrapper').html('');
       }
