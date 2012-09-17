@@ -4,7 +4,7 @@ var fs_helper = require('../helpers/fs_helper'),
 
 //Loads the editor
 exports.index = function(req, res) {
-  res.render('editor/index', {profile: req.user});
+  res.render('editor/index', {profile: req.user, version: config.editor.version});
 };
 
 exports.create_repository = function(req, res) {
