@@ -132,8 +132,10 @@ exports.open_file = function(path, cb) {
 };
 
 exports.create_project_readme = function(cb) {
-  var source = __dirname + '/../config/README.md';
-  var destination = __dirname + '/../repositories/' + config.defaults.repository + '/' + config.defaults.readme;
+  var source = path.resolve(__dirname + '/../config/README.md');
+  var destination = path.resolve(__dirname + '/../../repositories/' + config.defaults.repository + '/' + config.defaults.readme);
+  console.log(source);
+  console.log(destination);
   var file = {repository: config.defaults.repository, path: config.defaults.readme, name: config.defaults.readme};
 
   fs.lstat(destination, function(err, stat) {
