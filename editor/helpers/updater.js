@@ -29,7 +29,7 @@ exports.check_for_updates = function check_for_updates(socket) {
       has_update = false;
     }
 
-    socket.emit('editor-update-status', {has_update: has_update, url: update_url, notes: update_notes});
+    socket.emit('editor-update-status', {has_update: has_update, version: version, url: update_url, notes: update_notes});
   });
 };
 
