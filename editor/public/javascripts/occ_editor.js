@@ -213,7 +213,7 @@
     occEditor.path = path;
     path = path || '/filesystem';
     function populateFileSystem(err, list) {
-      console.log(list);
+      //console.log(list);
       build_navigator_top(list[0]);
       build_navigator_list(list);
       build_navigator_bottom(list[0]);
@@ -368,6 +368,7 @@
     }
 
     function copy_project(event) {
+      $('.copy-project').text("Copying into your project folder...");
       event.preventDefault();
       var source = $(this).attr('href');
       var path_array = source.split('/');
@@ -376,6 +377,7 @@
       
       davFS.copy(source, destination, true, function(err, status) {
         socket.emit('commit-file', { file: {path: destination, name: directory}, message: "Copied to my-pi-projects " + directory});
+        $('.copy-project').replaceWith($("<span>Project copy completed...</span>"));
       });
     }
 
