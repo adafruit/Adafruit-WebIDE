@@ -18,6 +18,7 @@
                                       '<a href="" class="run-file"><i class="icon-play"></i> Run</a>' +
                                       '<a href="" class="save-file"><i class="icon-cloud"></i> Save</a>' +
                                     '</p>',
+    "editor_bar_run_link":         '<a href="" class="run-file"><i class="icon-play"></i> Run</a>',
     "editor_bar_copy_link":         '<a href="" class="copy-project"><i class="icon-copy"></i> Copy this project to My Pi Projects</a>',
     "editor_bar_tutorial_link":     '<a href="" class="open-tutorial" target="_blank"><i class="icon-book"></i> Project Guide Available</a>',
     "editor_bar_file":              '<p class="editor-bar-actions">' +
@@ -208,6 +209,9 @@
       if (file.path) {
         if (is_adafruit_project(file.path)) {
           $editor_bar.html(templates.editor_bar_blank);
+          if (is_script(file.extension)) {
+            $(templates.editor_bar_run_link).appendTo('.editor-bar-actions');
+          }
           var $copy_link = $(templates.editor_bar_copy_link).attr('href', file.path);
           $copy_link.appendTo($('.editor-bar-actions'));
         }
