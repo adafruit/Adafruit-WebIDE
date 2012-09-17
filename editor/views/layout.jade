@@ -8,7 +8,8 @@ html
           a.brand(href="/")
             img(src="/images/WebIDE_Logo@2x.png", style="height:30px;")
           p.logout-wrapper
-            a(href="/logout") Log out
+            - if (typeof profile !== "undefined")
+              a(href="/logout") Log out
           p.update-wrapper
           div.connection-state
 
