@@ -4,10 +4,7 @@ var fs_helper = require('../helpers/fs_helper'),
 
 //Loads the editor
 exports.index = function(req, res) {
-  git_helper.pull(config.adafruit.repository, "origin", "master", function() {
-    console.log('pulled latest adafruit from github');
-    res.render('editor/index', {profile: req.user});
-  });
+  res.render('editor/index', {profile: req.user});
 };
 
 exports.create_repository = function(req, res) {

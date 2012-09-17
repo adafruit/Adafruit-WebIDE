@@ -13,6 +13,7 @@ var express = require('express'),
     fs = require('fs'),
     path = require('path'),
     updater = require('./helpers/updater'),
+    editor_setup = require('./helpers/editor_setup'),
     git_helper = require('./helpers/git_helper'),
     fs_helper = require('./helpers/fs_helper'),
     request_helper = require('./helpers/request_helper'),
@@ -72,47 +73,7 @@ function setup_passport(consumer_key, consumer_secret) {
         profile.consumer_key = consumer_key;
         profile.consumer_secret = consumer_secret;
 
-        var project_repository = 'git@bitbucket.org:' + profile.username + '/my-pi-projects.git';
-
-        //TODO REFACTOR THIS MESS - it shouldn't even be here...
-        git_helper.set_config(function() {
-          request_helper.list_repositories(profile, function(err, list) {
-            var exists = list.some(function(repository) {
-              return (repository.name.toLowerCase() === config.defaults.repository.toLowerCase());
-            });
-            git_helper.clone_adafruit_libraries(config.adafruit.repository, config.adafruit.remote, function() {
-              if (!exists) {
-                request_helper.create_repository(profile, config.defaults.repository, function(err, response) {
-                  git_helper.clone_repository(profile, project_repository, function(err, response) {
-                    console.log("created personal repository in bitbucket");
-                    fs_helper.create_project_readme(function(err, file) {
-                      if (err) console.log(err);
-                      console.log(file);
-
-                      git_helper.commit_push_and_save(file, function(err, response) {
-                        return done(null, profile);
-                      });
-                    });
-                  });
-
-                });
-              } else {
-                git_helper.clone_repository(profile, project_repository, function(err, response) {
-                  console.log(err, response);
-                  fs_helper.create_project_readme(function(err, file) {
-                    console.log(file);
-                    if (err) console.log(err);
-
-                    git_helper.commit_push_and_save(file, function(err, response) {
-                      return done(null, profile);
-                    });
-                  });
-                });
-              }
-            });
-          });
-        });
-
+        return done(null, profile);
       });
     }
   ));
@@ -134,6 +95,7 @@ app.use(function(req, res, next) {
   }
 });
 
+var sessionStore = new RedisStore();
 app.set('view engine', 'jade');
 app.set('views', __dirname + '/views');
 app.use(express.logger());
@@ -141,7 +103,7 @@ app.use(express.static(__dirname + '/public'));
 app.use(express.static(__dirname + '/node_modules/tty.js/static'));
 app.use(express.cookieParser());
 app.use(express.session({
-  store: new RedisStore(),
+  store: sessionStore,
   key: 'sid',
   secret: 'cat nap'
 }));
@@ -248,6 +210,24 @@ function start_server() {
 }
 
 function socket_listeners() {
+  io.sockets.authorization(function(handshakeData, callback) {
+    if (!handshakeData.headers.cookie) return callback('socket.io: no found cookie.', false);
+    var signedCookies = require('express/node_modules/cookie').parse(handshakeData.headers.cookie);
+    handshakeData.cookies = require('express/node_modules/connect/lib/utils').parseSignedCookies(signedCookies, 'cat nap');
+
+    sessionStore.get(handshakeData.cookies['sid'], function(err, session) {
+      client.get(session.passport.user, function(err, user) {
+        if (err || !session) return callback('socket.io: no found session.', false);
+        handshakeData.session = JSON.parse(user);
+        if (handshakeData.session) {
+          return callback(null, true);
+        } else {
+          return callback('socket.io: no found session.user', false);
+        }
+      });
+    });
+  });
+
   io.sockets.on('connection', function (socket) {
     socket.emit('cwd-init', {dirname: __dirname + '/../repositories'});
 
@@ -272,6 +252,10 @@ function socket_listeners() {
       //git_helper.commit_push_and_save(data.file, function(err, status) {
       //  socket.emit('commit-file-complete', {message: "Save was successful"});
       //});
+    });
+
+    socket.on('self-check-request', function() {
+      editor_setup.health_check(socket, socket.handshake.session);
     });
 
     socket.on('editor-check-updates', function() {

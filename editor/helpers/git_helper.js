@@ -11,12 +11,12 @@ var REPOSITORY_PATH = path.resolve(__dirname + "/../../repositories") + "/";
 exports.clone_adafruit_libraries = function(adafruit_repository, remote, cb) {
   fs_helper.check_for_repository(adafruit_repository, function(err, status) {
     if (!err && !status) {
-    git.clone(REPOSITORY_PATH, remote, function(output) {
-      console.log(output);
-      cb();
-    });
+      git.clone(REPOSITORY_PATH, remote, function(output) {
+        console.log(output);
+        cb(true);
+      });
     } else {
-      cb();
+      cb(false);
     }
   });
 };
@@ -71,7 +71,7 @@ exports.validate_config = function validate_config(cb) {
   git.config("user.email", null, function(err, email) {
     git.config("user.name", null, function(err, name) {
       if (err) console.log("validate_config err", err);
-      console.log(email, name);
+
       if (name && email) {
         cb(true);
       } else {
@@ -166,7 +166,7 @@ exports.push = function push(repository, remote, branch, cb) {
   });
 };
 
-exports.pull = function push(repository, remote, branch, cb) {
+exports.pull = function pull(repository, remote, branch, cb) {
   var repository_path = REPOSITORY_PATH + repository;
   git.pull(repository_path, remote, branch, function(obj) {
     //console.log(obj);

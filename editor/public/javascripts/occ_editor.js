@@ -67,16 +67,31 @@
     editor = ace.edit("editor");
     editor.setTheme("ace/theme/merbivore_soft");
     editor.getSession().setMode("ace/mode/python");
+    
     occEditor.init_commands(editor);
     occEditor.init_events(editor);
-    occEditor.populate_navigator();
     occEditor.populate_editor_bar();
-    occEditor.open_readme();
+    occEditor.self_check(function() {
+      occEditor.populate_navigator();
+      occEditor.open_readme();
+    });
 
     handle_navigator_actions();
     handle_editor_bar_actions();
     //handle_program_output();
     handle_update_action();
+  };
+
+  occEditor.self_check = function(cb) {
+    editor_startup("Checking Editor Health");
+    socket.emit("self-check-request");
+    socket.on("self-check-message", function(message) {
+      editor_startup(message);
+    })
+    socket.on("self-check-complete", function() {
+      editor_startup("Editor Health Check Complete");
+      cb();
+    });
   };
 
   occEditor.init_commands = function(editor) {
