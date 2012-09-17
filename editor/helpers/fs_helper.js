@@ -67,7 +67,8 @@ exports.read_or_generate_key = function(cb) {
 };
 
 exports.check_for_repository = function(repository, cb) {
-  fs.lstat(__dirname + '/../repositories/' + repository, function(err, stat) {
+  var repository_path = path.resolve(__dirname + '/../../repositories/' + repository);
+  fs.lstat(repository_path, function(err, stat) {
     if (stat && stat.isDirectory()) {
       cb(null, true);
     } else {
@@ -119,7 +120,7 @@ function build_file_structure(path, cb) {
 
 exports.read_repository = function(repository, cb) {
   
-  var repository_path = __dirname + "/../repositories/" + repository;
+  var repository_path = path.resolve(__dirname + "/../../repositories/" + repository);
   build_file_structure(repository_path, function(results) {
     cb(results);
   });
