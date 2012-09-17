@@ -11,7 +11,6 @@ exports.check_for_updates = function check_for_updates(socket) {
 
   console.log('check_for_updates');
   fs.exists(__dirname + '/../../update.lock', function(exists) {
-    console.log(__dirname + '/../../update.lock', exists);
     if (exists) {
       remove_lock_file(function (err) {
         socket.emit('editor-update-complete', {editor_update_success: true});
@@ -28,8 +27,9 @@ exports.check_for_updates = function check_for_updates(socket) {
     } else {
       has_update = false;
     }
-
-    socket.emit('editor-update-status', {has_update: has_update, version: version, url: update_url, notes: update_notes});
+    request(update_notes, function (err, response, body) {
+      socket.emit('editor-update-status', {has_update: has_update, version: version, url: update_url, notes: body});
+    });
   });
 };
 
