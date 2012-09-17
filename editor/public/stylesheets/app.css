@@ -28,7 +28,7 @@
 
 .connection-state {
   float: right;
-  padding-top: 15px;
+  padding-top: 16px;
 }
 
 .connection-state.connected {
@@ -39,17 +39,42 @@
   color: #bb1142;
 }
 
+.logout-wrapper {
+  float: right;
+  margin-top: 15px;
+  padding-left: 10px;
+  margin-left: 10px;
+  border-left: 1px solid #E4E5E7;
+}
+
+.logout-wrapper a {
+  color: #E4E5E7;
+  vertical-align: middle;
+}
+
+.logout-wrapper a:hover {
+  color: #b4b4b4;
+  text-decoration: none;
+}
+
 .update-wrapper {
   float: right;
   margin-top: 15px;
-  padding-left: 15px;
+
+
   line-height: 20px;
 }
 
 .update-wrapper a {
+  display: inline-block;
   color: #E4E5E7;
+  padding-left: 10px;
+  margin-left: 10px;
+  height: 100%;
+    border-left: 1px solid #E4E5E7;
   vertical-align: middle;
 }
+
 .update-wrapper a i {
   font-size: 20px;
   vertical-align: middle;
@@ -260,6 +285,7 @@ transition: none;
   right: 0;
   top: 50px;
   bottom: 40px;
+  border-bottom: 1px solid #EDEDED;
 }
 
 #editor-bar {
