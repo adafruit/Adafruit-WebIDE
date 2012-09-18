@@ -88,7 +88,7 @@
     socket.emit("self-check-request");
     socket.on("self-check-message", function(message) {
       editor_startup(message);
-    })
+    });
     socket.on("self-check-complete", function() {
       editor_startup("Editor Health Check Complete");
       cb();
@@ -187,11 +187,6 @@
   occEditor.populate_editor_bar = function() {
     editor_startup("Populating Editor Bar");
     var $editor_bar = $('#editor-bar');
-
-    function is_adafruit_project(path) {
-      var adafruit_root = "/filesystem/Adafruit-Raspberry-Pi-Python-Code/";
-      return (path.indexOf(adafruit_root) !== -1 && path !== adafruit_root);
-    }
 
     function is_script(extension) {
       return (extension === 'py' || extension === 'rb' || extension === 'js');
@@ -308,12 +303,29 @@
     $('.window').css({ top: windowTop, left: windowLeft, position:"absolute"}).show();
   };
 
+  function is_adafruit_project(path) {
+    var adafruit_root = "/filesystem/Adafruit-Raspberry-Pi-Python-Code/";
+    return (path.indexOf(adafruit_root) !== -1 && path !== adafruit_root);
+  }
+
+  function is_adafruit_repository(path) {
+    var adafruit_root = "/filesystem/Adafruit-Raspberry-Pi-Python-Code/";
+    console.log(path.indexOf(adafruit_root) !== -1);
+    return (path.indexOf(adafruit_root) !== -1);
+  }
+
   function build_navigator_top(item) {
-    var ul = $(".filesystem").html('');
+    var $nav_top, ul = $(".filesystem").html('');
     //console.log("item", item);
     if (item.name === 'filesystem') {
       var username = $('input[name="username"]').val();
-      $('#navigator-top p').addClass('navigator-item-back').html("<a href=''><i class='icon-user'></i> " + username + "</a><a href='' class='navigator-settings'><i class='icon-cog'></i></a>");
+      $nav_top = $('#navigator-top p').addClass('navigator-item-back').html("<a href=''><i class='icon-user'></i> " + username + "</a>");
+      
+      if (!is_adafruit_project(item.path) && !is_adafruit_repository(item.path)) {
+        console.log(item.path);
+        $nav_top.append("<a href='' class='navigator-settings'><i class='icon-cog'></i></a>");
+      }
+
       $('#navigator-folder p').text('All Repositories');
     } else {
       var title = "";
@@ -322,7 +334,13 @@
       } else {
         title = item.parent_name;
       }
-      $('#navigator-top p').addClass('navigator-item-back').data("file", item).html("<a href=''><i class='icon-chevron-left'></i> " + title + "</a><a href='' class='navigator-settings'><i class='icon-cog'></i></a>");
+      $nav_top = $('#navigator-top p').addClass('navigator-item-back').data("file", item).html("<a href=''><i class='icon-chevron-left'></i> " + title + "</a>");
+      
+      if (!is_adafruit_project(item.path) && !is_adafruit_repository(item.path)) {
+        console.log(item.path);
+        $nav_top.append("<a href='' class='navigator-settings'><i class='icon-cog'></i></a>");
+      }
+
       $('#navigator-folder p').text(item.name);
     }
   }
