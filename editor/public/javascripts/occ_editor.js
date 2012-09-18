@@ -571,9 +571,11 @@
 
       if (settings_enabled) {
         settings_enabled = false;
+        $('.navigator-settings i').removeClass('settings-enabled');
         icon_class = "icon-chevron-right";
       } else {
         settings_enabled = true;
+        $('.navigator-settings i').addClass('settings-enabled');
         icon_class = "icon-minus-sign";
       }
 
