@@ -16,7 +16,7 @@ mkdir -p "$WEBIDE_ROOT"
 cd "$WEBIDE_ROOT"
 
 echo "**** Downloading the latest version of the WebIDE ****"
-curl -s https://dl.dropbox.com/s/lbaapensj26fvfw/editor-0.0.7.tar.gz | tar xzf -
+curl -s https://dl.dropbox.com/s/5cex4si833tczfq/editor-0.0.8.tar.gz | tar xzf -
 
 echo "**** Installing required libraries (node, npm, redis-server) ****"
 sudo apt-get install nodejs npm redis-server -y
