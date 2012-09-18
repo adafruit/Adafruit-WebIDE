@@ -148,6 +148,10 @@
   font-size: 16px;
 }
 
+a.navigator-settings i.settings-enabled {
+  color: #74a927;
+}
+
 #navigator-folder {
   background-color: #323334;
 }
