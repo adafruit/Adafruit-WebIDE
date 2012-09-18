@@ -5,7 +5,7 @@ var child = new (forever.Monitor)('server.js', {
   killTree: true,
   minUptime: 5000,
   watch: true,
-  sourceDir: 'editor'
+  sourceDir: __dirname + '/editor'
   //watchIgnoreDotFiles: '.foreverignore',
   //'logFile': 'logs/forever.log',
   //'outFile': 'logs/stdout.log',
