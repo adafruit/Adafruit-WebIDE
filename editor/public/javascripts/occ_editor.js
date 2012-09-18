@@ -1,8 +1,8 @@
 //Ace mode setup code derived from: https://github.com/ajaxorg/ace/tree/master/demo (Thanks!)
 
 (function( occEditor, $, undefined ) {
-  var editor, modes = [],
-      socket = io.connect(null, {'reconnection limit': 2000, 'max reconnection attempts': 30}),
+  var editor, modes = [], max_reconnects = 50,
+      socket = io.connect(null, {'reconnection limit': 2000, 'max reconnection attempts': max_reconnects}),
       dirname, updating = false;
 
   var templates = {
@@ -108,6 +108,7 @@
   };
 
   occEditor.init_events = function(editor) {
+    var reconnect_attempts = 0;
     editor_startup("Initializing Editor Events");
     editor.on('change', function() {
       var editor_content = editor.getSession().getDocument().getValue();
@@ -125,6 +126,17 @@
         $('.connection-state').text('Restarting');
       } else {
         $('.connection-state').removeClass('connected').addClass('disconnected').text('Disconnected');
+      }
+    });
+    socket.on('reconnecting', function () {
+      if (!updating) {
+        ++reconnect_attempts;
+
+        if(reconnect_attempts >= max_reconnects) {
+          $('.connection-state').removeClass('connected').addClass('disconnected').text('Error: check server and refresh browser');
+        } else {
+          $('.connection-state').removeClass('connected').addClass('disconnected').text('Attempting to reconnect');
+        }
       }
     });
     socket.on('cwd-init', function(data) {

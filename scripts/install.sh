@@ -17,7 +17,7 @@ mkdir -p "$WEBIDE_ROOT"
 cd "$WEBIDE_ROOT"
 
 echo "**** Downloading the latest version of the WebIDE ****"
-curl -s https://dl.dropbox.com/s/5cex4si833tczfq/editor-0.0.8.tar.gz | tar xzf -
+curl -s https://dl.dropbox.com/s/7u3cvf7ich8btkc/editor-0.0.9.tar.gz | tar xzf -
 
 echo "**** Installing required libraries (node, npm, redis-server) ****"
 sudo apt-get install nodejs npm redis-server -y
@@ -31,12 +31,15 @@ npm install
 npm config set tmp /tmp
 
 echo "**** Installing the WebIDE as a service ****"
-echo "**** (to uninstall service, execute: 'sudo update-rc.d -f adafruit-webide.js remove') ****"
+echo "**** (to uninstall service, execute: 'sudo update-rc.d -f adafruit-webide.sh remove') ****"
 sudo cp "$WEBIDE_ROOT/scripts/adafruit-webide.sh" "/etc/init.d"
+cd /etc/init.d
+sudo chmod 755 adafruit-webide.sh
 sudo update-rc.d adafruit-webide.sh defaults
+service adafruit-webide.sh start
 
 echo "**** The Adafruit WebIDE is installed and running! ****"
-echo "**** Commands: service adafruit-webide.js {start,stop,restart} ****"
+echo "**** Commands: service adafruit-webide.sh {start,stop,restart} ****"
 #echo "**** To run the editor: ****"
 #echo "**** cd ~/Adafruit/WebIDE ****"
 #echo "**** node webide ****"
