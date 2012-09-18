@@ -5,6 +5,7 @@
 
 set -e
 WEBIDE_ROOT="$HOME/Adafruit/WebIDE"
+
 #NODE_PATH="/usr/local/lib/node"
 
 #if [ ! -d "$NODE_PATH" ]; then
@@ -29,7 +30,13 @@ cd "$WEBIDE_ROOT/editor"
 npm install
 npm config set tmp /tmp
 
-echo "**** The Adafruit WebIDE is installed! ****"
-echo "**** To run the editor: ****"
-echo "**** cd ~/Adafruit/WebIDE ****"
-echo "**** node webide ****"
+echo "**** Installing the WebIDE as a service ****"
+echo "**** (to uninstall service, execute: 'sudo update-rc.d -f adafruit-webide.js remove') ****"
+sudo cp "$WEBIDE_ROOT/scripts/adafruit-webide.sh" "/etc/init.d"
+sudo update-rc.d adafruit-webide.sh defaults
+
+echo "**** The Adafruit WebIDE is installed and running! ****"
+echo "**** Commands: service adafruit-webide.js {start,stop,restart} ****"
+#echo "**** To run the editor: ****"
+#echo "**** cd ~/Adafruit/WebIDE ****"
+#echo "**** node webide ****"
