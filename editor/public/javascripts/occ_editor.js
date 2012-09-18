@@ -342,6 +342,8 @@
 
   function build_navigator_bottom(item) {
     //console.log(item);
+    $('.create-form').remove();
+    $('.navigator-item-create').html('<a></a>');
     var $link = $('.navigator-item-create a');
     var $create_modal = $('#create-modal');
     if (item.name === 'filesystem') {
