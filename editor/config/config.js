@@ -1,5 +1,5 @@
 exports.editor = {
-  "version": "0.0.9",
+  "version": "0.1.0",
   "version_url": "https://dl.dropbox.com/s/d7tmnp983yk1v0g/version.txt"
 };
 
