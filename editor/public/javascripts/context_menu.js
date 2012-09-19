@@ -35,12 +35,14 @@
 
   function show_menu() {
     event.preventDefault();
+    $(document).off('click', '.context-menu-rename');
+    $(document).off('click', '.context-menu-delete');
 
     $(".context-menu").remove();
 
     var $menu = $(templates.context_menu);
     $menu.appendTo('body');
-    console.log(event.pageY);
+    
     $menu.css({'top': event.pageY, 'left': event.pageX - 10});
 
     // create and show menu      
@@ -50,12 +52,30 @@
 
   function rename_option(event) {
     event.preventDefault();
+    $(".context-menu").remove();
     console.log($(this).data('file'));
   }
 
   function delete_option(event) {
     event.preventDefault();
-        console.log($(this).data('file'));
+    console.log($(this));
+    $(".context-menu").remove();
+
+    var socket = occEditor.get_socket();
+
+    var file = $(this).data('file');
+
+    if (file.type === 'directory') {
+      davFS.remove(file.path, function(err, status) {
+        socket.emit('git-delete', { file: file});
+     });
+    } else {
+      davFS.remove(file.path, function(err, status) {
+        socket.emit('git-delete', { file: file});
+      });
+    }
+
+    occEditor.navigator_remove_item($(this));
   }  
 
 }( window.context_menu = window.context_menu || {}, jQuery ));

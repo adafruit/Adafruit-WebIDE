@@ -94,6 +94,10 @@
     handle_update_action();
   };
 
+  occEditor.get_socket = function() {
+    return socket;
+  }
+
   occEditor.self_check = function(cb) {
     editor_startup("Checking Editor Health");
     socket.emit("self-check-request");
@@ -274,6 +278,11 @@
     $(document).trigger('file_open', {path: path});
     davFS.listDir(path, populateFileSystem);
   };
+
+  occEditor.navigator_remove_item = function($element) {
+    $element.remove();
+    handle_navigator_scroll();
+  }
 
   occEditor.open_readme = function() {
     editor_startup("Opening Readme");
