@@ -3,6 +3,7 @@
 node_modules
 repositories
 users.db
+logs
 
 *.tar.gz
 __MACOSX

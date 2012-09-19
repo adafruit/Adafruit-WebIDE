@@ -1,15 +1,23 @@
-var forever = require('forever-monitor');
+var forever = require('forever-monitor'),
+    path = require('path'),
+    fs = require('fs');
+
+  var exists = path.existsSync(__dirname + '/logs');
+  if (!exists) {
+    fs.mkdirSync(__dirname + '/logs', 0755);
+    console.log('created repositories folder');
+  }
 
 var child = new (forever.Monitor)('server.js', {
   silent: false,
   killTree: true,
   minUptime: 5000,
   watch: true,
-  sourceDir: __dirname + '/editor'
+  sourceDir: __dirname + '/editor',
   //watchIgnoreDotFiles: '.foreverignore',
-  //'logFile': 'logs/forever.log',
-  //'outFile': 'logs/stdout.log',
-  //'errFile': 'logs/stderr.log'
+  'logFile': 'logs/forever.log',
+  'outFile': 'logs/stdout.log',
+  'errFile': 'logs/stderr.log'
 });
 
 child.on('exit', function () {

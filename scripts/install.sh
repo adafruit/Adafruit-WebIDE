@@ -37,9 +37,12 @@ cd /etc/init.d
 sudo chmod 755 adafruit-webide.sh
 sudo update-rc.d adafruit-webide.sh defaults
 service adafruit-webide.sh start
+echo "**** Starting the server...(please wait) ****"
+sleep 15s
 
 echo "**** The Adafruit WebIDE is installed and running! ****"
 echo "**** Commands: service adafruit-webide.sh {start,stop,restart} ****"
+echo "**** Navigate to http://raspberrypi.local:3000 to use the WebIDE"
 #echo "**** To run the editor: ****"
 #echo "**** cd ~/Adafruit/WebIDE ****"
 #echo "**** node webide ****"

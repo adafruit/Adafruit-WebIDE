@@ -219,7 +219,15 @@
           if (is_script(file.extension)) {
             $(templates.editor_bar_run_link).appendTo('.editor-bar-actions');
           }
-          var $copy_link = $(templates.editor_bar_copy_link).attr('href', file.path);
+
+          var copy_path;
+          if (file.type === 'file') {
+            copy_path = file.parent_path;
+          } else {
+            copy_path = file.path;
+          }
+          //console.log(file);
+          var $copy_link = $(templates.editor_bar_copy_link).attr('href', copy_path);
           $copy_link.appendTo($('.editor-bar-actions'));
         }
       }
@@ -424,12 +432,18 @@
     function copy_project(event) {
       $('.copy-project').text("Copying into your project folder...");
       event.preventDefault();
+
       var source = $(this).attr('href');
+      if(source.substr(-1) == '/') {
+        //strip trailing slash
+        source = source.substr(0, source.length - 1);
+      }
+
       var path_array = source.split('/');
-      var directory = path_array[path_array.length - 2];
+      var directory = path_array[path_array.length - 1];
       var destination = '/filesystem/my-pi-projects/' + directory;
       
-      davFS.copy(source, destination, true, function(err, status) {
+      davFS.copy(source, destination, false, function(err, status) {
         socket.emit('commit-file', { file: {path: destination, name: directory}, message: "Copied to my-pi-projects " + directory});
         $('.copy-project').replaceWith($("<span>Project copy completed...</span>"));
       });
