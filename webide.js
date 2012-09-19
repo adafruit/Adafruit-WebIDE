@@ -15,9 +15,9 @@ var child = new (forever.Monitor)('server.js', {
   watch: true,
   sourceDir: __dirname + '/editor',
   //watchIgnoreDotFiles: '.foreverignore',
-  'logFile': 'logs/forever.log',
-  'outFile': 'logs/stdout.log',
-  'errFile': 'logs/stderr.log'
+  'logFile': __dirname + '/logs/forever.log',
+  'outFile': __dirname + '/logs/stdout.log',
+  'errFile': __dirname + '/logs/stderr.log'
 });
 
 child.on('exit', function () {
