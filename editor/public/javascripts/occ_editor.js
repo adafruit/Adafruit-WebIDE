@@ -42,14 +42,22 @@
                                         '<input name="folder_name" placeholder="Project Name" type="text">' +
                                       '</div>' +
                                     '</form>',
-    "create_file_folder":        '<form class="create-form" id="create-file-form">' +
+    "create_file_folder":         '<form class="create-form" id="create-file-form">' +
                                       '<a href="" class="create-cancel"><i class="icon-remove-sign"></i></a>' +
                                       '<label for="file_name">+ Create File Folder</label>' +
                                       '<div class="create-input-wrapper">' +
                                         '<a class="create-save" href="">Submit</a>' +
                                         '<input name="file_name" placeholder="File Name" type="text">' +
                                       '</div>' +
-                                    '</form>'
+                                    '</form>',
+    "context_menu":               '<ul class="context-menu">' +
+                                    '<li>' +
+                                      '<a href="" class="run-file"><i class="icon-play"></i> Run</a>' +
+                                    '</li>' +
+                                    '<li>' +
+                                      '<a href="" class="save-file"><i class="icon-cloud"></i> Save</a>' +
+                                    '</li>' +
+                                  '</ul>'
   };
 
   occEditor.path = null;
@@ -71,6 +79,9 @@
     
     occEditor.init_commands(editor);
     occEditor.init_events(editor);
+
+    context_menu.init();
+
     occEditor.populate_editor_bar();
     occEditor.self_check(function() {
       occEditor.populate_navigator();
@@ -330,7 +341,6 @@
 
   function is_adafruit_repository(path) {
     var adafruit_root = "/filesystem/Adafruit-Raspberry-Pi-Python-Code/";
-    console.log(path.indexOf(adafruit_root) !== -1);
     return (path.indexOf(adafruit_root) !== -1);
   }
 
@@ -342,7 +352,6 @@
       $nav_top = $('#navigator-top p').addClass('navigator-item-back').html("<a href=''><i class='icon-user'></i> " + username + "</a>");
       
       if (!is_adafruit_project(item.path) && !is_adafruit_repository(item.path)) {
-        console.log(item.path);
         $nav_top.append("<a href='' class='navigator-settings'><i class='icon-cog'></i></a>");
       }
 
