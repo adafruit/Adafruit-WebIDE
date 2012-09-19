@@ -461,7 +461,7 @@
       occEditor.populate_editor({name: "notes.md", path: "notes.md"}, update_data.notes);
     }
 
-    function update_editor() {
+    function update_editor(event) {
       event.preventDefault();
       socket.emit('editor-update');
       $('.connection-state').text('Updating');
