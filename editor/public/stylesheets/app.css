@@ -173,7 +173,7 @@ a.navigator-settings i.settings-enabled {
 
 #navigator ul li {
   list-style-type: none;
-  padding: 10px 10px 10px 0;
+  padding: 10px 10px 10px 10px;
   border-bottom: 1px solid #909090;
   cursor: pointer;
 }
@@ -191,7 +191,6 @@ a.navigator-settings i.settings-enabled {
 }
 
 #navigator ul li a {
-  padding-left: 10px;
   color: #343637;
   font-weight: bold;
   text-decoration: none;
@@ -274,6 +273,10 @@ a.navigator-settings i.settings-enabled {
   width: 97%;
 }
 
+.rename-form {
+  margin: 0;
+}
+
 .create-form {
   margin-bottom: 2px;
   color: #E4E5E7;
@@ -283,36 +286,51 @@ a.navigator-settings i.settings-enabled {
   float: right;
 }
 
-.create-form .create-input-wrapper {
+.create-input-wrapper, .rename-input-wrapper {
   background-color: #FFFFFF;
+  border: 1px solid #909090;
   -webkit-border-radius: 5px;
      -moz-border-radius: 5px;
           border-radius: 5px;
 }
 
-.create-form .create-input-wrapper .create-save {
+.create-input-wrapper .create-save, .rename-submit {
   float: right;
+  color: #E4E5E7 !important;
   background-color: #087BD1;
   font-size: 11px;
-  margin: 6px 5px 0 0;
+  margin: 6px 6px 0 0;
   padding: 3px 7px 3px 7px;
   -webkit-border-radius: 3px;
      -moz-border-radius: 3px;
           border-radius: 3px;  
 }
 
-.create-form .create-input-wrapper input[type='text'] {
-  width: 185px;
+.create-input-wrapper input[type='text'], .rename-input-wrapper input[type='text'] {
   background-color: #FFFFFF;
+  border: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  -webkit-transition: none;
+  -moz-transition: none;
+  -o-transition: none;
+  transition: none;  
+}
+
+.create-input-wrapper input[type='text'] {
+  width: 185px;
   margin: 5px;
-border: none;
--webkit-box-shadow: none;
--moz-box-shadow: none;
-box-shadow: none;
--webkit-transition: none;
--moz-transition: none;
--o-transition: none;
-transition: none;  
+}
+
+.rename-input-wrapper {
+  width: 100%;
+  padding: -2px 0 0 0;
+}
+
+.rename-input-wrapper input[type='text'] {
+  width: 170px;
+  margin: 5px;
 }
 /* Editor Section */
 

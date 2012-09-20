@@ -9,7 +9,13 @@
                                     '<li class="context-menu-delete">' +
                                       '<a href=""><i class="icon-cloud"></i> Delete</a>' +
                                     '</li>' +
-                                  '</ul>'
+                                  '</ul>',
+    "rename_file_folder":         '<form class="rename-form" id="rename-file-folder-form">' +
+                                      '<div class="rename-input-wrapper">' +
+                                        '<a class="rename-submit" href="">Save</a>' +
+                                        '<input class="file-name" name="file_name" type="text">' +
+                                      '</div>' +
+                                    '</form>'
   };
 
 
@@ -51,14 +57,29 @@
   }  
 
   function rename_option(event) {
+    $(document).off('blur', '.file-name');
     event.preventDefault();
     $(".context-menu").remove();
-    console.log($(this).data('file'));
+    var $item = $(this);
+    $item.data('old', $item.html());
+    var file = $item.data('file');
+    console.log($item.data('file'));
+
+    $item.html(templates.rename_file_folder);
+    occEditor.handle_navigator_scroll();
+    $('.file-name').val(file.name);
+    $('.file-name').focus();
+
+    function disable_rename() {
+      //$item.html($item.data('old'));
+      //occEditor.handle_navigator_scroll();
+    }
+
+    $(document).on('blur', '.file-name', disable_rename);
   }
 
   function delete_option(event) {
     event.preventDefault();
-    console.log($(this));
     $(".context-menu").remove();
 
     var socket = occEditor.get_socket();

@@ -271,7 +271,7 @@
       build_navigator_bottom(list[0]);
       editor_startup("Navigator Populated", true);
       
-      handle_navigator_scroll();
+      occEditor.handle_navigator_scroll();
     }
 
     occEditor.clear_editor();
@@ -281,8 +281,8 @@
 
   occEditor.navigator_remove_item = function($element) {
     $element.remove();
-    handle_navigator_scroll();
-  }
+    occEditor.handle_navigator_scroll();
+  };
 
   occEditor.open_readme = function() {
     editor_startup("Opening Readme");
@@ -342,6 +342,25 @@
     var windowLeft = (maskWidth - $('.window').width())/2;
     $('.window').css({ top: windowTop, left: windowLeft, position:"absolute"}).show();
   };
+
+
+  occEditor.handle_navigator_scroll = function() {
+    //pretty ugly, but seems to work in firefox and chrome so far
+    var nav_height = $('#navigator').outerHeight();
+    var nav_footer_height = $('#navigator-bottom').outerHeight();
+    var nav_top_height = $('#navigator-top').outerHeight();
+    var nav_folder_height = $('#navigator-folder').outerHeight();
+    //minor hack to force an accurate scrollheight;
+    $('#navigator ul').height(0);
+    var nav_list_height = $('#navigator ul').prop('scrollHeight');
+    var possible_height = nav_height - (nav_footer_height + nav_top_height + nav_folder_height);
+
+    if (nav_list_height < possible_height) {
+      $('#navigator ul').height(nav_list_height);
+    } else {
+      $('#navigator ul').height(possible_height - 4);
+    }
+  }
 
   function is_adafruit_project(path) {
     var adafruit_root = "/filesystem/Adafruit-Raspberry-Pi-Python-Code/";
@@ -587,24 +606,6 @@
     $(document).mouseup(handle_dragbar_mouseup);
   }
 
-  function handle_navigator_scroll() {
-    //pretty ugly, but seems to work in firefox and chrome so far
-    var nav_height = $('#navigator').outerHeight();
-    var nav_footer_height = $('#navigator-bottom').outerHeight();
-    var nav_top_height = $('#navigator-top').outerHeight();
-    var nav_folder_height = $('#navigator-folder').outerHeight();
-    //minor hack to force an accurate scrollheight;
-    $('#navigator ul').height(0);
-    var nav_list_height = $('#navigator ul').prop('scrollHeight');
-    var possible_height = nav_height - (nav_footer_height + nav_top_height + nav_folder_height);
-
-    if (nav_list_height < possible_height) {
-      $('#navigator ul').height(nav_list_height);
-    } else {
-      $('#navigator ul').height(possible_height - 4);
-    }
-  }
-
   function handle_navigator_actions() {
     var settings_enabled = false;
     function navigator_toggle_settings(event) {
@@ -661,7 +662,7 @@
       }
 
       $item.remove();
-      handle_navigator_scroll();
+      occEditor.handle_navigator_scroll();
     }
 
     function navigator_item_selected(event) {
@@ -717,7 +718,7 @@
         $(this).data('link', $(this).html()).html(templates.create_file_folder);
         $('input[name="file_name"]').focus();
       }
-      handle_navigator_scroll();
+      occEditor.handle_navigator_scroll();
     }
 
     function create_modal_submit(event) {
@@ -737,7 +738,7 @@
     function create_replace($element) {
       var link = $element.data('link');
       $element.replaceWith('<p class="navigator-item-create">' + link + '</p>');
-      handle_navigator_scroll();
+      occEditor.handle_navigator_scroll();
     }
 
     function create_fs_response(err, status) {
@@ -750,7 +751,7 @@
         } else {
           $('.error', $create_wrapper).replaceWith($('<span class="error">' + err + '</span>'));
         }
-        handle_navigator_scroll();
+        occEditor.handle_navigator_scroll();
       } else {
         create_replace($create_wrapper);
         occEditor.populate_navigator(parent_folder.path);
