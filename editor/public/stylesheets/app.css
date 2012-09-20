@@ -235,35 +235,34 @@ a.navigator-settings i.settings-enabled {
 /* Context menu for navigator */
 .context-menu {
   position: absolute;
-  background-color: #E4E5E7;
-  border-top: 1px solid #909090;
-  border-left: 1px solid #909090;
-  border-right: 1px solid #909090;
-  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+  background-color: #313333;
+  border-top: 1px solid #E4E5E7;
+  border-left: 1px solid #E4E5E7;
+  border-right: 1px solid #E4E5E7;
+  box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.8);
+  font-size: 16px;
   z-index: 10;
 }
 
 .context-menu li {
   list-style-type: none;
-  padding: 10px 5px 5px 10px;
-  border-bottom: 1px solid #909090;
-  cursor: pointer;  
+  padding: 10px 25px 8px 10px;
+  border-bottom: 1px solid #E4E5E7;
+  cursor: pointer;
 }
 
-.context-menu li:hover {
-  background-color: #b4b4b4;
+.context-menu li:hover a {
+  color: #b4b4b4;
 }
 
 .context-menu li a {
-  color: #343637;
+  color: #E4E5E7;
 }
 
 .context-menu li a:hover {
   text-decoration: none;
+
 }
-
-
-
 
 #create-modal .modal-body p .small {
   font-size: 12px;

@@ -4,10 +4,10 @@
   var templates = {
     "context_menu":               '<ul class="context-menu">' +
                                     '<li class="context-menu-rename">' +
-                                      '<a href=""><i class="icon-play"></i> Rename</a>' +
+                                      '<a href=""><i class="icon-edit"></i> Rename</a>' +
                                     '</li>' +
                                     '<li class="context-menu-delete">' +
-                                      '<a href=""><i class="icon-cloud"></i> Delete</a>' +
+                                      '<a href=""><i class="icon-remove-sign"></i> Delete</a>' +
                                     '</li>' +
                                   '</ul>',
     "rename_file_folder":         '<form class="rename-form" id="rename-file-folder-form">' +

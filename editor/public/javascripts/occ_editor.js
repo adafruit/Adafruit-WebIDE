@@ -8,7 +8,7 @@
   var templates = {
     "editor_bar_init":              '<p class="editor-bar-actions">' +
                                       '<a href="" class="open-terminal"><i class="icon-list-alt"></i> Terminal</a>' +
-                                      '<i class="icon-edit"></i> Open a file to the left to edit and run.' +
+                                      '<i class="icon-circle-arrow-left"></i> Open a file to the left to edit and run.' +
                                     '</p>',
     "editor_bar_blank":             '<p class="editor-bar-actions">' +
                                       '<a href="" class="open-terminal"><i class="icon-list-alt"></i> Terminal</a>' +
