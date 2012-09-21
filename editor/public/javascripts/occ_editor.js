@@ -407,13 +407,18 @@
   }
 
   function build_navigator_list(list) {
-    var ul = $(".filesystem").html('');
+    var item_icon, ul = $(".filesystem").html('');
     $.each(list, function(i, item) {
+      if (item.type === 'file') {
+        item_icon = "<i class='icon-chevron-right'></i>";
+      } else {
+        item_icon = "<i class='icon-folder-open'></i>";
+      }
       if (i > 0) {
         item.id = i + "-item";
         $("<li id='" + i + "-item' class='navigator-item'></li>")
         .data( "file", item )
-        .append("<a href=''>" + item.name + "</a><i class='icon-chevron-right'></i>")
+        .append("<a href=''>" + item.name + item_icon)
         .appendTo(ul);
       }
     });
