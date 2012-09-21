@@ -131,6 +131,7 @@
   line-height: 13px;
   padding: 13px 12px 12px 12px;
   border-bottom: 1px solid #EDEDED;
+  cursor: pointer;
 }
 
 #navigator-top p a {

@@ -333,7 +333,7 @@
       socket.removeListener('move-file-complete', move_file_callback);
       occEditor.populate_navigator(item.parent_path);
     }
-    
+
     socket.on('move-file-complete', move_file_callback);
   };
 
@@ -391,10 +391,6 @@
     if (item.name === 'filesystem') {
       var username = $('input[name="username"]').val();
       $nav_top = $('#navigator-top p').addClass('navigator-item-back').html("<a href=''><i class='icon-user'></i> " + username + "</a>");
-      
-      if (!is_adafruit_project(item.path) && !is_adafruit_repository(item.path)) {
-        $nav_top.append("<a href='' class='navigator-settings'><i class='icon-cog'></i></a>");
-      }
 
       $('#navigator-folder p').text('All Repositories');
     } else {
@@ -405,11 +401,6 @@
         title = item.parent_name;
       }
       $nav_top = $('#navigator-top p').addClass('navigator-item-back').data("file", item).html("<a href=''><i class='icon-chevron-left'></i> " + title + "</a>");
-      
-      if (!is_adafruit_project(item.path) && !is_adafruit_repository(item.path)) {
-        console.log(item.path);
-        $nav_top.append("<a href='' class='navigator-settings'><i class='icon-cog'></i></a>");
-      }
 
       $('#navigator-folder p').text(item.name);
     }
@@ -620,29 +611,6 @@
   }
 
   function handle_navigator_actions() {
-    var settings_enabled = false;
-    function navigator_toggle_settings(event) {
-      if (event) {
-        event.preventDefault();
-      }
-      var icon_class;
-
-      if (settings_enabled) {
-        settings_enabled = false;
-        $('.navigator-settings i').removeClass('settings-enabled');
-        icon_class = "icon-chevron-right";
-      } else {
-        settings_enabled = true;
-        $('.navigator-settings i').addClass('settings-enabled');
-        icon_class = "icon-minus-sign";
-      }
-
-      $('.navigator-item i').each(function() {
-        $(this).attr('class', icon_class);
-      });
-
-    }
-
     function alert_changed_file() {
       var $edited_elements = $('.filesystem  li.edited');
       if ($('.filesystem li.edited').length > 0) {
@@ -694,8 +662,6 @@
         return;
       }
 
-      settings_enabled = false;
-
       if (file.type === 'directory') {
         alert_changed_file();
         occEditor.populate_navigator(file.path);
@@ -711,14 +677,9 @@
 
     function navigator_back_selected(event) {
       event.preventDefault();
-      //clicked the settings link
-      if (event.target.className === 'icon-cog') {
-        return;
-      }
 
-      settings_enabled = false;
       alert_changed_file();
-      var file = $(this).parent().data('file');
+      var file = $('a', this).parent().data('file');
       //console.log(file);
       occEditor.populate_navigator(file.parent_path);
     }
@@ -806,9 +767,8 @@
 
     //clicking a file or folder in the list.
     $(document).on('click touchstart', '.navigator-item', navigator_item_selected);
-    $(document).on('click touchstart', '.navigator-item-back a:first-child', navigator_back_selected);
+    $(document).on('click touchstart', '.navigator-item-back', navigator_back_selected);
     $(document).on('click touchstart', '.navigator-item-create', navigator_create_selected);
-    $(document).on('click touchstart', '.navigator-settings', navigator_toggle_settings);
     $(document).on('click touchstart', '#create-modal .modal-submit', create_modal_submit);
     $(document).on('click touchstart', '#create-project-form .create-save', create_folder);
     $(document).on('click touchstart', '#create-project-form .create-cancel', create_cancel);
