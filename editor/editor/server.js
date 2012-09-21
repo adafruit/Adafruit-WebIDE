@@ -24,7 +24,6 @@ var express = require('express'),
 var davServer;
 console.log(__dirname);
 console.log(process.cwd());
-console.log('hi');
 
 // Passport session setup.
 //   To support persistent login sessions, Passport needs to be able to
