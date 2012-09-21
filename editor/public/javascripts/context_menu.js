@@ -58,6 +58,7 @@
 
   function rename_option(event) {
     event.preventDefault();
+    var disable_timeout;
     $(".context-menu").remove();
     var $item = $(this);
     $item.data('old', $item.html());
@@ -70,22 +71,35 @@
     $('.file-name').focus();
 
     function disable_rename() {
-      $(document).off('blur', '.file-name');
-      $item.html($item.data('old'));
-      occEditor.handle_navigator_scroll();
+
+      disable_timeout = setTimeout(function() {
+        disable_listeners();
+        $item.html($item.data('old'));
+        occEditor.handle_navigator_scroll();
+      }, 200);
     }
 
     function rename_action(event) {
       event.preventDefault();
-      $(document).off('submit', '#rename-file-folder-form');
+      disable_listeners();
+      clearTimeout(disable_timeout);
+
       var file = $item.data('file');
       var new_name = $('.file-name').val();
+      $('.rename-form').html('Renaming...').css('font-weight', 'bold');
 
       occEditor.rename(file, new_name);
     }
 
-    $(document).on('blur', '.file-name', disable_rename);
+    function disable_listeners() {
+      $(document).off('blur', '.file-name', disable_rename);
+      $(document).off('submit', '#rename-file-folder-form', rename_action);
+      $(document).off('click', '.rename-submit', rename_action);      
+    }
+
     $(document).on('submit', '#rename-file-folder-form', rename_action);
+    $(document).on('click touchstart', '.rename-submit', rename_action);
+    $(document).on('blur', '.file-name', disable_rename);
   }
 
   function delete_option(event) {
