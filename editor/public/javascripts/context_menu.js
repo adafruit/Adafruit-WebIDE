@@ -57,13 +57,12 @@
   }  
 
   function rename_option(event) {
-    $(document).off('blur', '.file-name');
     event.preventDefault();
     $(".context-menu").remove();
     var $item = $(this);
     $item.data('old', $item.html());
     var file = $item.data('file');
-    console.log($item.data('file'));
+    //console.log($item.data('file'));
 
     $item.html(templates.rename_file_folder);
     occEditor.handle_navigator_scroll();
@@ -71,11 +70,22 @@
     $('.file-name').focus();
 
     function disable_rename() {
-      //$item.html($item.data('old'));
-      //occEditor.handle_navigator_scroll();
+      $(document).off('blur', '.file-name');
+      $item.html($item.data('old'));
+      occEditor.handle_navigator_scroll();
+    }
+
+    function rename_action(event) {
+      event.preventDefault();
+      $(document).off('submit', '#rename-file-folder-form');
+      var file = $item.data('file');
+      var new_name = $('.file-name').val();
+
+      occEditor.rename(file, new_name);
     }
 
     $(document).on('blur', '.file-name', disable_rename);
+    $(document).on('submit', '#rename-file-folder-form', rename_action);
   }
 
   function delete_option(event) {

@@ -149,6 +149,14 @@ exports.remove_recursive = function remove_recursive(repository, path, cb) {
   });
 };
 
+exports.move = function move(repository, source, destination, cb) {
+  var repository_path = REPOSITORY_PATH + repository;
+  git.move(repository_path, source, destination, function(obj) {
+    //console.log(obj);
+    cb(obj.error, obj.message);
+  });
+};
+
 exports.commit = function commit(repository, message, cb) {
   var repository_path = REPOSITORY_PATH + repository;
   console.log(repository_path);
@@ -190,7 +198,7 @@ exports.remove_commit_push = function(item, cb) {
       var commit_message = "Removed " + item.name;
       self.commit(repository, commit_message,  function(err, status) {
         self.push(repository, "origin", "master", function(err, status) {
-          //console.log(obj);
+          cb(err, status);
         });
       });
     });
@@ -199,11 +207,31 @@ exports.remove_commit_push = function(item, cb) {
       var commit_message = "Removed " + item.name;
       self.commit(repository, commit_message,  function(err, status) {
         self.push(repository, "origin", "master", function(err, status) {
-          //console.log(obj);
+          cb(err, status);
         });
       });
     });
   }
+};
+
+exports.move_commit_push = function(item, cb) {
+  var self = this;
+  var path_array = item.path.split('/');
+  var repository = path_array[2];
+  var item_path = path_array.slice(3).join('/');
+  var destination_path = item.destination.split('/').slice(3).join('/');
+
+  self.move(repository, item_path, destination_path, function(err, status) {
+    var commit_message = "Moved " + item.name;
+    console.log(commit_message);
+    self.commit(repository, commit_message,  function(err, status) {
+      console.log("Committed Moved File");
+      self.push(repository, "origin", "master", function(err, status) {
+        console.log("Pushed latest changes");
+        cb(err, status);
+      });
+    });
+  });
 };
 
 exports.commit_push_and_save = function(file, cb) {

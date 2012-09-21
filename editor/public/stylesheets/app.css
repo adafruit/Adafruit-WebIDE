@@ -305,6 +305,10 @@ a.navigator-settings i.settings-enabled {
           border-radius: 3px;  
 }
 
+.rename-submit:hover {
+  background-color: #006cbd;
+}
+
 .create-input-wrapper input[type='text'], .rename-input-wrapper input[type='text'] {
   background-color: #FFFFFF;
   border: none;
@@ -328,7 +332,7 @@ a.navigator-settings i.settings-enabled {
 }
 
 .rename-input-wrapper input[type='text'] {
-  width: 170px;
+  width: 190px;
   margin: 5px;
 }
 /* Editor Section */

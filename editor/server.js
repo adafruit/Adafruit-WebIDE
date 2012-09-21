@@ -247,6 +247,12 @@ function socket_listeners() {
       });
     });
 
+    socket.on('move-file', function (data) {
+      git_helper.move_commit_push(data.file, function(err, status) {
+        socket.emit('move-file-complete', {err: err, status: status});
+      });
+    });
+
     socket.on('run-file', function(data) {
       exec_helper.execute_program(data.file, socket);
       //git_helper.commit_push_and_save(data.file, function(err, status) {

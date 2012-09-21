@@ -311,7 +311,6 @@
   };
 
   occEditor.save_edited_files = function(file, content) {
-    //$('.save-file').html('<i class="icon-cloud"></i> Saving').fadeOut('fast').fadeIn('fast');
     function save_callback(err, status) {
       //TODO Handle save Notification
       //console.log(err);
@@ -322,6 +321,20 @@
     }
 
     davFS.write(file.path, content, save_callback);
+  };
+
+  occEditor.rename = function(item, new_name) {
+    var destination_path = item.parent_path + '/' + new_name;
+    item.destination = destination_path;
+
+    socket.emit('move-file', { file: item });
+
+    function move_file_callback() {
+      socket.removeListener('move-file-complete', move_file_callback);
+      occEditor.populate_navigator(item.parent_path);
+    }
+    
+    socket.on('move-file-complete', move_file_callback);
   };
 
   occEditor.open_terminal = function(path, command) {
@@ -667,6 +680,11 @@
 
     function navigator_item_selected(event) {
       event.preventDefault();
+
+      if ($('#rename-file-folder-form').length > 0) {
+        //we're renaming a file, quit out of here.
+        return;
+      }
 
       var file = $(this).data('file'), content;
 
