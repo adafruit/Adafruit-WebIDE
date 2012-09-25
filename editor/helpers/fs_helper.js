@@ -132,6 +132,12 @@ exports.open_file = function(path, cb) {
   });
 };
 
+exports.move_uploaded_file = function(temp_path, new_path, cb) {
+  fs.rename(temp_path, new_path, function(err) {
+    cb(err);
+  });
+};
+
 exports.create_project_readme = function(cb) {
   var source = path.resolve(__dirname + '/../config/README.md');
   var destination = path.resolve(__dirname + '/../../repositories/' + config.defaults.repository + '/' + config.defaults.readme);
