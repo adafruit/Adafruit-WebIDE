@@ -218,6 +218,7 @@ a.navigator-settings i.settings-enabled {
 
 #navigator-bottom p {
   padding: 10px 10px 10px 10px;
+  margin: 0;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
@@ -228,7 +229,7 @@ a.navigator-settings i.settings-enabled {
   text-decoration: none;
 }
 
-#navigator-bottom p:hover a {
+#navigator-bottom p:hover a, #navigator-bottom p:hover span {
   color: #b4b4b4;
 }
 
@@ -237,6 +238,7 @@ a.navigator-settings i.settings-enabled {
   color: #E4E5E7;
   font-weight: bold;  
 }
+
 
 
 /* Context menu for navigator */
