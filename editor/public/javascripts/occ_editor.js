@@ -50,6 +50,12 @@
                                         '<input name="file_name" placeholder="File Name" type="text">' +
                                       '</div>' +
                                     '</form>',
+    "upload_file_form":           '<form class="upload-form" id="upload-file-form" action="/editor/upload" enctype="multipart/form-data">' +
+                                    '<span class="fileinput-button">' +
+                                      '<span>+ Upload File</span>' +
+                                      '<input id="fileupload" type="file" name="files[]" data-url="/editor/upload" multiple>' +
+                                    '</span>' +
+                                  '</form>',
     "context_menu":               '<ul class="context-menu">' +
                                     '<li>' +
                                       '<a href="" class="run-file"><i class="icon-play"></i> Run</a>' +
@@ -424,21 +430,40 @@
     });
   }
 
+  function attach_file_upload_listener() {
+    var file = $('.navigator-item-back').data('file');
+
+    $('#fileupload').fileupload({
+      dataType: 'json',
+      formData: {path: file.path},
+      add: function(e, data) {
+        data.submit();
+      },
+      done: function (e, data) {
+        occEditor.populate_navigator(file.path);
+      }
+    });
+  }
+
   function build_navigator_bottom(item) {
     //console.log(item);
     $('.create-form').remove();
-    $('.navigator-item-create').html('<a></a>');
-    var $link = $('.navigator-item-create a');
+    $('.navigator-item-create').html('<a class="create-link"></a>');
+    var $create_link = $('.navigator-item-create .create-link');
     var $create_modal = $('#create-modal');
     if (item.name === 'filesystem') {
-      $link.text('+ Clone Repository');
+      $create_link.text('+ Clone Repository');
       $('h3', $create_modal).text("Clone Repository");
       $('.modal-body p', $create_modal).html(templates.create_clone_repository);
       $('.modal-submit', $create_modal).text('Clone Repository');
     } else if (item.parent_name === 'filesystem') {
-      $link.text('+ Create Project Folder');
+      $create_link.text('+ Create Project Folder');
     } else {
-      $link.text('+ Create New File');
+      $create_link.text('+ Create New File');
+      var $upload_form = $('<p class="navigator-item-upload"></p>');
+      $upload_form.html(templates.upload_file_form);
+      $upload_form.appendTo($('#navigator-bottom'));
+      attach_file_upload_listener();
     }
   }
 
