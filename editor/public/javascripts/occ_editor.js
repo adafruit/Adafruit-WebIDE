@@ -460,10 +460,13 @@
       $create_link.text('+ Create Project Folder');
     } else {
       $create_link.text('+ Create New File');
-      var $upload_form = $('<p class="navigator-item-upload"></p>');
-      $upload_form.html(templates.upload_file_form);
-      $upload_form.appendTo($('#navigator-bottom'));
-      attach_file_upload_listener();
+
+      if ($('.navigator-item-upload').length === 0) {
+        var $upload_form = $('<p class="navigator-item-upload"></p>');
+        $upload_form.html(templates.upload_file_form);
+        $upload_form.appendTo($('#navigator-bottom'));
+        attach_file_upload_listener();
+      }
     }
   }
 
