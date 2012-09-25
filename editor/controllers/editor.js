@@ -23,13 +23,19 @@ exports.upload_file = function(req, res) {
   console.log(req.files.files[0]);
 
   var temp_path = sanitize(req.files.files[0].path).xss().trim();
-
+  var file_name = sanitize(req.files.files[0].name).xss().trim();
   var folder_path = sanitize(req.body.path).xss().trim().replace('filesystem', 'repositories');
-  var new_path = __dirname + '/../..' + folder_path + sanitize(req.files.files[0].name).xss().trim();
+  
+  var new_path = __dirname + '/../..' + folder_path + file_name;
   new_path = path.resolve(new_path);
 
-  console.log(temp_path, new_path);
   fs_helper.move_uploaded_file(temp_path, new_path, function(err, status) {
-    res.send(true, 200);
+    if (err) {
+    res.send(false, 200);
+    } else {
+      git_helper.commit_push_and_save({path: folder_path + file_name}, function(err, status) {
+        res.send(true, 200);
+      });
+    }
   });
 };
