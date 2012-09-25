@@ -232,6 +232,12 @@ a.navigator-settings i.settings-enabled {
   color: #b4b4b4;
 }
 
+.fileinput-button span {
+  font-size: 16px;
+  color: #E4E5E7;
+  font-weight: bold;  
+}
+
 
 /* Context menu for navigator */
 .context-menu {
