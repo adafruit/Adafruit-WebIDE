@@ -41,6 +41,11 @@
 
   function show_menu() {
     event.preventDefault();
+
+    if(is_adafruit_repository($(this).data('file').path)) {
+      return;
+    }
+
     $(document).off('click', '.context-menu-rename');
     $(document).off('click', '.context-menu-delete');
 
@@ -51,9 +56,14 @@
     
     $menu.css({'top': event.pageY, 'left': event.pageX - 10});
 
-    // create and show menu      
+    // create and show menu
     $(document).on('click', '.context-menu-rename', $.proxy(rename_option, this));
     $(document).on('click', '.context-menu-delete', $.proxy(delete_option, this));
+  }
+
+  function is_adafruit_repository(path) {
+    var adafruit_root = "/filesystem/Adafruit-Raspberry-Pi-Python-Code/";
+    return (path.indexOf(adafruit_root) !== -1);
   }  
 
   function rename_option(event) {
