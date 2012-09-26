@@ -239,7 +239,9 @@ a.navigator-settings i.settings-enabled {
   font-weight: bold;  
 }
 
-
+.navigator-item-upload {
+  border-top: 1px solid #EDEDED;
+}
 
 /* Context menu for navigator */
 .context-menu {
