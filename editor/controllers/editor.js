@@ -24,6 +24,7 @@ exports.upload_file = function(req, res) {
 
   var temp_path = sanitize(req.files.files[0].path).xss().trim();
   var file_name = sanitize(req.files.files[0].name).xss().trim();
+  file_name = file_name.replace(" ", "_");
   var folder_path = sanitize(req.body.path).xss().trim().replace('filesystem', 'repositories');
   
   var new_path = __dirname + '/../..' + folder_path + file_name;
