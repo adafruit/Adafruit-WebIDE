@@ -7,6 +7,27 @@ var git = require('gitty'),
     request_helper = require('./request_helper');
 
 var REPOSITORY_PATH = path.resolve(__dirname + "/../../repositories") + "/";
+var push_queue = [], pushInterval, PUSH_TIMER = 30000;
+
+function push_queue_interval() {
+  console.log('git push queue init');
+  function push(repository_path, remote, branch) {
+    git.push(repository_path, remote, branch, function(obj) {
+      console.log(obj);
+    });
+  }
+
+  pushInterval = setInterval(function() {
+    console.log('git push queue check');
+    console.log(push_queue.length);
+    while(push_queue.length > 0) {
+      console.log('pushing code to remote repository');
+      var element = push_queue.shift();
+      push(element.repository_path, element.remote, element.branch);
+    }
+  }, PUSH_TIMER);
+}
+push_queue_interval();
 
 exports.clone_adafruit_libraries = function(adafruit_repository, remote, cb) {
   fs_helper.check_for_repository(adafruit_repository, function(err, status) {
@@ -168,10 +189,35 @@ exports.commit = function commit(repository, message, cb) {
 
 exports.push = function push(repository, remote, branch, cb) {
   var repository_path = REPOSITORY_PATH + repository;
-  git.push(repository_path, remote, branch, function(obj) {
-    //console.log(obj);
-    cb(obj.error, obj.message);
-  });
+  var key = repository + remote + branch;
+  console.log('called push ' + key);
+
+  //if the repository, remote and branch are already on the queue, just skip it...otherwise add it to the end
+  if (push_queue.length > 0) {
+    for (var i=0; i<push_queue.length; i++) {
+      if (push_queue[i].key === key) {
+        break;
+      } else {
+        console.log('added to queue ' + key);
+        push_queue.push({
+          key: key,
+          repository_path: repository_path,
+          repository: repository,
+          remote: remote,
+          branch: branch
+        });
+      }
+    }
+  } else {
+    push_queue.push({
+      key: key,
+      repository_path: repository_path,
+      repository: repository,
+      remote: remote,
+      branch: branch
+    });    
+  }
+  cb();
 };
 
 exports.pull = function pull(repository, remote, branch, cb) {
@@ -252,7 +298,7 @@ exports.commit_push_and_save = function(file, cb) {
     self.commit(repository, commit_message,  function(err, status) {
       console.log("committed", err, status);
       self.push(repository, "origin", "master", function(err, status) {
-        console.log("pushed", err, status);
+        console.log("pushed");
         cb(status);
       });
     });
