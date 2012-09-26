@@ -18,8 +18,6 @@ function push_queue_interval() {
   }
 
   pushInterval = setInterval(function() {
-    console.log('git push queue check');
-    console.log(push_queue.length);
     while(push_queue.length > 0) {
       console.log('pushing code to remote repository');
       var element = push_queue.shift();
