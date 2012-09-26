@@ -55,15 +55,7 @@
                                       '<span>+ Upload File</span>' +
                                       '<input id="fileupload" type="file" name="files[]" data-url="/editor/upload" multiple>' +
                                     '</span>' +
-                                  '</form>',
-    "context_menu":               '<ul class="context-menu">' +
-                                    '<li>' +
-                                      '<a href="" class="run-file"><i class="icon-play"></i> Run</a>' +
-                                    '</li>' +
-                                    '<li>' +
-                                      '<a href="" class="save-file"><i class="icon-cloud"></i> Save</a>' +
-                                    '</li>' +
-                                  '</ul>'
+                                  '</form>'
   };
 
   occEditor.path = null;
