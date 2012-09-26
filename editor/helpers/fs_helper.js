@@ -34,11 +34,19 @@ exports.generate_ssh_key = function(cb) {
 exports.append_to_ssh_config = function append_to_ssh_config(cb) {
   var ssh_config_file = process.env['HOME'] + '/.ssh/config';
   var identity_info = "Host bitbucket.org \r\n\tHostName bitbucket.org\r\n\tStrictHostKeyChecking no\r\n\tPreferredAuthentications publickey\r\n\tIdentityFile ~/.ssh/id_rsa_bitbucket";
+  
   path.exists(ssh_config_file, function(exists) {
     if (exists) {
-      var file = fs.createWriteStream(ssh_config_file, {'flags': 'a'});
-      file.write(identity_info, function() {
-        cb();
+      //file exists, let's check if it has the bitbucket host in it, otherwise add it
+      fs.readFile(ssh_config_file, 'ascii', function(err, data) {
+        if (data.indexOf('bitbucket.org') !== -1) {
+          cb();
+        } else {
+          var file = fs.createWriteStream(ssh_config_file, {'flags': 'a'});
+          file.write(identity_info, function() {
+            cb();
+          });
+        }
       });
     } else {
       fs.writeFile(ssh_config_file, identity_info, function(err) {
