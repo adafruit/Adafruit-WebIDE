@@ -537,6 +537,7 @@
 
     function update_editor(event) {
       event.preventDefault();
+      $(this).hide();
       socket.emit('editor-update');
       $('.connection-state').text('Updating');
       updating = true;
