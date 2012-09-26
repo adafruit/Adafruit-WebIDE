@@ -424,14 +424,17 @@
 
   function attach_file_upload_listener() {
     var file = $('.navigator-item-back').data('file');
+    var $upload_span = $('.fileinput-button span');
 
     $('#fileupload').fileupload({
       dataType: 'json',
       formData: {path: file.path},
       add: function(e, data) {
+        $upload_span.text('Uploading File...');
         data.submit();
       },
       done: function (e, data) {
+        $upload_span.text('+ Upload File');
         occEditor.populate_navigator(file.path);
       }
     });
@@ -768,6 +771,7 @@
       event.preventDefault();
       var $create_wrapper = $('.navigator-item-create');
       var folder_name = $('input[name="folder_name"]').val();
+      folder_name = folder_name.replace(" ", "_");
       var parent_folder = $('.navigator-item-back').data("file");
       var path = parent_folder.path + folder_name;
       var item = {path: path, name: folder_name, type: "file"};
@@ -782,6 +786,7 @@
       event.preventDefault();
       var $create_wrapper = $('.navigator-item-create');
       var file_name = $('input[name="file_name"]').val();
+      file_name = file_name.replace(" ", "_");
       var parent_folder = $('.navigator-item-back').data("file");
       var path = parent_folder.path + file_name;
 
