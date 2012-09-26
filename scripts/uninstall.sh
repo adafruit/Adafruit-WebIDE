@@ -17,6 +17,5 @@ rm -rf "$WEBIDE_ROOT"
 echo "**** Remvoving auto-generated Bitbucket SSH keys ****"
 cd "$HOME/.ssh"
 rm id_rsa_bitbucket*
-rm config
 
 echo "**** The Adafruit WebIDE is now uninstalled! ****"
