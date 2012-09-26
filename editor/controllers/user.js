@@ -1,5 +1,7 @@
 var redis = require("redis"),
-    client = redis.createClient();
+    client = redis.createClient(),
+    check = require('validator').check,
+    sanitize = require('validator').sanitize;
 
 exports.login = function(req, res){
   res.render('users/login', { title: 'test', user: req.user });
@@ -35,14 +37,14 @@ exports.setup = function(req, res) {
 };
 
 exports.submit_setup = function(req, res) {
-  console.log(req.body.key);
-  console.log(req.body.secret);
-  console.log(req.body.full_name);
-  console.log(req.body.email);
+  var key = sanitize(req.body.key).xss().trim();
+  var secret = sanitize(req.body.secret).xss().trim();
+  var full_name = sanitize(req.body.full_name).xss().trim();
+  var email = sanitize(req.body.email).xss().trim();
 
-  if (req.body.key && req.body.secret) {
-    client.hmset("bitbucket_oauth", "consumer_key", req.body.key, "consumer_secret", req.body.secret, function() {
-      client.hmset("user", "name", req.body.name, "email", req.body.email, function() {
+  if (key && secret) {
+    client.hmset("bitbucket_oauth", "consumer_key", key, "consumer_secret", secret, function() {
+      client.hmset("user", "name", name, "email", email, function() {
         res.redirect('/login');
       });
     });
