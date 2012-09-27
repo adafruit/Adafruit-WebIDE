@@ -143,15 +143,19 @@ exports.open_file = function(temp_path, cb) {
 
 exports.open_image = function(temp_path, cb) {
   var file_path = path.resolve(__dirname + '/../../' + temp_path);
-  
+
   fs.readFile(file_path, function(err, data){
     cb(err, data);
   });
 };
 
 exports.move_uploaded_file = function(temp_path, new_path, cb) {
-  fs.rename(temp_path, new_path, function(err) {
-    cb(err);
+  var is = fs.createReadStream(temp_path);
+  var os = fs.createWriteStream(new_path);
+
+  util.pump(is, os, function() {
+      fs.unlinkSync(temp_path);
+      cb();
   });
 };
 
