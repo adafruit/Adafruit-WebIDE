@@ -134,9 +134,18 @@ exports.read_repository = function(repository, cb) {
   });
 };
 
-exports.open_file = function(path, cb) {
-  fs.readFile(__dirname + '/' + path, 'ascii', function(err,data){
+exports.open_file = function(temp_path, cb) {
+  var file_path = path.resolve(__dirname + '/' + temp_path);
+  fs.readFile(file_path, 'ascii', function(err,data){
     cb(data);
+  });
+};
+
+exports.open_image = function(temp_path, cb) {
+  var file_path = path.resolve(__dirname + '/../../' + temp_path);
+  
+  fs.readFile(file_path, function(err, data){
+    cb(err, data);
   });
 };
 
