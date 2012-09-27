@@ -19,6 +19,17 @@ exports.create_repository = function(req, res) {
   });
 };
 
+exports.image = function(req, res) {
+  var temp_path = sanitize(req.query.path).xss().trim().replace('/filesystem/', '/repositories/');
+  //strip basic attempted path traversals
+  temp_path = temp_path.replace('..', '');
+
+  fs_helper.open_image(temp_path, function(err, data) {
+    res.send(data, 200);
+  });
+
+};
+
 exports.upload_file = function(req, res) {
   console.log(req.files.files[0]);
 
