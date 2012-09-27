@@ -14,7 +14,7 @@ sudo update-rc.d -f adafruit-webide.sh remove
 sudo rm /etc/init.d/adafruit-webide.sh
 echo "**** Removing the WebIDE Folder ****"
 rm -rf "$WEBIDE_ROOT"
-echo "**** Remvoving auto-generated Bitbucket SSH keys ****"
+echo "**** Removing auto-generated Bitbucket SSH keys ****"
 cd "$HOME/.ssh"
 rm id_rsa_bitbucket*
 
