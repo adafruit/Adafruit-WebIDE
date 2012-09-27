@@ -393,24 +393,6 @@
   function open_image(file) {
     var src = '/editor/image?path=' + file.path;
     $.colorbox({href: src, photo: true, maxWidth: "75%", maxHeight: "75%"});
-    //$('#create-modal').modal('show');
-
-    //$('.modal-body p').html('<img src="/editor/image?path=' + file.path + '">');
-
-/*
-    var request = $.ajax({
-      url: '/editor/image',
-      type: 'get',
-      dataType: 'html',
-      data: {path: file.path},
-      beforeSend: function(xhr) {
-        $('.modal-submit').addClass('disabled');
-      }
-    }).success(function(data, textStatus, jqXHR) {
-      console.log(data);
-    }).fail(function(jqXHR, textStatus) {
-      handler(textStatus, null, jqXHR);
-    });*/
   }
 
   function is_adafruit_project(path) {
