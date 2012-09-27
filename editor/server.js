@@ -118,7 +118,7 @@ app.get('/', ensureAuthenticated, site.index);
 //app.get('/editor/filesystem', editor.filesystem);
 //app.get('/editor/file', editor.file);
 app.get('/editor', ensureAuthenticated, editor.index);
-
+app.get('/editor/image', ensureAuthenticated, editor.image);
 app.post('/editor/upload', ensureAuthenticated, editor.upload_file);
 
 app.post('/create/repository', ensureAuthenticated, editor.create_repository);
