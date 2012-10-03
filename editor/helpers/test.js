@@ -3,6 +3,10 @@ var root
 var dir = __dirname + "/../repositories/Adafruit-Raspberry-Pi-Python-Code";
 var filter = ['.git'];
 
+/*
+ * Currently unused...used to test building a file tree.
+ */
+
 var walk = function(dir, done) {
   var results = [];
   fs.readdir(dir, function(err, list) {

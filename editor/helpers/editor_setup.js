@@ -15,7 +15,7 @@ var exec = require('child_process').exec,
     //check if the adafruit libraries exist, if not, clone them.
     git_helper.clone_adafruit_libraries(config.adafruit.repository, config.adafruit.remote, function(cloned_libraries) {
       socket.emit("self-check-message", "Cloning remote Adafruit repository");
-      //coned_libraries is false if they already existed...if false, let's pull the latest version of the adafruit libraries
+      //cloned_libraries is false if they already existed...if false, let's pull the latest version of the adafruit libraries
       if (!cloned_libraries) {
         git_helper.pull(config.adafruit.repository, "origin", "master", function() {
 
@@ -71,14 +71,14 @@ var exec = require('child_process').exec,
                     socket.emit('self-check-complete');
                   });
                 });
-              });              
+              });
             }
 
           });
 
         }
 
-      });      
+      });
     });
     
   };

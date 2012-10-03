@@ -9,6 +9,10 @@ var git = require('gitty'),
 var REPOSITORY_PATH = path.resolve(__dirname + "/../../repositories") + "/";
 var push_queue = [], pushInterval, PUSH_TIMER = 30000;
 
+/*
+ * Creates a simple queue that is used for pushing git changes to the remote repositories.
+ * The queue is currently set using the PUSH_TIMER to delay the remote pushes.
+ */
 function push_queue_interval() {
   console.log('git push queue init');
   function push(repository_path, remote, branch) {
@@ -27,6 +31,10 @@ function push_queue_interval() {
 }
 push_queue_interval();
 
+/*
+ * Clone the adafruit libraries defined in config/config.js.
+ * We start the editor off with the Adafruit libraries that may be useful to beginners.
+ */
 exports.clone_adafruit_libraries = function(adafruit_repository, remote, cb) {
   fs_helper.check_for_repository(adafruit_repository, function(err, status) {
     if (!err && !status) {
@@ -40,6 +48,15 @@ exports.clone_adafruit_libraries = function(adafruit_repository, remote, cb) {
   });
 };
 
+/*
+ * This does a few things in order to clone a repository, and save it to your Bitbucket profile.
+ * This allows you to clone from any remote repository, including Github (it's overly complicated...).
+ * 1. It first checks if the repository already exists in your bitbucket profile.
+ * 2. If not 1, it creates the repository in Bitbucket using the API.
+ * 3. It then clones the remote repository you're interested in.
+ * 4. It then updates the git remote for that repository to your bitbucket repository.
+ * 5. Finally, it pushes the cloned repository to your remote account.
+ */
 exports.clone_update_remote_push = function(profile, repository_url, cb) {
   var self = this;
   //console.log(profile);
@@ -122,6 +139,9 @@ exports.set_config = function(cb) {
 
 };
 
+/*
+ * Updates the remote repository to the users bitbucket repository.
+ */
 exports.update_remote = function(profile, repository, cb) {
   var remote_url = "ssh://git@bitbucket.org/" + profile.username + "/" + repository.toLowerCase() + ".git";
   git.remote.update(REPOSITORY_PATH + repository, "origin", remote_url, function(output) {
@@ -130,6 +150,9 @@ exports.update_remote = function(profile, repository, cb) {
   });
 };
 
+/*
+ * Adds an additional remote to a repository.
+ */
 exports.add_remote = function(repository, remote_name, remote_url, cb) {
   git.remote.add(REPOSITORY_PATH + repository, remote_name, remote_url, function(output) {
     //console.log(output);
@@ -137,6 +160,11 @@ exports.add_remote = function(repository, remote_name, remote_url, cb) {
   });
 };
 
+/*
+ * git add a single file, or an array of files.
+ * repository: the name of the repository that resides in the repositories folder.
+ * files: the relative path of the files from the root of the repository.
+ */
 exports.add = function add(repository, files, cb) {
   if (!Array.isArray(files)) {
     files = [files];
@@ -148,6 +176,11 @@ exports.add = function add(repository, files, cb) {
   });
 };
 
+/*
+ * git remove a single file, or an array of files.
+ * repository: the name of the repository that resides in the repositories folder.
+ * files: the relative path of the files from the root of the repository.
+ */
 exports.remove = function remove(repository, files, cb) {
   if (!Array.isArray(files)) {
     files = [files];
@@ -159,6 +192,11 @@ exports.remove = function remove(repository, files, cb) {
   });
 };
 
+/*
+ * git remove an entire directory, and it's contents.
+ * repository: the name of the repository that resides in the repositories folder.
+ * path: the relative path of the directory from the root of the repository.
+ */
 exports.remove_recursive = function remove_recursive(repository, path, cb) {
   var repository_path = REPOSITORY_PATH + repository;
 
@@ -168,6 +206,10 @@ exports.remove_recursive = function remove_recursive(repository, path, cb) {
   });
 };
 
+/*
+ * git move a single file or folder.
+ * repository: the name of the repository that resides in the repositories folder.
+ */
 exports.move = function move(repository, source, destination, cb) {
   var repository_path = REPOSITORY_PATH + repository;
   git.move(repository_path, source, destination, function(obj) {
@@ -176,6 +218,11 @@ exports.move = function move(repository, source, destination, cb) {
   });
 };
 
+/*
+ * git commit the changes.
+ * repository: the name of the repository that resides in the repositories folder.
+ * message: The text to go along with the commit.
+ */
 exports.commit = function commit(repository, message, cb) {
   var repository_path = REPOSITORY_PATH + repository;
   console.log(repository_path);
@@ -185,6 +232,10 @@ exports.commit = function commit(repository, message, cb) {
   });
 };
 
+/*
+ * git push the committed changes.  Adds it to the push queue.
+ * repository: the name of the repository that resides in the repositories folder.
+ */
 exports.push = function push(repository, remote, branch, cb) {
   var repository_path = REPOSITORY_PATH + repository;
   var key = repository + remote + branch;
@@ -218,6 +269,10 @@ exports.push = function push(repository, remote, branch, cb) {
   cb();
 };
 
+/*
+ * git pull remote changes to the repository.
+ * repository: the name of the repository that resides in the repositories folder.
+ */
 exports.pull = function pull(repository, remote, branch, cb) {
   var repository_path = REPOSITORY_PATH + repository;
   git.pull(repository_path, remote, branch, function(obj) {
@@ -226,7 +281,9 @@ exports.pull = function pull(repository, remote, branch, cb) {
   });
 };
 
-
+/*
+ * Simply removes a file or directory, commits it, and pushes it out.
+ */
 exports.remove_commit_push = function(item, cb) {
   var self = this;
   console.log(item);
@@ -258,6 +315,9 @@ exports.remove_commit_push = function(item, cb) {
   }
 };
 
+/*
+ * Simply moves a file or directory, commits it, and pushes it out.
+ */
 exports.move_commit_push = function(item, cb) {
   var self = this;
   var path_array = item.path.split('/');
@@ -278,6 +338,9 @@ exports.move_commit_push = function(item, cb) {
   });
 };
 
+/*
+ * Simply commits a file or directory, commits it, and pushes it out.
+ */
 exports.commit_push_and_save = function(file, cb) {
   var self = this,
       path_array, repository, file_path;

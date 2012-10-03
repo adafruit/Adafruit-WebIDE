@@ -6,6 +6,9 @@ var exec = require('child_process').exec,
 
   fs.exists || (fs.exists = path.exists);
 
+/*
+ * Check for editor updates when connnecting to the editor.
+ */
 exports.check_for_updates = function check_for_updates(socket) {
   var self = this;
 
@@ -33,6 +36,9 @@ exports.check_for_updates = function check_for_updates(socket) {
   });
 };
 
+/*
+ * Checks the remote version from the remote version.txt file defined in config/config.js
+ */
 exports.get_version_info = function(cb) {
   console.log('get_version_info');
   request(config.editor.version_url, function (err, response, body) {
@@ -45,6 +51,9 @@ exports.get_version_info = function(cb) {
   });
 };
 
+/*
+ * Start the update process, once the user clicks the update link.
+ */
 exports.update = function (socket) {
   var self = this;
   socket = socket;
@@ -70,6 +79,9 @@ exports.update = function (socket) {
   });
 };
 
+/*
+ * Creates an update.lock file to let the editor know it's being updated.
+ */
 function create_lock_file(cb) {
   fs.writeFile(__dirname + '/../../update.lock', '', function (err) {
     console.log('created lock file');
@@ -78,6 +90,9 @@ function create_lock_file(cb) {
   });
 }
 
+/*
+ * Removes the update.lock file to let the editor know it's done being updated.
+ */
 function remove_lock_file(cb) {
   fs.unlink(__dirname + '/../../update.lock', function (err) {
     console.log('successfully deleted update.lock file');
@@ -85,6 +100,9 @@ function remove_lock_file(cb) {
   });
 }
 
+/*
+ * Downloads the tar.gz of the latest editor.  This file is defined in the remote version.txt file.
+ */
 function download_archive(update_url, socket, cb) {
   socket.emit('editor-update-download-start');
   console.log('download start');
@@ -100,6 +118,9 @@ function download_archive(update_url, socket, cb) {
   });
 }
 
+/*
+ * Handles the download, and unzipping of the latest editor code.
+ */
 function execute_update(update_url, socket, cb) {
   console.log('execute_update');
   download_archive(update_url, socket, function() {
@@ -113,6 +134,11 @@ function execute_update(update_url, socket, cb) {
   });
 }
 
+/*
+ * Extract the archive into the correct folder in a child process.  Overwrites existing files.
+ * TODO: This should be improved to prevent corrupting a running installation on failure.
+ *       Create the editor in a versioned folder, and point a symlink to that new version.
+ */
 function extract_upate(file, socket, cb) {
   var command = 'tar -zxvf ' + file + ' -C ' + __dirname + '/../../';
   socket.emit('editor-update-unpack-start');

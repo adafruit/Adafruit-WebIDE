@@ -4,6 +4,9 @@ var path = require('path'),
     config = require('../config/config');
     exec = require('child_process').exec;
 
+/*
+ * Checks to see if a bitbucket ssh key exists already.
+ */
 exports.has_ssh_key = function has_ssh_key(cb) {
   path.exists(process.env['HOME'] + '/.ssh/id_rsa_bitbucket.pub', function(exists) {
     if (exists) {
@@ -14,13 +17,15 @@ exports.has_ssh_key = function has_ssh_key(cb) {
   });
 };
 
+/*
+ * Generates an ssh key for Bitbucket
+ */
 exports.generate_ssh_key = function(cb) {
   var self = this;
   self.has_ssh_key(function(exists) {
     if (exists) {
       cb();
     } else {
-      //TODO generate key
       exec("ssh-keygen -b 2048 -N '' -f ~/.ssh/id_rsa_bitbucket -t rsa -q", function(err, stdout, stderr) {
         //console.log(err, stdout, stderr);
         self.append_to_ssh_config(function() {
@@ -31,6 +36,10 @@ exports.generate_ssh_key = function(cb) {
   });
 };
 
+/*
+ * Append bitbucket.org to the ssh config file to disable StrictHostKeyChecking.
+ * This isn't great, but we need a way for beginners to get past the known_host checks.
+ */
 exports.append_to_ssh_config = function append_to_ssh_config(cb) {
   var ssh_config_file = process.env['HOME'] + '/.ssh/config';
   var identity_info = "Host bitbucket.org \r\n\tHostName bitbucket.org\r\n\tStrictHostKeyChecking no\r\n\tPreferredAuthentications publickey\r\n\tIdentityFile ~/.ssh/id_rsa_bitbucket";
@@ -85,55 +94,6 @@ exports.check_for_repository = function(repository, cb) {
   });
 };
 
-function build_file_structure(path, cb) {
-  var filter = ['.git'];
-
-  var walk = function(dir, done) {
-    var results = [];
-    fs.readdir(dir, function(err, list) {
-      if (err) return done(err);
-      var i = 0;
-      (function next() {
-        var file = list[i++];
-        if (!file) return done(null, results);
-
-        full_path = dir + '/' + file;
-        relative_path = full_path.replace(__dirname + "/", '');
-        fs.stat(full_path, function(err, stat) {
-          if (stat && stat.isDirectory()) {
-            if (filter.indexOf(file) === -1) {
-              var dir = {data: file, children: []};
-              walk(full_path, function(err, res) {
-                dir.children = res;
-                results.push(dir);
-                next();
-              });
-            } else {
-              next();
-            }
-          } else {
-            results.push({data: file, attr: {"id": relative_path}});
-            next();
-          }
-        });
-      })();
-    });
-  };
-
-  walk(path, function(err, results) {
-    if (err) throw err;
-      cb(results);
-  });
-}
-
-exports.read_repository = function(repository, cb) {
-  
-  var repository_path = path.resolve(__dirname + "/../../repositories/" + repository);
-  build_file_structure(repository_path, function(results) {
-    cb(results);
-  });
-};
-
 exports.open_file = function(temp_path, cb) {
   var file_path = path.resolve(__dirname + '/' + temp_path);
   fs.readFile(file_path, 'ascii', function(err,data){
@@ -149,6 +109,9 @@ exports.open_image = function(temp_path, cb) {
   });
 };
 
+/*
+ * Copies recently uploaded file from tmp to the valid repositories folder
+ */
 exports.move_uploaded_file = function(temp_path, new_path, cb) {
   var is = fs.createReadStream(temp_path);
   var os = fs.createWriteStream(new_path);
@@ -159,6 +122,10 @@ exports.move_uploaded_file = function(temp_path, new_path, cb) {
   });
 };
 
+/*
+ * Copies the stock README into the my-pi-projects root folder.  This file is
+ * opened when the editor is opened.
+ */
 exports.create_project_readme = function(cb) {
   var source = path.resolve(__dirname + '/../config/README.md');
   var destination = path.resolve(__dirname + '/../../repositories/' + config.defaults.repository + '/' + config.defaults.readme);
