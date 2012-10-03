@@ -94,7 +94,7 @@
 
   occEditor.get_socket = function() {
     return socket;
-  }
+  };
 
   occEditor.self_check = function(cb) {
     editor_startup("Checking Editor Health");
@@ -839,7 +839,7 @@
       $('#editor-startup').hide();
       $('#editor-container').show();
     }
-  }  
+  }
 
   function clone_repository($form) {
     function handler(err, data, jqXHR) {

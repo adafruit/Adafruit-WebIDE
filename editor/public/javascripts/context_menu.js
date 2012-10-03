@@ -104,7 +104,7 @@
     function disable_listeners() {
       $(document).off('blur', '.file-name', disable_rename);
       $(document).off('submit', '#rename-file-folder-form', rename_action);
-      $(document).off('click', '.rename-submit', rename_action);      
+      $(document).off('click', '.rename-submit', rename_action);
     }
 
     $(document).on('submit', '#rename-file-folder-form', rename_action);
