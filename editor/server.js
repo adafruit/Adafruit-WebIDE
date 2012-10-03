@@ -25,7 +25,6 @@ var express = require('express'),
 
 var davServer;
 var REPOSITORY_PATH = path.resolve(__dirname + "/../repositories");
-console.log(__dirname);
 console.log("REPOSITORY_PATH", REPOSITORY_PATH);
 
 // Passport session setup.
@@ -62,7 +61,6 @@ function setup_passport(consumer_key, consumer_secret) {
       consumerKey: consumer_key,
       consumerSecret: consumer_secret,
       callbackURL: "http://raspberrypi.local:3000/auth/bitbucket/callback"
-      //callbackURL: "http://76.17.224.82:3000/auth/bitbucket/callback"
       //callbackURL: "http://127.0.0.1:3000/auth/bitbucket/callback"
     },
     function(token, tokenSecret, profile, done) {
@@ -115,8 +113,7 @@ app.use(app.router);
 
 
 app.get('/', ensureAuthenticated, site.index);
-//app.get('/editor/filesystem', editor.filesystem);
-//app.get('/editor/file', editor.file);
+
 app.get('/editor', ensureAuthenticated, editor.index);
 app.get('/editor/image', ensureAuthenticated, editor.image);
 app.post('/editor/upload', ensureAuthenticated, editor.upload_file);
@@ -213,18 +210,18 @@ function start_server() {
 
 function socket_listeners() {
   io.sockets.authorization(function(handshakeData, callback) {
-    if (!handshakeData.headers.cookie) return callback('socket.io: no found cookie.', false);
+    if (!handshakeData.headers.cookie) return callback('socket.io: cookie not found.', false);
     var signedCookies = require('express/node_modules/cookie').parse(handshakeData.headers.cookie);
     handshakeData.cookies = require('express/node_modules/connect/lib/utils').parseSignedCookies(signedCookies, 'cat nap');
 
     sessionStore.get(handshakeData.cookies['sid'], function(err, session) {
       client.get(session.passport.user, function(err, user) {
-        if (err || !session) return callback('socket.io: no found session.', false);
+        if (err || !session) return callback('socket.io: session not found.', false);
         handshakeData.session = JSON.parse(user);
         if (handshakeData.session) {
           return callback(null, true);
         } else {
-          return callback('socket.io: no found session.user', false);
+          return callback('socket.io: session user not found', false);
         }
       });
     });
@@ -240,10 +237,6 @@ function socket_listeners() {
     });
 
     socket.on('commit-file', function (data) {
-      //TODO...clean this up, and check for errors
-      //console.log(data.file.path);
-
-      //console.log(repository);
       git_helper.commit_push_and_save(data.file, function(err, status) {
         socket.emit('commit-file-complete', {message: "Save was successful"});
       });
@@ -253,13 +246,6 @@ function socket_listeners() {
       git_helper.move_commit_push(data.file, function(err, status) {
         socket.emit('move-file-complete', {err: err, status: status});
       });
-    });
-
-    socket.on('run-file', function(data) {
-      exec_helper.execute_program(data.file, socket);
-      //git_helper.commit_push_and_save(data.file, function(err, status) {
-      //  socket.emit('commit-file-complete', {message: "Save was successful"});
-      //});
     });
 
     socket.on('self-check-request', function() {
@@ -276,8 +262,6 @@ function socket_listeners() {
   });
 }
 
-
-
 function mount_dav(server) {
   var jsDAV_Tree_Filesystem = require("jsDAV/lib/DAV/tree/filesystem").jsDAV_Tree_Filesystem;
   //jsDAV.debugMode = true;
@@ -291,4 +275,3 @@ function mount_dav(server) {
   });
   console.log('webdav filesystem mounted');
 }
-
