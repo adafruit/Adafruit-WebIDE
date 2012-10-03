@@ -12,6 +12,8 @@ exports.logout = function(req, res){
   res.redirect('/');
 };
 
+// Instructional page that displays the bitbucket setup steps,
+// and inputs for OAuth and Git config
 exports.setup = function(req, res) {
   client.hgetall('bitbucket_oauth', function (err, bitbucket) {
     client.hgetall('user', function (err, user) {
@@ -36,6 +38,8 @@ exports.setup = function(req, res) {
   });
 };
 
+// Saves the bitbucket and git config setup information in Redis,
+// submitted as a post from /setup
 exports.submit_setup = function(req, res) {
   var key = sanitize(req.body.key).xss().trim();
   var secret = sanitize(req.body.secret).xss().trim();
