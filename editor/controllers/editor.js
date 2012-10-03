@@ -19,6 +19,7 @@ exports.create_repository = function(req, res) {
   });
 };
 
+//Opens an image clicked from the editor navigator
 exports.image = function(req, res) {
   var temp_path = sanitize(req.query.path).xss().trim().replace('/filesystem/', '/repositories/');
   //strip basic attempted path traversals
