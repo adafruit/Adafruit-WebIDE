@@ -30,9 +30,11 @@ exports.check_for_updates = function check_for_updates(socket) {
     } else {
       has_update = false;
     }
-    request(update_notes, function (err, response, body) {
-      socket.emit('editor-update-status', {has_update: has_update, version: version, url: update_url, notes: body});
-    });
+    if (update_notes) {
+      request(update_notes, function (err, response, body) {
+        socket.emit('editor-update-status', {has_update: has_update, version: version, url: update_url, notes: body});
+      });
+    }
   });
 };
 
