@@ -5,7 +5,9 @@ block content
     p Initializing Editor...
   #editor-container
     #navigator
-      input(type="hidden", name="username", value="#{profile.username}")
+      if profile
+        input(type="hidden", name="username", value="#{profile.username}")
+      
       #navigator-top
         p
       #navigator-folder

@@ -8,9 +8,20 @@ var exec = require('child_process').exec,
 
   fs.exists || (fs.exists = path.exists);
 
+  exports.offline_health_check = function(socket) {
+
+    socket.emit('self-check-complete');
+  };
+
   //TODO this is a mess..clean this up
   exports.health_check = function(socket, profile) {
+    if (config.editor.offline) {
+      this.offline_health_check(socket);
+      return;
+    }
+
     var project_repository = 'git@bitbucket.org:' + profile.username + '/my-pi-projects.git';
+    console.log(project_repository);
 
     //check if the adafruit libraries exist, if not, clone them.
     git_helper.clone_adafruit_libraries(config.adafruit.repository, config.adafruit.remote, function(cloned_libraries) {

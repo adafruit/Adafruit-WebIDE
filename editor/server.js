@@ -17,7 +17,6 @@ var express = require('express'),
     git_helper = require('./helpers/git_helper'),
     fs_helper = require('./helpers/fs_helper'),
     request_helper = require('./helpers/request_helper'),
-    exec_helper = require('./helpers/exec_helper'),
     RedisStore = require('connect-redis')(express),
     redis = require("redis"),
     client = redis.createClient(),
@@ -159,8 +158,10 @@ serverInitialization(app);
 //   the request will proceed.  Otherwise, the user will be redirected to the
 //   login page.
 function ensureAuthenticated(req, res, next) {
-  console.log(req.session);
-  console.log(req.isAuthenticated());
+  if (config.editor.offline) {
+    //TODO: create a dummy session here
+    return next();
+  }
   if (req.isAuthenticated()) {
     return next();
   }
@@ -175,6 +176,11 @@ function ensureAuthenticated(req, res, next) {
 }
 
 function ensureOauth(req, res, next) {
+  if (config.editor.offline) {
+    //TODO: create a dummy session here
+    return next();
+  }
+
   client.hgetall('bitbucket_oauth', function (err, bitbucket) {
     if (!bitbucket) {
       res.redirect('/setup');
@@ -215,6 +221,9 @@ function socket_listeners() {
     handshakeData.cookies = require('express/node_modules/connect/lib/utils').parseSignedCookies(signedCookies, 'cat nap');
 
     sessionStore.get(handshakeData.cookies['sid'], function(err, session) {
+      if (config.editor.offline) {
+        return callback(null, true);
+      }
       client.get(session.passport.user, function(err, user) {
         if (err || !session) return callback('socket.io: session not found.', false);
         handshakeData.session = JSON.parse(user);

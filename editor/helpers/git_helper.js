@@ -4,7 +4,8 @@ var git = require('gitty'),
     fs_helper = require('./fs_helper'),
     redis = require("redis"),
     client = redis.createClient(),
-    request_helper = require('./request_helper');
+    request_helper = require('./request_helper'),
+    config = require('../config/config');
 
 var REPOSITORY_PATH = path.resolve(__dirname + "/../../repositories") + "/";
 var push_queue = [], pushInterval, PUSH_TIMER = 30000;
@@ -22,6 +23,10 @@ function push_queue_interval() {
   }
 
   pushInterval = setInterval(function() {
+    if (config.editor.offline) {
+      return;
+    }
+    
     while(push_queue.length > 0) {
       console.log('pushing code to remote repository');
       var element = push_queue.shift();
