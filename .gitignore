@@ -5,5 +5,5 @@ repositories
 users.db
 logs
 
-*.tar.gz
+/editor.tar.gz
 __MACOSX
