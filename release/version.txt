@@ -1,0 +1,3 @@
+0.1.3
+https://raw.github.com/adafruit/Adafruit-WebIDE/release/release/editor.tar.gz
+https://raw.github.com/adafruit/Adafruit-WebIDE/release/release/changelog.txt
