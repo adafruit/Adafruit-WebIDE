@@ -20,6 +20,7 @@ exports.post_ssh_key = function(profile, cb) {
       body: qs.stringify(params),
       oauth:oauth
     }, function (e, r, body) {
+      console.log(e);
       console.log(r.statusCode);
       console.log(body);
       cb (e, body);
@@ -43,7 +44,7 @@ exports.list_repositories = function(profile, cb) {
     oauth:oauth,
     json: true
   }, function (e, r, body) {
-    //console.log(e);
+    console.log(e);
     //console.log(r.statusCode);
     //console.log(body);
     cb (e, body);

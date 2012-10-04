@@ -94,13 +94,6 @@ exports.check_for_repository = function(repository, cb) {
   });
 };
 
-exports.open_file = function(temp_path, cb) {
-  var file_path = path.resolve(__dirname + '/' + temp_path);
-  fs.readFile(file_path, 'ascii', function(err,data){
-    cb(data);
-  });
-};
-
 exports.open_image = function(temp_path, cb) {
   var file_path = path.resolve(__dirname + '/../../' + temp_path);
 
