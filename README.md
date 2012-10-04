@@ -50,7 +50,7 @@ Using Firefox or Chrome (and likely any other webkit browser) on any computer in
 Offline Mode
 ============
 
-    Yup, there is basic support for offline mode.  Just switch the 'offline' flag in the editor/config/config.js file to true when you're coding on a boat, in a submarine, or on your bicycle (not recommended).
+Yup, there is basic support for offline mode.  Just switch the 'offline' flag in the editor/config/config.js file to true when you're coding on a boat, in a submarine, or on your bicycle (not recommended).
 
 SCREENSHOTS
 ===========
