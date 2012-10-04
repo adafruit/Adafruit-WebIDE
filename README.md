@@ -43,7 +43,14 @@ On the Raspberry PI:
 Running the Editor
 ============
 
+Using Firefox or Chrome (and likely any other webkit browser) on any computer in your internal network:
+
     http://raspberrypi.local:3000
+
+Offline Mode
+============
+
+    Yup, there is basic support for offline mode.  Just switch the 'offline' flag in the editor/config/config.js file to true when you're coding on a boat, in a submarine, or on your bicycle (not recommended).
 
 SCREENSHOTS
 ===========
