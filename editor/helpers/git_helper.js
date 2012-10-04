@@ -94,18 +94,14 @@ exports.clone_update_remote_push = function(profile, repository_url, cb) {
   });
 };
 
-exports.clone_repository = function(profile, repository_path, cb) {
+exports.clone_repository = function(repository_path, cb) {
   console.log(repository_path);
   var repository_url = url.parse(repository_path);
 
   console.log("cloning", repository_path);
-  request_helper.post_ssh_key(profile, function(err, response) {
-    console.log(err, response);
-    git.clone(REPOSITORY_PATH, repository_url.href, function(output) {
-      cb(output.error, output.message);
-    });
+  git.clone(REPOSITORY_PATH, repository_url.href, function(output) {
+    cb(output.error, output.message);
   });
-
 };
 
 exports.validate_config = function validate_config(cb) {

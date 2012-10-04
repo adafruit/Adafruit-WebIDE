@@ -13,7 +13,7 @@ var exec = require('child_process').exec,
     socket.emit('self-check-complete');
   };
 
-  //TODO this is a mess..clean this up
+  //TODO this is a terrible mess..clean this up, no reason to have these big blocks of callbacks...uffda.
   exports.health_check = function(socket, profile) {
     if (config.editor.offline) {
       this.offline_health_check(socket);
@@ -24,16 +24,16 @@ var exec = require('child_process').exec,
     console.log(project_repository);
 
     //check if the adafruit libraries exist, if not, clone them.
-    git_helper.clone_adafruit_libraries(config.adafruit.repository, config.adafruit.remote, function(cloned_libraries) {
-      socket.emit("self-check-message", "Cloning remote Adafruit repository");
-      //cloned_libraries is false if they already existed...if false, let's pull the latest version of the adafruit libraries
-      if (!cloned_libraries) {
-        git_helper.pull(config.adafruit.repository, "origin", "master", function() {
-
-          socket.emit("self-check-message", "Adafruit repository updated");
-        });
-      }
-    });
+    request_helper.post_ssh_key(profile, function(err, response) {
+      git_helper.clone_adafruit_libraries(config.adafruit.repository, config.adafruit.remote, function(cloned_libraries) {
+        socket.emit("self-check-message", "Cloning remote Adafruit repository");
+        //cloned_libraries is false if they already existed...if false, let's pull the latest version of the adafruit libraries
+        if (!cloned_libraries) {
+          git_helper.pull(config.adafruit.repository, "origin", "master", function() {
+            socket.emit("self-check-message", "Adafruit repository updated");
+          });
+        }
+      });
 
     git_helper.set_config(function() {
       request_helper.list_repositories(profile, function(err, list) {
@@ -44,7 +44,8 @@ var exec = require('child_process').exec,
         if (!exists) {
           request_helper.create_repository(profile, config.defaults.repository, function(err, response) {
             socket.emit("self-check-message", "Created my-pi-projects in Bitbucket");
-            git_helper.clone_repository(profile, project_repository, function(err, response) {
+
+            git_helper.clone_repository(project_repository, function(err, response) {
               socket.emit("self-check-message", "Cloned my-pi-projects on local system");
               fs_helper.create_project_readme(function(err, file) {
                 socket.emit("self-check-message", "Added README.md in my-pi-projects");
@@ -57,7 +58,6 @@ var exec = require('child_process').exec,
                 });
               });
             });
-
           });
         } else {
           //check if repository exists here
@@ -70,7 +70,7 @@ var exec = require('child_process').exec,
                 socket.emit('self-check-complete');
               });
             } else {
-              git_helper.clone_repository(profile, project_repository, function(err, response) {
+              git_helper.clone_repository(project_repository, function(err, response) {
                 socket.emit("self-check-message", "Cloned my-pi-projects on local system");
                 fs_helper.create_project_readme(function(err, file) {
                   socket.emit("self-check-message", "Added README.md in my-pi-projects");
@@ -84,12 +84,12 @@ var exec = require('child_process').exec,
                 });
               });
             }
-
           });
 
         }
 
-      });
-    });
+      }); // end of list repositories
+    }); //end of git set config
+  }); //end of post ssh key
     
   };
