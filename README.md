@@ -7,7 +7,7 @@ Easiest Installation
 
 On the Raspberry PI:
 
-    curl https://dl.dropbox.com/s/ib27qzu83lhowar/install.sh | sh
+    curl https://raw.github.com/adafruit/Adafruit-WebIDE/release/scripts/install.sh | sh
 
 Manual Installation
 ============
@@ -30,7 +30,15 @@ Uninstallation
 
 On the Raspberry PI:
 
-    curl https://dl.dropbox.com/s/b8n0a28gwgd38he/uninstall.sh | sh
+    curl https://raw.github.com/adafruit/Adafruit-WebIDE/release/scripts/uninstall.sh | sh
+
+Manual Uninstallation
+============
+
+On the Raspberry PI:
+
+    rm -r Adafruit-WebIDE
+    rm ~/.ssh/id_rsa_bitbucket*  
 
 Running the Editor
 ============

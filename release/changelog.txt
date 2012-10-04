@@ -1,0 +1,59 @@
+-0.1.3
+Add Offline Mode.
+Update Logo to add Alpha.
+Add release information directly to repository
+
+-0.1.2
+Allow file uploads in project folders.
+Open images in an overlay, instead of the editor.
+Queue git push requests for every 30 seconds (configurable) instead of constant after saving files, etc.
+Fix ssh config from continually appending the bitbucket host info.
+Remove context menu when viewing the Adafruit repository.
+Replace spaces in file names with underscores for now.
+Remove update link after clicking update.
+Move jquery dependency to local copy.
+Add validation to some of the parms for xss and trimming.
+
+-0.1.1
+Fix for Firefox updating.  Missing event parameter
+Add folder icon for folders to better differentiate
+Add Favicon
+Add Context Menu
+Rename files and folders in context menu
+Delete files and folders in context menu
+Remove old settings icon
+Update the Navigator Back to use entire blue area, rather than just link
+
+
+-0.1.0
+Create logs folder on server startup, and log stdout and stderr for now
+Fix for copying adafruit projects when a file is open.
+Update installation scripts
+
+-0.0.9
+Add new adafruit-webide.sh script for init.d
+Modify install.sh to install the editor as a service
+Change title in browser
+Fix editor path issue for forever-monitor
+Add Uninstall script
+Display notice of browser attempting to reconnect to server
+
+-0.0.8
+Hide Log out button when not signed in.
+Add run link to Adafruit projects.
+Fix create form causing issues when open and navigating
+Remove settings icon when viewing Adafruit repository
+Add color to the settings icon when it is enabled
+
+-0.0.7
+Update Editor self-check.
+Editor initializes faster.
+Add Footer for Editor Version
+Show version in Update Text in Navbar
+Show update notes in editor while updating
+
+-0.0.6
+Fix for path issues with new editor file structure.
+
+-0.0.5
+Add login page styling
