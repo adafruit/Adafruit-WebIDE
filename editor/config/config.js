@@ -1,6 +1,7 @@
 exports.editor = {
   "version": "0.1.2",
-  "version_url": "https://dl.dropbox.com/s/d7tmnp983yk1v0g/version.txt"
+  "version_url": "https://dl.dropbox.com/s/d7tmnp983yk1v0g/version.txt",
+  "offline": false
 };
 
 exports.adafruit = {
