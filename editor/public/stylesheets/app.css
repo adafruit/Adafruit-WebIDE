@@ -396,6 +396,11 @@ a.navigator-settings i.settings-enabled {
   border-right: 1px solid #EDEDED;
 }
 
+.ace_gutter-cell.ace_breakpoint {
+ background-color: red;
+
+}
+
 #editor-output-wrapper {
   position: absolute;
   bottom: 0;

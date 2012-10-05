@@ -130,6 +130,29 @@
       $('a', $file_element).css('font-style', 'italic').text($file_element.data('file').name + '*');
     });
 
+    editor.on("guttermousedown", function(e) {
+        var target = e.domEvent.target;
+        if (target.className.indexOf("ace_gutter-cell") == -1) {
+            return;
+        }
+        if (!editor.isFocused()) {
+            return;
+        }
+        if (e.clientX > 25 + target.getBoundingClientRect().left) {
+            return;
+        }
+
+        var row = e.getDocumentPosition().row;
+        var breakpoints = e.editor.session.getBreakpoints();
+
+        if (breakpoints.length > row && breakpoints[row]) {
+          e.editor.session.clearBreakpoint(row);
+        } else {
+          e.editor.session.setBreakpoint(row);
+        }
+        e.stop();
+    });
+
     socket.on('connect', function () {
       $('.connection-state').removeClass('disconnected').addClass('connected').text('Connected');
       occEditor.check_for_updates();
