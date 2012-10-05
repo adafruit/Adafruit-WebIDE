@@ -4,6 +4,9 @@ block content
   #setup-wrapper
     #setup-content
       h3 Welcome to the Raspberry Pi WebIDE powered by the Adafruit Learning System
+      if (typeof(session.message) != 'undefined')
+        div.alert
+          p #{session.message}
       p Setting up your Raspberry Pi will only take a few minutes.  Let's get started.
       p One of the many useful features of the WebIDE is that all of your code will be
         | stored in the cloud over at bitbucket.org. So, before we can go any further, you

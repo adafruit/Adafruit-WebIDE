@@ -108,6 +108,12 @@ app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use(function(req, res, next) {
+  res.locals.session = req.session;
+  next();
+});
+
 app.use(app.router);
 
 

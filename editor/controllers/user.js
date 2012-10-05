@@ -41,16 +41,30 @@ exports.setup = function(req, res) {
 // Saves the bitbucket and git config setup information in Redis,
 // submitted as a post from /setup
 exports.submit_setup = function(req, res) {
-  var key = sanitize(req.body.key).xss().trim();
-  var secret = sanitize(req.body.secret).xss().trim();
-  var name = sanitize(req.body.name).xss().trim();
-  var email = sanitize(req.body.email).xss().trim();
+  var key, secret, name, email, message;
+  req.session.message = null;
 
-  if (key && secret) {
+  try {
+    key = sanitize(req.body.key).xss().trim();
+    secret = sanitize(req.body.secret).xss().trim();
+    name = sanitize(req.body.name).xss().trim();
+    email = sanitize(req.body.email).xss().trim();
+    check(email).isEmail();
+  } catch (e) {
+    req.session.message = e.message;
+    console.log(e.message);
+  }
+
+  if (key && secret && name && email) {
     client.hmset("bitbucket_oauth", "consumer_key", key, "consumer_secret", secret, function() {
       client.hmset("user", "name", name, "email", email, function() {
         res.redirect('/login');
       });
     });
+  } else {
+    if (!req.session.message) {
+      req.session.message = "Please set all fields, at the bottom of this page, in order to continue.";
+    }
+    res.redirect('/setup');
   }
 };
