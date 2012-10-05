@@ -43,7 +43,7 @@ exports.setup = function(req, res) {
 exports.submit_setup = function(req, res) {
   var key = sanitize(req.body.key).xss().trim();
   var secret = sanitize(req.body.secret).xss().trim();
-  var full_name = sanitize(req.body.full_name).xss().trim();
+  var name = sanitize(req.body.name).xss().trim();
   var email = sanitize(req.body.email).xss().trim();
 
   if (key && secret) {

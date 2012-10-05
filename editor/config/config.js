@@ -1,5 +1,5 @@
 exports.editor = {
-  "version": "0.1.4",
+  "version": "0.1.5",
   "version_url": "https://raw.github.com/adafruit/Adafruit-WebIDE/release/release/version.txt",
   "offline": false
 };
