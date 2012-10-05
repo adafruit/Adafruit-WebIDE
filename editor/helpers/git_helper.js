@@ -77,7 +77,7 @@ exports.clone_update_remote_push = function(profile, repository_url, cb) {
       //TODO need better error handling eventually
       request_helper.create_repository(profile, repository_name, function(err, response) {
         console.log("created repository in bitbucket: " + repository_name);
-        self.clone_repository(profile, repository_url, function(err, results) {
+        self.clone_repository(repository_url, function(err, results) {
           console.log("clone repository locally: " + repository_name);
           self.update_remote(profile, repository_name, function(err, response) {
             console.log("updated remote for repository: " + repository_name);
