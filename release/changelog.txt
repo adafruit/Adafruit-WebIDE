@@ -1,3 +1,6 @@
+-0.1.6
+Perform more validations in the /setup page to ensure all the parameters are sent.
+
 -0.1.5
 Fix for /setup using wrong parm full_name instead of name.
 
