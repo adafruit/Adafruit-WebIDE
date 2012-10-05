@@ -60,4 +60,4 @@ http://www.gnu.org/licenses/agpl-3.0.html
 
 SCREENSHOTS
 ===========
-Coming soon
+![ScreenShot](http://www.adafruit.com/adablog/wp-content/uploads/2012/10/WebIDE_Alpha.jpg)
