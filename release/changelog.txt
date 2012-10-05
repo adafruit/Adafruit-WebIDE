@@ -1,5 +1,5 @@
 -0.1.5
-Fix for /setup using wrong parm full_name instead of name
+Fix for /setup using wrong parm full_name instead of name.
 
 -0.1.4
 Minor fix of cloning repositories
