@@ -42,7 +42,7 @@ exports.setup = function(req, res) {
 // submitted as a post from /setup
 exports.submit_setup = function(req, res) {
   var key, secret, name, email, message;
-  req.session.message = null;
+  req.session.message = undefined;
 
   try {
     key = sanitize(req.body.key).xss().trim();

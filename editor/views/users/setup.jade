@@ -5,7 +5,7 @@ block content
     #setup-content
       h3 Welcome to the Raspberry Pi WebIDE powered by the Adafruit Learning System
       if (typeof(session.message) != 'undefined')
-        div.alert
+        div.alert.alert-error
           p #{session.message}
       p Setting up your Raspberry Pi will only take a few minutes.  Let's get started.
       p One of the many useful features of the WebIDE is that all of your code will be
