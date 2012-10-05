@@ -2,5 +2,6 @@ The Adafruit WebIDE is copyright Adafruit Industries, 2012, and the files herein
 the Affero General Public License version 3.  Components of the Adafruit WebIDE, such as express, connect
 and others are licensed via MIT, BSD, or Apache.
 
-Permission was extended to Adafruit Industries, by the original author (of which tty.js/term.js is based on), 
-for the use, and open source distribution of his derived work.
+Permission was extended to Adafruit Industries, by the Fabrice Bellard of the javascript vt100 for jslinux 
+(of which tty.js/term.js, by Christopher Jeffrey is based on), for the use, and open source distribution 
+of his derived work.
