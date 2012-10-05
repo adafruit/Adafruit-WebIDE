@@ -14,3 +14,7 @@ versioned and saved at Bitbucket.
 
 This file was pre-loaded in your projects folder, and is located in the 
 'my-pi-projects' link to the left.
+
+We have usage information, installation instructions and various
+other information you may find useful at the Adafruit Learning System: 
+http://learn.adafruit.com/webide
