@@ -1,7 +1,6 @@
 #!/bin/sh
 
-# Temp install:
-# curl https://dl.dropbox.com/s/b8n0a28gwgd38he/uninstall.sh | sh
+# curl https://raw.github.com/adafruit/Adafruit-WebIDE/release/scripts/uninstall.sh | sh
 
 
 WEBIDE_ROOT="$HOME/Adafruit/WebIDE"

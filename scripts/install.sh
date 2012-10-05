@@ -1,7 +1,6 @@
 #!/bin/sh
 
-# Temp install:
-# curl https://dl.dropbox.com/s/ib27qzu83lhowar/install.sh | sh
+# curl https://raw.github.com/adafruit/Adafruit-WebIDE/release/scripts/install.sh | sh
 
 set -e
 WEBIDE_ROOT="$HOME/Adafruit/WebIDE"
