@@ -1,4 +1,6 @@
 exports.editor = {
+  "hostname": "raspberrypi.local",
+  "port": 3000,
   "version": "0.1.6",
   "version_url": "https://raw.github.com/adafruit/Adafruit-WebIDE/release/release/version.txt",
   "offline": false

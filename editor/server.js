@@ -22,7 +22,7 @@ var express = require('express'),
     client = redis.createClient(),
     config = require('./config/config');
 
-var davServer;
+var davServer, SERVER_PORT;
 var REPOSITORY_PATH = path.resolve(__dirname + "/../repositories");
 console.log("REPOSITORY_PATH", REPOSITORY_PATH);
 
@@ -56,24 +56,32 @@ function setup_passport(consumer_key, consumer_secret) {
     });
   });
 
-  passport.use(new BitbucketStrategy({
-      consumerKey: consumer_key,
-      consumerSecret: consumer_secret,
-      callbackURL: "http://raspberrypi.local:3000/auth/bitbucket/callback"
-      //callbackURL: "http://127.0.0.1:3000/auth/bitbucket/callback"
-    },
-    function(token, tokenSecret, profile, done) {
-      // asynchronous verification, for effect...
-      process.nextTick(function () {
-        profile.token = token;
-        profile.token_secret = tokenSecret;
-        profile.consumer_key = consumer_key;
-        profile.consumer_secret = consumer_secret;
-
-        return done(null, profile);
-      });
+  client.hgetall('user', function (err, user) {
+    var hostname;
+    if (user && user.hostname) {
+      hostname = user.hostname;
     }
-  ));
+
+    var callback_url = "http://" + (hostname ? hostname : config.editor.hostname) + ":" + SERVER_PORT + "/auth/bitbucket/callback";
+
+    passport.use(new BitbucketStrategy({
+        consumerKey: consumer_key,
+        consumerSecret: consumer_secret,
+        callbackURL: callback_url
+      },
+      function(token, tokenSecret, profile, done) {
+        // asynchronous verification, for effect...
+        process.nextTick(function () {
+          profile.token = token;
+          profile.token_secret = tokenSecret;
+          profile.consumer_key = consumer_key;
+          profile.consumer_secret = consumer_secret;
+
+          return done(null, profile);
+        });
+      }
+    ));
+  });
 }
 
 //need to setup passport on server startup, if the bitbucket oauth is already setup
@@ -206,18 +214,19 @@ function serverInitialization(app) {
   }
 
   var server = start_server();
+  SERVER_PORT = server.address().port;
   socket_listeners();
   mount_dav(server);
 }
 
 function start_server() {
-  console.log('listening on port 3000');
+  console.log('listening on port ' + config.editor.port);
 
   server = require('http').createServer(app);
   io = io.listen(server);
   new tty.Server(config.term, app, server, io);
 
-  return server.listen(3000);
+  return server.listen(config.editor.port);
 }
 
 function socket_listeners() {

@@ -21,7 +21,8 @@ exports.setup = function(req, res) {
         consumer_key: "",
         consumer_secret: "",
         name: "",
-        email: ""
+        email: "",
+        hostname: ""
       };
       if (bitbucket) {
         locals.consumer_key = bitbucket.consumer_key;
@@ -31,6 +32,7 @@ exports.setup = function(req, res) {
       if (user) {
         locals.name = user.name;
         locals.email = user.email;
+        locals.hostname = user.hostname;
       }
       
       res.render('users/setup', locals);
@@ -49,15 +51,16 @@ exports.submit_setup = function(req, res) {
     secret = sanitize(req.body.secret).xss().trim();
     name = sanitize(req.body.name).xss().trim();
     email = sanitize(req.body.email).xss().trim();
+    hostname = sanitize(req.body.hostname).xss().trim();
     check(email).isEmail();
   } catch (e) {
     req.session.message = e.message;
     console.log(e.message);
   }
 
-  if (key && secret && name && email) {
+  if (key && secret && name && email && hostname) {
     client.hmset("bitbucket_oauth", "consumer_key", key, "consumer_secret", secret, function() {
-      client.hmset("user", "name", name, "email", email, function() {
+      client.hmset("user", "name", name, "email", email, "hostname", hostname, function() {
         res.redirect('/login');
       });
     });
