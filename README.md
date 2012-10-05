@@ -52,6 +52,12 @@ Offline Mode
 
 Yup, there is basic support for offline mode.  Just switch the 'offline' flag in the editor/config/config.js file to true when you're coding on a boat, in a submarine, or on your bicycle (not recommended).
 
+License
+============
+
+The editor is licensed with AGPL Version 3.
+http://www.gnu.org/licenses/agpl-3.0.html
+
 SCREENSHOTS
 ===========
 Coming soon
