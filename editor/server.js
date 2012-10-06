@@ -22,8 +22,11 @@ var express = require('express'),
     client = redis.createClient(),
     config = require('./config/config');
 
-var davServer, SERVER_PORT;
-var REPOSITORY_PATH = path.resolve(__dirname + "/../repositories");
+var davServer,
+    HOSTNAME,
+    IS_PASSPORT_SETUP = false,
+    REPOSITORY_PATH = path.resolve(__dirname + "/../repositories");
+
 console.log("REPOSITORY_PATH", REPOSITORY_PATH);
 
 // Passport session setup.
@@ -56,40 +59,24 @@ function setup_passport(consumer_key, consumer_secret) {
     });
   });
 
-  client.hgetall('user', function (err, user) {
-    var hostname;
-    if (user && user.hostname) {
-      hostname = user.hostname;
+  passport.use(new BitbucketStrategy({
+      consumerKey: consumer_key,
+      consumerSecret: consumer_secret,
+      callbackURL: callback_url = "http://" + HOSTNAME + "/auth/bitbucket/callback"
+    },
+    function(token, tokenSecret, profile, done) {
+      // asynchronous verification, for effect...
+      process.nextTick(function () {
+        profile.token = token;
+        profile.token_secret = tokenSecret;
+        profile.consumer_key = consumer_key;
+        profile.consumer_secret = consumer_secret;
+
+        return done(null, profile);
+      });
     }
-
-    var callback_url = "http://" + (hostname ? hostname : config.editor.hostname) + ":" + SERVER_PORT + "/auth/bitbucket/callback";
-
-    passport.use(new BitbucketStrategy({
-        consumerKey: consumer_key,
-        consumerSecret: consumer_secret,
-        callbackURL: callback_url
-      },
-      function(token, tokenSecret, profile, done) {
-        // asynchronous verification, for effect...
-        process.nextTick(function () {
-          profile.token = token;
-          profile.token_secret = tokenSecret;
-          profile.consumer_key = consumer_key;
-          profile.consumer_secret = consumer_secret;
-
-          return done(null, profile);
-        });
-      }
-    ));
-  });
+  ));
 }
-
-//need to setup passport on server startup, if the bitbucket oauth is already setup
-client.hgetall('bitbucket_oauth', function (err, bitbucket) {
-  if (bitbucket) {
-    setup_passport(bitbucket.consumer_key, bitbucket.consumer_secret);
-  }
-});
 
 //redirect anything with /filesystem in the url to the WebDav server.
 app.use(function(req, res, next) {
@@ -172,6 +159,19 @@ serverInitialization(app);
 //   the request will proceed.  Otherwise, the user will be redirected to the
 //   login page.
 function ensureAuthenticated(req, res, next) {
+  setHostName(req);
+
+  if (!IS_PASSPORT_SETUP) {
+    console.log('here');
+    //need to setup passport on server startup, if the bitbucket oauth is already setup
+    client.hgetall('bitbucket_oauth', function (err, bitbucket) {
+      if (bitbucket) {
+        setup_passport(bitbucket.consumer_key, bitbucket.consumer_secret);
+        IS_PASSPORT_SETUP = true;
+      }
+    });
+  }
+
   if (config.editor.offline) {
     //TODO: create a dummy session here
     return next();
@@ -180,16 +180,16 @@ function ensureAuthenticated(req, res, next) {
     return next();
   }
 
-  client.hgetall('bitbucket_oauth', function (err, bitbucket) {
-    if (!bitbucket) {
-      res.redirect('/setup');
-    } else {
-      res.redirect('/login');
-    }
-  });
+  if (!IS_PASSPORT_SETUP) {
+    res.redirect('/setup');
+  } else {
+    res.redirect('/login');
+  }
 }
 
 function ensureOauth(req, res, next) {
+  setHostName(req);
+
   if (config.editor.offline) {
     //TODO: create a dummy session here
     return next();
@@ -205,6 +205,12 @@ function ensureOauth(req, res, next) {
   });
 }
 
+function setHostName(req) {
+  if (!HOSTNAME) {
+    HOSTNAME = req.headers.host;
+  }
+}
+
 function serverInitialization(app) {
 
   var exists = path.existsSync(REPOSITORY_PATH);
@@ -214,7 +220,6 @@ function serverInitialization(app) {
   }
 
   var server = start_server();
-  SERVER_PORT = server.address().port;
   socket_listeners();
   mount_dav(server);
 }

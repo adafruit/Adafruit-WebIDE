@@ -47,12 +47,5 @@ block content
           label(for="email", class="control-label") Email:
           div.controls
             input(type="text", name="email", value=email) 
-        p Validate your Raspberry Pi Hostname.  This is used for bitbucket redirects.
-        div.control-group
-          label(for="hostname", class="control-label") Hostname:
-          div.controls
-            input(type="text", name="hostname", value=hostname)
-            script
-              $('input[name="hostname"]').val(window.location.hostname);
         p
           input(type="submit", class="btn btn-primary btn-large", name="Submit")

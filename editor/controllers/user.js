@@ -51,16 +51,15 @@ exports.submit_setup = function(req, res) {
     secret = sanitize(req.body.secret).xss().trim();
     name = sanitize(req.body.name).xss().trim();
     email = sanitize(req.body.email).xss().trim();
-    hostname = sanitize(req.body.hostname).xss().trim();
     check(email).isEmail();
   } catch (e) {
     req.session.message = e.message;
     console.log(e.message);
   }
 
-  if (key && secret && name && email && hostname) {
+  if (key && secret && name && email) {
     client.hmset("bitbucket_oauth", "consumer_key", key, "consumer_secret", secret, function() {
-      client.hmset("user", "name", name, "email", email, "hostname", hostname, function() {
+      client.hmset("user", "name", name, "email", email, function() {
         res.redirect('/login');
       });
     });
