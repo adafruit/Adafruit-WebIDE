@@ -1,6 +1,7 @@
 -0.1.7
 Automate setting of hostname using req.headers.host.
 Add port to config file.
+Add git as a dependency for installation.
 
 -0.1.6
 Perform more validations in the /setup page to ensure all the parameters are sent.
