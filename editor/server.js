@@ -47,7 +47,7 @@ function setup_passport(consumer_key, consumer_secret) {
   passport.use(new BitbucketStrategy({
       consumerKey: consumer_key,
       consumerSecret: consumer_secret,
-      callbackURL: callback_url = "http://" + HOSTNAME + "/auth/bitbucket/callback"
+      callbackURL: "http://" + HOSTNAME + "/auth/bitbucket/callback"
     },
     function(token, tokenSecret, profile, done) {
       // asynchronous verification, for effect...
