@@ -43,21 +43,6 @@ console.log("REPOSITORY_PATH", REPOSITORY_PATH);
 //   credentials (in this case, a token, tokenSecret, and Bitbucket profile),
 //   and invoke a callback with a user object.
 function setup_passport(consumer_key, consumer_secret) {
-  passport.serializeUser(function(user, done) {
-    //console.log("serializeUser");
-    //console.log(user);
-    client.set(user.username, JSON.stringify(user));
-    done(null, user.username);
-  });
-
-  passport.deserializeUser(function(obj, done) {
-    //console.log("deserializeUser");
-    //console.log(obj);
-    client.get(obj, function(err, reply) {
-      //console.log(JSON.parse(reply));
-      done(null, JSON.parse(reply));
-    });
-  });
 
   passport.use(new BitbucketStrategy({
       consumerKey: consumer_key,
@@ -77,6 +62,17 @@ function setup_passport(consumer_key, consumer_secret) {
     }
   ));
 }
+
+passport.serializeUser(function(user, done) {
+  client.set(user.username, JSON.stringify(user));
+  done(null, user.username);
+});
+
+passport.deserializeUser(function(obj, done) {
+  client.get(obj, function(err, reply) {
+    done(null, JSON.parse(reply));
+  });
+});
 
 //redirect anything with /filesystem in the url to the WebDav server.
 app.use(function(req, res, next) {
@@ -162,7 +158,6 @@ function ensureAuthenticated(req, res, next) {
   setHostName(req);
 
   if (!IS_PASSPORT_SETUP) {
-    console.log('here');
     //need to setup passport on server startup, if the bitbucket oauth is already setup
     client.hgetall('bitbucket_oauth', function (err, bitbucket) {
       if (bitbucket) {
@@ -170,6 +165,7 @@ function ensureAuthenticated(req, res, next) {
         IS_PASSPORT_SETUP = true;
       }
     });
+    console.log(req.route);
   }
 
   if (config.editor.offline) {
