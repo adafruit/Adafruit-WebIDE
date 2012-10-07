@@ -47,6 +47,14 @@ Using Firefox or Chrome (and likely any other webkit browser) on any computer in
 
     http://raspberrypi.local:3000
 
+Restart the Editor
+============
+
+If for any reason you need to restart the editor, you can execute the following commands in order
+    
+    service adafruit-webide.sh stop
+    service adafruit-webide.sh start 
+
 Offline Mode
 ============
 
