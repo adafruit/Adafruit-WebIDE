@@ -1,3 +1,7 @@
+-0.1.9
+Fix for Editor dependency changes causing server startup failure for new installations.
+Set Hostname on each request, to allow access from internal or external IP's without restarting.
+
 -0.1.8
 Fix for the error with deserializing the session after restarting the server.
 Remove pre-populated values from /setup as that path isn't authenticated.
