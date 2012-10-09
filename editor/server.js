@@ -202,9 +202,8 @@ function ensureOauth(req, res, next) {
 }
 
 function setHostName(req) {
-  if (!HOSTNAME) {
-    HOSTNAME = req.headers.host;
-  }
+  //set it each time, it's quick, and hostname may change (internal IP vs external IP).
+  HOSTNAME = req.headers.host;
 }
 
 function serverInitialization(app) {
