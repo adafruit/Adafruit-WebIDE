@@ -233,7 +233,7 @@ function socket_listeners() {
   io.sockets.authorization(function(handshakeData, callback) {
     if (!handshakeData.headers.cookie) return callback('socket.io: cookie not found.', false);
     var signedCookies = require('express/node_modules/cookie').parse(handshakeData.headers.cookie);
-    handshakeData.cookies = require('express/node_modules/connect/lib/utils').parseSignedCookies(signedCookies, 'cat nap');
+    handshakeData.cookies = require('connect/lib/utils').parseSignedCookies(signedCookies, 'cat nap');
 
     sessionStore.get(handshakeData.cookies['sid'], function(err, session) {
       if (config.editor.offline) {
