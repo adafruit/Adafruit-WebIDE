@@ -16,10 +16,10 @@ mkdir -p "$WEBIDE_ROOT"
 cd "$WEBIDE_ROOT"
 
 echo "**** Downloading the latest version of the WebIDE ****"
-curl -sL https://github.com/downloads/adafruit/Adafruit-WebIDE/editor.tar.gz | tar xzf -
+curl -sL https://github.com/downloads/adafruit/Adafruit-WebIDE/editor-0.1.8.tar.gz | tar xzf -
 
 echo "**** Installing required libraries (node, npm, redis-server) ****"
-sudo apt-get install nodejs npm redis-server -y
+sudo apt-get install nodejs npm redis-server git -y
 
 rm -rf "$WEBIDE_ROOT/tmp"
 mkdir "$WEBIDE_ROOT/tmp"

@@ -22,8 +22,11 @@ var express = require('express'),
     client = redis.createClient(),
     config = require('./config/config');
 
-var davServer;
-var REPOSITORY_PATH = path.resolve(__dirname + "/../repositories");
+var davServer,
+    HOSTNAME,
+    IS_PASSPORT_SETUP = false,
+    REPOSITORY_PATH = path.resolve(__dirname + "/../repositories");
+
 console.log("REPOSITORY_PATH", REPOSITORY_PATH);
 
 // Passport session setup.
@@ -40,27 +43,11 @@ console.log("REPOSITORY_PATH", REPOSITORY_PATH);
 //   credentials (in this case, a token, tokenSecret, and Bitbucket profile),
 //   and invoke a callback with a user object.
 function setup_passport(consumer_key, consumer_secret) {
-  passport.serializeUser(function(user, done) {
-    //console.log("serializeUser");
-    //console.log(user);
-    client.set(user.username, JSON.stringify(user));
-    done(null, user.username);
-  });
-
-  passport.deserializeUser(function(obj, done) {
-    //console.log("deserializeUser");
-    //console.log(obj);
-    client.get(obj, function(err, reply) {
-      //console.log(JSON.parse(reply));
-      done(null, JSON.parse(reply));
-    });
-  });
 
   passport.use(new BitbucketStrategy({
       consumerKey: consumer_key,
       consumerSecret: consumer_secret,
-      callbackURL: "http://raspberrypi.local:3000/auth/bitbucket/callback"
-      //callbackURL: "http://127.0.0.1:3000/auth/bitbucket/callback"
+      callbackURL: "http://" + HOSTNAME + "/auth/bitbucket/callback"
     },
     function(token, tokenSecret, profile, done) {
       // asynchronous verification, for effect...
@@ -76,11 +63,15 @@ function setup_passport(consumer_key, consumer_secret) {
   ));
 }
 
-//need to setup passport on server startup, if the bitbucket oauth is already setup
-client.hgetall('bitbucket_oauth', function (err, bitbucket) {
-  if (bitbucket) {
-    setup_passport(bitbucket.consumer_key, bitbucket.consumer_secret);
-  }
+passport.serializeUser(function(user, done) {
+  client.set(user.username, JSON.stringify(user));
+  done(null, user.username);
+});
+
+passport.deserializeUser(function(obj, done) {
+  client.get(obj, function(err, reply) {
+    done(null, JSON.parse(reply));
+  });
 });
 
 //redirect anything with /filesystem in the url to the WebDav server.
@@ -164,6 +155,19 @@ serverInitialization(app);
 //   the request will proceed.  Otherwise, the user will be redirected to the
 //   login page.
 function ensureAuthenticated(req, res, next) {
+  setHostName(req);
+
+  if (!IS_PASSPORT_SETUP) {
+    //need to setup passport on server startup, if the bitbucket oauth is already setup
+    client.hgetall('bitbucket_oauth', function (err, bitbucket) {
+      if (bitbucket) {
+        setup_passport(bitbucket.consumer_key, bitbucket.consumer_secret);
+        IS_PASSPORT_SETUP = true;
+      }
+    });
+    console.log(req.route);
+  }
+
   if (config.editor.offline) {
     //TODO: create a dummy session here
     return next();
@@ -172,16 +176,16 @@ function ensureAuthenticated(req, res, next) {
     return next();
   }
 
-  client.hgetall('bitbucket_oauth', function (err, bitbucket) {
-    if (!bitbucket) {
-      res.redirect('/setup');
-    } else {
-      res.redirect('/login');
-    }
-  });
+  if (!IS_PASSPORT_SETUP) {
+    res.redirect('/setup');
+  } else {
+    res.redirect('/login');
+  }
 }
 
 function ensureOauth(req, res, next) {
+  setHostName(req);
+
   if (config.editor.offline) {
     //TODO: create a dummy session here
     return next();
@@ -195,6 +199,11 @@ function ensureOauth(req, res, next) {
       return next();
     }
   });
+}
+
+function setHostName(req) {
+  //set it each time, it's quick, and hostname may change (internal IP vs external IP).
+  HOSTNAME = req.headers.host;
 }
 
 function serverInitialization(app) {
@@ -211,13 +220,13 @@ function serverInitialization(app) {
 }
 
 function start_server() {
-  console.log('listening on port 3000');
+  console.log('listening on port ' + config.editor.port);
 
   server = require('http').createServer(app);
   io = io.listen(server);
   new tty.Server(config.term, app, server, io);
 
-  return server.listen(3000);
+  return server.listen(config.editor.port);
 }
 
 function socket_listeners() {

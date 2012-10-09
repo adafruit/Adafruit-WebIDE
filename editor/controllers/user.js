@@ -21,8 +21,10 @@ exports.setup = function(req, res) {
         consumer_key: "",
         consumer_secret: "",
         name: "",
-        email: ""
+        email: "",
+        hostname: ""
       };
+      /*
       if (bitbucket) {
         locals.consumer_key = bitbucket.consumer_key;
         locals.consumer_secret = bitbucket.consumer_secret;
@@ -31,7 +33,8 @@ exports.setup = function(req, res) {
       if (user) {
         locals.name = user.name;
         locals.email = user.email;
-      }
+        locals.hostname = user.hostname;
+      }*/
       
       res.render('users/setup', locals);
     });
