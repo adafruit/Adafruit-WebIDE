@@ -52,7 +52,7 @@ service adafruit-webide.sh start
 echo "**** Monitoring the WebIDE with restartd ****"
 if sudo grep -q adafruit-webide.sh /etc/restartd.conf
 then
-  #already exists
+  echo "restartd already configured"
 else
   echo 'webide "node" "service adafruit-webide.sh restart" ""' >> /etc/restartd.conf
 fi
