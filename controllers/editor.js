@@ -39,7 +39,7 @@ exports.upload_file = function(req, res) {
   file_name = file_name.replace(" ", "_");
   var folder_path = sanitize(req.body.path).xss().trim().replace('filesystem', 'repositories');
   
-  var new_path = __dirname + '/../..' + folder_path + file_name;
+  var new_path = __dirname + '/..' + folder_path + file_name;
   new_path = path.resolve(new_path);
 
   fs_helper.move_uploaded_file(temp_path, new_path, function(err, status) {

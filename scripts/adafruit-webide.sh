@@ -19,10 +19,10 @@
 PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/bin
 
 
-DAEMON_ARGS="/home/pi/Adafruit/WebIDE/webide.js"
+DAEMON_ARGS="/usr/share/adafruit/webide/server.js"
 DESC="Adafruit WebIDE server"
-NODEUSER=pi:pi
-LOCAL_VAR_RUN="/home/pi/Adafruit/WebIDE"
+NODEUSER=webide:webide
+LOCAL_VAR_RUN="/var/run"
 NAME=adafruit-webide
 DAEMON=$(which node)
 

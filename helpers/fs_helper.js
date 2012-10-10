@@ -84,7 +84,7 @@ exports.read_or_generate_key = function(cb) {
 };
 
 exports.check_for_repository = function(repository, cb) {
-  var repository_path = path.resolve(__dirname + '/../../repositories/' + repository);
+  var repository_path = path.resolve(__dirname + '/../repositories/' + repository);
   fs.lstat(repository_path, function(err, stat) {
     if (stat && stat.isDirectory()) {
       cb(null, true);
@@ -95,7 +95,7 @@ exports.check_for_repository = function(repository, cb) {
 };
 
 exports.open_image = function(temp_path, cb) {
-  var file_path = path.resolve(__dirname + '/../../' + temp_path);
+  var file_path = path.resolve(__dirname + '/../' + temp_path);
 
   fs.readFile(file_path, function(err, data){
     cb(err, data);
@@ -121,7 +121,7 @@ exports.move_uploaded_file = function(temp_path, new_path, cb) {
  */
 exports.create_project_readme = function(cb) {
   var source = path.resolve(__dirname + '/../config/README.md');
-  var destination = path.resolve(__dirname + '/../../repositories/' + config.defaults.repository + '/' + config.defaults.readme);
+  var destination = path.resolve(__dirname + '/../repositories/' + config.defaults.repository + '/' + config.defaults.readme);
   console.log(source);
   console.log(destination);
   var file = {repository: config.defaults.repository, path: config.defaults.readme, name: config.defaults.readme};

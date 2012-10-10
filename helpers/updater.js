@@ -73,7 +73,8 @@ exports.update = function (socket) {
           });
         } else {
           execute_update(update_url, socket, function(err, status) {
-            //server restarting here...check for lock when re-connect
+            //kill the server, and let the process monitor restart it
+            process.exit();
           });
         }
       });

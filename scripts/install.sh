@@ -1,9 +1,16 @@
 #!/bin/sh
 
-# curl https://raw.github.com/adafruit/Adafruit-WebIDE/release/scripts/install.sh | sh
+# curl https://raw.github.com/adafruit/Adafruit-WebIDE/release/scripts/install.sh | sudo sh
+
+#tar -zcvf editor-test.tar.gz * --exclude .git --exclude .gitignore
+#scp pi@raspberrypi.local:/home/pi/Adafruit-WebIDE/editor-test.tar.gz editor-test.tar.gz
+#sudo -u webide -g webide node server
 
 set -e
-WEBIDE_ROOT="$HOME/Adafruit/WebIDE"
+WEBIDE_ROOT="/usr/share/adafruit/webide"
+
+#needed for SSH key and config access at this point.
+WEBIDE_HOME="/home/webide"
 
 #NODE_PATH="/usr/local/lib/node"
 
@@ -13,29 +20,44 @@ WEBIDE_ROOT="$HOME/Adafruit/WebIDE"
 #fi
 
 mkdir -p "$WEBIDE_ROOT"
+mkdir -p "$WEBIDE_HOME"
 cd "$WEBIDE_ROOT"
 
 echo "**** Downloading the latest version of the WebIDE ****"
-curl -sL https://github.com/downloads/adafruit/Adafruit-WebIDE/editor-0.1.8.tar.gz | tar xzf -
+curl -L https://github.com/downloads/adafruit/Adafruit-WebIDE/editor-test.tar.gz | tar xzf -
 
 echo "**** Installing required libraries (node, npm, redis-server) ****"
-sudo apt-get install nodejs npm redis-server git -y
+apt-get install nodejs npm redis-server git restartd -y
 
-rm -rf "$WEBIDE_ROOT/tmp"
-mkdir "$WEBIDE_ROOT/tmp"
-npm config set tmp "$WEBIDE_ROOT/tmp"
-npm install
-cd "$WEBIDE_ROOT/editor"
-npm install
-npm config set tmp /tmp
+echo "**** Create webide user and group ****"
+groupadd webide || true
+useradd -g webide webide || true
+adduser webide i2c || true
+
+chown -R webide:webide "$WEBIDE_HOME"
+chown -R webide:webide "$WEBIDE_ROOT"
+chmod 775 "$WEBIDE_ROOT"
+
+echo "**** Adding default .bashrc file for webide user ****"
+cp "$WEBIDE_ROOT/scripts/.bashrc" "$WEBIDE_HOME"
 
 echo "**** Installing the WebIDE as a service ****"
 echo "**** (to uninstall service, execute: 'sudo update-rc.d -f adafruit-webide.sh remove') ****"
-sudo cp "$WEBIDE_ROOT/scripts/adafruit-webide.sh" "/etc/init.d"
+cp "$WEBIDE_ROOT/scripts/adafruit-webide.sh" "/etc/init.d"
 cd /etc/init.d
-sudo chmod 755 adafruit-webide.sh
-sudo update-rc.d adafruit-webide.sh defaults
+chmod 755 adafruit-webide.sh
+update-rc.d adafruit-webide.sh defaults
 service adafruit-webide.sh start
+
+echo "**** Monitoring the WebIDE with restartd ****"
+if sudo grep -q adafruit-webide.sh /etc/restartd.conf
+then
+  echo "restartd already configured"
+else
+  echo 'webide "node" "service adafruit-webide.sh restart" ""' >> /etc/restartd.conf
+fi
+
+#sudo su -m webide -c "node server.js"
 echo "**** Starting the server...(please wait) ****"
 sleep 15s
 

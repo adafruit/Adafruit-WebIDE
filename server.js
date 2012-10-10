@@ -20,14 +20,28 @@ var express = require('express'),
     RedisStore = require('connect-redis')(express),
     redis = require("redis"),
     client = redis.createClient(),
-    config = require('./config/config');
+    config = require('./config/config'),
+    winston = require('winston');
 
 var davServer,
     HOSTNAME,
     IS_PASSPORT_SETUP = false,
-    REPOSITORY_PATH = path.resolve(__dirname + "/../repositories");
+    REPOSITORY_PATH = path.resolve(__dirname + "/repositories");
 
 console.log("REPOSITORY_PATH", REPOSITORY_PATH);
+
+//check for the existence of the logs directory, if it doesn't
+//exist, create it prior to starting the child process.
+var exists = path.existsSync(__dirname + '/logs');
+if (!exists) {
+  fs.mkdirSync(__dirname + '/logs', 0755);
+  console.log('created logs folder');
+}
+
+winston.add(winston.transports.File, { filename: __dirname + '/logs/output.log', json: false });
+winston.handleExceptions(new winston.transports.File({ filename: __dirname + '/logs/errors.log', json: false }));
+winston.info('Logger initialized!');
+//winston.remove(winston.transports.Console);
 
 // Passport session setup.
 //   To support persistent login sessions, Passport needs to be able to
@@ -220,7 +234,7 @@ function serverInitialization(app) {
 }
 
 function start_server() {
-  console.log('listening on port ' + config.editor.port);
+  winston.info('listening on port ' + config.editor.port);
 
   server = require('http').createServer(app);
   io = io.listen(server);
@@ -233,7 +247,7 @@ function socket_listeners() {
   io.sockets.authorization(function(handshakeData, callback) {
     if (!handshakeData.headers.cookie) return callback('socket.io: cookie not found.', false);
     var signedCookies = require('express/node_modules/cookie').parse(handshakeData.headers.cookie);
-    handshakeData.cookies = require('express/node_modules/connect/lib/utils').parseSignedCookies(signedCookies, 'cat nap');
+    handshakeData.cookies = require('connect/lib/utils').parseSignedCookies(signedCookies, 'cat nap');
 
     sessionStore.get(handshakeData.cookies['sid'], function(err, session) {
       if (config.editor.offline) {
@@ -252,7 +266,7 @@ function socket_listeners() {
   });
 
   io.sockets.on('connection', function (socket) {
-    socket.emit('cwd-init', {dirname: __dirname + '/../repositories'});
+    socket.emit('cwd-init', {dirname: REPOSITORY_PATH});
 
     socket.on('git-delete', function(data) {
       git_helper.remove_commit_push(data.file, function(err, status) {
