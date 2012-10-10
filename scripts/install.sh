@@ -27,7 +27,7 @@ echo "**** Downloading the latest version of the WebIDE ****"
 curl -L https://github.com/downloads/adafruit/Adafruit-WebIDE/editor-0.1.9.tar.gz | tar xzf -
 
 echo "**** Installing required libraries (node, npm, redis-server) ****"
-apt-get install nodejs npm redis-server git -y
+apt-get install nodejs npm redis-server git restartd -y
 
 echo "**** Create webide user and group ****"
 groupadd webide || true
@@ -38,6 +38,9 @@ chown -R webide:webide "$WEBIDE_HOME"
 chown -R webide:webide "$WEBIDE_ROOT"
 chmod 775 "$WEBIDE_ROOT"
 
+echo "**** Adding default .bashrc file for webide user ****"
+cp "$WEBIDE_ROOT/scripts/.bashrc" "$WEBIDE_HOME"
+
 echo "**** Installing the WebIDE as a service ****"
 echo "**** (to uninstall service, execute: 'sudo update-rc.d -f adafruit-webide.sh remove') ****"
 cp "$WEBIDE_ROOT/scripts/adafruit-webide.sh" "/etc/init.d"
@@ -45,6 +48,14 @@ cd /etc/init.d
 chmod 755 adafruit-webide.sh
 update-rc.d adafruit-webide.sh defaults
 service adafruit-webide.sh start
+
+echo "**** Monitoring the WebIDE with restartd ****"
+if sudo grep -q adafruit-webide.sh /etc/restartd.conf
+then
+  #already exists
+else
+  echo 'webide "node" "service adafruit-webide.sh restart" ""' >> /etc/restartd.conf
+fi
 
 #sudo su -m webide -c "node server.js"
 echo "**** Starting the server...(please wait) ****"
