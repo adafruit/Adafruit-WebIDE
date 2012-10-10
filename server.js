@@ -38,8 +38,8 @@ if (!exists) {
   console.log('created logs folder');
 }
 
-winston.add(winston.transports.File, { filename: 'logs/output.log', json: false });
-winston.handleExceptions(new winston.transports.File({ filename: 'logs/errors.log', json: false }));
+winston.add(winston.transports.File, { filename: __dirname + '/logs/output.log', json: false });
+winston.handleExceptions(new winston.transports.File({ filename: __dirname + '/logs/errors.log', json: false }));
 winston.info('Logger initialized!');
 //winston.remove(winston.transports.Console);
 
