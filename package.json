@@ -1,9 +1,21 @@
 {
-  "name": "AdafruitWebIDEMonitor",
+  "name": "raspeditor",
   "description": "simple raspberry pi editing environment",
-  "version": "0.0.1",
+  "version": "0.1.2",
   "private": true,
   "dependencies": {
-    "forever-monitor": "git://github.com/jwcooper/forever-monitor.git"
+    "express": "3.x",
+    "passport": "0.x",
+    "passport-bitbucket": "0.x",
+    "jade": "0.x",
+    "request": "2.x",
+    "socket.io": "0.x",
+    "gitty": "git://github.com/jwcooper/Gitty.git",
+    "jsDAV": "git://github.com/mikedeboer/jsDAV.git",
+    "connect": "2.x",
+    "connect-redis": "1.x",
+    "redis": "0.x",
+    "tty.js": "git://github.com/jwcooper/tty.js.git",
+    "validator": "0.x"
   }
 }

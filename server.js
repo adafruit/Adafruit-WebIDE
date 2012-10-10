@@ -25,7 +25,7 @@ var express = require('express'),
 var davServer,
     HOSTNAME,
     IS_PASSPORT_SETUP = false,
-    REPOSITORY_PATH = path.resolve(__dirname + "/../repositories");
+    REPOSITORY_PATH = path.resolve(__dirname + "/repositories");
 
 console.log("REPOSITORY_PATH", REPOSITORY_PATH);
 
@@ -252,7 +252,7 @@ function socket_listeners() {
   });
 
   io.sockets.on('connection', function (socket) {
-    socket.emit('cwd-init', {dirname: __dirname + '/../repositories'});
+    socket.emit('cwd-init', {dirname: REPOSITORY_PATH});
 
     socket.on('git-delete', function(data) {
       git_helper.remove_commit_push(data.file, function(err, status) {

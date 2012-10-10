@@ -7,7 +7,7 @@ var git = require('gitty'),
     request_helper = require('./request_helper'),
     config = require('../config/config');
 
-var REPOSITORY_PATH = path.resolve(__dirname + "/../../repositories") + "/";
+var REPOSITORY_PATH = path.resolve(__dirname + "/../repositories") + "/";
 var push_queue = [], pushInterval, PUSH_TIMER = 30000;
 
 /*
