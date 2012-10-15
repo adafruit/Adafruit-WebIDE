@@ -1,5 +1,5 @@
 exports.editor = {
-  "port": 3000,
+  "port": 80,
   "version": "0.2.0",
   "version_url": "https://raw.github.com/adafruit/Adafruit-WebIDE/startup/release/version.txt",
   "offline": false
