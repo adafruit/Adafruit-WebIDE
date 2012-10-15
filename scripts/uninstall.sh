@@ -5,9 +5,13 @@
 
 WEBIDE_ROOT="/usr/share/adafruit"
 WEBIDE_HOME="/home/webide"
+NODE=$(which node)
 
 echo "**** Removing restartd WebIDE configuration ****"
 sed -i '/adafruit-webide.sh/ d' /etc/restartd.conf
+
+echo "*** Removing access to port 80"
+setcap -r "$NODE"
 
 echo "**** Stopping the Adafruit WebIDE ****"
 service adafruit-webide.sh stop
