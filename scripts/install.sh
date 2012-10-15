@@ -33,7 +33,7 @@ apt-get install nodejs npm redis-server git restartd libcap2-bin -y
 echo "**** Create webide user and group ****"
 groupadd webide || true
 useradd -g webide webide || true
-adduser webide i2c || true
+usermod -a -G i2c,sudo webide || true
 
 chown -R webide:webide "$WEBIDE_HOME"
 chown -R webide:webide "$WEBIDE_ROOT"
