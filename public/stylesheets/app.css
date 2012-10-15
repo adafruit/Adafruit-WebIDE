@@ -13,6 +13,13 @@
   display: none;
 }
 
+#trace-container {
+  padding-top: 60px;
+  margin: 0 auto;
+  width: 100%;
+  background-color: white;
+}
+
 #editor-startup {
   height: 100%;
   padding: 20px 0 0 20px;

@@ -16,6 +16,7 @@ var express = require('express'),
     editor_setup = require('./helpers/editor_setup'),
     git_helper = require('./helpers/git_helper'),
     fs_helper = require('./helpers/fs_helper'),
+    exec_helper = require('./helpers/exec_helper'),
     request_helper = require('./helpers/request_helper'),
     RedisStore = require('connect-redis')(express),
     redis = require("redis"),
@@ -57,7 +58,9 @@ winston.info('Logger initialized!');
 //   credentials (in this case, a token, tokenSecret, and Bitbucket profile),
 //   and invoke a callback with a user object.
 function setup_passport(consumer_key, consumer_secret) {
-
+  console.log(consumer_key);
+  console.log(consumer_secret);
+  console.log("http://" + HOSTNAME + "/auth/bitbucket/callback");
   passport.use(new BitbucketStrategy({
       consumerKey: consumer_key,
       consumerSecret: consumer_secret,
@@ -296,6 +299,10 @@ function socket_listeners() {
 
     socket.on('editor-update', function() {
       updater.update(socket);
+    });
+
+    socket.on('trace-file', function(data) {
+      exec_helper.trace_program(data.file, socket);
     });
   });
 }

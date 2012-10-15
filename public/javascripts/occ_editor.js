@@ -16,9 +16,11 @@
     "editor_bar_interpreted_file":  '<p class="editor-bar-actions">' +
                                       '<a href="" class="open-terminal"><i class="icon-list-alt"></i> Terminal</a>' +
                                       '<a href="" class="run-file"><i class="icon-play"></i> Run</a>' +
+                                      '<a href="" class="trace-file"><i class="icon-sitemap"></i> Trace</a>' +
                                       '<a href="" class="save-file"><i class="icon-cloud"></i> Save</a>' +
                                     '</p>',
-    "editor_bar_run_link":         '<a href="" class="run-file"><i class="icon-play"></i> Run</a>',
+    "editor_bar_run_link":          '<a href="" class="run-file"><i class="icon-play"></i> Run</a>',
+    "editor_bar_trace_link":        '<a href="" class="trace-file"><i class="icon-sitemap"></i> Trace</a>',
     "editor_bar_copy_link":         '<a href="" class="copy-project"><i class="icon-copy"></i> Copy this project to My Pi Projects</a>',
     "editor_bar_tutorial_link":     '<a href="" class="open-tutorial" target="_blank"><i class="icon-book"></i> Project Guide Available</a>',
     "editor_bar_file":              '<p class="editor-bar-actions">' +
@@ -178,6 +180,11 @@
     socket.on('cwd-init', function(data) {
       dirname = data.dirname;
     });
+
+    socket.on('program-exit', function(trace) {
+      var v = new ExecutionVisualizer("trace-container", $.parseJSON(trace.output), {});
+      
+    });
   };
 
   occEditor.check_for_updates = function() {
@@ -260,6 +267,7 @@
           $editor_bar.html(templates.editor_bar_blank);
           if (is_script(file.extension)) {
             $(templates.editor_bar_run_link).appendTo('.editor-bar-actions');
+            //$(templates.editor_bar_trace_link).appendTo('.editor-bar-actions');
           }
 
           var copy_path;
@@ -512,6 +520,15 @@
 
   function handle_editor_bar_actions() {
 
+    function trace_file(event) {
+      event.preventDefault();
+
+      var file = $('.file-open').data('file');
+      file.content = editor.getSession().getDocument().getValue();
+
+      $('#editor-container').hide();
+      socket.emit('trace-file', {file: file});
+    }
 
     function run_file(event) {
       event.preventDefault();
@@ -567,6 +584,7 @@
     $(document).on('click touchstart', '.copy-project', copy_project);
     $(document).on('click touchstart', '.save-file', occEditor.save_file);
     $(document).on('click touchstart', '.run-file', run_file);
+    $(document).on('click touchstart', '.trace-file', trace_file);
   }
 
   function handle_update_action() {
