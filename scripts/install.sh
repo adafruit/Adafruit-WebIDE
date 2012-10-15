@@ -26,7 +26,8 @@ cd "$WEBIDE_ROOT"
 echo "**** Downloading the latest version of the WebIDE ****"
 curl -L https://github.com/downloads/adafruit/Adafruit-WebIDE/editor-test.tar.gz | tar xzf -
 
-echo "**** Installing required libraries (node, npm, redis-server) ****"
+echo "**** Installing required libraries ****"
+echo "**** (nodejs npm redis-server git restartd libcap2-bin) ****"
 apt-get update
 apt-get install nodejs npm redis-server git restartd libcap2-bin -y
 
@@ -72,11 +73,11 @@ fi
 
 #sudo su -m webide -c "node server.js"
 echo "**** Starting the server...(please wait) ****"
-sleep 15s
+sleep 20s
 
 echo "**** The Adafruit WebIDE is installed and running! ****"
 echo "**** Commands: service adafruit-webide.sh {start,stop,restart} ****"
-echo "**** Navigate to http://raspberrypi.local:3000 to use the WebIDE"
+echo "**** Navigate to http://raspberrypi.local to use the WebIDE"
 #echo "**** To run the editor: ****"
 #echo "**** cd ~/Adafruit/WebIDE ****"
 #echo "**** node webide ****"
