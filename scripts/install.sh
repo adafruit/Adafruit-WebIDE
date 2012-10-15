@@ -27,7 +27,8 @@ echo "**** Downloading the latest version of the WebIDE ****"
 curl -L https://github.com/downloads/adafruit/Adafruit-WebIDE/editor-test.tar.gz | tar xzf -
 
 echo "**** Installing required libraries (node, npm, redis-server) ****"
-apt-get install nodejs npm redis-server git restartd -y
+apt-get update
+apt-get install nodejs npm redis-server git restartd libcap2-bin -y
 
 echo "**** Create webide user and group ****"
 groupadd webide || true
