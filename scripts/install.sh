@@ -35,6 +35,18 @@ groupadd webide || true
 useradd -g webide webide || true
 usermod -a -G i2c,sudo webide || true
 
+echo "**** Adding webide user to sudoers ****"
+if [ -f "/etc/sudoers.tmp" ]; then
+    rm /etc/sudoers.tmp
+fi
+cp /etc/sudoers /etc/sudoers.tmp
+echo "webide ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.tmp
+visudo -c -f /etc/sudoers.tmp
+if [ "$?" -eq "0" ]; then
+    cp /etc/sudoers.tmp /etc/sudoers
+fi
+rm /etc/sudoers.tmp
+
 chown -R webide:webide "$WEBIDE_HOME"
 chown -R webide:webide "$WEBIDE_ROOT"
 chmod 775 "$WEBIDE_ROOT"

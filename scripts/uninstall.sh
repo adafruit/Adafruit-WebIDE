@@ -10,6 +10,18 @@ NODE=$(which node)
 echo "**** Removing restartd WebIDE configuration ****"
 sed -i '/adafruit-webide.sh/ d' /etc/restartd.conf
 
+echo "**** Removing webide user from sudoers ****"
+if [ -f "/etc/sudoers.tmp" ]; then
+    rm /etc/sudoers.tmp
+fi
+cp /etc/sudoers /etc/sudoers.tmp
+sed -i '/webide ALL/ d' /etc/sudoers.tmp
+visudo -c -f /etc/sudoers.tmp
+if [ "$?" -eq "0" ]; then
+    cp /etc/sudoers.tmp /etc/sudoers
+fi
+rm /etc/sudoers.tmp
+
 echo "*** Removing access to port 80"
 setcap -r "$NODE"
 
