@@ -22,7 +22,7 @@ if [ "$?" -eq "0" ]; then
 fi
 rm /etc/sudoers.tmp
 
-echo "*** Removing access to port 80"
+echo "**** Removing access to port 80 for node ****"
 setcap -r "$NODE"
 
 echo "**** Stopping the Adafruit WebIDE ****"
@@ -37,3 +37,9 @@ echo "**** Removing webide user ****"
 userdel -r webide
 
 echo "**** The Adafruit WebIDE is now uninstalled! ****"
+echo "**** During the installation process, there were a few ****"
+echo "**** libraries installed that we did not uninstall as ****"
+echo "**** we're not able to determine if other applications are dependent ****"
+echo "**** on them. If you are not using them, you can uninstall by executing ****"
+echo "**** the following command: ****"
+echo "**** sudo apt-get remove nodejs npm redis-server git restartd libcap2-bin ****"
