@@ -1,6 +1,6 @@
 var redis = require("redis"),
     client = redis.createClient(),
-    hostname_helper = require('../helpers/hostname_helper'),
+    scripts_helper = require('../helpers/scripts_helper'),
     check = require('validator').check,
     sanitize = require('validator').sanitize;
 
@@ -95,9 +95,19 @@ exports.submit_config = function(req, res) {
 
   if (req.session.message) {
     res.redirect('/config');
-  } else if (hostname) {
-    hostname_helper.change_hostname(hostname, function(err) {
-      res.redirect('http://' + hostname + '.local/login');
-    });
+  } else {
+    //change the wifi without waiting for it
+    if (wifi_ssid && wifi_password) {
+      scripts_helper.change_wifi(wifi_ssid, wifi_password, function(err) {
+
+      });
+    }
+    if (hostname) {
+      scripts_helper.change_hostname(hostname, function(err) {
+        res.redirect('http://' + hostname + '.local/login');
+      });
+    } else {
+      res.redirect('/login');
+    }
   }
 };
