@@ -11,9 +11,10 @@ var path = require('path'),
 exports.change_hostname = function(hostname, cb) {
   var self = this;
   var script_path = path.resolve(__dirname + "/../scripts/change-hostname.sh");
-  var command = "sudo ./";
+  var command = "sudo " + script_path + " " + hostname;
+  console.log(command);
   exec("chmod +x " + script_path, function(err, stdout, stderr) {
-    exec("sudo ./" + script_path + " " + hostname, function(err, stdout, stderr) {
+    exec(command, function(err, stdout, stderr) {
       cb();
     });
   });
@@ -25,9 +26,10 @@ exports.change_hostname = function(hostname, cb) {
 exports.change_wifi = function(ssid, password, cb) {
   var self = this;
   var script_path = path.resolve(__dirname + "/../scripts/change-wifi.sh");
-  var command = "sudo ./";
+  var command = "sudo " + script_path + " " + ssid + " " + password;
+  console.log(command)
   exec("chmod +x " + script_path, function(err, stdout, stderr) {
-    exec("sudo ./" + script_path + " " + ssid + " " + password, function(err, stdout, stderr) {
+    exec(command, function(err, stdout, stderr) {
       cb();
     });
   });
