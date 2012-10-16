@@ -106,6 +106,7 @@ exports.submit_config = function(req, res) {
     }
     if (hostname) {
       scripts_helper.change_hostname(hostname, function(err) {
+        req.session.message = "Settings Successfully Configured.";
         res.redirect('http://' + hostname + '.local/login');
       });
     } else {

@@ -3,6 +3,10 @@ extends ../layout
 block content
   #login-wrapper
     #login-content
+      if (typeof(session.message) != 'undefined')
+        div.alert.alert-error
+          p #{session.message}
+            session.message = undefined
       img(src="/images/login/login2_logos.jpg")
       a(href="/auth/bitbucket", rel="external", class="btn btn-large") Click here to log in to your Bitbucket Account
       .login-help
