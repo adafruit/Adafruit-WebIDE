@@ -1,3 +1,6 @@
+body {
+  background-color: #f1f1f1;
+}
 .error {
   color: red;
 }
@@ -6,7 +9,6 @@
   padding-top: 40px;
   width: 100%;
   height: 100%;
-  background-color: #f1f1f1;
 }
 
 #editor-container {
@@ -106,6 +108,11 @@
 #login-wrapper .login-help {
   padding-top: 5px;
   font-size: 12px;
+}
+
+.login-info {
+  margin: 0 auto;
+  width: 400px;
 }
 
 /* File Navigator Section */
@@ -481,8 +488,12 @@ a.navigator-settings i.settings-enabled {
   font-weight: bold;
 }
 
-#setup-content form input[type='text'] {
+#setup-content form input[type='text'], #setup-content form input[type='password'] {
   width: 350px;
+}
+
+#setup-content form .skip-button {
+  margin-left: 10px;
 }
 
 .editor-version {

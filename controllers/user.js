@@ -1,5 +1,6 @@
 var redis = require("redis"),
     client = redis.createClient(),
+    scripts_helper = require('../helpers/scripts_helper'),
     check = require('validator').check,
     sanitize = require('validator').sanitize;
 
@@ -24,17 +25,6 @@ exports.setup = function(req, res) {
         email: "",
         hostname: ""
       };
-      /*
-      if (bitbucket) {
-        locals.consumer_key = bitbucket.consumer_key;
-        locals.consumer_secret = bitbucket.consumer_secret;
-      }
-
-      if (user) {
-        locals.name = user.name;
-        locals.email = user.email;
-        locals.hostname = user.hostname;
-      }*/
       
       res.render('users/setup', locals);
     });
@@ -61,6 +51,7 @@ exports.submit_setup = function(req, res) {
   if (key && secret && name && email) {
     client.hmset("bitbucket_oauth", "consumer_key", key, "consumer_secret", secret, function() {
       client.hmset("user", "name", name, "email", email, function() {
+        req.session.message = "Settings Successfully Configured.";
         res.redirect('/login');
       });
     });
@@ -69,5 +60,58 @@ exports.submit_setup = function(req, res) {
       req.session.message = "Please set all fields, at the bottom of this page, in order to continue.";
     }
     res.redirect('/setup');
+  }
+};
+
+
+exports.config = function(req, res) {
+  client.hgetall('bitbucket_oauth', function (err, bitbucket) {
+    client.hgetall('user', function (err, user) {
+      var locals = {
+        hostname: "",
+        wifi_ssid: "",
+        wifi_password: ""
+      };
+      
+      res.render('users/config', locals);
+    });
+  });
+};
+
+// Saves the bitbucket and git config setup information in Redis,
+// submitted as a post from /setup
+exports.submit_config = function(req, res) {
+  var key, secret, name, email, message;
+  req.session.message = undefined;
+
+  try {
+    hostname = sanitize(req.body.hostname).xss().trim();
+    wifi_ssid = sanitize(req.body.wifi_ssid).xss().trim();
+    wifi_password = sanitize(req.body.wifi_password).xss().trim();
+    if (hostname) {
+      check(hostname).len(3, 25);
+    }
+  } catch (e) {
+    req.session.message = e.message;
+    console.log(e.message);
+  }
+
+  if (req.session.message) {
+    res.redirect('/config');
+  } else {
+    //change the wifi without waiting for it
+    if (wifi_ssid && wifi_password) {
+      scripts_helper.change_wifi(wifi_ssid, wifi_password, function(err) {
+        req.session.message = "Settings Successfully Configured.";
+      });
+    }
+    if (hostname) {
+      scripts_helper.change_hostname(hostname, function(err) {
+        req.session.message = "Settings Successfully Configured.";
+        res.redirect('http://' + hostname + '.local/login');
+      });
+    } else {
+      res.redirect('/login');
+    }
   }
 };
