@@ -110,6 +110,11 @@ body {
   font-size: 12px;
 }
 
+.login-info {
+  margin: 0 auto;
+  width: 400px;
+}
+
 /* File Navigator Section */
 
 #navigator {
