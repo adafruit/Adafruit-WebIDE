@@ -122,6 +122,11 @@
 
   occEditor.init_events = function(editor) {
     var reconnect_attempts = 0;
+
+    $(window).bind("beforeunload",function(event) {
+      return "Please confirm that you would like to leave the editor.";
+    });
+
     editor_startup("Initializing Editor Events");
     editor.on('change', function() {
       var editor_content = editor.getSession().getDocument().getValue();
