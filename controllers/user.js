@@ -101,7 +101,7 @@ exports.submit_config = function(req, res) {
     //change the wifi without waiting for it
     if (wifi_ssid && wifi_password) {
       scripts_helper.change_wifi(wifi_ssid, wifi_password, function(err) {
-
+        req.session.message = "Settings Successfully Configured.";
       });
     }
     if (hostname) {
