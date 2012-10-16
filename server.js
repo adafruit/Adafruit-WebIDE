@@ -132,6 +132,8 @@ app.post('/create/repository', ensureAuthenticated, editor.create_repository);
 
 app.get('/setup', user.setup);
 app.post('/setup', user.submit_setup);
+app.get('/config', user.config);
+app.post('/config', user.submit_config);
 app.get('/login', ensureOauth, user.login);
 app.get('/logout', user.logout);
 
