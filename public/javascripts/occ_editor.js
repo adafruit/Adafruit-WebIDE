@@ -353,6 +353,11 @@
       });
     });
 
+    tty.on('close window', function() {
+      tty.off('close window');
+      editor.focus();
+    });
+
     var maskHeight = $(window).height();
     var maskWidth = $(window).width();
     var windowTop =  (maskHeight  - $('.window').height())/2;
