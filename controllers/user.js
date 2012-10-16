@@ -87,7 +87,9 @@ exports.submit_config = function(req, res) {
     hostname = sanitize(req.body.hostname).xss().trim();
     wifi_ssid = sanitize(req.body.wifi_ssid).xss().trim();
     wifi_password = sanitize(req.body.wifi_password).xss().trim();
-    check(hostname).len(3, 25);
+    if (hostname) {
+      check(hostname).len(3, 25);
+    }
   } catch (e) {
     req.session.message = e.message;
     console.log(e.message);
