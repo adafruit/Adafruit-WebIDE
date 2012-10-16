@@ -51,7 +51,7 @@ exports.submit_setup = function(req, res) {
   if (key && secret && name && email) {
     client.hmset("bitbucket_oauth", "consumer_key", key, "consumer_secret", secret, function() {
       client.hmset("user", "name", name, "email", email, function() {
-        res.redirect('/config');
+        res.redirect('/login');
       });
     });
   } else {
