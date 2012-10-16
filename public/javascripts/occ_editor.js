@@ -499,12 +499,13 @@
         //console.log(err);
         //console.log(status);
         var command;
+        //Running as sudo is temporary.  It's a necessary evil to access GPIO at this point.
         if (file.extension === 'py') {
-          command = "python ";
+          command = "sudo python ";
         } else if (file.extension === 'rb') {
-          command = "ruby ";
+          command = "sudo ruby ";
         } else if (file.extension === 'js') {
-          command = "node ";
+          command = "sudo node ";
         }
         command += file.name;
 

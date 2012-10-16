@@ -1,3 +1,13 @@
+-0.2.0
+New installation procedure to fix many of the initial installation issues with 0.1.9 and earlier.
+Include the majority of dependencies with the editor archive.
+New startup and process monitor procedure.
+Default run as sudo for now.
+Add /config page to set hostname and basic wifi.
+Use port 80 instead of 3000 as the default.
+Add new error and exception logging to help troubleshoot.
+Update documentation for new features.
+
 -0.1.9
 Fix for Editor dependency changes causing server startup failure for new installations.
 Set Hostname on each request, to allow access from internal or external IP's without restarting.
