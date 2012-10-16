@@ -39,7 +39,7 @@
     }
   }
 
-  function show_menu() {
+  function show_menu(event) {
     event.preventDefault();
 
     if(is_adafruit_repository($(this).data('file').path)) {
@@ -64,7 +64,7 @@
   function is_adafruit_repository(path) {
     var adafruit_root = "/filesystem/Adafruit-Raspberry-Pi-Python-Code/";
     return (path.indexOf(adafruit_root) !== -1);
-  }  
+  }
 
   function rename_option(event) {
     event.preventDefault();
