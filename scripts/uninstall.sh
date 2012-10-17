@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # curl https://raw.github.com/adafruit/Adafruit-WebIDE/release/scripts/uninstall.sh | sudo sh
 
