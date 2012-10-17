@@ -143,11 +143,11 @@ function execute_update(update_url, socket, cb) {
  *       Create the editor in a versioned folder, and point a symlink to that new version.
  */
 function extract_upate(file, socket, cb) {
-  var command = 'tar -zxvf ' + file + ' -C ' + __dirname + '/../';
+  var command = 'tar -zxf ' + file + ' -C ' + __dirname + '/../';
   socket.emit('editor-update-unpack-start');
   console.log('extract update');
   console.log(command);
-  var child = exec('tar -zxvf ' + file + ' -C ' + __dirname + '/../', function (err, stdout, stderr) {
+  var child = exec(command, function (err, stdout, stderr) {
     socket.emit('editor-update-unpack-end');
     console.log('err', err);
     console.log('stderr', stderr);

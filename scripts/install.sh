@@ -3,7 +3,7 @@
 # curl https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/install.sh | sudo sh
 
 #tar -zcvf editor.tar.gz * --exclude .git --exclude .gitignore
-#scp pi@raspberrypi.local:/home/pi/Adafruit-WebIDE/editor.tar.gz editor-0.2.1.tar.gz
+#scp pi@raspberrypi.local:/home/pi/Adafruit-WebIDE/editor.tar.gz editor-0.2.0.tar.gz
 #sudo -u webide -g webide node server
 
 set -e
