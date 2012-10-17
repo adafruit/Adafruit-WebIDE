@@ -60,7 +60,7 @@ echo "**** (to uninstall service, execute: 'sudo update-rc.d -f adafruit-webide.
 cp "$WEBIDE_ROOT/scripts/adafruit-webide.sh" "/etc/init.d"
 cd /etc/init.d
 chmod 755 adafruit-webide.sh
-update-rc.d adafruit-webide.sh defaultsd
+update-rc.d adafruit-webide.sh defaults
 service adafruit-webide.sh start
 
 echo "**** Monitoring the WebIDE with restartd ****"
