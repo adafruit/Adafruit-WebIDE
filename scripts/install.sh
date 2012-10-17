@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-# curl https://raw.github.com/adafruit/Adafruit-WebIDE/release/scripts/install.sh | sudo sh
+# curl https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/install.sh | sudo sh
 
 #tar -zcvf editor.tar.gz * --exclude .git --exclude .gitignore
-#scp pi@raspberrypi.local:/home/pi/Adafruit-WebIDE/editor.tar.gz editor-0.2.0.tar.gz
+#scp pi@raspberrypi.local:/home/pi/Adafruit-WebIDE/editor.tar.gz editor-0.2.1.tar.gz
 #sudo -u webide -g webide node server
 
 set -e
@@ -60,7 +60,7 @@ echo "**** (to uninstall service, execute: 'sudo update-rc.d -f adafruit-webide.
 cp "$WEBIDE_ROOT/scripts/adafruit-webide.sh" "/etc/init.d"
 cd /etc/init.d
 chmod 755 adafruit-webide.sh
-update-rc.d adafruit-webide.sh defaults
+update-rc.d adafruit-webide.sh defaultsd
 service adafruit-webide.sh start
 
 echo "**** Monitoring the WebIDE with restartd ****"
@@ -70,7 +70,7 @@ then
 else
   echo 'webide "node" "service adafruit-webide.sh restart" ""' >> /etc/restartd.conf
 fi
-
+restartd
 #sudo su -m webide -c "node server.js"
 echo "**** Starting the server...(please wait) ****"
 sleep 20s

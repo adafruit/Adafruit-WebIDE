@@ -1,17 +1,11 @@
 #!/usr/bin/env bash
 
-# curl https://raw.github.com/adafruit/Adafruit-WebIDE/release/scripts/uninstall.sh | sudo sh
+# curl https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/uninstall.sh | sudo sh
 
 
 WEBIDE_ROOT="/usr/share/adafruit"
 WEBIDE_HOME="/home/webide"
 NODE=$(which node)
-
-read -p "Thank you for using the WebIDE. Uninstall the WebIDE [y/n]? " REPLY
-if [[ ! $REPLY =~ ^[Yy]$ ]]
-then
-  exit 1
-fi
 
 echo "**** Removing restartd WebIDE configuration ****"
 sed -i '/adafruit-webide.sh/ d' /etc/restartd.conf
