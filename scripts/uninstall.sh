@@ -8,7 +8,7 @@ WEBIDE_HOME="/home/webide"
 NODE=$(which node)
 
 read -p "Thank you for using the WebIDE. Uninstall the WebIDE [y/n]? " RESPONSE
-[[ $RESPONSE == "y" ]] || exit 1
+[[ $RESPONSE =~ ^[Yy]$ ]] || exit 1
 
 echo "**** Removing restartd WebIDE configuration ****"
 sed -i '/adafruit-webide.sh/ d' /etc/restartd.conf
