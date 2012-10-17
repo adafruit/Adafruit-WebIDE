@@ -1,17 +1,19 @@
 -0.2.0
 New installation procedure to fix many of the initial installation issues with 0.1.9 and earlier.
+Reduce memory consumption by 10-20mb.
 Include the majority of dependencies with the editor archive.
 New startup and process monitor procedure.
 Run as 'webide' user to isolate from 'pi' user, 'webide' has similar permissions as 'pi' for GPIO and I2C.
+Add 'webide' to I2C group
 Default to run as sudo for now.
 Add /config page to change hostname and basic wifi.
 Use port 80 instead of 3000 as the default.
 Add new error and exception logging to help troubleshoot.
-Update documentation for new features.
 Give focus back to the editor when closing the terminal.
 Add confirmation to prevent accidental navigation away from the editor.
 Fix context menu so that it displays properly in firefox.
 Add notification of activity while creating files and folders.
+Update documentation for new features.
 
 -0.1.9
 Fix for Editor dependency changes causing server startup failure for new installations.
