@@ -786,6 +786,10 @@
       var $create_wrapper = $('.navigator-item-create');
       var folder_name = $('input[name="folder_name"]').val();
       var parent_folder = $('.navigator-item-back').data("file");
+
+      $('.create-save').text('Submit');
+      $('.create-input-wrapper input').prop('disabled', false);
+
       if (err) {
         if (!$create_wrapper.find('.error').length) {
           $create_wrapper.prepend($('<span class="error">' + err + '</span>'));
@@ -802,6 +806,9 @@
 
     function create_folder(event) {
       event.preventDefault();
+      $('.create-save').text('Working');
+      $('.create-input-wrapper input').prop('disabled', true);
+
       var $create_wrapper = $('.navigator-item-create');
       var folder_name = $('input[name="folder_name"]').val();
       folder_name = folder_name.replace(" ", "_");
@@ -817,6 +824,9 @@
 
     function create_file(event) {
       event.preventDefault();
+      $('.create-save').text('Working');
+      $('.create-input-wrapper input').prop('disabled', true);
+            
       var $create_wrapper = $('.navigator-item-create');
       var file_name = $('input[name="file_name"]').val();
       file_name = file_name.replace(" ", "_");
