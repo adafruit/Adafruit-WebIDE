@@ -573,7 +573,7 @@
     }
 
     socket.on('editor-update-download-start', function() {
-      $('.connection-state').text('Downloading');
+      $('.connection-state').text('Downloading (~30 seconds)');
     });
 
     socket.on('editor-update-download-end', function() {
@@ -581,11 +581,11 @@
     });
 
     socket.on('editor-update-unpack-start', function() {
-      $('.connection-state').text('Unpacking');
+      $('.connection-state').text('Unpacking (~60 seconds)');
     });
 
     socket.on('editor-update-unpack-end', function() {
-      $('.connection-state').text('Restarting');
+      $('.connection-state').text('Restarting (~30 seconds)');
     });
 
     socket.on('editor-update-complete', function(data) {
