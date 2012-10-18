@@ -230,19 +230,30 @@ function serverInitialization(app) {
     console.log('created repositories folder');
   }
 
-  var server = start_server();
-  socket_listeners();
-  mount_dav(server);
+  start_server(function(server) {
+    socket_listeners();
+    mount_dav(server);
+  });
 }
 
-function start_server() {
-  winston.info('listening on port ' + config.editor.port);
+function start_server(cb) {
+
 
   server = require('http').createServer(app);
   io = io.listen(server);
   new tty.Server(config.term, app, server, io);
 
-  return server.listen(config.editor.port);
+  client.hgetall('server', function (err, server_data) {
+    var port;
+
+    if (server_data && server_data.port) {
+      port = server_data.port;
+    } else {
+      port = config.editor.port;
+    }
+    winston.info('listening on port ' + port);
+    cb(server.listen(port));
+  });
 }
 
 function socket_listeners() {

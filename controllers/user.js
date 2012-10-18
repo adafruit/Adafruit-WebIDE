@@ -65,21 +65,22 @@ exports.submit_setup = function(req, res) {
 
 
 exports.config = function(req, res) {
-  client.hgetall('bitbucket_oauth', function (err, bitbucket) {
-    client.hgetall('user', function (err, user) {
+  client.hgetall('server', function (err, server) {
       var locals = {
         hostname: "",
         wifi_ssid: "",
-        wifi_password: ""
+        wifi_password: "",
+        port: (server ? (server.port || "") : "")
       };
       
       res.render('users/config', locals);
-    });
   });
 };
 
 // Saves the bitbucket and git config setup information in Redis,
 // submitted as a post from /setup
+
+//TODO: Refactor this...it's out of control!
 exports.submit_config = function(req, res) {
   var key, secret, name, email, message;
   req.session.message = undefined;
@@ -88,8 +89,12 @@ exports.submit_config = function(req, res) {
     hostname = sanitize(req.body.hostname).xss().trim();
     wifi_ssid = sanitize(req.body.wifi_ssid).xss().trim();
     wifi_password = sanitize(req.body.wifi_password).xss().trim();
+    port = sanitize(req.body.port).xss().trim();
     if (hostname) {
       check(hostname).len(3, 25);
+    }
+    if (port) {
+      check(port).isNumeric().min(1).max(65535);
     }
   } catch (e) {
     req.session.message = e.message;
@@ -105,12 +110,20 @@ exports.submit_config = function(req, res) {
         req.session.message = "Settings Successfully Configured.";
       });
     }
+    if (port) {
+      client.hmset("server", "port", port, function() {
+      });
+    }
+
     if (hostname) {
       scripts_helper.change_hostname(hostname, function(err) {
         req.session.message = "Settings Successfully Configured.";
         res.redirect('http://' + hostname + '.local/login');
       });
     } else {
+      if (port) {
+        req.session.message = "Please restart the server for port changes to take effect.";
+      }
       res.redirect('/login');
     }
   }
