@@ -237,8 +237,6 @@ function serverInitialization(app) {
 }
 
 function start_server(cb) {
-
-
   server = require('http').createServer(app);
   io = io.listen(server);
   new tty.Server(config.term, app, server, io);
@@ -251,6 +249,7 @@ function start_server(cb) {
     } else {
       port = config.editor.port;
     }
+    
     winston.info('listening on port ' + port);
     cb(server.listen(port));
   });
