@@ -73,10 +73,10 @@ fi
 restartd
 #sudo su -m webide -c "node server.js"
 echo "**** Starting the server...(please wait) ****"
-sleep 20s
+sleep 23s
 
 echo "**** The Adafruit WebIDE is installed and running! ****"
-echo "**** Commands: service adafruit-webide.sh {start,stop,restart} ****"
+echo "**** Commands: sudo service adafruit-webide.sh {start,stop,restart} ****"
 echo "**** Navigate to http://raspberrypi.local to use the WebIDE"
 #echo "**** To run the editor: ****"
 #echo "**** cd ~/Adafruit/WebIDE ****"
