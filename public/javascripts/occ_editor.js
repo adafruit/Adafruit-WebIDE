@@ -607,17 +607,21 @@
   }
 
   function handle_scheduler_events() {
-    socket.on('scheduler-start', function(file) {
-      console.log('scheduler-start');
+    socket.on('scheduler-start', function(data) {
+      console.log(data);
+      $('.schedule-status').text('Initializing Job: ' + data.file.name);
     });
-    socket.on('scheduler-executing', function(file) {
-      console.log('scheduler-start');
+    socket.on('scheduler-executing', function(data) {
+      console.log('scheduler-executing');
+      $('.schedule-status').text('Running Job: ' + data.file.name);
     });
-    socket.on('scheduler-error', function(file) {
+    socket.on('scheduler-error', function(data) {
       console.log('scheduler-error');
+      $('.schedule-status').text('Job Error: ' + data.file.name);
     });
-    socket.on('scheduler-exit', function(file) {
+    socket.on('scheduler-exit', function(data) {
       console.log('scheduler-exit');
+      $('.schedule-status').text('Last Run Job: ' + data.file.name);
     });
   }
 

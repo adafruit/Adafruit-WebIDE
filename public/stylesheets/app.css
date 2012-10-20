@@ -496,9 +496,7 @@ a.navigator-settings i.settings-enabled {
   margin-left: 10px;
 }
 
-.editor-version {
-  padding: 10px 0 0 10px;
-}
+
 
 #schedule-modal .scheduler-links a{
   margin: 0 5px 5px 0;
@@ -520,4 +518,26 @@ a.navigator-settings i.settings-enabled {
   width: 515px;
   height: 30px;
   font-size: 20px;
+}
+
+.schedule-footer {
+  float: right;
+  font-size: 16px;
+  color: #E4E5E7;
+  padding: 10px 10px 0 10px;
+}
+
+.schedule-footer a {
+  color: #E4E5E7;
+  text-decoration: none;
+  padding-left: 15px;
+}
+
+.schedule-footer .schedule-status {
+  color: #74A927;
+}
+
+.editor-version {
+  float: left;
+  padding: 10px 0 0 10px;
 }
