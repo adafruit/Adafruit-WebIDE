@@ -1,3 +1,5 @@
+//NOTE: Changes in this file will not persist between updates at this point.
+//Change port number in /config.
 exports.editor = {
   "port": 80,
   "version": "0.2.0",
