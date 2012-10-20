@@ -283,7 +283,7 @@ function socket_listeners() {
 
   io.sockets.on('connection', function (socket) {
     socket.set('username', socket.handshake.session.username);
-    exec_helper.set_sockets(io.sockets.sockets);
+    //exec_helper.set_sockets(io.sockets.sockets);
 
     //console.log(socket.get('username'));
 
@@ -343,3 +343,13 @@ function mount_dav(server) {
   });
   console.log('webdav filesystem mounted');
 }
+
+exports.get_socket = function (username, cb) {
+  for (var socketId in io.sockets.sockets) {
+    io.sockets.sockets[socketId].get('username', function(err, sock_username) {
+      if (username === sock_username) {
+        cb(io.sockets.sockets[socketId]);
+      }
+    });
+  }
+};
