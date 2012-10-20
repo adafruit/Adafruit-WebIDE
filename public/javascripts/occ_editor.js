@@ -91,6 +91,7 @@
     handle_navigator_actions();
     handle_editor_bar_actions();
     //handle_program_output();
+    handle_scheduler_events();
     handle_update_action();
   };
 
@@ -566,16 +567,21 @@
       function submit_schedule(event) {
         event.preventDefault();
 
-        var schedule = $('input[name="schedule"]').val().trim();
-        var parsed_schedule = enParser().parse(schedule);
-        console.log(parsed_schedule);
-        console.log(schedule);
+        var file = $('.file-open').data('file');
+        var schedule_text = $('input[name="schedule"]').val().trim();
+        var parsed_schedule = enParser().parse(schedule_text);
+
         if (parsed_schedule.error !== -1) {
-          var schedule_good = schedule.slice(0,parsed_schedule.error);
-          var schedule_bad = schedule.slice(parsed_schedule.error);
+          //found an error parsing, split the schedule string based on where the error occurs
+          var schedule_good = schedule_text.slice(0,parsed_schedule.error);
+          var schedule_bad = schedule_text.slice(parsed_schedule.error);
           $('.scheduler-error').html('Invalid Schedule: ' + schedule_good + '<strong>' + schedule_bad + '</strong>');
         } else {
+          //all is good, submit schedule to backend
+          socket.emit('submit-schedule', {text: schedule_text, schedule: parsed_schedule, file: file});
           $('#schedule-modal').modal('hide');
+
+          $('.schedule-file').html('<i class="icon-time"></i> Scheduled').delay(100).fadeOut().fadeIn('slow');
         }
 
       }
@@ -598,6 +604,21 @@
     $(document).on('click touchstart', '.save-file', occEditor.save_file);
     $(document).on('click touchstart', '.run-file', run_file);
     $(document).on('click touchstart', '.schedule-file', open_scheduler);
+  }
+
+  function handle_scheduler_events() {
+    socket.on('scheduler-start', function(file) {
+      console.log('scheduler-start');
+    });
+    socket.on('scheduler-executing', function(file) {
+      console.log('scheduler-start');
+    });
+    socket.on('scheduler-error', function(file) {
+      console.log('scheduler-error');
+    });
+    socket.on('scheduler-exit', function(file) {
+      console.log('scheduler-exit');
+    });
   }
 
   function handle_update_action() {

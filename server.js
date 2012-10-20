@@ -13,8 +13,10 @@ var express = require('express'),
     fs = require('fs'),
     path = require('path'),
     updater = require('./helpers/updater'),
+    scheduler = require('./helpers/scheduler'),
     editor_setup = require('./helpers/editor_setup'),
     git_helper = require('./helpers/git_helper'),
+    exec_helper = require('./helpers/exec_helper'),
     fs_helper = require('./helpers/fs_helper'),
     request_helper = require('./helpers/request_helper'),
     RedisStore = require('connect-redis')(express),
@@ -230,6 +232,8 @@ function serverInitialization(app) {
     console.log('created repositories folder');
   }
 
+  scheduler.initialize_jobs();
+
   start_server(function(server) {
     socket_listeners();
     mount_dav(server);
@@ -278,6 +282,12 @@ function socket_listeners() {
   });
 
   io.sockets.on('connection', function (socket) {
+    socket.set('username', socket.handshake.session.username);
+    exec_helper.set_sockets(io.sockets.sockets);
+
+    //console.log(socket.get('username'));
+
+
     socket.emit('cwd-init', {dirname: REPOSITORY_PATH});
 
     socket.on('git-delete', function(data) {
@@ -309,8 +319,16 @@ function socket_listeners() {
     socket.on('editor-update', function() {
       updater.update(socket);
     });
+
+    socket.on('submit-schedule', function(schedule) {
+      scheduler.add_schedule(schedule, socket, socket.handshake.session);
+    });
   });
 }
+
+io.sockets.on('disconnect', function(socket) {
+  exec_helper.set_sockets(io.sockets.sockets);
+});
 
 function mount_dav(server) {
   var jsDAV_Tree_Filesystem = require("jsDAV/lib/DAV/tree/filesystem").jsDAV_Tree_Filesystem;
