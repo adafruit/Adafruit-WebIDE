@@ -17,8 +17,10 @@
                                       '<a href="" class="open-terminal"><i class="icon-list-alt"></i> Terminal</a>' +
                                       '<a href="" class="run-file"><i class="icon-play"></i> Run</a>' +
                                       '<a href="" class="save-file"><i class="icon-cloud"></i> Save</a>' +
+                                      '<a href="" class="schedule-file"><i class="icon-time"></i> Schedule</a>' +
                                     '</p>',
-    "editor_bar_run_link":         '<a href="" class="run-file"><i class="icon-play"></i> Run</a>',
+    "editor_bar_run_link":          '<a href="" class="run-file"><i class="icon-play"></i> Run</a>',
+    "editor_bar_schedule_link":     '<a href="" class="schedule-file"><i class="icon-time"></i> Schedule</a>',
     "editor_bar_copy_link":         '<a href="" class="copy-project"><i class="icon-copy"></i> Copy this project to My Pi Projects</a>',
     "editor_bar_tutorial_link":     '<a href="" class="open-tutorial" target="_blank"><i class="icon-book"></i> Project Guide Available</a>',
     "editor_bar_file":              '<p class="editor-bar-actions">' +
@@ -551,10 +553,51 @@
       });
     }
 
+    function open_scheduler(event) {
+      event.preventDefault();
+
+      function populate_scheduler_input(event) {
+        event.preventDefault();
+
+        var schedule = $(this).text();
+        $('input[name="schedule"]').val(schedule);
+      }
+
+      function submit_schedule(event) {
+        event.preventDefault();
+
+        var schedule = $('input[name="schedule"]').val().trim();
+        var parsed_schedule = enParser().parse(schedule);
+        console.log(parsed_schedule);
+        console.log(schedule);
+        if (parsed_schedule.error !== -1) {
+          var schedule_good = schedule.slice(0,parsed_schedule.error);
+          var schedule_bad = schedule.slice(parsed_schedule.error);
+          $('.scheduler-error').html('Invalid Schedule: ' + schedule_good + '<strong>' + schedule_bad + '</strong>');
+        } else {
+          $('#schedule-modal').modal('hide');
+        }
+
+      }
+
+
+      $('#schedule-modal').modal('show');
+
+      $('#schedule-modal').on('hidden', function () {
+        $('#schedule-modal').off('hidden');
+        $(document).off('click touchstart', '.scheduler-links');
+        $(document).off('click touchstart', '#schedule-modal .modal-submit');
+      });
+
+      $(document).on('click touchstart', '.scheduler-links a', populate_scheduler_input);
+      $(document).on('click touchstart', '#schedule-modal .modal-submit', submit_schedule);
+    }
+
     $(document).on('click touchstart', '.open-terminal', open_terminal);
     $(document).on('click touchstart', '.copy-project', copy_project);
     $(document).on('click touchstart', '.save-file', occEditor.save_file);
     $(document).on('click touchstart', '.run-file', run_file);
+    $(document).on('click touchstart', '.schedule-file', open_scheduler);
   }
 
   function handle_update_action() {

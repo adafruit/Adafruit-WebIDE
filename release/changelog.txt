@@ -1,3 +1,6 @@
+-0.2.1
+Add option to change port number in /config, and persist in Redis, surviving updates.
+
 -0.2.0
 New installation procedure to fix many of the initial installation issues with 0.1.9 and earlier.
 Reduce memory consumption by 10-20mb.

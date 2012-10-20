@@ -499,3 +499,25 @@ a.navigator-settings i.settings-enabled {
 .editor-version {
   padding: 10px 0 0 10px;
 }
+
+#schedule-modal .scheduler-links a{
+  margin: 0 5px 5px 0;
+}
+
+#schedule-modal .scheduler-form form {
+  margin-bottom: 0;
+}
+
+#schedule-modal .scheduler-form label {
+  font-weight: bold;
+}
+
+#schedule-modal .scheduler-error {
+  color: #BA0E41;
+}
+
+#schedule-modal .scheduler-form input[type='text'] {
+  width: 515px;
+  height: 30px;
+  font-size: 20px;
+}
