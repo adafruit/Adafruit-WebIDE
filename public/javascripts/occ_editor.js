@@ -3,7 +3,8 @@
 (function( occEditor, $, undefined ) {
   var editor, modes = [], max_reconnects = 50,
       socket = io.connect(null, {'reconnection limit': 2000, 'max reconnection attempts': max_reconnects}),
-      dirname, updating = false;
+      dirname, updating = false,
+      job_list;
 
   var templates = {
     "editor_bar_init":              '<p class="editor-bar-actions">' +
@@ -141,6 +142,7 @@
     socket.on('connect', function () {
       $('.connection-state').removeClass('disconnected').addClass('connected').text('Connected');
       occEditor.check_for_updates();
+      occEditor.load_scheduled_jobs();
     });
     socket.on('disconnect', function () {
       if (updating) {
@@ -178,6 +180,13 @@
     });
   };
 
+  occEditor.load_scheduled_jobs = function() {
+    socket.on('scheduled-job-list', function(data) {
+      job_list = data;
+      //console.log(job_list);
+    });
+  };
+
   occEditor.populate_editor = function(file, content) {
 
     var EditSession = require("ace/edit_session").EditSession;
@@ -193,6 +202,7 @@
       if (file.path) {
         var file_mode = getModeFromPath(file.path);
         session.setMode(file_mode.mode);
+        occEditor.handle_scheduled_file(file);
       }
 
       editor.setSession(session);
@@ -211,6 +221,35 @@
       }
     }
     
+  };
+
+  /*
+   * Populates the editor bar if this is a scheduled file.  Also populates the scheduled input text
+   */
+
+  occEditor.handle_scheduled_file = function(file) {
+    var is_scheduled_file = false;
+    if (!file) {
+      return;
+    }
+
+    var file_path = file.path.replace('\/filesystem\/', '\/repositories\/');
+
+    //loop through the job list, and check if this file is scheduled, if it is populate the valid DOM elements
+    for (var i=0; i<job_list.length; i++) {
+      if (job_list[i].path === file_path) {
+        $('.schedule-file').html('<i class="icon-time"></i> Scheduled');
+        $('input[name="schedule"]').val(job_list[i].text);
+        is_scheduled_file = true;
+
+        break;
+      }
+    }
+
+    //clear out the input text if this isn't a scheduled file
+    if (!is_scheduled_file) {
+      $('input[name="schedule"]').val("");
+    }
   };
 
   occEditor.clear_editor = function() {
@@ -586,6 +625,7 @@
 
       }
 
+      occEditor.handle_scheduled_file($('.file-open').data('file'));
 
       $('#schedule-modal').modal('show');
 
@@ -608,19 +648,19 @@
 
   function handle_scheduler_events() {
     socket.on('scheduler-start', function(data) {
-      console.log(data);
+      //console.log(data);
       $('.schedule-status').text('Initializing Job: ' + data.file.name);
     });
     socket.on('scheduler-executing', function(data) {
-      console.log('scheduler-executing');
+      //console.log('scheduler-executing');
       $('.schedule-status').text('Running Job: ' + data.file.name);
     });
     socket.on('scheduler-error', function(data) {
-      console.log('scheduler-error');
+      //console.log('scheduler-error');
       $('.schedule-status').text('Job Error: ' + data.file.name);
     });
     socket.on('scheduler-exit', function(data) {
-      console.log('scheduler-exit');
+      //console.log('scheduler-exit');
       $('.schedule-status').text('Last Run Job: ' + data.file.name);
     });
   }

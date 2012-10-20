@@ -19,7 +19,7 @@ function schedule_job(key, job) {
       var is_new_job = true,
           l = later(60),
           schedule = enParser().parse(job.text);
-          
+
       l.exec(schedule, new Date(), execute_job, job);
       console.log("Job Scheduled: ", schedule);
 
@@ -39,13 +39,33 @@ function schedule_job(key, job) {
       if (is_new_job) {
         job_queue.push({key: key, later: l});
       }
-      
-      console.log(job_queue);
+
+      //console.log(job_queue);
 }
+
+
+exports.emit_scheduled_jobs = function emit_scheduled_jobs(username, socket) {
+  var job_list = [];
+  client.smembers("jobs", function(err, res) {
+    res.forEach(function(key, i) {
+      client.hgetall(key, function(err, job_data) {
+        if (job_data.username === username) {
+          job_list.push(job_data);
+        }
+
+        if (res.length === (i+1)) {
+          socket.emit('scheduled-job-list', job_list);
+        }
+      });
+    });
+  });  
+};
+
 /*
  * Create new schedule
  */
-exports.add_schedule = function (schedule, socket, session) {
+exports.add_schedule = function(schedule, socket, session) {
+  var self = this;
   schedule.file.username = session.username;
   var file_path = schedule.file.path.replace('\/filesystem\/', '\/repositories\/');
   var key = "jobs:" + file_path.replace(/\W/g, '');  //keep only alphanumeric for key
@@ -59,10 +79,11 @@ exports.add_schedule = function (schedule, socket, session) {
   client.sadd("jobs", key, function() {
     client.hmset(key, job_data, function() {
       schedule_job(key, job_data);
+      //repopulate the job list in the editor
+      self.emit_scheduled_jobs(session.username, socket);
     });
   });
 };
-
 
 
 /*

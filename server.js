@@ -283,13 +283,12 @@ function socket_listeners() {
 
   io.sockets.on('connection', function (socket) {
     socket.set('username', socket.handshake.session.username);
-    //exec_helper.set_sockets(io.sockets.sockets);
 
-    //console.log(socket.get('username'));
-
-
+    //emit on first connection
     socket.emit('cwd-init', {dirname: REPOSITORY_PATH});
+    scheduler.emit_scheduled_jobs(socket.handshake.session.username, socket);
 
+    //listen for events
     socket.on('git-delete', function(data) {
       git_helper.remove_commit_push(data.file, function(err, status) {
         socket.emit('git-delete-complete', {message: ""});
