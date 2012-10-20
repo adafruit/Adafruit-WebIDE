@@ -1,10 +1,5 @@
 var spawn = require('child_process').spawn,
-    path = require('path'),
-    sockets;
-
-exports.set_sockets = function(sock) {
-  sockets = sock;
-};
+    path = require('path');
 
 exports.execute_program = function(file, is_job) {
   
@@ -18,22 +13,14 @@ exports.execute_program = function(file, is_job) {
   }
 };
 
-function get_socket(username, cb) {
-  for (var socketId in sockets) {
-    sockets[socketId].get('username', function(err, sock_username) {
-      if (username === sock_username) {
-        cb(sockets[socketId]);
-      }
-    });
-  }
-}
+
 
 function execute_program(file, type, is_job) {
   var file_path = path.resolve(__dirname + "/../" + file.path.replace('\/filesystem\/', '\/repositories\/'));
 
   console.log('execute_program');
 
-  get_socket(file.username, function(socket) {
+  require('../server').get_socket(file.username, function(socket) {
     var prog = spawn(type, [file_path]);
     if (socket) {
       handle_output(prog, file, is_job, socket);
@@ -64,9 +51,9 @@ function handle_output(prog, file, is_job, socket) {
 
   prog.on('exit', function(code) {
     if (is_job) {
-      socket.emit('scheduler-exit', {code: code});
+      socket.emit('scheduler-exit', {code: code, file: file});
     } else {
-      socket.emit('program-exit', {code: code});      
+      socket.emit('program-exit', {code: code});
     }
 
   });    
