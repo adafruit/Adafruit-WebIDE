@@ -437,6 +437,16 @@ a.navigator-settings i.settings-enabled {
   word-wrap: break-word;       /* Internet Explorer 5.5+ */
 }
 
+.ansiblack {color: black;}
+.ansired {color: darkred;}
+.ansigreen {color: darkgreen;}
+.ansiyellow {color: brown;}
+.ansiblue {color: darkblue;}
+.ansipurple {color: darkviolet;}
+.ansicyan {color: steelblue;}
+.ansigrey {color: grey;}
+.ansibold {font-weight: bold;}
+
 #dragbar {
   display: none;
   background-color: #1A1A1A;

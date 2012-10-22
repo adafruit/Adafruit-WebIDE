@@ -319,6 +319,18 @@ function socket_listeners() {
       updater.update(socket);
     });
 
+    socket.on('commit-run-file', function(data) {
+      console.log(data);
+      if (data && data.file) {
+        data.file.username = socket.handshake.session.username;
+      }
+      
+      exec_helper.execute_program(data.file, false);
+      git_helper.commit_push_and_save(data.file, function(err, status) {
+        socket.emit('commit-file-complete', {message: "Save was successful"});
+      });
+    });
+
     socket.on('submit-schedule', function(schedule) {
       scheduler.add_schedule(schedule, socket, socket.handshake.session);
     });

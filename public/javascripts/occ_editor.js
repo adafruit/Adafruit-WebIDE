@@ -91,7 +91,7 @@
 
     handle_navigator_actions();
     handle_editor_bar_actions();
-    //handle_program_output();
+    handle_program_output();
     handle_scheduler_events();
     handle_update_action();
   };
@@ -550,18 +550,18 @@
       function run_callback(err, status) {
         //console.log(err);
         //console.log(status);
-        var command;
+        //var command;
         //Running as sudo is temporary.  It's a necessary evil to access GPIO at this point.
-        if (file.extension === 'py') {
-          command = "sudo python ";
-        } else if (file.extension === 'rb') {
-          command = "sudo ruby ";
-        } else if (file.extension === 'js') {
-          command = "sudo node ";
-        }
-        command += file.name;
-
-        occEditor.open_terminal(occEditor.cwd(), command);
+        //if (file.extension === 'py') {
+        //  command = "sudo python ";
+        //} else if (file.extension === 'rb') {
+        //  command = "sudo ruby ";
+        //} else if (file.extension === 'js') {
+        //  command = "sudo node ";
+        //}
+        //command += file.name;
+        socket.emit('commit-run-file', { file: file});
+        //occEditor.open_terminal(occEditor.cwd(), command);
       }
 
       davFS.write(file.path, editor_content, run_callback);
@@ -716,29 +716,32 @@
     function show_editor_output() {
       if (!editor_output_visible) {
         editor_output_visible = true;
-        $('#editor-output').height('150px');
+        $('#editor-output').height('200px');
         $('#dragbar').show();
         $('#editor-output div').css('padding', '10px');
-        $('#editor').css('bottom', '153px');
+        $('#editor').css('bottom', '203px');
       }
     }
 
     socket.on('program-stdout', function(data) {
       show_editor_output();
-      $('#editor-output div pre').append(data.output);
+      $('#editor-output div pre').append(webide_utils.fix_console(data.output));
       $("#editor-output").animate({ scrollTop: $(document).height() }, "slow");
+      editor.focus();
       //console.log(data);
     });
     socket.on('program-stderr', function(data) {
       show_editor_output();
-      $('#editor-output div pre').append(data.output);
+      $('#editor-output div pre').append(webide_utils.fix_console(data.output));
       $("#editor-output").animate({ scrollTop: $(document).height() }, "slow");
+      editor.focus();
       //console.log(data);
     });
     socket.on('program-exit', function(data) {
       show_editor_output();
-      $('#editor-output div pre').append("code: " + data.code + '\n');
-      $("#editor-output").animate({ scrollTop: $(document).height() }, "slow");
+      editor.focus();
+      //$('#editor-output div pre').append("code: " + data.code + '\n');
+      //$("#editor-output").animate({ scrollTop: $(document).height() }, "slow");
       //console.log(data);
     });
 
