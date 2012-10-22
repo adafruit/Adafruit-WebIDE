@@ -27,9 +27,9 @@ echo "**** Downloading the latest version of the WebIDE ****"
 curl -L https://github.com/downloads/adafruit/Adafruit-WebIDE/editor-0.2.0.tar.gz | tar xzf -
 
 echo "**** Installing required libraries ****"
-echo "**** (nodejs npm redis-server git restartd libcap2-bin avahi-daemon i2c-tools) ****"
+echo "**** (nodejs npm redis-server git restartd libcap2-bin avahi-daemon i2c-tools ipython) ****"
 apt-get update
-apt-get install nodejs npm redis-server git restartd libcap2-bin avahi-daemon i2c-tools -y
+apt-get install nodejs npm redis-server git restartd libcap2-bin avahi-daemon i2c-tools ipython -y
 
 echo "**** Create webide user and group ****"
 groupadd webide || true
