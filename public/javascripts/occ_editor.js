@@ -236,13 +236,15 @@
     var file_path = file.path.replace('\/filesystem\/', '\/repositories\/');
 
     //loop through the job list, and check if this file is scheduled, if it is populate the valid DOM elements
-    for (var i=0; i<job_list.length; i++) {
-      if (job_list[i].path === file_path) {
-        $('.schedule-file').html('<i class="icon-time"></i> Scheduled');
-        $('input[name="schedule"]').val(job_list[i].text);
-        is_scheduled_file = true;
+    if (job_list.length) {
+      for (var i=0; i<job_list.length; i++) {
+        if (job_list[i].path === file_path) {
+          $('.schedule-file').html('<i class="icon-time"></i> Scheduled');
+          $('input[name="schedule"]').val(job_list[i].text);
+          is_scheduled_file = true;
 
-        break;
+          break;
+        }
       }
     }
 
