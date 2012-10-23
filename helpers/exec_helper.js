@@ -22,12 +22,19 @@ exports.execute_program = function(file, is_job) {
 function execute_ipython(file, is_job) {
   var file_path = path.resolve(__dirname + "/../" + file.path.replace('\/filesystem\/', '\/repositories\/'));
   ipython.removeAllListeners('data');
-  ipython.on('data', function(data) {
-    require('../server').get_socket(file.username, function(socket) {
+  require('../server').get_socket(file.username, function(socket) {
+    if (is_job) {
+      socket.emit('scheduler-start', {file: file});
+    }
+    ipython.on('data', function(data) {
       console.log(data);
       data = data.replace(/\[0;.*?In\s\[.*?\[0m/, '~-prompt-~');
       data = data.replace(/In\s\[.*?\]:/, '~-prompt-~');
-      socket.emit('program-stdout', {output: data});
+      if (is_job) {
+        socket.emit('scheduler-executing', {file: file});
+      } else {
+        socket.emit('program-stdout', {output: data});
+      }
     });
   });
   ipython.write('run ');

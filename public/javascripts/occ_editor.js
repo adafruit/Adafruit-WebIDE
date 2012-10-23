@@ -668,7 +668,7 @@
     });
     socket.on('scheduler-executing', function(data) {
       //console.log('scheduler-executing');
-      $('.schedule-status').text('Running Job: ' + data.file.name);
+      $('.schedule-status').text('Ran Job: ' + data.file.name);
     });
     socket.on('scheduler-error', function(data) {
       //console.log('scheduler-error');
