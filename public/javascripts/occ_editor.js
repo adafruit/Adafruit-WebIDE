@@ -744,8 +744,8 @@
       //console.log(data.output.replace(/run\s.*.py/gm, ''));
       buffer += data.output;
       console.log(buffer);
-      if (buffer.match(/run[\S\s]*.py/)) {
-        buffer = buffer.replace(/run[\S\s]*.py/, '');
+      if (buffer.match(/run[\S\s]*.[\S\s]*p[\S\s]*y/)) {
+        buffer = buffer.replace(/run[\S\s]*.[\S\s]*p[\S\s]*y/, '');
         $('#editor-output div pre').append('\n');
         buffer_start = true;
       }
