@@ -20,7 +20,6 @@ exports.execute_program = function(file, is_job) {
 };
 
 function execute_ipython(file, is_job) {
-  console.log('I AM HERE');
   var file_path = path.resolve(__dirname + "/../" + file.path.replace('\/filesystem\/', '\/repositories\/'));
   ipython.removeAllListeners('data');
   ipython.on('data', function(data) {

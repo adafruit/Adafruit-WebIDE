@@ -740,7 +740,6 @@
 
     socket.on('program-stdout', function(data) {
       occEditor.show_editor_output();
-      $('.run-file').html('<i class="icon-play"></i> Run');
       //.replace(/In\s\[.*?\]:/, '')
       //console.log(data.output.replace(/run\s.*.py/gm, ''));
       buffer += data.output;
@@ -752,6 +751,7 @@
       }
 
       if (buffer.indexOf('~-prompt-~') !== -1) {
+        $('.run-file').html('<i class="icon-play"></i> Run');
         buffer_start = false;
         buffer = buffer.replace(/~-prompt-~[\S\s]*/, '');
         $('#editor-output div pre').append(webide_utils.fix_console(buffer) + '\n');
