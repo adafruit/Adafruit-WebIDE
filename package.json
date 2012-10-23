@@ -18,6 +18,7 @@
     "tty.js": "git://github.com/jwcooper/tty.js.git",
     "validator": "0.x",
     "winston": "0.x",
-    "later": "git://github.com/jwcooper/later.git"
+    "later": "git://github.com/jwcooper/later.git",
+    "pty.js": "0.x"
   }
 }
