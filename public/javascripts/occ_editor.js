@@ -747,20 +747,20 @@
       console.log(buffer);
       if (buffer.match(/run[\S\s]*.py/)) {
         buffer = buffer.replace(/run[\S\s]*.py/, '');
+        $('#editor-output div pre').append('\n');
         buffer_start = true;
       }
 
-      console.log(buffer.indexOf('~-prompt-~'));
       if (buffer.indexOf('~-prompt-~') !== -1) {
         buffer_start = false;
-        console.log('in!');
+        buffer = buffer.replace(/~-prompt-~[\S\s]*/, '');
+        $('#editor-output div pre').append(webide_utils.fix_console(buffer) + '\n');
         buffer = "";
-        $('#editor-output div pre').append('\n');
       }
 
       if (buffer_start) {
-        $('#editor-output div pre').append(webide_utils.fix_console(buffer));
-        buffer = "";
+        //$('#editor-output div pre').append(webide_utils.fix_console(buffer) + '\n');
+        //buffer = "";
       }
 
 
