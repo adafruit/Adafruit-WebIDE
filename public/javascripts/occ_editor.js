@@ -714,6 +714,7 @@
     var i = 0;
     var dragging = false;
     var editor_output_visible = false;
+    var buffer = "", buffer_start = false;
 
     function show_editor_output() {
       if (!editor_output_visible) {
@@ -727,7 +728,30 @@
 
     socket.on('program-stdout', function(data) {
       show_editor_output();
-      $('#editor-output div pre').append(webide_utils.fix_console(data.output));
+      //.replace(/In\s\[.*?\]:/, '')
+      //console.log(data.output.replace(/run\s.*.py/gm, ''));
+      buffer += data.output;
+      console.log(buffer);
+      if (buffer.match(/run[\S\s]*.py/)) {
+        buffer = buffer.replace(/run[\S\s]*.py/, '');
+        buffer_start = true;
+      }
+
+      console.log(buffer.indexOf('~-prompt-~'));
+      if (buffer.indexOf('~-prompt-~') !== -1) {
+        buffer_start = false;
+        console.log('in!');
+        buffer = "";
+        $('#editor-output div pre').append('\n');
+      }
+
+      if (buffer_start) {
+        $('#editor-output div pre').append(webide_utils.fix_console(buffer));
+        buffer = "";
+      }
+
+
+
       $("#editor-output").animate({ scrollTop: $(document).height() }, "slow");
       editor.focus();
       //console.log(data);

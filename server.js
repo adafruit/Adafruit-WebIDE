@@ -32,6 +32,8 @@ var davServer,
 
 console.log("REPOSITORY_PATH", REPOSITORY_PATH);
 
+exec_helper.spawn_ipython();
+
 //check for the existence of the logs directory, if it doesn't
 //exist, create it prior to starting the child process.
 var exists = path.existsSync(__dirname + '/logs');
@@ -324,7 +326,7 @@ function socket_listeners() {
       if (data && data.file) {
         data.file.username = socket.handshake.session.username;
       }
-      
+
       exec_helper.execute_program(data.file, false);
       git_helper.commit_push_and_save(data.file, function(err, status) {
         socket.emit('commit-file-complete', {message: "Save was successful"});

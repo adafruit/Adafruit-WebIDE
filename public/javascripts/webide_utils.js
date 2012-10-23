@@ -23,7 +23,7 @@
     // classes listed in the above ansi_colormap object. The actual color used
     // are set in the css file.
     webide_utils.fix_console = function (txt) {
-        console.log(txt);
+        //console.log(txt);
         txt = txt.replace('[?1034h', '');
         txt = xmlencode(txt);
         var re = /\033\[([\d;]*?)m/;
@@ -46,7 +46,7 @@
             txt = txt.replace(re, closer + opener);
         }
         if (opened) txt += "</span>";
-        console.log(txt.trim());
+        //console.log(txt.trim());
         return txt.trim();
     };
 }( window.webide_utils = window.webide_utils || {}, jQuery ));

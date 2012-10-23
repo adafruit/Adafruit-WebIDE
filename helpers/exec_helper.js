@@ -1,11 +1,17 @@
 var spawn = require('child_process').spawn,
-    path = require('path');
+    pty = require('pty.js'),
+    path = require('path'),
+    ipython;
+
+exports.spawn_ipython = function() {
+  ipython = pty.spawn('ipython');
+};
 
 exports.execute_program = function(file, is_job) {
   
   console.log(file);
   if (file.extension === 'py') {
-    execute_program(file, "ipython", is_job);
+    execute_ipython(file, is_job);
   } else if (file.extension === 'rb') {
     execute_program(file, "ruby", is_job);
   } else if (file.extension === 'js') {
@@ -13,7 +19,23 @@ exports.execute_program = function(file, is_job) {
   }
 };
 
+function execute_ipython(file, is_job) {
+  console.log('I AM HERE');
+  var file_path = path.resolve(__dirname + "/../" + file.path.replace('\/filesystem\/', '\/repositories\/'));
+  ipython.removeAllListeners('data');
+  ipython.on('data', function(data) {
+    require('../server').get_socket(file.username, function(socket) {
+      console.log(data);
+      data = data.replace(/\[0;.*?In\s\[.*?\[0m/, '~-prompt-~');
+      data = data.replace(/In\s\[.*?\]:/, '~-prompt-~');
+      socket.emit('program-stdout', {output: data});
+    });
+  });
+  ipython.write('run ');
+  ipython.write(file_path);
+  ipython.write('\r\n');
 
+}
 
 function execute_program(file, type, is_job) {
   var file_path = path.resolve(__dirname + "/../" + file.path.replace('\/filesystem\/', '\/repositories\/'));
