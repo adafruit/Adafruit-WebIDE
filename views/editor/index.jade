@@ -18,6 +18,7 @@ block content
           a + Clone Repository
     #editor-wrapper
       #editor-bar
+      #schedule-manager
       #editor
       #editor-output-wrapper
         #dragbar
@@ -29,7 +30,7 @@ block content
         div.editor-version Adafruit WebIDE v#{version}
         div.schedule-footer
           span.schedule-status Scheduler Active
-          a(href="") Schedule Manager
+          a(href="", class="schedule-manager-link") Schedule Manager
     #create-modal(class="modal hide fade")
       .modal-header
         button.close(type="button", data-dismiss-"modal", aria-hidden="true") &times;

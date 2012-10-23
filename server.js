@@ -336,6 +336,14 @@ function socket_listeners() {
     socket.on('submit-schedule', function(schedule) {
       scheduler.add_schedule(schedule, socket, socket.handshake.session);
     });
+
+    socket.on('schedule-delete-job', function(key) {
+      scheduler.delete_job(key, socket, socket.handshake.session);
+    });
+
+    socket.on('schedule-toggle-job', function(key) {
+      scheduler.toggle_job(key, socket, socket.handshake.session);
+    });
   });
 }
 

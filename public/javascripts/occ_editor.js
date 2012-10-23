@@ -15,6 +15,10 @@
     "editor_bar_blank":             '<p class="editor-bar-actions">' +
                                       '<a href="" class="open-terminal"><i class="icon-list-alt"></i> Terminal</a>' +
                                     '</p>',
+    "editor_bar_schedule_manager":  '<p class="editor-bar-actions">' +
+                                      'Manage your scheduled scripts' +
+                                      '<a href="" class="close-schedule-manager"><i class="icon-remove"></i> Close</a>' +
+                                    '</p>',
     "editor_bar_interpreted_file":  '<p class="editor-bar-actions">' +
                                       '<a href="" class="open-terminal"><i class="icon-list-alt"></i> Terminal</a>' +
                                       '<a href="" class="run-file"><i class="icon-play"></i> Run</a>' +
@@ -92,6 +96,7 @@
 
     handle_navigator_actions();
     handle_editor_bar_actions();
+    handle_footer_actions();
     handle_program_output();
     handle_scheduler_events();
     handle_update_action();
@@ -196,6 +201,9 @@
   };
 
   occEditor.populate_editor = function(file, content) {
+
+    $('#editor').show();
+    $('#schedule-manager').hide();
 
     var EditSession = require("ace/edit_session").EditSession;
     var UndoManager = require("ace/undomanager").UndoManager;
@@ -319,6 +327,7 @@
     }
     $editor_bar.html(templates.editor_bar_init);
     
+    $(document).off('file_open', editor_bar_actions);
     $(document).on('file_open', editor_bar_actions);
   };
 
@@ -337,6 +346,9 @@
     }
 
     occEditor.clear_editor();
+    $('#editor').show();
+    $('#schedule-manager').hide();
+
     $(document).trigger('file_open', {path: path});
     davFS.listDir(path, populateFileSystem);
   };
@@ -659,6 +671,79 @@
     $(document).on('click touchstart', '.save-file', occEditor.save_file);
     $(document).on('click touchstart', '.run-file', occEditor.run_file);
     $(document).on('click touchstart', '.schedule-file', open_scheduler);
+  }
+
+  function handle_footer_actions() {
+    function close_schedule_manager(event) {
+      event.preventDefault();
+      $(document).off('click touchstart', '.close-schedule-manager');
+      $(document).off('click touchstart', '.schedule-delete-link');
+      $(document).off('click touchstart', '.schedule-toggle-link');
+
+      $('#schedule-manager').hide();
+      $('#editor').show();
+      occEditor.populate_editor_bar();
+    }
+
+    function delete_scheduled_job(event) {
+      event.preventDefault();
+
+      var key = $(this).attr('id');
+      socket.emit('schedule-delete-job', key);
+      $(this).parents('tr').remove();
+    }
+
+    function toggle_scheduled_job(event) {
+      var key = $(this).attr('id');
+      socket.emit('schedule-toggle-job', key);
+    }
+
+    function format_schedule_last_run(date) {
+      var d = new Date(date);
+      var str = "";
+      str += d.getFullYear() + "-";
+      str += (d.getMonth() + 1) + "-";
+      str += d.getDate() + " ";
+      str += d.toLocaleTimeString();
+      console.log(d.getDate());
+      return str;
+    }
+
+    function show_schedule_manager(event) {
+      event.preventDefault();
+
+      var $table = $('<table><tr><th>Activate</th><th>Name</th><th>Frequency</th><th>Path</th><th>Last Run</th><th>Actions</th></tr></table>');
+
+      if (job_list && job_list.length) {
+        for (var i=0; i<job_list.length; i++) {
+          $('<tr class="spacer"><td></td></tr>').appendTo($table);
+          console.log(job_list[i]);
+          var $tr = $('<tr></tr>');
+          var checked = "checked";
+          if (!job_list[i].active) {
+            checked = "";
+          }
+          $('<td class="schedule-toggle"><input type="checkbox" name="schedule-toggle" value="' + job_list[i].key + '"'+ checked +'></td>').appendTo($tr);
+          $('<td>' + job_list[i].name + '</td>').appendTo($tr);
+          $('<td>' + job_list[i].text + '</td>').appendTo($tr);
+          $('<td>' + job_list[i].path.replace('\/repositories\/', '') + '</td>').appendTo($tr);
+          $('<td>' + format_schedule_last_run(job_list[i].last_run) + '</td>').appendTo($tr);
+          $('<td><a href="" class="schedule-delete-link" id="' + job_list[i].key + '">delete</a></td>').appendTo($tr);
+          $tr.appendTo($table);
+        }
+      }
+
+      $('#editor').hide();
+      $('#schedule-manager').show();
+      $('#editor-bar').html(templates.editor_bar_schedule_manager);
+      $('#schedule-manager').html($table);
+
+      $(document).on('click touchstart', '.close-schedule-manager', close_schedule_manager);
+      $(document).on('click touchstart', '.schedule-delete-link', delete_scheduled_job);
+      $(document).on('click touchstart', '.schedule-toggle input', toggle_scheduled_job);
+    }
+
+    $(document).on('click touchstart', '.schedule-manager-link', show_schedule_manager);
   }
 
   function handle_scheduler_events() {

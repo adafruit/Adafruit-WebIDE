@@ -1,4 +1,12 @@
 -0.2.1
+Job scheduler for automating script execution.  Run a script "every 15 minutes", for example.
+Use iPython for running python.  Launching inline in the editor instead of popping a terminal.
+Syntax highlighted python output.
+Faster execution of python scripts.
+Notifications while running scripts in editor bar.
+Focus the editor in many more situations, for example, when opening a file, it will give focus to the editor.
+Add "Command-Enter", or "Ctrl-Enter" command to run scripts, this is in addition to "Command-S" and "Ctrl-S" to save.
+Update Bitbucket logos with new design.
 Add option to change port number in /config, and persist in Redis, surviving updates.
 
 -0.2.0

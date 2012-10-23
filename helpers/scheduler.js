@@ -12,7 +12,11 @@ var exec = require('child_process').exec,
 
 function execute_job(file) {
   exec_helper.execute_program(file, true);
-  //console.log(file);
+  console.log(file);
+
+  client.hmset(file.key, "last_run", new Date(), function() {
+    //repopulate the job list in the editor
+  });
 }
 
 function schedule_job(key, job) {
@@ -31,6 +35,7 @@ function schedule_job(key, job) {
 
           //replace it in the queue
           job_queue[i] = {key: key, later: l};
+
           is_new_job = false;
           break;
         }
@@ -58,7 +63,7 @@ exports.emit_scheduled_jobs = function emit_scheduled_jobs(username, socket) {
         }
       });
     });
-  });  
+  });
 };
 
 /*
@@ -72,10 +77,15 @@ exports.add_schedule = function(schedule, socket, session) {
   var job_data = {
       text: schedule.text,
       name: schedule.file.name,
+      key: key,
+      last_run: "",
+      active: "1",
       path: file_path,
       extension: schedule.file.extension,
       username: schedule.file.username
   };
+  console.log("add_schedule");
+  console.log(job_data);
   client.sadd("jobs", key, function() {
     client.hmset(key, job_data, function() {
       schedule_job(key, job_data);
@@ -85,6 +95,26 @@ exports.add_schedule = function(schedule, socket, session) {
   });
 };
 
+exports.delete_job = function(key, socket, session) {
+  var len = job_queue.length;
+  for (var i=0; i<len; i++) {
+    if (job_queue[i].key === key) {
+      //job exists, lets delete it
+      job_queue[i].later.stopExec();
+      //remove from array
+      job_queue.splice(i, 1);
+      //remove from redis
+      client.del(key);
+      //emit change to front-end
+      self.emit_scheduled_jobs(session.username, socket);
+      break;
+    }
+  }
+};
+
+exports.toggle_job = function(key, socket, session) {
+  console.log(key);
+};
 
 /*
  * Jobs initialized at server startup

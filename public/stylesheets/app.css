@@ -393,7 +393,7 @@ a.navigator-settings i.settings-enabled {
 }
 
 
-#editor {
+#editor, #schedule-manager {
   position: absolute;
   left: 0;
   right: 0;  
@@ -401,6 +401,54 @@ a.navigator-settings i.settings-enabled {
   bottom: 0;
   border-top: 1px solid #EDEDED;
   border-right: 1px solid #EDEDED;
+}
+
+#schedule-manager {
+  display: none;
+  background-color: #FFFFFF;
+}
+#schedule-manager table {
+  width: 100%;
+  margin: 0 auto;
+  color: #2F3133;
+}
+
+#schedule-manager table th {
+  background-color: #bd2c2c;
+  border: 1px solid #bd2c2c;
+  color: #E4E5E7;
+  font-size: 12px;
+  font-weight: normal;
+}
+
+
+#schedule-manager table td {
+  background-color: #EDEEEE;
+  padding: 5px;
+  color: #2F3133;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+  border: 1px solid #B4B4B4;
+}
+
+#schedule-manager table td a {
+  font-size: 12px;
+}
+
+#schedule-manager tr.spacer {
+  margin: 1px 0 0 0;
+  padding: 0;
+}
+
+#schedule-manager tr.spacer td {
+  border: none;
+  margin: 1px 0 0 0;
+  padding: 1px 0 0 0;
+}
+
+.close-schedule-manager {
+  float: right;
 }
 
 #editor-output-wrapper {
