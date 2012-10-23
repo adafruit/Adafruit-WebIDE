@@ -419,6 +419,9 @@ a.navigator-settings i.settings-enabled {
   color: #E4E5E7;
   font-size: 12px;
   font-weight: normal;
+  padding: 0;
+  margin: 0;
+  line-height: 18px;
 }
 
 
