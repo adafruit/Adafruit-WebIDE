@@ -4,6 +4,7 @@
   var editor, modes = [], max_reconnects = 50,
       socket = io.connect(null, {'reconnection limit': 2000, 'max reconnection attempts': max_reconnects}),
       dirname, updating = false,
+      editor_output_visible = false,
       job_list;
 
   var templates = {
@@ -122,6 +123,13 @@
           occEditor.save_file();
         }
     });
+    /* commands.addCommand({
+        name: "run",
+        bindKey: {win: "Ctrl-Enter", mac: "Command-Enter"},
+        exec: function() {
+          occEditor.run_file();
+        }
+    });*/
   };
 
   occEditor.init_events = function(editor) {
@@ -541,33 +549,37 @@
     }
   }
 
-  function handle_editor_bar_actions() {
-
-
-    function run_file(event) {
+  occEditor.run_file = function(event) {
+    if (event) {
       event.preventDefault();
-      var file = $('.file-open').data('file');
-      var editor_content = editor.getSession().getDocument().getValue();
-
-      function run_callback(err, status) {
-        //console.log(err);
-        //console.log(status);
-        //var command;
-        //Running as sudo is temporary.  It's a necessary evil to access GPIO at this point.
-        //if (file.extension === 'py') {
-        //  command = "sudo python ";
-        //} else if (file.extension === 'rb') {
-        //  command = "sudo ruby ";
-        //} else if (file.extension === 'js') {
-        //  command = "sudo node ";
-        //}
-        //command += file.name;
-        socket.emit('commit-run-file', { file: file});
-        //occEditor.open_terminal(occEditor.cwd(), command);
-      }
-
-      davFS.write(file.path, editor_content, run_callback);
     }
+
+    var file = $('.file-open').data('file');
+    var editor_content = editor.getSession().getDocument().getValue();
+
+    function run_callback(err, status) {
+      //console.log(err);
+      //console.log(status);
+      //var command;
+      //Running as sudo is temporary.  It's a necessary evil to access GPIO at this point.
+      //if (file.extension === 'py') {
+      //  command = "sudo python ";
+      //} else if (file.extension === 'rb') {
+      //  command = "sudo ruby ";
+      //} else if (file.extension === 'js') {
+      //  command = "sudo node ";
+      //}
+      //command += file.name;
+      socket.emit('commit-run-file', { file: file});
+      //occEditor.open_terminal(occEditor.cwd(), command);
+    }
+
+    $('.run-file').html('<i class="icon-play"></i> Running').delay(100).fadeOut().fadeIn('slow');
+    occEditor.show_editor_output();
+    davFS.write(file.path, editor_content, run_callback);
+  };
+
+  function handle_editor_bar_actions() {
 
     function open_terminal(event) {
       event.preventDefault();
@@ -644,7 +656,7 @@
     $(document).on('click touchstart', '.open-terminal', open_terminal);
     $(document).on('click touchstart', '.copy-project', copy_project);
     $(document).on('click touchstart', '.save-file', occEditor.save_file);
-    $(document).on('click touchstart', '.run-file', run_file);
+    $(document).on('click touchstart', '.run-file', occEditor.run_file);
     $(document).on('click touchstart', '.schedule-file', open_scheduler);
   }
 
@@ -710,24 +722,24 @@
     $(document).on('click touchstart', '.editor-update-link', update_editor);
   }
 
+  occEditor.show_editor_output = function() {
+    if (!editor_output_visible) {
+      editor_output_visible = true;
+      $('#editor-output').height('200px');
+      $('#dragbar').show();
+      $('#editor-output div').css('padding', '10px');
+      $('#editor').css('bottom', '203px');
+    }
+  };
+
   function handle_program_output() {
     var i = 0;
     var dragging = false;
-    var editor_output_visible = false;
     var buffer = "", buffer_start = false;
 
-    function show_editor_output() {
-      if (!editor_output_visible) {
-        editor_output_visible = true;
-        $('#editor-output').height('200px');
-        $('#dragbar').show();
-        $('#editor-output div').css('padding', '10px');
-        $('#editor').css('bottom', '203px');
-      }
-    }
-
     socket.on('program-stdout', function(data) {
-      show_editor_output();
+      occEditor.show_editor_output();
+      $('.run-file').html('<i class="icon-play"></i> Run');
       //.replace(/In\s\[.*?\]:/, '')
       //console.log(data.output.replace(/run\s.*.py/gm, ''));
       buffer += data.output;
@@ -757,14 +769,14 @@
       //console.log(data);
     });
     socket.on('program-stderr', function(data) {
-      show_editor_output();
+      occEditor.show_editor_output();
       $('#editor-output div pre').append(webide_utils.fix_console(data.output));
       $("#editor-output").animate({ scrollTop: $(document).height() }, "slow");
       editor.focus();
       //console.log(data);
     });
     socket.on('program-exit', function(data) {
-      show_editor_output();
+      occEditor.show_editor_output();
       editor.focus();
       //$('#editor-output div pre').append("code: " + data.code + '\n');
       //$("#editor-output").animate({ scrollTop: $(document).height() }, "slow");
