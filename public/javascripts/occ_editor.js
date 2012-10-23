@@ -214,6 +214,7 @@
       }
 
       editor.setSession(session);
+      editor.focus();
 
       editor_startup("Populating Editor");
     }
