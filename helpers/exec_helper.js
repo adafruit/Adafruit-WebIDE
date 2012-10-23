@@ -4,7 +4,7 @@ var spawn = require('child_process').spawn,
     ipython;
 
 exports.spawn_ipython = function() {
-  ipython = pty.spawn('ipython');
+  ipython = pty.spawn('sudo', ['ipython']);
 };
 
 exports.execute_program = function(file, is_job) {
