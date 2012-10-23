@@ -388,6 +388,11 @@ a.navigator-settings i.settings-enabled {
   margin-right: 10px;
 }
 
+#editor-bar .schedule-file {
+  float: right;
+  margin-right: 10px !important;
+}
+
 #editor-bar p.editor-bar-actions a:hover {
   color: #b4b4b4;
 }
