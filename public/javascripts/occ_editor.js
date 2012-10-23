@@ -123,13 +123,13 @@
           occEditor.save_file();
         }
     });
-    /* commands.addCommand({
+    commands.addCommand({
         name: "run",
-        bindKey: {win: "Ctrl-Enter", mac: "Command-Enter"},
+        bindKey: {win: "Ctrl-Return", mac: "Command-Return"},
         exec: function() {
           occEditor.run_file();
         }
-    });*/
+    });
   };
 
   occEditor.init_events = function(editor) {
