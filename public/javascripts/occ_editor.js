@@ -637,10 +637,15 @@
         var schedule_text = $('input[name="schedule"]').val().trim();
         var parsed_schedule = enParser().parse(schedule_text);
 
-        if (parsed_schedule.error !== -1) {
+        if (!schedule_text.length || parsed_schedule.error !== -1) {
+
           //found an error parsing, split the schedule string based on where the error occurs
           var schedule_good = schedule_text.slice(0,parsed_schedule.error);
           var schedule_bad = schedule_text.slice(parsed_schedule.error);
+          if (!schedule_text.length) {
+            schedule_good = "Please add a schedule for your job.";
+          }
+
           $('.scheduler-error').html('Invalid Schedule: ' + schedule_good + '<strong>' + schedule_bad + '</strong>');
         } else {
           //all is good, submit schedule to backend
