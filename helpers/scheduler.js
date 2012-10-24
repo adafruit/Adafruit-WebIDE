@@ -86,6 +86,7 @@ exports.add_schedule = function(schedule, socket, session) {
   };
   console.log("add_schedule");
   console.log(job_data);
+
   client.sadd("jobs", key, function() {
     client.hmset(key, job_data, function() {
       schedule_job(key, job_data);
@@ -115,7 +116,38 @@ exports.delete_job = function(key, socket, session) {
 };
 
 exports.toggle_job = function(key, socket, session) {
+  var self = this;
   console.log(key);
+  client.hgetall(key, function(err, job) {
+    console.log(job);
+    //toggle status
+    job.active = 1-job.active;
+
+    client.hmset(key, "active", job.active, function() {
+      if (!job.active) {
+        //remove job from queue, but not redis
+        var len = job_queue.length;
+        for (var i=0; i<len; i++) {
+          if (job_queue[i].key === key) {
+            //job exists, lets delete it
+            job_queue[i].later.stopExec();
+            //remove from array
+            job_queue.splice(i, 1);
+            //emit change to front-end
+            self.emit_scheduled_jobs(session.username, socket);
+            break;
+          }
+        }
+      } else {
+        schedule_job(key, job);
+        //repopulate the job list in the editor
+        self.emit_scheduled_jobs(session.username, socket);
+      }
+
+
+    });
+  });
+
 };
 
 /*

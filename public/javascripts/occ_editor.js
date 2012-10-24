@@ -699,7 +699,7 @@
     }
 
     function toggle_scheduled_job(event) {
-      var key = $(this).attr('id');
+      var key = $(this).val();
       socket.emit('schedule-toggle-job', key);
     }
 
@@ -727,7 +727,8 @@
           console.log(job_list[i]);
           var $tr = $('<tr></tr>');
           var checked = "checked";
-          if (!job_list[i].active) {
+          if (job_list[i].active == 0) { //intentional double quotes...active is a string
+            console.log("here");
             checked = "";
           }
           $('<td class="schedule-toggle"><input type="checkbox" name="schedule-toggle" value="' + job_list[i].key + '"'+ checked +'></td>').appendTo($tr);
