@@ -96,6 +96,7 @@ exports.add_schedule = function(schedule, socket, session) {
 };
 
 exports.delete_job = function(key, socket, session) {
+  var self = this;
   var len = job_queue.length;
   for (var i=0; i<len; i++) {
     if (job_queue[i].key === key) {
@@ -105,6 +106,7 @@ exports.delete_job = function(key, socket, session) {
       job_queue.splice(i, 1);
       //remove from redis
       client.del(key);
+      client.srem("jobs", key);
       //emit change to front-end
       self.emit_scheduled_jobs(session.username, socket);
       break;

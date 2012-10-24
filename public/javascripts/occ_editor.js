@@ -699,6 +699,8 @@
     }
 
     function format_schedule_last_run(date) {
+      if (!date.length) return "";
+
       var d = new Date(date);
       var str = "";
       str += d.getFullYear() + "-";
