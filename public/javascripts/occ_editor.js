@@ -5,6 +5,8 @@
       socket = io.connect(null, {'reconnection limit': 2000, 'max reconnection attempts': max_reconnects}),
       dirname, updating = false,
       editor_output_visible = false,
+      is_terminal_open = false,
+      terminal_win,
       job_list;
 
   var templates = {
@@ -142,6 +144,28 @@
 
     $(window).bind("beforeunload",function(event) {
       return "Please confirm that you would like to leave the editor.";
+    });
+
+    $('.window').focus(function() {
+      //console.log('here');
+    });
+
+    $(document).on('click', '#editor, #navigator', function() {
+      //console.log('here');
+      if (terminal_win) {
+        terminal_win.blur();
+      }
+    });
+    $(document).on('click', 'window', function() {
+      //console.log('here');
+      if (terminal_win) {
+        terminal_win.focus();
+      }
+    });
+    editor.on('focus', function() {
+      if (terminal_win) {
+        terminal_win.blur();
+      }
     });
 
     editor_startup("Initializing Editor Events");
@@ -411,28 +435,48 @@
     socket.on('move-file-complete', move_file_callback);
   };
 
+  occEditor.send_terminal_command = function(command) {
+    if (is_terminal_open) {
+      terminal_win.tabs[0].sendString(command);
+      editor.focus();
+    }
+  };
+
   occEditor.open_terminal = function(path, command) {
-    var win = new tty.Window(null, path);
+    if (is_terminal_open) {
+      if (command) {
+        terminal_win.tabs[0].sendString(command);
+        editor.focus();
+      }
+      return;
+    }
+    is_terminal_open = true;
+
+    occEditor.show_editor_output();
+    terminal_win = new tty.Window(null, path);
     tty.on('open tab', function(){
       tty.on('tab-ready', function() {
         tty.off('open tab');
         tty.off('tab-ready');
         if (command) {
-          win.tabs[0].sendString(command);
+          terminal_win.tabs[0].sendString(command);
+          editor.focus();
         }
       });
     });
 
     tty.on('close window', function() {
       tty.off('close window');
+      is_terminal_open = false;
+      occEditor.hide_editor_output();
       editor.focus();
     });
 
-    var maskHeight = $(window).height();
-    var maskWidth = $(window).width();
-    var windowTop =  (maskHeight  - $('.window').height())/2;
-    var windowLeft = (maskWidth - $('.window').width())/2;
-    $('.window').css({ top: windowTop, left: windowLeft, position:"absolute"}).show();
+    //var maskHeight = $(window).height();
+    //var maskWidth = $(window).width();
+    //var windowTop =  (maskHeight  - $('.window').height())/2;
+    //var windowLeft = (maskWidth - $('.window').width())/2;
+    //$('.window').css({ top: windowTop, left: windowLeft, position:"absolute"}).show();
   };
 
 
@@ -562,6 +606,16 @@
     }
   }
 
+  occEditor.stop_file = function(event) {
+    if (event) {
+      event.preventDefault();
+    }
+
+    var file = $('.file-open').data('file');
+    socket.emit('stop-script-execution', { file: file});
+    $('.stop-file').html('<i class="icon-play"></i> Run').removeClass('stop-file').addClass('run-file');
+  };
+
   occEditor.run_file = function(event) {
     if (event) {
       event.preventDefault();
@@ -575,20 +629,21 @@
       //console.log(status);
       //var command;
       //Running as sudo is temporary.  It's a necessary evil to access GPIO at this point.
-      //if (file.extension === 'py') {
-      //  command = "sudo python ";
-      //} else if (file.extension === 'rb') {
-      //  command = "sudo ruby ";
-      //} else if (file.extension === 'js') {
-      //  command = "sudo node ";
-      //}
-      //command += file.name;
-      socket.emit('commit-run-file', { file: file});
-      //occEditor.open_terminal(occEditor.cwd(), command);
+      if (file.extension === 'py') {
+        command = "sudo python ";
+      } else if (file.extension === 'rb') {
+        command = "sudo ruby ";
+      } else if (file.extension === 'js') {
+        command = "sudo node ";
+      }
+      command += file.name;
+      //$('#editor-output div pre').append('------------------------------------------------------------\n');
+      //socket.emit('commit-run-file', { file: file});
+      occEditor.open_terminal(occEditor.cwd(), command);
     }
 
-    $('.run-file').html('<i class="icon-play"></i> Running').delay(100).fadeOut().fadeIn('slow');
-    occEditor.show_editor_output();
+    //$('.run-file').html('<i class="icon-remove"></i> Stop').removeClass('run-file').addClass('stop-file');
+    //occEditor.show_editor_output();
     davFS.write(file.path, editor_content, run_callback);
   };
 
@@ -675,6 +730,7 @@
     $(document).on('click touchstart', '.copy-project', copy_project);
     $(document).on('click touchstart', '.save-file', occEditor.save_file);
     $(document).on('click touchstart', '.run-file', occEditor.run_file);
+    $(document).on('click touchstart', '.stop-file', occEditor.stop_file);
     $(document).on('click touchstart', '.schedule-file', open_scheduler);
   }
 
@@ -819,10 +875,22 @@
   occEditor.show_editor_output = function() {
     if (!editor_output_visible) {
       editor_output_visible = true;
-      $('#editor-output').height('200px');
+      $('#editor-output').height('325px');
       $('#dragbar').show();
       $('#editor-output div').css('padding', '10px');
-      $('#editor').css('bottom', '203px');
+      $('#editor').css('bottom', '328px');
+      editor.resize();
+    }
+  };
+
+  occEditor.hide_editor_output = function() {
+    if (editor_output_visible) {
+      editor_output_visible = false;
+      $('#editor-output').height('0px');
+      $('#dragbar').hide();
+      $('#editor-output div').css('padding', '0px');
+      $('#editor').css('bottom', '3px');
+      editor.resize();
     }
   };
 
@@ -830,47 +898,29 @@
     var i = 0;
     var dragging = false;
     var buffer = "", buffer_start = false;
+    var termOffsetWidth, termOffsetHeight;
 
     socket.on('program-stdout', function(data) {
+      console.log(data);
       occEditor.show_editor_output();
-      //.replace(/In\s\[.*?\]:/, '')
-      //console.log(data.output.replace(/run\s.*.py/gm, ''));
-      buffer += data.output;
-      console.log(buffer);
-      if (buffer.match(/run[\S\s]*.[\S\s]*p[\S\s]*y/)) {
-        buffer = buffer.replace(/run[\S\s]*.[\S\s]*p[\S\s]*y/, '');
-        $('#editor-output div pre').append('\n');
-        buffer_start = true;
-      }
-
-      if (buffer.indexOf('~-prompt-~') !== -1) {
-        $('.run-file').html('<i class="icon-play"></i> Run');
-        buffer_start = false;
-        buffer = buffer.replace(/~-prompt-~[\S\s]*/, '');
-        $('#editor-output div pre').append(webide_utils.fix_console(buffer) + '\n');
-        buffer = "";
-      }
-
-      if (buffer_start) {
-        //$('#editor-output div pre').append(webide_utils.fix_console(buffer) + '\n');
-        //buffer = "";
-      }
-
-
-
-      $("#editor-output").animate({ scrollTop: $(document).height() }, "slow");
+      $('#editor-output div pre').append(webide_utils.fix_console(data.output));
+      $("#editor-output").animate({ scrollTop: $(document).height() }, "fast");
+      $("#editor-output").scrollTop($(document).height());
       editor.focus();
       //console.log(data);
     });
     socket.on('program-stderr', function(data) {
       occEditor.show_editor_output();
       $('#editor-output div pre').append(webide_utils.fix_console(data.output));
-      $("#editor-output").animate({ scrollTop: $(document).height() }, "slow");
+      //$("#editor-output").animate({ scrollTop: $(document).height() }, "fast");
+      $("#editor-output").scrollTop($(document).height());
       editor.focus();
       //console.log(data);
     });
     socket.on('program-exit', function(data) {
       occEditor.show_editor_output();
+      $('#editor-output div pre').append('\n\n');
+      $('.stop-file').html('<i class="icon-play"></i> Run').removeClass('stop-file').addClass('run-file');
       editor.focus();
       //$('#editor-output div pre').append("code: " + data.code + '\n');
       //$("#editor-output").animate({ scrollTop: $(document).height() }, "slow");
@@ -884,6 +934,8 @@
     function handle_dragbar_mousedown(event) {
       event.preventDefault();
       dragging = true;
+      termOffsetWidth = $('.terminal').width();
+      termOffsetHeight = $('.terminal').height();
       var $editor = $('#editor-output-wrapper');
       var ghostbar = $('<div>',
                       {id:'ghostbar',
@@ -895,6 +947,7 @@
                       }).appendTo('body');
       $(document).mousemove(function(event){
         ghostbar.css("top",event.pageY+2);
+        
       });
     }
 
@@ -908,6 +961,7 @@
         $(document).unbind('mousemove');
         editor.resize();
         dragging = false;
+        terminal_win.maximize();
       }
     }
 
@@ -969,6 +1023,7 @@
 
       if (file.type === 'directory') {
         alert_changed_file();
+        occEditor.send_terminal_command('cd ' + file.name);
         occEditor.populate_navigator(file.path);
       } else {
         $('.filesystem li').removeClass('file-open');
@@ -986,6 +1041,7 @@
       alert_changed_file();
       var file = $('a', this).parent().data('file');
       //console.log(file);
+      occEditor.send_terminal_command('cd ..');
       occEditor.populate_navigator(file.parent_path);
     }
 

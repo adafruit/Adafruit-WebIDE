@@ -1,7 +1,7 @@
 var spawn = require('child_process').spawn,
     pty = require('pty.js'),
     path = require('path'),
-    ipython;
+    ipython, spawn_list = [];
 
 exports.spawn_ipython = function() {
   ipython = pty.spawn('sudo', ['ipython']);
@@ -11,11 +11,21 @@ exports.execute_program = function(file, is_job) {
   
   console.log(file);
   if (file.extension === 'py') {
-    execute_ipython(file, is_job);
+    execute_program(file, "python", is_job);
   } else if (file.extension === 'rb') {
     execute_program(file, "ruby", is_job);
   } else if (file.extension === 'js') {
     execute_program(file, "node", is_job);
+  }
+};
+
+exports.stop_program = function(file, is_job) {
+  var key = get_key(file);
+  for (var i=0; i< spawn_list.length; i++) {
+    if (spawn_list[i].key === key) {
+      spawn_list.prog.kill();
+      spawn_list.splice(i, 1);
+    }
   }
 };
 
@@ -28,8 +38,8 @@ function execute_ipython(file, is_job) {
     }
     ipython.on('data', function(data) {
       console.log(data);
-      data = data.replace(/\[0;.*?In\s\[.*?\[0m/, '~-prompt-~');
-      data = data.replace(/In\s\[.*?\]:/, '~-prompt-~');
+      //data = data.replace(/\[0;.*?In\s\[.*?\[0m/, '~-prompt-~');
+      //data = data.replace(/In\s\[.*?\]:/, '~-prompt-~');
       if (is_job) {
         socket.emit('scheduler-executing', {file: file});
       } else {
@@ -43,6 +53,11 @@ function execute_ipython(file, is_job) {
 
 }
 
+function get_key(file) {
+  var key = "prog:" + file.path.replace(/\W/g, '');
+  return key;
+}
+
 function execute_program(file, type, is_job) {
   var file_path = path.resolve(__dirname + "/../" + file.path.replace('\/filesystem\/', '\/repositories\/'));
 
@@ -51,6 +66,8 @@ function execute_program(file, type, is_job) {
 
   require('../server').get_socket(file.username, function(socket) {
     var prog = spawn("sudo", [type, file_path]);
+    var key = get_key(file);
+    spawn_list.push({key: key, prog: prog});
     if (socket) {
       console.log('found socket, executing');
       handle_output(prog, file, is_job, socket);
@@ -81,11 +98,18 @@ function handle_output(prog, file, is_job, socket) {
   });
 
   prog.on('exit', function(code) {
+    var key = get_key(file);
+    for (var i=0; i< spawn_list.length; i++) {
+      if (spawn_list[i].key === key) {
+        spawn_list.splice(i, 1);
+      }
+    }
+
     if (is_job) {
       socket.emit('scheduler-exit', {code: code, file: file});
     } else {
       socket.emit('program-exit', {code: code});
     }
 
-  });    
+  });
 }

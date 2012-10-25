@@ -333,6 +333,10 @@ function socket_listeners() {
       });
     });
 
+    socket.on('stop-script-execution', function(data) {
+      exec_helper.stop_program(data.file, false);
+    });
+
     socket.on('submit-schedule', function(schedule) {
       scheduler.add_schedule(schedule, socket, socket.handshake.session);
     });

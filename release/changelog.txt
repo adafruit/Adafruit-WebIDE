@@ -1,5 +1,6 @@
 -0.2.1
 Job scheduler for automating script execution.  Run a script "every 15 minutes", for example.
+Schedule manager for toggling jobs, and deleting jobs.
 Use iPython for running python.  Launching inline in the editor instead of popping a terminal.
 Syntax highlighted python output.
 Faster execution of python scripts.
