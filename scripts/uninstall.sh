@@ -27,6 +27,7 @@ setcap -r "$NODE"
 
 echo "**** Stopping the Adafruit WebIDE ****"
 service adafruit-webide.sh stop
+sleep 5s
 
 echo "**** Removing update-rc.d service ****"
 update-rc.d -f adafruit-webide.sh remove

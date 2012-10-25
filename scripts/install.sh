@@ -70,7 +70,7 @@ then
 else
   echo 'webide "node" "service adafruit-webide.sh restart" ""' >> /etc/restartd.conf
 fi
-restartd
+
 #sudo su -m webide -c "node server.js"
 echo "**** Starting the server...(please wait) ****"
 sleep 23s
