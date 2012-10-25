@@ -1,11 +1,11 @@
 var spawn = require('child_process').spawn,
-    pty = require('pty.js'),
+    //pty = require('pty.js'),
     path = require('path'),
     ipython, spawn_list = [];
 
-exports.spawn_ipython = function() {
+/*exports.spawn_ipython = function() {
   ipython = pty.spawn('sudo', ['ipython']);
-};
+};*/
 
 exports.execute_program = function(file, is_job) {
   
@@ -29,7 +29,7 @@ exports.stop_program = function(file, is_job) {
   }
 };
 
-function execute_ipython(file, is_job) {
+/*function execute_ipython(file, is_job) {
   var file_path = path.resolve(__dirname + "/../" + file.path.replace('\/filesystem\/', '\/repositories\/'));
   ipython.removeAllListeners('data');
   require('../server').get_socket(file.username, function(socket) {
@@ -51,7 +51,7 @@ function execute_ipython(file, is_job) {
   ipython.write(file_path);
   ipython.write('\r\n');
 
-}
+}*/
 
 function get_key(file) {
   var key = "prog:" + file.path.replace(/\W/g, '');

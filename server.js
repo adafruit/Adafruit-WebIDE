@@ -32,7 +32,7 @@ var davServer,
 
 console.log("REPOSITORY_PATH", REPOSITORY_PATH);
 
-exec_helper.spawn_ipython();
+//exec_helper.spawn_ipython();
 
 //check for the existence of the logs directory, if it doesn't
 //exist, create it prior to starting the child process.
