@@ -2,8 +2,8 @@
 //Change port number in /config.
 exports.editor = {
   "port": 80,
-  "version": "0.2.0",
-  "version_url": "https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/release/version.txt",
+  "version": "0.2.1",
+  "version_url": "https://raw.github.com/adafruit/Adafruit-WebIDE/test/release/version.txt",
   "offline": false
 };
 
