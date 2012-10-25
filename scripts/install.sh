@@ -72,7 +72,7 @@ else
 fi
 
 #kill all restartd processes, and restart one
-pkill restartd
+pkill -f restartd || true
 sleep 5s
 restartd
 
