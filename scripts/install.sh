@@ -78,7 +78,7 @@ restartd
 
 #sudo su -m webide -c "node server.js"
 echo "**** Starting the server...(please wait) ****"
-sleep 23s
+sleep 20s
 
 echo "**** The Adafruit WebIDE is installed and running! ****"
 echo "**** Commands: sudo service adafruit-webide.sh {start,stop,restart} ****"
