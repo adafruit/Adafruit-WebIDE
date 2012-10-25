@@ -146,23 +146,16 @@
       return "Please confirm that you would like to leave the editor.";
     });
 
-    $('.window').focus(function() {
+    $(document).on('click', '#editor, #editor-bar, #navigator', function() {
       //console.log('here');
-    });
-
-    $(document).on('click', '#editor, #navigator', function() {
-      //console.log('here');
+      occEditor.focus_terminal(false);
       if (terminal_win) {
         terminal_win.blur();
       }
     });
-    $(document).on('click', 'window', function() {
-      //console.log('here');
-      if (terminal_win) {
-        terminal_win.focus();
-      }
-    });
+
     editor.on('focus', function() {
+      occEditor.focus_terminal(false);
       if (terminal_win) {
         terminal_win.blur();
       }
@@ -262,6 +255,18 @@
       }
     }
     
+  };
+
+  occEditor.focus_terminal = function(should_focus) {
+    if (should_focus) {
+      $('.bar').css('background-color', '#2c58bd');
+      //$('#editor-output-wrapper').css({ 'opacity' : 1 });
+      //$('#editor, #editor-bar').css({ 'opacity' : 0.95 });
+    } else {
+      $('.bar').css('background-color', '#323233');
+      //$('#editor-output-wrapper').css({ 'opacity' : 0.95 });
+      //$('#editor, #editor-bar').css({ 'opacity' : 1 });
+    }
   };
 
   /*
@@ -454,20 +459,29 @@
 
     occEditor.show_editor_output();
     terminal_win = new tty.Window(null, path);
+
     tty.on('open tab', function(){
       tty.on('tab-ready', function() {
         tty.off('open tab');
         tty.off('tab-ready');
+
         if (command) {
           terminal_win.tabs[0].sendString(command);
           editor.focus();
+        } else {
+          terminal_win.focus();
         }
       });
+    });
+
+    terminal_win.on('focus', function() {
+      occEditor.focus_terminal(true);
     });
 
     tty.on('close window', function() {
       tty.off('close window');
       is_terminal_open = false;
+      terminal_win = undefined;
       occEditor.hide_editor_output();
       editor.focus();
     });

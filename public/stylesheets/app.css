@@ -128,7 +128,7 @@ body {
 }
 
 #navigator-top {
-  background-color: #2A5CB7;
+  background-color: #2c58bd;
 }
 
 #navigator-top p {
@@ -588,19 +588,21 @@ a.navigator-settings i.settings-enabled {
 
 .schedule-footer {
   float: right;
-  font-size: 16px;
+  font-size: 14px;
   color: #E4E5E7;
-  padding: 10px 10px 0 10px;
+  padding: 10px 20px 0 10px;
 }
 
 .schedule-footer a {
   color: #E4E5E7;
   text-decoration: none;
-  padding-left: 15px;
+  padding-left: 7px;
 }
 
 .schedule-footer .schedule-status {
   color: #74A927;
+  border-right: 1px solid #E4E5E7;
+  padding-right: 7px;
 }
 
 .editor-version {
