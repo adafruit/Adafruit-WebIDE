@@ -86,7 +86,7 @@ block content
     script(type="text/javascript")
       if(!#{shown_notification}) {
         setTimeout(function() {
-          $('#notification-modal').modal('show');
+          $('#notification-modal').modal({show: true, backdrop: 'static'});
         }, 20000);
         
       }     
