@@ -1,5 +1,7 @@
 var fs_helper = require('../helpers/fs_helper'),
     path = require('path'),
+    redis = require('redis'),
+    client = redis.createClient(),
     git_helper = require('../helpers/git_helper'),
     config = require('../config/config'),
     check = require('validator').check,
@@ -7,7 +9,16 @@ var fs_helper = require('../helpers/fs_helper'),
 
 //Loads the editor
 exports.index = function(req, res) {
-  res.render('editor/index', {profile: req.user, version: config.editor.version});
+  var shown_notification = false;
+  client.get('editor:shown_notification', function(err, result) {
+    if (result) {
+      shown_notification = result;
+    } else {
+      client.set('editor:shown_notification', true);
+    }
+    res.render('editor/index', {profile: req.user, version: config.editor.version, shown_notification: shown_notification});
+  });
+  
 };
 
 exports.create_repository = function(req, res) {
