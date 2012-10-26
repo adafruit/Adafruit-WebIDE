@@ -9,6 +9,10 @@ NODE=$(which node)
 
 echo "**** Removing restartd WebIDE configuration ****"
 sed -i '/adafruit-webide.sh/ d' /etc/restartd.conf
+#kill all restartd processes, and restart one
+pkill -f restartd || true
+sleep 5s
+restartd
 
 echo "**** Removing webide user from sudoers ****"
 if [ -f "/etc/sudoers.tmp" ]; then
