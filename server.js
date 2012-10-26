@@ -193,7 +193,6 @@ function ensureAuthenticated(req, res, next) {
     }
   }
 
-  console.log('ensureAuthenticated');
   if (!IS_PASSPORT_SETUP) {
     //need to setup passport on server startup, if the bitbucket oauth is already setup
     client.hgetall('bitbucket_oauth', function (err, bitbucket) {
