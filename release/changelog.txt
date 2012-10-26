@@ -8,6 +8,7 @@ Focus the editor in many more situations, for example, when opening a file, it w
 Add "Command-Enter", or "Ctrl-Enter" command to run scripts, this is in addition to "Command-S" and "Ctrl-S" to save.
 Update Bitbucket logos with new design.
 Add option to change port number in /config, and persist in Redis, surviving updates.
+Ensure only one instance of restartd is running during installation
 
 -0.2.0
 New installation procedure to fix many of the initial installation issues with 0.1.9 and earlier.

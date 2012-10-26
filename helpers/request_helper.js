@@ -62,7 +62,7 @@ exports.create_repository = function(profile, repository_name, cb) {
                 token_secret: profile.token_secret };
 
   
-  var params = { name: repository_name, scm: 'git'};
+  var params = { name: repository_name, scm: 'git', is_private: true};
 
   request.post({
     url:url,
