@@ -213,7 +213,7 @@
   occEditor.load_scheduled_jobs = function() {
     socket.on('scheduled-job-list', function(data) {
       job_list = data;
-      console.log(job_list);
+      //console.log(job_list);
     });
   };
 
@@ -782,7 +782,7 @@
       str += (d.getMonth() + 1) + "-";
       str += d.getDate() + " ";
       str += d.toLocaleTimeString();
-      console.log(d.getDate());
+      //console.log(d.getDate());
       return str;
     }
 
@@ -794,11 +794,10 @@
       if (job_list && job_list.length) {
         for (var i=0; i<job_list.length; i++) {
           $('<tr class="spacer"><td></td></tr>').appendTo($table);
-          console.log(job_list[i]);
+          //console.log(job_list[i]);
           var $tr = $('<tr></tr>');
           var checked = "checked";
           if (job_list[i].active == 0) { //intentional double quotes...active is a string
-            console.log("here");
             checked = "";
           }
           $('<td class="schedule-toggle"><input type="checkbox" name="schedule-toggle" value="' + job_list[i].key + '"'+ checked +'></td>').appendTo($tr);
