@@ -177,6 +177,23 @@ serverInitialization(app);
 function ensureAuthenticated(req, res, next) {
   setHostName(req);
 
+  function authRoute(req, res, next) {
+    if (config.editor.offline) {
+      //TODO: create a dummy session here
+      return next();
+    }
+    if (req.isAuthenticated()) {
+      return next();
+    }
+
+    if (!IS_PASSPORT_SETUP) {
+      res.redirect('/setup');
+    } else {
+      res.redirect('/login');
+    }
+  }
+
+  console.log('ensureAuthenticated');
   if (!IS_PASSPORT_SETUP) {
     //need to setup passport on server startup, if the bitbucket oauth is already setup
     client.hgetall('bitbucket_oauth', function (err, bitbucket) {
@@ -184,23 +201,12 @@ function ensureAuthenticated(req, res, next) {
         setup_passport(bitbucket.consumer_key, bitbucket.consumer_secret);
         IS_PASSPORT_SETUP = true;
       }
+      authRoute(req, res, next);
     });
-    console.log(req.route);
-  }
-
-  if (config.editor.offline) {
-    //TODO: create a dummy session here
-    return next();
-  }
-  if (req.isAuthenticated()) {
-    return next();
-  }
-
-  if (!IS_PASSPORT_SETUP) {
-    res.redirect('/setup');
   } else {
-    res.redirect('/login');
+    authRoute(req, res, next);
   }
+
 }
 
 function ensureOauth(req, res, next) {
