@@ -66,7 +66,29 @@ block content
           a(href="", class="btn btn-small") on the 15,18,20 minute            
       .modal-footer
         button.btn(data-dismiss="modal", aria-hidden="true") Close
-        button.btn.btn-primary.modal-submit Submit       
+        button.btn.btn-primary.modal-submit Submit  
+    #notification-modal(class="modal hide fade")
+      .modal-header
+        button.close(type="button", data-dismiss-"modal", aria-hidden="true") &times;
+        h3#create-modal-label WebIDE Message
+      .modal-body
+        p Please ensure your repositories are listed private or public at Bitbucket based on your preferences.
+        p You can validate them by viewing your <a href="https://bitbucket.org" target="_blank">bitbucket profile page</a>
+          | , and looking for the padlock to the left of the repository
+          | name in the "Repositories" sidebar.
+        p To make the repository private or public, click the repository name, and then the gear in the header on the
+          | the repository page.  Then click the checkbox in the form to make the repository private or public,
+          | and click submit.
+        p This particular notification will only display one time.  Thank you!
+      .modal-footer
+        button.btn(data-dismiss="modal", aria-hidden="true") Dismiss 
+    script(type="text/javascript")
+      if(!#{shown_notification}) {
+        setTimeout(function() {
+          $('#notification-modal').modal('show');
+        }, 5000);
+        
+      }     
   script(src="/javascripts/ace/ace.js")
   script(src="/socket.io/socket.io.js")
   script(src="/term.js")

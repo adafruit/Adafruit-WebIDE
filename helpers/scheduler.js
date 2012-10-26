@@ -12,7 +12,8 @@ var exec = require('child_process').exec,
 
 function execute_job(file) {
   exec_helper.execute_program(file, true);
-  console.log(file);
+  console.log("execute_job");
+  console.log(file.key);
 
   client.hmset(file.key, "last_run", new Date(), function() {
     //repopulate the job list in the editor

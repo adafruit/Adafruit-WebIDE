@@ -58,6 +58,12 @@ function get_key(file) {
   return key;
 }
 
+function get_cwd(file_path) {
+  var split = file_path.split('/');
+  split.splice(split.length-1, 1);
+  return split.join('/');
+}
+
 function execute_program(file, type, is_job) {
   var file_path = path.resolve(__dirname + "/../" + file.path.replace('\/filesystem\/', '\/repositories\/'));
 
@@ -65,7 +71,9 @@ function execute_program(file, type, is_job) {
   console.log(file_path);
 
   require('../server').get_socket(file.username, function(socket) {
-    var prog = spawn("sudo", [type, file_path]);
+    console.log(file);
+    var cwd = get_cwd(file_path);
+    var prog = spawn("sudo", [type, file_path], {cwd: cwd});
     var key = get_key(file);
     spawn_list.push({key: key, prog: prog});
     if (socket) {
@@ -82,6 +90,7 @@ function handle_output(prog, file, is_job, socket) {
 
   prog.stdout.on('data', function(data) {
     if (is_job) {
+      console.log(data.toString());
       socket.emit('scheduler-executing', {file: file});
     } else {
       console.log(data.toString());
@@ -91,8 +100,10 @@ function handle_output(prog, file, is_job, socket) {
 
   prog.stderr.on('data', function(data) {
     if (is_job) {
+      console.log(data.toString());
       socket.emit('scheduler-error', {file: file, error: data});
     } else {
+      console.log(data.toString());
       socket.emit('program-stderr', {output: data.toString()});
     }
   });

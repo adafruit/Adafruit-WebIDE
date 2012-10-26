@@ -213,7 +213,7 @@
   occEditor.load_scheduled_jobs = function() {
     socket.on('scheduled-job-list', function(data) {
       job_list = data;
-      //console.log(job_list);
+      console.log(job_list);
     });
   };
 
