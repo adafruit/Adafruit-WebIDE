@@ -1,3 +1,6 @@
+-0.2.2
+Fix for false redirects to /setup even if bitbucket and git is already configured.
+
 -0.2.1
 Job scheduler for automating script execution.  Run a script "every 15 minutes", for example.
 Schedule manager for toggling jobs, and deleting jobs.
