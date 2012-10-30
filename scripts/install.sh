@@ -64,10 +64,22 @@ cp "$WEBIDE_ROOT/scripts/adafruit-webide.sh" "/etc/init.d"
 cd /etc/init.d
 chmod 755 adafruit-webide.sh
 update-rc.d adafruit-webide.sh defaults
+
+#Check if port 80 is in use, use 3000 if so.
+PORTS="$(netstat -lnt | awk '$6 == "LISTEN" && $4 ~ ".80"')"
+PORT_USED=""
+if [[ $PORTS =~ "LISTEN" ]]; then
+  redis-cli HMSET server port 3000
+  PORT_USED=":3000"
+  echo "**** WARNING: PORT 80 IN USE. FALLING BACK TO 3000. ****"
+  echo "**** TO CHOOSE A DIFFERENT PORT USE THE FOLLOWING COMMAND: ****"
+  echo "**** redis-cli HMSET server port 3000 ****"
+  echo "**** AND RESTART THE SERVER ****"
+fi
+
 service adafruit-webide.sh start
 
-echo "**** Monitoring the WebIDE with restartd ****"
-if sudo grep -q adafruit-webide.sh /etc/restartd.conf
+if grep -q adafruit-webide.sh /etc/restartd.conf
 then
   echo "restartd already configured"
 else
@@ -79,13 +91,12 @@ pkill -f restartd || true
 sleep 5s
 restartd
 
-#sudo su -m webide -c "node server.js"
 echo "**** Starting the server...(please wait) ****"
 sleep 20s
 
 echo "**** The Adafruit WebIDE is installed and running! ****"
 echo "**** Commands: sudo service adafruit-webide.sh {start,stop,restart} ****"
-echo "**** Navigate to http://raspberrypi.local to use the WebIDE"
+echo "**** Navigate to http://$(hostname).local$PORT_USED to use the WebIDE"
 #echo "**** To run the editor: ****"
 #echo "**** cd ~/Adafruit/WebIDE ****"
 #echo "**** node webide ****"
