@@ -1018,6 +1018,14 @@
       occEditor.handle_navigator_scroll();
     }
 
+    function set_page_title(name) {
+      //update page title
+      if (name === 'filesystem') {
+        name = "All Repositories";
+      }
+      document.title = name + " - Adafruit Learning System Raspberry Pi WebIDE";
+    }
+
     function navigator_item_selected(event) {
       event.preventDefault();
 
@@ -1027,6 +1035,8 @@
       }
 
       var file = $(this).data('file'), content;
+
+      set_page_title(file.name);
 
       //user clicked on delete file or folder
       if (event.target.className === 'icon-minus-sign') {
@@ -1053,6 +1063,9 @@
 
       alert_changed_file();
       var file = $('a', this).parent().data('file');
+
+      set_page_title(file.parent_name);
+
       //console.log(file);
       occEditor.send_terminal_command('cd ..');
       occEditor.populate_navigator(file.parent_path);
