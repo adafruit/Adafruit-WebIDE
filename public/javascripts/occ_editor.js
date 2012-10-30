@@ -81,6 +81,8 @@
   };
 
   occEditor.init = function(id) {
+    occEditor.set_page_title("All Repositories");
+    
     editor = ace.edit("editor");
     editor.setTheme("ace/theme/merbivore_soft");
     editor.getSession().setMode("ace/mode/python");
@@ -215,6 +217,15 @@
       job_list = data;
       //console.log(job_list);
     });
+  };
+
+
+  occEditor.set_page_title = function(name) {
+    //update page title
+    if (name === 'filesystem') {
+      name = "All Repositories";
+    }
+    document.title = name + " - Adafruit Learning System Raspberry Pi WebIDE";
   };
 
   occEditor.populate_editor = function(file, content) {
@@ -1018,14 +1029,6 @@
       occEditor.handle_navigator_scroll();
     }
 
-    function set_page_title(name) {
-      //update page title
-      if (name === 'filesystem') {
-        name = "All Repositories";
-      }
-      document.title = name + " - Adafruit Learning System Raspberry Pi WebIDE";
-    }
-
     function navigator_item_selected(event) {
       event.preventDefault();
 
@@ -1036,7 +1039,7 @@
 
       var file = $(this).data('file'), content;
 
-      set_page_title(file.name);
+      occEditor.set_page_title(file.name);
 
       //user clicked on delete file or folder
       if (event.target.className === 'icon-minus-sign') {
@@ -1064,7 +1067,7 @@
       alert_changed_file();
       var file = $('a', this).parent().data('file');
 
-      set_page_title(file.parent_name);
+      occEditor.set_page_title(file.parent_name);
 
       //console.log(file);
       occEditor.send_terminal_command('cd ..');
