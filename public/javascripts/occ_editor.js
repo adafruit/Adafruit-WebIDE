@@ -242,6 +242,7 @@
       $(document).trigger('file_open', file);
       var session = new EditSession(data);
       session.setUndoManager(new UndoManager());
+      session.setUseSoftTabs(false);
 
       if (file.path) {
         var file_mode = getModeFromPath(file.path);
