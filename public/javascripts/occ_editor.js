@@ -768,7 +768,14 @@
 
       $('#schedule-manager').hide();
       $('#editor').show();
-      occEditor.populate_editor_bar();
+      
+      var file = $('.filesystem li.file-open').data('file');
+      if (file) {
+        $(document).trigger('file_open', file);
+      } else {
+        occEditor.populate_editor_bar();
+      }
+
     }
 
     function delete_scheduled_job(event) {
