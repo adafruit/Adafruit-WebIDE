@@ -244,6 +244,10 @@
       session.setUndoManager(new UndoManager());
       session.setUseSoftTabs(false);
 
+      if (typeof settings !== 'undefined' && settings.font_size) {
+        editor.setFontSize(settings.font_size);
+      }
+
       if (file.path) {
         var file_mode = getModeFromPath(file.path);
         session.setMode(file_mode.mode);
@@ -476,6 +480,10 @@
       tty.on('tab-ready', function() {
         tty.off('open tab');
         tty.off('tab-ready');
+
+        if (typeof settings !== 'undefined' && settings.font_size) {
+          $('.terminal').css('font-size', settings.font_size);
+        }
 
         if (command) {
           terminal_win.tabs[0].sendString(command);
