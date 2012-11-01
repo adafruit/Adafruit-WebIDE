@@ -233,10 +233,19 @@ function setHostName(req) {
 
 function serverInitialization(app) {
 
+  //setup repositories path
   var exists = path.existsSync(REPOSITORY_PATH);
   if (!exists) {
     fs.mkdirSync(REPOSITORY_PATH, 0777);
-    console.log('created repositories folder');
+    winston.info('created repositories folder');
+  }
+
+  //setup symlink to webide home, if it exists:
+  var has_webide_path = path.existsSync("/home/webide");
+  if (has_webide_path) {
+    //Creating symbolic link to repositories path
+    winston.info('Linked repository paths: /home/webide/repositories');
+    fs.symlinkSync(REPOSITORY_PATH, "/home/webide/repositories", 'dir');
   }
 
   scheduler.initialize_jobs();
