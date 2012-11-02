@@ -66,9 +66,9 @@ chmod 755 adafruit-webide.sh
 update-rc.d adafruit-webide.sh defaults
 
 #Check if port 80 is in use, use 3000 if so.
-PORTS="$(netstat -lnt | awk '$6 == "LISTEN" && $4 ~ ".80"')"
 PORT_USED=""
-if [[ $PORTS =~ "LISTEN" ]]; then
+if netstat -lnt | awk '$6 == "LISTEN" && $4 ~ ".80"' | grep -q "LISTEN"
+then
   redis-cli HMSET server port 3000
   PORT_USED=":3000"
   echo "**** WARNING: PORT 80 IN USE. FALLING BACK TO 3000. ****"
