@@ -3,6 +3,7 @@ Fix for false redirects to /setup even if bitbucket and git is already configure
 Change page title based on what directory or file is open.
 Update Ace to the latest version, fixing line numbering
 Detect if port 80 is in use during install, and try 3000 instead.
+Set path to open editor at end of install script to actual hostname.
 Install python-smbus as part of the installation process.
 Add symlink for repositories to webide users home path.
 Fix for closing the schedule manager breaking the editor toolbar.
