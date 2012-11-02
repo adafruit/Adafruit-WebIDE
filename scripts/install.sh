@@ -5,8 +5,8 @@
 
 #tar -zcvf editor.tar.gz * --exclude .git --exclude .gitignore
 #tar -zcvf editor-update.tar.gz * --exclude .git --exclude .gitignore
-#scp pi@raspberrypi.local:/home/pi/Adafruit-WebIDE/editor.tar.gz editor-0.2.1.tar.gz
-#scp pi@raspberrypi.local:/home/pi/Adafruit-WebIDE-Update/editor-update.tar.gz editor-0.2.1-update.tar.gz
+#scp pi@raspberrypi.local:/home/pi/Adafruit-WebIDE/editor.tar.gz editor-0.2.2.tar.gz
+#scp pi@raspberrypi.local:/home/pi/Adafruit-WebIDE-Update/editor-update.tar.gz editor-0.2.2-update.tar.gz
 #sudo -u webide -g webide node server
 
 set -e
@@ -27,7 +27,7 @@ mkdir -p "$WEBIDE_HOME"
 cd "$WEBIDE_ROOT"
 
 echo "**** Downloading the latest version of the WebIDE ****"
-curl -L https://github.com/downloads/adafruit/Adafruit-WebIDE/editor-0.2.1.tar.gz | tar xzf -
+curl -L https://github.com/downloads/adafruit/Adafruit-WebIDE/editor-0.2.2.tar.gz | tar xzf -
 
 echo "**** Installing required libraries ****"
 echo "**** (nodejs npm redis-server git restartd libcap2-bin avahi-daemon i2c-tools python-smbus) ****"
