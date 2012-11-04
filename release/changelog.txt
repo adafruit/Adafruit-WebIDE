@@ -1,3 +1,6 @@
+-0.2.3
+Fix server failing to start on reboot of Pi.
+
 -0.2.2
 Fix for false redirects to /setup even if bitbucket and git is already configured.
 Change page title based on what directory or file is open.
