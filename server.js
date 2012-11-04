@@ -245,7 +245,9 @@ function serverInitialization(app) {
   if (has_webide_path) {
     //Creating symbolic link to repositories path
     winston.info('Linked repository paths: /home/webide/repositories');
-    fs.symlinkSync(REPOSITORY_PATH, "/home/webide/repositories", 'dir');
+    if (!path.existsSync("/home/webide/repositories")) {
+      fs.symlinkSync(REPOSITORY_PATH, "/home/webide/repositories", 'dir');
+    }
   }
 
   scheduler.initialize_jobs();
