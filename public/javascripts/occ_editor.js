@@ -588,18 +588,25 @@
   }
 
   function build_navigator_list(list) {
-    var item_icon, ul = $(".filesystem").html('');
+    var item_icon, item_name, ul = $(".filesystem").html('');
     $.each(list, function(i, item) {
-      if (item.type === 'file') {
-        item_icon = "<i class='icon-chevron-right'></i>";
+
+      if (item.name.length <= 33) {
+        item_name = item.name;
+        if (item.type === 'file') {
+          item_icon = "<i class='icon-chevron-right'></i>";
+        } else {
+          item_icon = "<i class='icon-folder-open'></i>";
+        }
       } else {
-        item_icon = "<i class='icon-folder-open'></i>";
+        item_icon = "";
+        item_name = item.name.slice(0, 30) + "...";
       }
       if (i > 0) {
         item.id = i + "-item";
         $("<li id='" + i + "-item' class='navigator-item'></li>")
         .data( "file", item )
-        .append("<a href=''>" + item.name + item_icon)
+        .append("<a href='' title='" + item.name + "'>" + item_name + item_icon)
         .appendTo(ul);
       }
     });

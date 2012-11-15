@@ -184,6 +184,7 @@ a.navigator-settings i.settings-enabled {
   padding: 10px 10px 10px 10px;
   border-bottom: 1px solid #909090;
   cursor: pointer;
+  overflow: hidden;
 }
 
 #navigator ul li:last-child {
@@ -202,6 +203,7 @@ a.navigator-settings i.settings-enabled {
   color: #343637;
   font-weight: bold;
   text-decoration: none;
+
 }
 
 #navigator ul li.file-open a, #navigator ul li.file-open i  {
