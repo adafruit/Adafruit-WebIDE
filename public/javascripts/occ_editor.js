@@ -23,6 +23,7 @@
                                     '</p>',
     "editor_bar_settings_manager":  '<p class="editor-bar-actions">' +
                                       'Edit your settings' +
+                                      '<span class="saved-setting" style="display: none;"></span>' +
                                       '<a href="" class="close-settings-manager"><i class="icon-remove"></i> Close</a>' +
                                     '</p>',
     "editor_bar_interpreted_file":  '<p class="editor-bar-actions">' +
@@ -120,8 +121,8 @@
     socket.on("self-check-message", function(message) {
       editor_startup(message);
     });
-    socket.on("self-check-settings", function(settings) {
-      console.log(settings);
+    socket.on("self-check-settings", function(data) {
+      settings = data;
       editor_startup("Editor settings received");
     });
     socket.on("self-check-complete", function() {
@@ -253,7 +254,7 @@
       session.setUseSoftTabs(false);
 
       if (typeof settings !== 'undefined' && settings.font_size) {
-        editor.setFontSize(settings.font_size);
+        editor.setFontSize(settings.font_size + "px");
       }
 
       if (file.path) {
@@ -490,7 +491,7 @@
         tty.off('tab-ready');
 
         if (typeof settings !== 'undefined' && settings.font_size) {
-          $('.terminal').css('font-size', settings.font_size);
+          $('.terminal').css('font-size', settings.font_size + "px");
         }
 
         if (command) {
@@ -1093,9 +1094,20 @@
     }
 
     function view_settings() {
+      function set_settings(value) {
+        if (typeof settings === 'undefined') {
+          settings = {};
+        }
+        settings = $.extend({}, settings, value);
+
+        socket.emit("set-settings", value);
+        $('.saved-setting').html('<i class="icon-ok"></i> Saved').delay(100).fadeIn('slow').fadeOut();
+      }
+
       function close_settings_manager(event) {
         event.preventDefault();
         $(document).off('click touchstart', '.close-settings-manager');
+        $(document).off('click touchstart', '.font-size-value');
 
         $('#settings-manager').hide();
         $('#editor').show();
@@ -1107,10 +1119,24 @@
           occEditor.populate_editor_bar();
         }
       }
+
+      function set_font_size(event) {
+        $('.font-size-value').removeClass('selected');
+        $(this).addClass('selected');
+        set_settings({"font_size": $(this).text()});
+      }
+
+      if (typeof settings !== 'undefined' && settings.font_size) {
+        $('.font-size-value.' + settings.font_size + 'px').addClass('selected');
+      } else {
+        $('.font-size-value.12px').addClass('selected');
+      }
+
       $('#editor').hide();
-      //$('#settings-manager').html("");
       $('#settings-manager').show();
       $('#editor-bar').html(templates.editor_bar_settings_manager);
+      
+      $(document).on('click touchstart', '.font-size-value', set_font_size);
       $(document).on('click touchstart', '.close-settings-manager', close_settings_manager);
     }
 

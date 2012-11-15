@@ -26,6 +26,7 @@ var exec = require('child_process').exec,
     console.log(project_repository);
 
     client.hgetall('editor:settings', function(err, settings) {
+      console.log("getting settings", settings);
       socket.emit("self-check-settings", settings);
     });
 

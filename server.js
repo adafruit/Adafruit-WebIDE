@@ -129,7 +129,6 @@ app.use(app.router);
 app.get('/', ensureAuthenticated, site.index);
 
 app.get('/editor', ensureAuthenticated, editor.index);
-app.post('/editor/settings', ensureAuthenticated, editor.settings);
 app.get('/editor/image', ensureAuthenticated, editor.image);
 app.post('/editor/upload', ensureAuthenticated, editor.upload_file);
 
@@ -364,6 +363,12 @@ function socket_listeners() {
 
     socket.on('schedule-toggle-job', function(key) {
       scheduler.toggle_job(key, socket, socket.handshake.session);
+    });
+
+    socket.on('set-settings', function(value) {
+      client.hmset("editor:settings", value, function(err) {
+        console.log(err);
+      });
     });
   });
 }

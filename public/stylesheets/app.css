@@ -461,6 +461,33 @@ a.navigator-settings i.settings-enabled {
   float: right;
 }
 
+#editor-bar .saved-setting {
+  padding-left: 10px;
+}
+
+#settings-manager .settings-element {
+  margin-top: 9px;
+}
+
+#settings-manager span {
+  border: 1px solid #B4B4B4;
+  background-color: #EDEEEE;
+  color: #2F3133;
+  font-size: 12px;
+  font-weight: bold;  
+  padding: 10px;
+  margin: 0 1px 0 0;
+}
+
+.settings-element .font-size-value {
+  cursor: pointer;
+}
+
+#settings-manager span.selected {
+  border: 1px solid #B4B4B4;
+  background-color: #B4B4B4;
+}
+
 #editor-output-wrapper {
   position: absolute;
   bottom: 0;

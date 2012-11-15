@@ -21,10 +21,6 @@ exports.index = function(req, res) {
   
 };
 
-exports.settings = function(req, res) {
-
-};
-
 exports.create_repository = function(req, res) {
   var repository_url = sanitize(req.body.repository_url).xss().trim();
 
