@@ -7,7 +7,7 @@
       editor_output_visible = false,
       is_terminal_open = false,
       terminal_win,
-      job_list;
+      job_list, settings;
 
   var templates = {
     "editor_bar_init":              '<p class="editor-bar-actions">' +
@@ -20,6 +20,10 @@
     "editor_bar_schedule_manager":  '<p class="editor-bar-actions">' +
                                       'Manage your scheduled scripts' +
                                       '<a href="" class="close-schedule-manager"><i class="icon-remove"></i> Close</a>' +
+                                    '</p>',
+    "editor_bar_settings_manager":  '<p class="editor-bar-actions">' +
+                                      'Edit your settings' +
+                                      '<a href="" class="close-settings-manager"><i class="icon-remove"></i> Close</a>' +
                                     '</p>',
     "editor_bar_interpreted_file":  '<p class="editor-bar-actions">' +
                                       '<a href="" class="open-terminal"><i class="icon-list-alt"></i> Terminal</a>' +
@@ -115,6 +119,10 @@
     socket.emit("self-check-request");
     socket.on("self-check-message", function(message) {
       editor_startup(message);
+    });
+    socket.on("self-check-settings", function(settings) {
+      console.log(settings);
+      editor_startup("Editor settings received");
     });
     socket.on("self-check-complete", function() {
       editor_startup("Editor Health Check Complete");
@@ -563,7 +571,7 @@
     //console.log("item", item);
     if (item.name === 'filesystem') {
       var username = $('input[name="username"]').val();
-      $nav_top = $('#navigator-top p').addClass('navigator-item-back').html("<a href=''><i class='icon-user'></i> " + username + "</a>");
+      $nav_top = $('#navigator-top p').addClass('navigator-item-back').html("<a class='editor-settings' href=''><i class='icon-user'></i> " + username + " (settings)</a>");
 
       $('#navigator-folder p').text('All Repositories');
     } else {
@@ -1077,8 +1085,36 @@
       }
     }
 
+    function view_settings() {
+      function close_settings_manager(event) {
+        event.preventDefault();
+        $(document).off('click touchstart', '.close-settings-manager');
+
+        $('#settings-manager').hide();
+        $('#editor').show();
+        
+        var file = $('.filesystem li.file-open').data('file');
+        if (file) {
+          $(document).trigger('file_open', file);
+        } else {
+          occEditor.populate_editor_bar();
+        }
+      }
+      $('#editor').hide();
+      //$('#settings-manager').html("");
+      $('#settings-manager').show();
+      $('#editor-bar').html(templates.editor_bar_settings_manager);
+      $(document).on('click touchstart', '.close-settings-manager', close_settings_manager);
+    }
+
     function navigator_back_selected(event) {
       event.preventDefault();
+
+      console.log($('a', this).hasClass("editor-settings"));
+      if ($('a', this).hasClass("editor-settings")) {
+        view_settings();
+        return;
+      }
 
       alert_changed_file();
       var file = $('a', this).parent().data('file');

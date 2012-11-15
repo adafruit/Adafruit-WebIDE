@@ -398,7 +398,7 @@ a.navigator-settings i.settings-enabled {
 }
 
 
-#editor, #schedule-manager {
+#editor, #schedule-manager, #settings-manager {
   position: absolute;
   left: 0;
   right: 0;  
@@ -408,7 +408,7 @@ a.navigator-settings i.settings-enabled {
   border-right: 1px solid #EDEDED;
 }
 
-#schedule-manager {
+#schedule-manager, #settings-manager {
   display: none;
   background-color: #FFFFFF;
 }
@@ -455,7 +455,7 @@ a.navigator-settings i.settings-enabled {
   padding: 1px 0 0 0;
 }
 
-.close-schedule-manager {
+.close-schedule-manager, .close-settings-manager {
   float: right;
 }
 

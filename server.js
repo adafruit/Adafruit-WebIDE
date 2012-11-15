@@ -129,6 +129,7 @@ app.use(app.router);
 app.get('/', ensureAuthenticated, site.index);
 
 app.get('/editor', ensureAuthenticated, editor.index);
+app.post('/editor/settings', ensureAuthenticated, editor.settings);
 app.get('/editor/image', ensureAuthenticated, editor.image);
 app.post('/editor/upload', ensureAuthenticated, editor.upload_file);
 

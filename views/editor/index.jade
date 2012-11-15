@@ -19,6 +19,13 @@ block content
     #editor-wrapper
       #editor-bar
       #schedule-manager
+      #settings-manager
+        form(method="post", action="/editor/settings")
+          label Font Size:
+            select(name="settings[font]")
+              option(value="12px") 12px
+              option(value="14px") 14px
+              option(value="16px") 16px
       #editor
       #editor-output-wrapper
         #dragbar
