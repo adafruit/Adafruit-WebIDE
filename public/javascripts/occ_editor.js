@@ -1117,7 +1117,6 @@
     function navigator_back_selected(event) {
       event.preventDefault();
 
-      console.log($('a', this).hasClass("editor-settings"));
       if ($('a', this).hasClass("editor-settings")) {
         view_settings();
         return;
