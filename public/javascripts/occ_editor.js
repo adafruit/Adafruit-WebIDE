@@ -3,7 +3,11 @@
 (function( occEditor, $, undefined ) {
   var editor, modes = [], max_reconnects = 50,
       socket = io.connect(null, {'reconnection limit': 2000, 'max reconnection attempts': max_reconnects}),
-      dirname, updating = false;
+      dirname, updating = false,
+      editor_output_visible = false,
+      is_terminal_open = false,
+      terminal_win,
+      job_list, settings;
 
   var templates = {
     "editor_bar_init":              '<p class="editor-bar-actions">' +
@@ -13,14 +17,28 @@
     "editor_bar_blank":             '<p class="editor-bar-actions">' +
                                       '<a href="" class="open-terminal"><i class="icon-list-alt"></i> Terminal</a>' +
                                     '</p>',
+    "editor_bar_schedule_manager":  '<p class="editor-bar-actions">' +
+                                      'Manage your scheduled scripts' +
+                                      '<a href="" class="close-schedule-manager"><i class="icon-remove"></i> Close</a>' +
+                                    '</p>',
+    "editor_bar_settings_manager":  '<p class="editor-bar-actions">' +
+                                      'Edit your settings' +
+                                      '<span class="saved-setting" style="display: none;"></span>' +
+                                      '<a href="" class="close-settings-manager"><i class="icon-remove"></i> Close</a>' +
+                                    '</p>',
     "editor_bar_interpreted_file":  '<p class="editor-bar-actions">' +
                                       '<a href="" class="open-terminal"><i class="icon-list-alt"></i> Terminal</a>' +
                                       '<a href="" class="run-file"><i class="icon-play"></i> Run</a>' +
                                       '<a href="" class="trace-file"><i class="icon-sitemap"></i> Trace</a>' +
                                       '<a href="" class="save-file"><i class="icon-cloud"></i> Save</a>' +
+                                      '<a href="" class="schedule-file"><i class="icon-time"></i> Schedule</a>' +
                                     '</p>',
     "editor_bar_run_link":          '<a href="" class="run-file"><i class="icon-play"></i> Run</a>',
+<<<<<<< HEAD
     "editor_bar_trace_link":        '<a href="" class="trace-file"><i class="icon-sitemap"></i> Trace</a>',
+=======
+    "editor_bar_schedule_link":     '<a href="" class="schedule-file"><i class="icon-time"></i> Schedule</a>',
+>>>>>>> master
     "editor_bar_copy_link":         '<a href="" class="copy-project"><i class="icon-copy"></i> Copy this project to My Pi Projects</a>',
     "editor_bar_tutorial_link":     '<a href="" class="open-tutorial" target="_blank"><i class="icon-book"></i> Project Guide Available</a>',
     "editor_bar_file":              '<p class="editor-bar-actions">' +
@@ -73,6 +91,8 @@
   };
 
   occEditor.init = function(id) {
+    occEditor.set_page_title("All Repositories");
+    
     editor = ace.edit("editor");
     editor.setTheme("ace/theme/merbivore_soft");
     editor.getSession().setMode("ace/mode/python");
@@ -90,7 +110,9 @@
 
     handle_navigator_actions();
     handle_editor_bar_actions();
-    //handle_program_output();
+    handle_footer_actions();
+    handle_program_output();
+    handle_scheduler_events();
     handle_update_action();
   };
 
@@ -103,6 +125,10 @@
     socket.emit("self-check-request");
     socket.on("self-check-message", function(message) {
       editor_startup(message);
+    });
+    socket.on("self-check-settings", function(data) {
+      settings = data;
+      editor_startup("Editor settings received");
     });
     socket.on("self-check-complete", function() {
       editor_startup("Editor Health Check Complete");
@@ -120,10 +146,37 @@
           occEditor.save_file();
         }
     });
+    commands.addCommand({
+        name: "run",
+        bindKey: {win: "Ctrl-Return", mac: "Command-Return"},
+        exec: function() {
+          occEditor.run_file();
+        }
+    });
   };
 
   occEditor.init_events = function(editor) {
     var reconnect_attempts = 0;
+
+    $(window).bind("beforeunload",function(event) {
+      return "Please confirm that you would like to leave the editor.";
+    });
+
+    $(document).on('click', '#editor, #editor-bar, #navigator', function() {
+      //console.log('here');
+      occEditor.focus_terminal(false);
+      if (terminal_win) {
+        terminal_win.blur();
+      }
+    });
+
+    editor.on('focus', function() {
+      occEditor.focus_terminal(false);
+      if (terminal_win) {
+        terminal_win.blur();
+      }
+    });
+
     editor_startup("Initializing Editor Events");
     editor.on('change', function() {
       var editor_content = editor.getSession().getDocument().getValue();
@@ -158,6 +211,7 @@
     socket.on('connect', function () {
       $('.connection-state').removeClass('disconnected').addClass('connected').text('Connected');
       occEditor.check_for_updates();
+      occEditor.load_scheduled_jobs();
     });
     socket.on('disconnect', function () {
       if (updating) {
@@ -200,7 +254,26 @@
     });
   };
 
+  occEditor.load_scheduled_jobs = function() {
+    socket.on('scheduled-job-list', function(data) {
+      job_list = data;
+      //console.log(job_list);
+    });
+  };
+
+
+  occEditor.set_page_title = function(name) {
+    //update page title
+    if (name === 'filesystem') {
+      name = "All Repositories";
+    }
+    document.title = name + " - Adafruit Learning System Raspberry Pi WebIDE";
+  };
+
   occEditor.populate_editor = function(file, content) {
+
+    $('#editor').show();
+    $('#schedule-manager').hide();
 
     var EditSession = require("ace/edit_session").EditSession;
     var UndoManager = require("ace/undomanager").UndoManager;
@@ -211,13 +284,20 @@
       $(document).trigger('file_open', file);
       var session = new EditSession(data);
       session.setUndoManager(new UndoManager());
+      session.setUseSoftTabs(false);
+
+      if (typeof settings !== 'undefined' && settings.font_size) {
+        editor.setFontSize(settings.font_size + "px");
+      }
 
       if (file.path) {
         var file_mode = getModeFromPath(file.path);
         session.setMode(file_mode.mode);
+        occEditor.handle_scheduled_file(file);
       }
 
       editor.setSession(session);
+      editor.focus();
 
       editor_startup("Populating Editor");
     }
@@ -233,6 +313,49 @@
       }
     }
     
+  };
+
+  occEditor.focus_terminal = function(should_focus) {
+    if (should_focus) {
+      $('.bar').css('background-color', '#2c58bd');
+      //$('#editor-output-wrapper').css({ 'opacity' : 1 });
+      //$('#editor, #editor-bar').css({ 'opacity' : 0.95 });
+    } else {
+      $('.bar').css('background-color', '#323233');
+      //$('#editor-output-wrapper').css({ 'opacity' : 0.95 });
+      //$('#editor, #editor-bar').css({ 'opacity' : 1 });
+    }
+  };
+
+  /*
+   * Populates the editor bar if this is a scheduled file.  Also populates the scheduled input text
+   */
+
+  occEditor.handle_scheduled_file = function(file) {
+    var is_scheduled_file = false;
+    if (!file) {
+      return;
+    }
+
+    var file_path = file.path.replace('\/filesystem\/', '\/repositories\/');
+
+    //loop through the job list, and check if this file is scheduled, if it is populate the valid DOM elements
+    if (job_list && job_list.length) {
+      for (var i=0; i<job_list.length; i++) {
+        if (job_list[i].path === file_path) {
+          $('.schedule-file').html('<i class="icon-time"></i> Scheduled');
+          $('input[name="schedule"]').val(job_list[i].text);
+          is_scheduled_file = true;
+
+          break;
+        }
+      }
+    }
+
+    //clear out the input text if this isn't a scheduled file
+    if (!is_scheduled_file) {
+      $('input[name="schedule"]').val("");
+    }
   };
 
   occEditor.clear_editor = function() {
@@ -292,6 +415,7 @@
     }
     $editor_bar.html(templates.editor_bar_init);
     
+    $(document).off('file_open', editor_bar_actions);
     $(document).on('file_open', editor_bar_actions);
   };
 
@@ -310,6 +434,9 @@
     }
 
     occEditor.clear_editor();
+    $('#editor').show();
+    $('#schedule-manager').hide();
+
     $(document).trigger('file_open', {path: path});
     davFS.listDir(path, populateFileSystem);
   };
@@ -372,23 +499,61 @@
     socket.on('move-file-complete', move_file_callback);
   };
 
+  occEditor.send_terminal_command = function(command) {
+    if (is_terminal_open) {
+      terminal_win.tabs[0].sendString(command);
+      editor.focus();
+    }
+  };
+
   occEditor.open_terminal = function(path, command) {
-    var win = new tty.Window(null, path);
+    if (is_terminal_open) {
+      if (command) {
+        terminal_win.tabs[0].sendString(command);
+        editor.focus();
+      }
+      return;
+    }
+    is_terminal_open = true;
+
+    occEditor.show_editor_output();
+    terminal_win = new tty.Window(null, path);
+
     tty.on('open tab', function(){
       tty.on('tab-ready', function() {
         tty.off('open tab');
         tty.off('tab-ready');
+
+        if (typeof settings !== 'undefined' && settings.font_size) {
+          $('.terminal').css('font-size', settings.font_size + "px");
+        }
+
         if (command) {
-          win.tabs[0].sendString(command);
+          terminal_win.tabs[0].sendString(command);
+          editor.focus();
+        } else {
+          terminal_win.focus();
         }
       });
     });
 
-    var maskHeight = $(window).height();
-    var maskWidth = $(window).width();
-    var windowTop =  (maskHeight  - $('.window').height())/2;
-    var windowLeft = (maskWidth - $('.window').width())/2;
-    $('.window').css({ top: windowTop, left: windowLeft, position:"absolute"}).show();
+    terminal_win.on('focus', function() {
+      occEditor.focus_terminal(true);
+    });
+
+    tty.on('close window', function() {
+      tty.off('close window');
+      is_terminal_open = false;
+      terminal_win = undefined;
+      occEditor.hide_editor_output();
+      editor.focus();
+    });
+
+    //var maskHeight = $(window).height();
+    //var maskWidth = $(window).width();
+    //var windowTop =  (maskHeight  - $('.window').height())/2;
+    //var windowLeft = (maskWidth - $('.window').width())/2;
+    //$('.window').css({ top: windowTop, left: windowLeft, position:"absolute"}).show();
   };
 
 
@@ -441,7 +606,7 @@
     //console.log("item", item);
     if (item.name === 'filesystem') {
       var username = $('input[name="username"]').val();
-      $nav_top = $('#navigator-top p').addClass('navigator-item-back').html("<a href=''><i class='icon-user'></i> " + username + "</a>");
+      $nav_top = $('#navigator-top p').addClass('navigator-item-back').html("<a class='editor-settings' href=''><i class='icon-user'></i> " + username + " (settings)</a>");
 
       $('#navigator-folder p').text('All Repositories');
     } else {
@@ -458,18 +623,25 @@
   }
 
   function build_navigator_list(list) {
-    var item_icon, ul = $(".filesystem").html('');
+    var item_icon, item_name, ul = $(".filesystem").html('');
     $.each(list, function(i, item) {
-      if (item.type === 'file') {
-        item_icon = "<i class='icon-chevron-right'></i>";
+
+      if (item.name.length <= 33) {
+        item_name = item.name;
+        if (item.type === 'file') {
+          item_icon = "<i class='icon-chevron-right'></i>";
+        } else {
+          item_icon = "<i class='icon-folder-open'></i>";
+        }
       } else {
-        item_icon = "<i class='icon-folder-open'></i>";
+        item_icon = "";
+        item_name = item.name.slice(0, 30) + "...";
       }
       if (i > 0) {
         item.id = i + "-item";
         $("<li id='" + i + "-item' class='navigator-item'></li>")
         .data( "file", item )
-        .append("<a href=''>" + item.name + item_icon)
+        .append("<a href='' title='" + item.name + "'>" + item_name + item_icon)
         .appendTo(ul);
       }
     });
@@ -518,8 +690,12 @@
     }
   }
 
-  function handle_editor_bar_actions() {
+  occEditor.stop_file = function(event) {
+    if (event) {
+      event.preventDefault();
+    }
 
+<<<<<<< HEAD
     function trace_file(event) {
       event.preventDefault();
 
@@ -529,30 +705,45 @@
       $('#editor-container').hide();
       socket.emit('trace-file', {file: file});
     }
+=======
+    var file = $('.file-open').data('file');
+    socket.emit('stop-script-execution', { file: file});
+    $('.stop-file').html('<i class="icon-play"></i> Run').removeClass('stop-file').addClass('run-file');
+  };
+>>>>>>> master
 
-    function run_file(event) {
+  occEditor.run_file = function(event) {
+    if (event) {
       event.preventDefault();
-      var file = $('.file-open').data('file');
-      var editor_content = editor.getSession().getDocument().getValue();
-
-      function run_callback(err, status) {
-        //console.log(err);
-        //console.log(status);
-        var command;
-        if (file.extension === 'py') {
-          command = "python ";
-        } else if (file.extension === 'rb') {
-          command = "ruby ";
-        } else if (file.extension === 'js') {
-          command = "node ";
-        }
-        command += file.name;
-
-        occEditor.open_terminal(occEditor.cwd(), command);
-      }
-
-      davFS.write(file.path, editor_content, run_callback);
     }
+
+    var file = $('.file-open').data('file');
+    var editor_content = editor.getSession().getDocument().getValue();
+
+    function run_callback(err, status) {
+      //console.log(err);
+      //console.log(status);
+      //var command;
+      //Running as sudo is temporary.  It's a necessary evil to access GPIO at this point.
+      if (file.extension === 'py') {
+        command = "sudo python ";
+      } else if (file.extension === 'rb') {
+        command = "sudo ruby ";
+      } else if (file.extension === 'js') {
+        command = "sudo node ";
+      }
+      command += file.name;
+      //$('#editor-output div pre').append('------------------------------------------------------------\n');
+      //socket.emit('commit-run-file', { file: file});
+      occEditor.open_terminal(occEditor.cwd(), command);
+    }
+
+    //$('.run-file').html('<i class="icon-remove"></i> Stop').removeClass('run-file').addClass('stop-file');
+    //occEditor.show_editor_output();
+    davFS.write(file.path, editor_content, run_callback);
+  };
+
+  function handle_editor_bar_actions() {
 
     function open_terminal(event) {
       event.preventDefault();
@@ -580,11 +771,169 @@
       });
     }
 
+    function open_scheduler(event) {
+      event.preventDefault();
+
+      function populate_scheduler_input(event) {
+        event.preventDefault();
+
+        var schedule = $(this).text();
+        $('input[name="schedule"]').val(schedule);
+      }
+
+      function submit_schedule(event) {
+        event.preventDefault();
+
+        var file = $('.file-open').data('file');
+        var schedule_text = $('input[name="schedule"]').val().trim();
+        var parsed_schedule = enParser().parse(schedule_text);
+
+        if (!schedule_text.length || parsed_schedule.error !== -1) {
+
+          //found an error parsing, split the schedule string based on where the error occurs
+          var schedule_good = schedule_text.slice(0,parsed_schedule.error);
+          var schedule_bad = schedule_text.slice(parsed_schedule.error);
+          if (!schedule_text.length) {
+            schedule_good = "Please add a schedule for your job.";
+          }
+
+          $('.scheduler-error').html('Invalid Schedule: ' + schedule_good + '<strong>' + schedule_bad + '</strong>');
+        } else {
+          //all is good, submit schedule to backend
+          socket.emit('submit-schedule', {text: schedule_text, schedule: parsed_schedule, file: file});
+          $('#schedule-modal').modal('hide');
+
+          $('.schedule-file').html('<i class="icon-time"></i> Scheduled').delay(100).fadeOut().fadeIn('slow');
+        }
+
+      }
+
+      occEditor.handle_scheduled_file($('.file-open').data('file'));
+
+      $('#schedule-modal').modal('show');
+
+      $('#schedule-modal').on('hidden', function () {
+        $('#schedule-modal').off('hidden');
+        $(document).off('click touchstart', '.scheduler-links');
+        $(document).off('click touchstart', '#schedule-modal .modal-submit');
+      });
+
+      $(document).on('click touchstart', '.scheduler-links a', populate_scheduler_input);
+      $(document).on('click touchstart', '#schedule-modal .modal-submit', submit_schedule);
+    }
+
     $(document).on('click touchstart', '.open-terminal', open_terminal);
     $(document).on('click touchstart', '.copy-project', copy_project);
     $(document).on('click touchstart', '.save-file', occEditor.save_file);
+<<<<<<< HEAD
     $(document).on('click touchstart', '.run-file', run_file);
     $(document).on('click touchstart', '.trace-file', trace_file);
+=======
+    $(document).on('click touchstart', '.run-file', occEditor.run_file);
+    $(document).on('click touchstart', '.stop-file', occEditor.stop_file);
+    $(document).on('click touchstart', '.schedule-file', open_scheduler);
+  }
+
+  function handle_footer_actions() {
+    function close_schedule_manager(event) {
+      event.preventDefault();
+      $(document).off('click touchstart', '.close-schedule-manager');
+      $(document).off('click touchstart', '.schedule-delete-link');
+      $(document).off('click touchstart', '.schedule-toggle-link');
+
+      $('#schedule-manager').hide();
+      $('#editor').show();
+      
+      var file = $('.filesystem li.file-open').data('file');
+      if (file) {
+        $(document).trigger('file_open', file);
+      } else {
+        occEditor.populate_editor_bar();
+      }
+
+    }
+
+    function delete_scheduled_job(event) {
+      event.preventDefault();
+
+      var key = $(this).attr('id');
+      socket.emit('schedule-delete-job', key);
+      $(this).parents('tr').remove();
+    }
+
+    function toggle_scheduled_job(event) {
+      var key = $(this).val();
+      socket.emit('schedule-toggle-job', key);
+    }
+
+    function format_schedule_last_run(date) {
+      if (!date.length) return "";
+
+      var d = new Date(date);
+      var str = "";
+      str += d.getFullYear() + "-";
+      str += (d.getMonth() + 1) + "-";
+      str += d.getDate() + " ";
+      str += d.toLocaleTimeString();
+      //console.log(d.getDate());
+      return str;
+    }
+
+    function show_schedule_manager(event) {
+      event.preventDefault();
+
+      var $table = $('<table><tr><th>Activate</th><th>Name</th><th>Frequency</th><th>Path</th><th>Last Run</th><th>Actions</th></tr></table>');
+
+      if (job_list && job_list.length) {
+        for (var i=0; i<job_list.length; i++) {
+          $('<tr class="spacer"><td></td></tr>').appendTo($table);
+          //console.log(job_list[i]);
+          var $tr = $('<tr></tr>');
+          var checked = "checked";
+          if (job_list[i].active == 0) { //intentional double quotes...active is a string
+            checked = "";
+          }
+          $('<td class="schedule-toggle"><input type="checkbox" name="schedule-toggle" value="' + job_list[i].key + '"'+ checked +'></td>').appendTo($tr);
+          $('<td>' + job_list[i].name + '</td>').appendTo($tr);
+          $('<td>' + job_list[i].text + '</td>').appendTo($tr);
+          $('<td>' + job_list[i].path.replace('\/repositories\/', '') + '</td>').appendTo($tr);
+          $('<td>' + format_schedule_last_run(job_list[i].last_run) + '</td>').appendTo($tr);
+          $('<td><a href="" class="schedule-delete-link" id="' + job_list[i].key + '">delete</a></td>').appendTo($tr);
+          $tr.appendTo($table);
+        }
+      }
+
+      $('#editor').hide();
+      $('#schedule-manager').show();
+      $('#editor-bar').html(templates.editor_bar_schedule_manager);
+      $('#schedule-manager').html($table);
+
+      $(document).on('click touchstart', '.close-schedule-manager', close_schedule_manager);
+      $(document).on('click touchstart', '.schedule-delete-link', delete_scheduled_job);
+      $(document).on('click touchstart', '.schedule-toggle input', toggle_scheduled_job);
+    }
+
+    $(document).on('click touchstart', '.schedule-manager-link', show_schedule_manager);
+  }
+
+  function handle_scheduler_events() {
+    socket.on('scheduler-start', function(data) {
+      //console.log(data);
+      $('.schedule-status').text('Initializing Job: ' + data.file.name);
+    });
+    socket.on('scheduler-executing', function(data) {
+      //console.log('scheduler-executing');
+      $('.schedule-status').text('Ran Job: ' + data.file.name);
+    });
+    socket.on('scheduler-error', function(data) {
+      //console.log('scheduler-error');
+      $('.schedule-status').text('Job Error: ' + data.file.name);
+    });
+    socket.on('scheduler-exit', function(data) {
+      //console.log('scheduler-exit');
+      $('.schedule-status').text('Last Run Job: ' + data.file.name);
+    });
+>>>>>>> master
   }
 
   function handle_update_action() {
@@ -603,7 +952,7 @@
     }
 
     socket.on('editor-update-download-start', function() {
-      $('.connection-state').text('Downloading');
+      $('.connection-state').text('Downloading (~30 seconds)');
     });
 
     socket.on('editor-update-download-end', function() {
@@ -611,11 +960,11 @@
     });
 
     socket.on('editor-update-unpack-start', function() {
-      $('.connection-state').text('Unpacking');
+      $('.connection-state').text('Unpacking (~60 seconds)');
     });
 
     socket.on('editor-update-unpack-end', function() {
-      $('.connection-state').text('Restarting');
+      $('.connection-state').text('Restarting (~30 seconds)');
     });
 
     socket.on('editor-update-complete', function(data) {
@@ -630,37 +979,58 @@
     $(document).on('click touchstart', '.editor-update-link', update_editor);
   }
 
+  occEditor.show_editor_output = function() {
+    if (!editor_output_visible) {
+      editor_output_visible = true;
+      $('#editor-output').height('325px');
+      $('#dragbar').show();
+      $('#editor-output div').css('padding', '10px');
+      $('#editor').css('bottom', '328px');
+      editor.resize();
+    }
+  };
+
+  occEditor.hide_editor_output = function() {
+    if (editor_output_visible) {
+      editor_output_visible = false;
+      $('#editor-output').height('0px');
+      $('#dragbar').hide();
+      $('#editor-output div').css('padding', '0px');
+      $('#editor').css('bottom', '3px');
+      editor.resize();
+    }
+  };
+
   function handle_program_output() {
     var i = 0;
     var dragging = false;
-    var editor_output_visible = false;
-
-    function show_editor_output() {
-      if (!editor_output_visible) {
-        editor_output_visible = true;
-        $('#editor-output').height('150px');
-        $('#dragbar').show();
-        $('#editor-output div').css('padding', '10px');
-        $('#editor').css('bottom', '153px');
-      }
-    }
+    var buffer = "", buffer_start = false;
+    var termOffsetWidth, termOffsetHeight;
 
     socket.on('program-stdout', function(data) {
-      show_editor_output();
-      $('#editor-output div pre').append(data.output);
-      $("#editor-output").animate({ scrollTop: $(document).height() }, "slow");
+      console.log(data);
+      occEditor.show_editor_output();
+      $('#editor-output div pre').append(webide_utils.fix_console(data.output));
+      $("#editor-output").animate({ scrollTop: $(document).height() }, "fast");
+      $("#editor-output").scrollTop($(document).height());
+      editor.focus();
       //console.log(data);
     });
     socket.on('program-stderr', function(data) {
-      show_editor_output();
-      $('#editor-output div pre').append(data.output);
-      $("#editor-output").animate({ scrollTop: $(document).height() }, "slow");
+      occEditor.show_editor_output();
+      $('#editor-output div pre').append(webide_utils.fix_console(data.output));
+      //$("#editor-output").animate({ scrollTop: $(document).height() }, "fast");
+      $("#editor-output").scrollTop($(document).height());
+      editor.focus();
       //console.log(data);
     });
     socket.on('program-exit', function(data) {
-      show_editor_output();
-      $('#editor-output div pre').append("code: " + data.code + '\n');
-      $("#editor-output").animate({ scrollTop: $(document).height() }, "slow");
+      occEditor.show_editor_output();
+      $('#editor-output div pre').append('\n\n');
+      $('.stop-file').html('<i class="icon-play"></i> Run').removeClass('stop-file').addClass('run-file');
+      editor.focus();
+      //$('#editor-output div pre').append("code: " + data.code + '\n');
+      //$("#editor-output").animate({ scrollTop: $(document).height() }, "slow");
       //console.log(data);
     });
 
@@ -671,6 +1041,8 @@
     function handle_dragbar_mousedown(event) {
       event.preventDefault();
       dragging = true;
+      termOffsetWidth = $('.terminal').width();
+      termOffsetHeight = $('.terminal').height();
       var $editor = $('#editor-output-wrapper');
       var ghostbar = $('<div>',
                       {id:'ghostbar',
@@ -682,6 +1054,7 @@
                       }).appendTo('body');
       $(document).mousemove(function(event){
         ghostbar.css("top",event.pageY+2);
+        
       });
     }
 
@@ -695,6 +1068,7 @@
         $(document).unbind('mousemove');
         editor.resize();
         dragging = false;
+        terminal_win.maximize();
       }
     }
 
@@ -748,6 +1122,8 @@
 
       var file = $(this).data('file'), content;
 
+      occEditor.set_page_title(file.name);
+
       //user clicked on delete file or folder
       if (event.target.className === 'icon-minus-sign') {
         navigator_delete_item($(this));
@@ -756,6 +1132,7 @@
 
       if (file.type === 'directory') {
         alert_changed_file();
+        occEditor.send_terminal_command('cd ' + file.name);
         occEditor.populate_navigator(file.path);
       } else {
         $('.filesystem li').removeClass('file-open');
@@ -767,12 +1144,68 @@
       }
     }
 
+    function view_settings() {
+      function set_settings(value) {
+        if (typeof settings === 'undefined') {
+          settings = {};
+        }
+        settings = $.extend({}, settings, value);
+
+        socket.emit("set-settings", value);
+        $('.saved-setting').html('<i class="icon-ok"></i> Saved').delay(100).fadeIn('slow').fadeOut();
+      }
+
+      function close_settings_manager(event) {
+        event.preventDefault();
+        $(document).off('click touchstart', '.close-settings-manager');
+        $(document).off('click touchstart', '.font-size-value');
+
+        $('#settings-manager').hide();
+        $('#editor').show();
+        
+        var file = $('.filesystem li.file-open').data('file');
+        if (file) {
+          $(document).trigger('file_open', file);
+        } else {
+          occEditor.populate_editor_bar();
+        }
+      }
+
+      function set_font_size(event) {
+        $('.font-size-value').removeClass('selected');
+        $(this).addClass('selected');
+        set_settings({"font_size": $(this).text()});
+      }
+
+      if (typeof settings !== 'undefined' && settings.font_size) {
+        $('.font-size-value.' + settings.font_size + 'px').addClass('selected');
+      } else {
+        $('.font-size-value.12px').addClass('selected');
+      }
+
+      $('#editor').hide();
+      $('#settings-manager').show();
+      $('#editor-bar').html(templates.editor_bar_settings_manager);
+      
+      $(document).on('click touchstart', '.font-size-value', set_font_size);
+      $(document).on('click touchstart', '.close-settings-manager', close_settings_manager);
+    }
+
     function navigator_back_selected(event) {
       event.preventDefault();
 
+      if ($('a', this).hasClass("editor-settings")) {
+        view_settings();
+        return;
+      }
+
       alert_changed_file();
       var file = $('a', this).parent().data('file');
+
+      occEditor.set_page_title(file.parent_name);
+
       //console.log(file);
+      occEditor.send_terminal_command('cd ..');
       occEditor.populate_navigator(file.parent_path);
     }
 
@@ -816,6 +1249,10 @@
       var $create_wrapper = $('.navigator-item-create');
       var folder_name = $('input[name="folder_name"]').val();
       var parent_folder = $('.navigator-item-back').data("file");
+
+      $('.create-save').text('Submit');
+      $('.create-input-wrapper input').prop('disabled', false);
+
       if (err) {
         if (!$create_wrapper.find('.error').length) {
           $create_wrapper.prepend($('<span class="error">' + err + '</span>'));
@@ -832,6 +1269,9 @@
 
     function create_folder(event) {
       event.preventDefault();
+      $('.create-save').text('Working');
+      $('.create-input-wrapper input').prop('disabled', true);
+
       var $create_wrapper = $('.navigator-item-create');
       var folder_name = $('input[name="folder_name"]').val();
       folder_name = folder_name.replace(" ", "_");
@@ -847,6 +1287,9 @@
 
     function create_file(event) {
       event.preventDefault();
+      $('.create-save').text('Working');
+      $('.create-input-wrapper input').prop('disabled', true);
+            
       var $create_wrapper = $('.navigator-item-create');
       var file_name = $('input[name="file_name"]').val();
       file_name = file_name.replace(" ", "_");

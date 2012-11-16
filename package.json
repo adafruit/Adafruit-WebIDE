@@ -17,6 +17,7 @@
     "redis": "0.x",
     "tty.js": "git://github.com/jwcooper/tty.js.git",
     "validator": "0.x",
-    "winston": "0.x"
+    "winston": "0.x",
+    "later": "git://github.com/jwcooper/later.git"
   }
 }

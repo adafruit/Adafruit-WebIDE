@@ -13,7 +13,7 @@ exports.check_for_updates = function check_for_updates(socket) {
   var self = this;
 
   console.log('check_for_updates');
-  fs.exists(__dirname + '/../../update.lock', function(exists) {
+  fs.exists(__dirname + '/../update.lock', function(exists) {
     if (exists) {
       remove_lock_file(function (err) {
         socket.emit('editor-update-complete', {editor_update_success: true});
@@ -86,7 +86,7 @@ exports.update = function (socket) {
  * Creates an update.lock file to let the editor know it's being updated.
  */
 function create_lock_file(cb) {
-  fs.writeFile(__dirname + '/../../update.lock', '', function (err) {
+  fs.writeFile(__dirname + '/../update.lock', '', function (err) {
     console.log('created lock file');
     if (err) cb(err);
     else cb(null);
@@ -97,7 +97,7 @@ function create_lock_file(cb) {
  * Removes the update.lock file to let the editor know it's done being updated.
  */
 function remove_lock_file(cb) {
-  fs.unlink(__dirname + '/../../update.lock', function (err) {
+  fs.unlink(__dirname + '/../update.lock', function (err) {
     console.log('successfully deleted update.lock file');
     cb();
   });
@@ -110,7 +110,7 @@ function download_archive(update_url, socket, cb) {
   socket.emit('editor-update-download-start');
   console.log('download start');
   var download = request(update_url);
-  download.pipe(fs.createWriteStream(__dirname + '/../../editor.tar.gz'));
+  download.pipe(fs.createWriteStream(__dirname + '/../editor.tar.gz'));
   download.on('error', function (e) {
     cb(e);
   });
@@ -128,7 +128,7 @@ function execute_update(update_url, socket, cb) {
   console.log('execute_update');
   download_archive(update_url, socket, function() {
     console.log('download response');
-    var editor_zip = __dirname + "/../../editor.tar.gz";
+    var editor_zip = __dirname + "/../editor.tar.gz";
     console.log(editor_zip);
     extract_upate(editor_zip, socket, function(err, status) {
       console.log('extract update response');
@@ -143,11 +143,11 @@ function execute_update(update_url, socket, cb) {
  *       Create the editor in a versioned folder, and point a symlink to that new version.
  */
 function extract_upate(file, socket, cb) {
-  var command = 'tar -zxvf ' + file + ' -C ' + __dirname + '/../../';
+  var command = 'tar -zxf ' + file + ' -C ' + __dirname + '/../';
   socket.emit('editor-update-unpack-start');
   console.log('extract update');
   console.log(command);
-  var child = exec('tar -zxvf ' + file + ' -C ' + __dirname + '/../../', function (err, stdout, stderr) {
+  var child = exec(command, function (err, stdout, stderr) {
     socket.emit('editor-update-unpack-end');
     console.log('err', err);
     console.log('stderr', stderr);

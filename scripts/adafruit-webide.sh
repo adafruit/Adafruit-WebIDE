@@ -82,7 +82,8 @@ do_start()
 
 #       start-stop-daemon --start --quiet --pidfile $PIDFILE --chuid $NODEUSER --background --exec $DAEMON --test -- $DAEMON_ARGS > /dev/null \
 #               || { [ "$VERBOSE" != no ] && log_daemon_msg  "  --->  Daemon already running $DESC" "$INIT_SCRIPT_NAME_NOEXT"; return 1; }
-
+        setcap 'cap_net_bind_service=+ep' $DAEMON
+        
         start-stop-daemon --start --quiet --chuid $NODEUSER --make-pidfile --pidfile $PIDFILE --background --exec $DAEMON -- \
                 $DAEMON_ARGS \
                 || { [ "$VERBOSE" != no ] && log_daemon_msg  "  --->  could not be start $DESC" "$INIT_SCRIPT_NAME_NOEXT"; return 2; }

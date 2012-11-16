@@ -1,3 +1,6 @@
+body {
+  background-color: #f1f1f1;
+}
 .error {
   color: red;
 }
@@ -6,7 +9,6 @@
   padding-top: 40px;
   width: 100%;
   height: 100%;
-  background-color: #f1f1f1;
 }
 
 #editor-container {
@@ -115,6 +117,11 @@
   font-size: 12px;
 }
 
+.login-info {
+  margin: 0 auto;
+  width: 400px;
+}
+
 /* File Navigator Section */
 
 #navigator {
@@ -128,7 +135,7 @@
 }
 
 #navigator-top {
-  background-color: #2A5CB7;
+  background-color: #2c58bd;
 }
 
 #navigator-top p {
@@ -184,6 +191,7 @@ a.navigator-settings i.settings-enabled {
   padding: 10px 10px 10px 10px;
   border-bottom: 1px solid #909090;
   cursor: pointer;
+  overflow: hidden;
 }
 
 #navigator ul li:last-child {
@@ -202,6 +210,7 @@ a.navigator-settings i.settings-enabled {
   color: #343637;
   font-weight: bold;
   text-decoration: none;
+
 }
 
 #navigator ul li.file-open a, #navigator ul li.file-open i  {
@@ -388,12 +397,17 @@ a.navigator-settings i.settings-enabled {
   margin-right: 10px;
 }
 
+#editor-bar .schedule-file {
+  float: right;
+  margin-right: 10px !important;
+}
+
 #editor-bar p.editor-bar-actions a:hover {
   color: #b4b4b4;
 }
 
 
-#editor {
+#editor, #schedule-manager, #settings-manager {
   position: absolute;
   left: 0;
   right: 0;  
@@ -403,21 +417,100 @@ a.navigator-settings i.settings-enabled {
   border-right: 1px solid #EDEDED;
 }
 
+<<<<<<< HEAD
 .ace_gutter-cell.ace_breakpoint {
  background-color: red;
 
+=======
+#schedule-manager, #settings-manager {
+  display: none;
+  background-color: #FFFFFF;
+}
+#schedule-manager table {
+  width: 100%;
+  margin: 0 auto;
+  color: #2F3133;
+}
+
+#schedule-manager table th {
+  background-color: #bd2c2c;
+  border: 1px solid #bd2c2c;
+  color: #E4E5E7;
+  font-size: 12px;
+  font-weight: normal;
+  padding: 0;
+  margin: 0;
+  line-height: 18px;
+}
+
+
+#schedule-manager table td {
+  background-color: #EDEEEE;
+  padding: 5px;
+  color: #2F3133;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+  border: 1px solid #B4B4B4;
+}
+
+#schedule-manager table td a {
+  font-size: 12px;
+}
+
+#schedule-manager tr.spacer {
+  margin: 1px 0 0 0;
+  padding: 0;
+}
+
+#schedule-manager tr.spacer td {
+  border: none;
+  margin: 1px 0 0 0;
+  padding: 1px 0 0 0;
+}
+
+.close-schedule-manager, .close-settings-manager {
+  float: right;
+}
+
+#editor-bar .saved-setting {
+  padding-left: 10px;
+}
+
+#settings-manager .settings-element {
+  margin-top: 9px;
+}
+
+#settings-manager span {
+  border: 1px solid #B4B4B4;
+  background-color: #EDEEEE;
+  color: #2F3133;
+  font-size: 12px;
+  font-weight: bold;  
+  padding: 10px;
+  margin: 0 1px 0 0;
+}
+
+.settings-element .font-size-value {
+  cursor: pointer;
+}
+
+#settings-manager span.selected {
+  border: 1px solid #B4B4B4;
+  background-color: #B4B4B4;
+>>>>>>> master
 }
 
 #editor-output-wrapper {
   position: absolute;
   bottom: 0;
   left: 0;
-  right: 0;  
+  right: 0;
 }
 
 #editor-output {
   position: relative;
-  overflow: auto;
+  overflow: hidden;
   background-color: #1A1A1A;
   width: 100%;
   height: 0;
@@ -441,6 +534,16 @@ a.navigator-settings i.settings-enabled {
   white-space: -o-pre-wrap;    /* Opera 7 */
   word-wrap: break-word;       /* Internet Explorer 5.5+ */
 }
+
+.ansiblack {color: black;}
+.ansired {color: darkred;}
+.ansigreen {color: darkgreen;}
+.ansiyellow {color: brown;}
+.ansiblue {color: darkblue;}
+.ansipurple {color: darkviolet;}
+.ansicyan {color: steelblue;}
+.ansigrey {color: grey;}
+.ansibold {font-weight: bold;}
 
 #dragbar {
   display: none;
@@ -493,10 +596,58 @@ a.navigator-settings i.settings-enabled {
   font-weight: bold;
 }
 
-#setup-content form input[type='text'] {
+#setup-content form input[type='text'], #setup-content form input[type='password'] {
   width: 350px;
 }
 
+#setup-content form .skip-button {
+  margin-left: 10px;
+}
+
+
+
+#schedule-modal .scheduler-links a{
+  margin: 0 5px 5px 0;
+}
+
+#schedule-modal .scheduler-form form {
+  margin-bottom: 0;
+}
+
+#schedule-modal .scheduler-form label {
+  font-weight: bold;
+}
+
+#schedule-modal .scheduler-error {
+  color: #BA0E41;
+}
+
+#schedule-modal .scheduler-form input[type='text'] {
+  width: 515px;
+  height: 30px;
+  font-size: 20px;
+}
+
+.schedule-footer {
+  float: right;
+  font-size: 14px;
+  color: #E4E5E7;
+  padding: 10px 20px 0 10px;
+}
+
+.schedule-footer a {
+  color: #E4E5E7;
+  text-decoration: none;
+  padding-left: 7px;
+}
+
+.schedule-footer .schedule-status {
+  color: #74A927;
+  border-right: 1px solid #E4E5E7;
+  padding-right: 7px;
+}
+
 .editor-version {
+  float: left;
   padding: 10px 0 0 10px;
 }

@@ -3,6 +3,8 @@ var exec = require('child_process').exec,
   path = require('path'),
   git_helper = require('./git_helper'),
   fs_helper = require('./fs_helper'),
+  redis = require('redis'),
+  client = redis.createClient(),
   request_helper = require('./request_helper'),
   config = require('../config/config');
 
@@ -22,6 +24,11 @@ var exec = require('child_process').exec,
 
     var project_repository = 'git@bitbucket.org:' + profile.username + '/my-pi-projects.git';
     console.log(project_repository);
+
+    client.hgetall('editor:settings', function(err, settings) {
+      console.log("getting settings", settings);
+      socket.emit("self-check-settings", settings);
+    });
 
     //check if the adafruit libraries exist, if not, clone them.
     request_helper.post_ssh_key(profile, function(err, response) {

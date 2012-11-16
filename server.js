@@ -13,8 +13,10 @@ var express = require('express'),
     fs = require('fs'),
     path = require('path'),
     updater = require('./helpers/updater'),
+    scheduler = require('./helpers/scheduler'),
     editor_setup = require('./helpers/editor_setup'),
     git_helper = require('./helpers/git_helper'),
+    exec_helper = require('./helpers/exec_helper'),
     fs_helper = require('./helpers/fs_helper'),
     exec_helper = require('./helpers/exec_helper'),
     request_helper = require('./helpers/request_helper'),
@@ -30,6 +32,8 @@ var davServer,
     REPOSITORY_PATH = path.resolve(__dirname + "/repositories");
 
 console.log("REPOSITORY_PATH", REPOSITORY_PATH);
+
+//exec_helper.spawn_ipython();
 
 //check for the existence of the logs directory, if it doesn't
 //exist, create it prior to starting the child process.
@@ -135,6 +139,8 @@ app.post('/create/repository', ensureAuthenticated, editor.create_repository);
 
 app.get('/setup', user.setup);
 app.post('/setup', user.submit_setup);
+app.get('/config', user.config);
+app.post('/config', user.submit_config);
 app.get('/login', ensureOauth, user.login);
 app.get('/logout', user.logout);
 
@@ -174,6 +180,22 @@ serverInitialization(app);
 function ensureAuthenticated(req, res, next) {
   setHostName(req);
 
+  function authRoute(req, res, next) {
+    if (config.editor.offline) {
+      //TODO: create a dummy session here
+      return next();
+    }
+    if (req.isAuthenticated()) {
+      return next();
+    }
+
+    if (!IS_PASSPORT_SETUP) {
+      res.redirect('/setup');
+    } else {
+      res.redirect('/login');
+    }
+  }
+
   if (!IS_PASSPORT_SETUP) {
     //need to setup passport on server startup, if the bitbucket oauth is already setup
     client.hgetall('bitbucket_oauth', function (err, bitbucket) {
@@ -181,23 +203,12 @@ function ensureAuthenticated(req, res, next) {
         setup_passport(bitbucket.consumer_key, bitbucket.consumer_secret);
         IS_PASSPORT_SETUP = true;
       }
+      authRoute(req, res, next);
     });
-    console.log(req.route);
-  }
-
-  if (config.editor.offline) {
-    //TODO: create a dummy session here
-    return next();
-  }
-  if (req.isAuthenticated()) {
-    return next();
-  }
-
-  if (!IS_PASSPORT_SETUP) {
-    res.redirect('/setup');
   } else {
-    res.redirect('/login');
+    authRoute(req, res, next);
   }
+
 }
 
 function ensureOauth(req, res, next) {
@@ -225,25 +236,48 @@ function setHostName(req) {
 
 function serverInitialization(app) {
 
+  //setup repositories path
   var exists = path.existsSync(REPOSITORY_PATH);
   if (!exists) {
     fs.mkdirSync(REPOSITORY_PATH, 0777);
-    console.log('created repositories folder');
+    winston.info('created repositories folder');
   }
 
-  var server = start_server();
-  socket_listeners();
-  mount_dav(server);
+  //setup symlink to webide home, if it exists:
+  var has_webide_path = path.existsSync("/home/webide");
+  if (has_webide_path) {
+    //Creating symbolic link to repositories path
+    winston.info('Linked repository paths: /home/webide/repositories');
+    if (!path.existsSync("/home/webide/repositories")) {
+      fs.symlinkSync(REPOSITORY_PATH, "/home/webide/repositories", 'dir');
+    }
+  }
+
+  scheduler.initialize_jobs();
+
+  start_server(function(server) {
+    socket_listeners();
+    mount_dav(server);
+  });
 }
 
-function start_server() {
-  winston.info('listening on port ' + config.editor.port);
-
+function start_server(cb) {
   server = require('http').createServer(app);
   io = io.listen(server);
   new tty.Server(config.term, app, server, io);
 
-  return server.listen(config.editor.port);
+  client.hgetall('server', function (err, server_data) {
+    var port;
+
+    if (server_data && server_data.port) {
+      port = server_data.port;
+    } else {
+      port = config.editor.port;
+    }
+    
+    winston.info('listening on port ' + port);
+    cb(server.listen(port));
+  });
 }
 
 function socket_listeners() {
@@ -269,8 +303,13 @@ function socket_listeners() {
   });
 
   io.sockets.on('connection', function (socket) {
-    socket.emit('cwd-init', {dirname: REPOSITORY_PATH});
+    socket.set('username', socket.handshake.session.username);
 
+    //emit on first connection
+    socket.emit('cwd-init', {dirname: REPOSITORY_PATH});
+    scheduler.emit_scheduled_jobs(socket.handshake.session.username, socket);
+
+    //listen for events
     socket.on('git-delete', function(data) {
       git_helper.remove_commit_push(data.file, function(err, status) {
         socket.emit('git-delete-complete', {message: ""});
@@ -301,11 +340,50 @@ function socket_listeners() {
       updater.update(socket);
     });
 
+<<<<<<< HEAD
     socket.on('trace-file', function(data) {
       exec_helper.trace_program(data.file, socket);
+=======
+    socket.on('commit-run-file', function(data) {
+      console.log(data);
+      if (data && data.file) {
+        data.file.username = socket.handshake.session.username;
+      }
+
+      exec_helper.execute_program(data.file, false);
+      git_helper.commit_push_and_save(data.file, function(err, status) {
+        socket.emit('commit-file-complete', {message: "Save was successful"});
+      });
+    });
+
+    socket.on('stop-script-execution', function(data) {
+      exec_helper.stop_program(data.file, false);
+    });
+
+    socket.on('submit-schedule', function(schedule) {
+      scheduler.add_schedule(schedule, socket, socket.handshake.session);
+    });
+
+    socket.on('schedule-delete-job', function(key) {
+      scheduler.delete_job(key, socket, socket.handshake.session);
+    });
+
+    socket.on('schedule-toggle-job', function(key) {
+      scheduler.toggle_job(key, socket, socket.handshake.session);
+    });
+
+    socket.on('set-settings', function(value) {
+      client.hmset("editor:settings", value, function(err) {
+        console.log(err);
+      });
+>>>>>>> master
     });
   });
 }
+
+io.sockets.on('disconnect', function(socket) {
+  exec_helper.set_sockets(io.sockets.sockets);
+});
 
 function mount_dav(server) {
   var jsDAV_Tree_Filesystem = require("jsDAV/lib/DAV/tree/filesystem").jsDAV_Tree_Filesystem;
@@ -320,3 +398,13 @@ function mount_dav(server) {
   });
   console.log('webdav filesystem mounted');
 }
+
+exports.get_socket = function (username, cb) {
+  for (var socketId in io.sockets.sockets) {
+    io.sockets.sockets[socketId].get('username', function(err, sock_username) {
+      if (username === sock_username) {
+        cb(io.sockets.sockets[socketId]);
+      }
+    });
+  }
+};

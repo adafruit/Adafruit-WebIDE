@@ -1,3 +1,53 @@
+-0.2.4
+Added ability to change font sizes in the editor and the terminal
+New settings manager added, currently only has font size, but more can be added
+
+-0.2.3
+Fix server failing to start on reboot of Pi.
+
+-0.2.2
+Fix for false redirects to /setup even if bitbucket and git is already configured.
+Change page title based on what directory or file is open.
+Update Ace to the latest version, fixing line numbering
+Detect if port 80 is in use during install, and try 3000 instead.
+Set path to open editor at end of install script to actual hostname.
+Install python-smbus as part of the installation process.
+Add symlink for repositories to webide users home path.
+Fix for closing the schedule manager breaking the editor toolbar.
+Set default as using hard tabs for editing files for now.
+
+-0.2.1
+Job scheduler for automating script execution.  Run a script "every 15 minutes", for example.
+Schedule manager for toggling jobs, and deleting jobs.
+Move terminal inline with the editor for faster run/code workflow.
+Focus editor when running code.
+Notifications while running scripts in editor bar.
+Focus the editor in many more situations, for example, when opening a file, it will give focus to the editor.
+Add "Command-Enter", or "Ctrl-Enter" command to run scripts, this is in addition to "Command-S" and "Ctrl-S" to save.
+Update Bitbucket logos with new design.
+Add option to change port number in /config, and persist in Redis, surviving updates.
+Ensure only one instance of restartd is running during installation
+Add ALS Guide: tag to the initial Readme
+Message System for various notifications
+Explicitly set is_private when creating repositories
+
+-0.2.0
+New installation procedure to fix many of the initial installation issues with 0.1.9 and earlier.
+Reduce memory consumption by 10-20mb.
+Include the majority of dependencies with the editor archive.
+New startup and process monitor procedure.
+Run as 'webide' user to isolate from 'pi' user, 'webide' has similar permissions as 'pi' for GPIO and I2C.
+Add 'webide' to I2C group
+Default to run as sudo for now.
+Add /config page to change hostname and basic wifi.
+Use port 80 instead of 3000 as the default.
+Add new error and exception logging to help troubleshoot.
+Give focus back to the editor when closing the terminal.
+Add confirmation to prevent accidental navigation away from the editor.
+Fix context menu so that it displays properly in firefox.
+Add notification of activity while creating files and folders.
+Update documentation for new features.
+
 -0.1.9
 Fix for Editor dependency changes causing server startup failure for new installations.
 Set Hostname on each request, to allow access from internal or external IP's without restarting.

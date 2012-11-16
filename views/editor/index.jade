@@ -18,6 +18,16 @@ block content
           a + Clone Repository
     #editor-wrapper
       #editor-bar
+      #schedule-manager
+      #settings-manager
+        form(method="post", action="/editor/settings")
+          .settings-element
+            span Select Font Size (px):
+            span.font-size-value.10px 10
+            span.font-size-value.12px 12
+            span.font-size-value.14px 14
+            span.font-size-value.16px 16
+            span.font-size-value.20px 20
       #editor
       #editor-output-wrapper
         #dragbar
@@ -27,6 +37,9 @@ block content
     .navbar.navbar-fixed-bottom.navbar-inverse
       .navbar-inner
         div.editor-version Adafruit WebIDE v#{version}
+        div.schedule-footer
+          span.schedule-status Scheduler Active
+          a(href="", class="schedule-manager-link") Schedule Manager
     #create-modal(class="modal hide fade")
       .modal-header
         button.close(type="button", data-dismiss-"modal", aria-hidden="true") &times;
@@ -36,7 +49,60 @@ block content
       .modal-footer
         button.btn(data-dismiss="modal", aria-hidden="true") Close
         button.btn.btn-primary.modal-submit Save
+<<<<<<< HEAD
   #trace-container
+=======
+    #schedule-modal(class="modal hide fade")
+      .modal-header
+        button.close(type="button", data-dismiss-"modal", aria-hidden="true") &times;
+        h3#create-modal-label Job Scheduler
+      .modal-body
+        p Schedule your script to run at specific time periods.  There are many combinations you can use to schedule.
+          | For example, by typing "every 5 minutes" into the input, your script will run every 5 minutes until you tell
+          | it to stop.  
+        p You can click a few of the pre-set combinations we've provided to give you an idea of the flexibility
+          | of the parser.
+        div.scheduler-error
+        div.scheduler-form
+          form(method="post", action="/editor/schedule")
+            label(for="schedule") Type in your schedule, or click a preset link listed below
+            input(type="text", name="schedule", value="")
+        div.scheduler-links
+          a(href="", class="btn btn-small") every 5 minutes
+          a(href="", class="btn btn-small") every 15 minutes
+          a(href="", class="btn btn-small") after 1 hour
+          a(href="", class="btn btn-small") every 5 hours on the first min
+          a(href="", class="btn btn-small") every weekday
+          a(href="", class="btn btn-small") every 2 weeks of the year
+          a(href="", class="btn btn-small") on tuesday at 11:00 am
+          a(href="", class="btn btn-small") on the 1st day of the month
+          a(href="", class="btn btn-small") on the 15,18,20 minute            
+      .modal-footer
+        button.btn(data-dismiss="modal", aria-hidden="true") Close
+        button.btn.btn-primary.modal-submit Submit  
+    #notification-modal(class="modal hide fade")
+      .modal-header
+        button.close(type="button", data-dismiss-"modal", aria-hidden="true") &times;
+        h3#create-modal-label WebIDE Message
+      .modal-body
+        p Please ensure your repositories are listed private or public at Bitbucket based on your preferences.
+        p You can validate them by viewing your <a href="https://bitbucket.org" target="_blank">bitbucket profile page</a>
+          | , and looking for the padlock to the left of the repository
+          | name in the "Repositories" sidebar.
+        p To make the repository private or public, click the repository name, and then the gear in the header on the
+          | the repository page.  Then click the checkbox in the form to make the repository private or public,
+          | and click submit.
+        p This particular notification will only display one time.  Thank you!
+      .modal-footer
+        button.btn(data-dismiss="modal", aria-hidden="true") Dismiss 
+    script(type="text/javascript")
+      if(!#{shown_notification}) {
+        setTimeout(function() {
+          $('#notification-modal').modal({show: true, backdrop: 'static'});
+        }, 20000);
+        
+      }     
+>>>>>>> master
   script(src="/javascripts/ace/ace.js")
   script(src="/socket.io/socket.io.js")
   script(src="/term.js")
@@ -50,6 +116,9 @@ block content
   script(src="/javascripts/fileupload/js/jquery.fileupload.js")
   script(src="/javascripts/fileupload/js/jquery.fileupload-ui.js")  
   script(src="/javascripts/davFS.js")
+  script(src="/javascripts/later/later-recur.min.js")
+  script(src="/javascripts/later/later.min.js")
   script(src="/javascripts/jquery.colorbox-min.js")
   script(src="/javascripts/context_menu.js")
+  script(src="/javascripts/webide_utils.js")
   script(src="/javascripts/occ_editor.js")

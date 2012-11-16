@@ -3,7 +3,6 @@
 node_modules
 repositories
 users.db
-logs
 
 /editor.tar.gz
 __MACOSX
