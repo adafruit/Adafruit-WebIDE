@@ -340,10 +340,10 @@ function socket_listeners() {
       updater.update(socket);
     });
 
-<<<<<<< HEAD
     socket.on('trace-file', function(data) {
       exec_helper.trace_program(data.file, socket);
-=======
+    });
+
     socket.on('commit-run-file', function(data) {
       console.log(data);
       if (data && data.file) {
@@ -376,7 +376,6 @@ function socket_listeners() {
       client.hmset("editor:settings", value, function(err) {
         console.log(err);
       });
->>>>>>> master
     });
   });
 }

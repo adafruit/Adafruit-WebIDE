@@ -15,13 +15,6 @@ body {
   display: none;
 }
 
-#trace-container {
-  padding-top: 60px;
-  margin: 0 auto;
-  width: 100%;
-  background-color: white;
-}
-
 #editor-startup {
   height: 100%;
   padding: 20px 0 0 20px;
@@ -362,6 +355,22 @@ a.navigator-settings i.settings-enabled {
   width: 190px;
   margin: 5px;
 }
+
+/* Trace Section */
+#trace-wrapper {
+  position:absolute;
+  left: 300px;
+  right: 0;
+  top: 50px;
+  bottom: 40px;
+  border-bottom: 1px solid #EDEDED;
+}
+
+#trace-container {
+  position:relative;
+  height: 100%;
+  width: 100%;
+}
 /* Editor Section */
 
 #editor-wrapper {
@@ -373,7 +382,7 @@ a.navigator-settings i.settings-enabled {
   border-bottom: 1px solid #EDEDED;
 }
 
-#editor-bar {
+#editor-bar, #trace-bar {
   height: 40px;
   background-color: #323334;
   border-top: 1px solid #EDEDED;
@@ -382,11 +391,15 @@ a.navigator-settings i.settings-enabled {
   font-size: 16px;
 }
 
-#editor-bar p {
+#trace-bar {
+  height: 39px;
+}
+
+#editor-bar p, #trace-bar p {
   padding: 10px 10px 10px 20px;
 }
 
-#editor-bar p.editor-bar-actions a {
+#editor-bar p.editor-bar-actions a, #trace-bar p.trace-bar-actions a {
   color: #E4E5E7;
   text-decoration: none;
   margin-right: 20px;
@@ -402,10 +415,9 @@ a.navigator-settings i.settings-enabled {
   margin-right: 10px !important;
 }
 
-#editor-bar p.editor-bar-actions a:hover {
+#editor-bar p.editor-bar-actions a:hover, #trace-bar p.trace-bar-actions a:hover {
   color: #b4b4b4;
 }
-
 
 #editor, #schedule-manager, #settings-manager {
   position: absolute;
@@ -417,11 +429,6 @@ a.navigator-settings i.settings-enabled {
   border-right: 1px solid #EDEDED;
 }
 
-<<<<<<< HEAD
-.ace_gutter-cell.ace_breakpoint {
- background-color: red;
-
-=======
 #schedule-manager, #settings-manager {
   display: none;
   background-color: #FFFFFF;

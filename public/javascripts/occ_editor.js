@@ -34,11 +34,8 @@
                                       '<a href="" class="schedule-file"><i class="icon-time"></i> Schedule</a>' +
                                     '</p>',
     "editor_bar_run_link":          '<a href="" class="run-file"><i class="icon-play"></i> Run</a>',
-<<<<<<< HEAD
     "editor_bar_trace_link":        '<a href="" class="trace-file"><i class="icon-sitemap"></i> Trace</a>',
-=======
     "editor_bar_schedule_link":     '<a href="" class="schedule-file"><i class="icon-time"></i> Schedule</a>',
->>>>>>> master
     "editor_bar_copy_link":         '<a href="" class="copy-project"><i class="icon-copy"></i> Copy this project to My Pi Projects</a>',
     "editor_bar_tutorial_link":     '<a href="" class="open-tutorial" target="_blank"><i class="icon-book"></i> Project Guide Available</a>',
     "editor_bar_file":              '<p class="editor-bar-actions">' +
@@ -695,22 +692,21 @@
       event.preventDefault();
     }
 
-<<<<<<< HEAD
-    function trace_file(event) {
-      event.preventDefault();
-
-      var file = $('.file-open').data('file');
-      file.content = editor.getSession().getDocument().getValue();
-
-      $('#editor-container').hide();
-      socket.emit('trace-file', {file: file});
-    }
-=======
     var file = $('.file-open').data('file');
     socket.emit('stop-script-execution', { file: file});
     $('.stop-file').html('<i class="icon-play"></i> Run').removeClass('stop-file').addClass('run-file');
   };
->>>>>>> master
+
+  occEditor.trace_file = function(event) {
+    event.preventDefault();
+
+    var file = $('.file-open').data('file');
+    file.content = editor.getSession().getDocument().getValue();
+
+    $('#editor-wrapper').hide();
+    socket.emit('trace-file', {file: file});
+  };
+
 
   occEditor.run_file = function(event) {
     if (event) {
@@ -825,10 +821,7 @@
     $(document).on('click touchstart', '.open-terminal', open_terminal);
     $(document).on('click touchstart', '.copy-project', copy_project);
     $(document).on('click touchstart', '.save-file', occEditor.save_file);
-<<<<<<< HEAD
-    $(document).on('click touchstart', '.run-file', run_file);
-    $(document).on('click touchstart', '.trace-file', trace_file);
-=======
+    $(document).on('click touchstart', '.trace-file', occEditor.trace_file);
     $(document).on('click touchstart', '.run-file', occEditor.run_file);
     $(document).on('click touchstart', '.stop-file', occEditor.stop_file);
     $(document).on('click touchstart', '.schedule-file', open_scheduler);
@@ -933,7 +926,6 @@
       //console.log('scheduler-exit');
       $('.schedule-status').text('Last Run Job: ' + data.file.name);
     });
->>>>>>> master
   }
 
   function handle_update_action() {

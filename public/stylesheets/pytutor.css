@@ -37,12 +37,35 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
    e.g., http://meyerweb.com/eric/tools/css/reset/
 */
 div.ExecutionVisualizer {
-  /* none for now */
+  position:relative;
+  height: 100%;
+  width: 100%;
 }
 
 div.ExecutionVisualizer table.visualizer {
+  width: 100%;
+  height: 100%;
   font-family: verdana, arial, helvetica, sans-serif;
   font-size: 10pt;
+  vertical-align: top;
+  border-width: 0 0 0 0;
+  border-spacing: 0;
+  border-collapse: collapse;
+  border-style: none;
+}
+
+div.ExecutionVisualizer table.visualizer td {
+  vertical-align: top;
+}
+
+div.ExecutionVisualizer table.visualizer .vizLayoutTd {
+  width: 50%;
+  background-color: white;
+}
+
+div.ExecutionVisualizer table.visualizer #codeDisplayDiv {
+  height: 100%;
+  background-color: white;
 }
 
 div.ExecutionVisualizer td#stack_td,
@@ -56,29 +79,38 @@ div.ExecutionVisualizer #dataViz {
 }
 
 div.ExecutionVisualizer div#pyCodeOutputDiv {
-  max-width: 550px;
-  max-height: 450px;
+  width: 500px;
+  height: 100%;
   /*max-height: 620px;*/
   overflow: auto;
   /*margin-bottom: 4px;*/
 }
 
 div.ExecutionVisualizer table#pyCodeOutput {
+  width: 100%;
+  height: 100%;
   font-family: Andale mono, monospace;
   font-size:12pt;
-  line-height:1.1em;
-  border-spacing: 0px;
-  border-top: 1px solid #bbb;
+  line-height:1.0em;
   padding-top: 3px;
-  border-bottom: 1px solid #bbb;
+  background-color: white;
+  color: black;
+  border-width: 0 0 0 0;
+  border-spacing: 0;
+  border-style: none;
+  border-collapse: collapse;  
   /*margin-top: 6px;*/
-  margin: 6px auto; /* Center code in its pane */
+  margin: 0; /* Center code in its pane */
 }
 
 /* don't wrap lines within code output ... FORCE scrollbars to appear */
 div.ExecutionVisualizer table#pyCodeOutput td {
   white-space: nowrap;
-  vertical-align: middle; /* explicitly force, to override external CSS conflicts */
+  vertical-align: top; /* explicitly force, to override external CSS conflicts */
+}
+
+div.ExecutionVisualizer table#pyCodeOutput td#gutterTD {
+  background-color: #8d8d8d;
 }
 
 div.ExecutionVisualizer #leftCodeGutterSVG {
@@ -87,8 +119,8 @@ div.ExecutionVisualizer #leftCodeGutterSVG {
                   be 0 or it defaults to something arbitrary and gross */
 }
 
-div.ExecutionVisualizer #prevLegendArrowSVG,
-div.ExecutionVisualizer #curLegendArrowSVG {
+div#trace-bar #prevLegendArrowSVG,
+div#trace-bar #curLegendArrowSVG {
   width: 18px;
   height: 10px;
 }
@@ -98,10 +130,11 @@ div.ExecutionVisualizer .arrow {
 }
 
 div.ExecutionVisualizer table#pyCodeOutput .lineNo {
-  color: #aaa;
+  color: black;
+  background-color: #8d8d8d;
   padding: 0.2em;
-  padding-left: 0.3em;
-  padding-right: 0.5em;
+  padding-left: 0em;
+  padding-right: 0.2em;
   text-align: right;
 }
 
@@ -112,12 +145,23 @@ div.ExecutionVisualizer table#pyCodeOutput .cod {
   text-align: left; /* necessary or else doesn't work properly in IE */
 }
 
-div.ExecutionVisualizer div#legendDiv {
-  margin-top: 20px;
-  padding: 0px;
-  text-align: left;
+div#trace-bar span#legendDiv {
+  float: right;
+  margin-bottom: 0;
   color: #666;
   font-size: 9pt;
+}
+
+div#trace-bar #close-trace {
+  float: right;
+}
+
+div#trace-bar #curInstr {
+  margin-right: 20px;
+}
+
+div#trace-bar span#legendDiv span {
+  padding-left: 10px;
 }
 
 div.ExecutionVisualizer div#editCodeLinkDiv {
@@ -139,7 +183,7 @@ div.ExecutionVisualizer #errorOutput {
 
 /* VCR control buttons for stepping through execution */
 
-div.ExecutionVisualizer #vcrControls {
+div#trace-bar #vcrControls {
   margin: 15px auto;
   width: 100%;
   text-align: center;
@@ -155,18 +199,9 @@ div.ExecutionVisualizer #vcrControls #curInstr {
   margin-right: 4px;
 }
 
-div.ExecutionVisualizer #pyStdout {
-  border: 1px solid #999999;
-  font-size: 12pt;
-  padding: 4px;
-  font-family: Andale mono, monospace;
-}
-
-
 div.ExecutionVisualizer .vizFrame {
   margin-bottom: 20px;
   padding-left: 8px;
-  border-left: 2px solid #cccccc;
 }
 
 
@@ -479,3 +514,21 @@ div.ExecutionVisualizer .ui-slider .ui-slider-handle {
   border: 1px solid #999;
 }
 
+div.ExecutionVisualizer div#progOutputs {
+  position: absolute;
+  background-color: black;
+  color: white;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+div.ExecutionVisualizer div#progOutputs textarea {
+  width: 100%;
+  height: 100px;
+  color: white;
+  background-color: black;
+  font-size: 12pt;
+  border: none;
+  font-family: Andale mono, monospace;  
+}

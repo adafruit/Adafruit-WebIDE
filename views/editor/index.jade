@@ -16,6 +16,9 @@ block content
       #navigator-bottom
         p.navigator-item-create
           a + Clone Repository
+    #trace-wrapper
+      #trace-bar
+      #trace-container
     #editor-wrapper
       #editor-bar
       #schedule-manager
@@ -49,9 +52,6 @@ block content
       .modal-footer
         button.btn(data-dismiss="modal", aria-hidden="true") Close
         button.btn.btn-primary.modal-submit Save
-<<<<<<< HEAD
-  #trace-container
-=======
     #schedule-modal(class="modal hide fade")
       .modal-header
         button.close(type="button", data-dismiss-"modal", aria-hidden="true") &times;
@@ -102,7 +102,6 @@ block content
         }, 20000);
         
       }     
->>>>>>> master
   script(src="/javascripts/ace/ace.js")
   script(src="/socket.io/socket.io.js")
   script(src="/term.js")
@@ -111,7 +110,7 @@ block content
   script(src="/javascripts/trace/d3.v2.min.js")
   script(src="/javascripts/trace/jquery.ba-bbq.min.js")
   script(src="/javascripts/trace/jquery.jsPlumb-1.3.10-all-min.js")
-  script(src="/javascripts/trace/pytutor.js")
+  script(src="/javascripts/trace/pytutor.js")  
   script(src="/javascripts/fileupload/js/vendor/jquery.ui.widget.js")
   script(src="/javascripts/fileupload/js/jquery.fileupload.js")
   script(src="/javascripts/fileupload/js/jquery.fileupload-ui.js")  
