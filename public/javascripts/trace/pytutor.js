@@ -188,6 +188,7 @@ ExecutionVisualizer.prototype.render = function() {
 
   var codeDisplayHTML = 
     '<div id="codeDisplayDiv">\
+       <div id="pyCodeOutputDivGutter"/>\
        <div id="pyCodeOutputDiv"/>\
        <div id="editCodeLinkDiv"><a id="editBtn">Edit code</a></div>\
        <div id="annotateLinkDiv"><a id="annotateBtn" href="javascript:void(0);">Annotate this step</a></div>\
@@ -205,12 +206,12 @@ ExecutionVisualizer.prototype.render = function() {
 
   var codeButtons = 
        '<p class="trace-bar-actions">\
+         <span id="legendDiv"></span>\
          <a id="jmpFirstInstr", href=""><i class="icon-fast-backward"></i> First</a>\
          <a id="jmpStepBack", href=""><i class="icon-step-backward"></i> Back</a>\
          <span id="curInstr">Step ? of ?</span>\
          <a id="jmpStepFwd", href="">Forward <i class="icon-step-forward"></i></a>\
          <a id="jmpLastInstr", href="">Last <i class="icon-fast-forward"></i></a>\
-         <span id="legendDiv"></span>\
          <a class="close-trace", href=""><i class="icon-remove"></i> Back to Editor</a>\
        </p>';
 
@@ -235,14 +236,14 @@ ExecutionVisualizer.prototype.render = function() {
 
 
   if (this.params.verticalStack) {
-    this.domRoot.html('<table border="0" class="visualizer"><tr><td class="vizLayoutTd">' +
+    this.domRoot.html('<table border="0" cellpadding="0" cellspacing="0" class="visualizer"><tr><td class="vizLayoutTd">' +
                       codeDisplayHTML + '</td></tr><tr><td class="vizLayoutTd">' +
                       codeVizHTML + '</td></tr></table>');
   }
   else {
-    this.domRoot.html('<table border="0" class="visualizer"><tr><td class="vizLayoutTd">' +
-                      codeDisplayHTML + '</td><td class="vizLayoutTd">' +
-                      codeVizHTML + '</td></tr></table>' + codeOutputs);
+    this.domRoot.html('<div class="vizLayout vizLayoutLeft">' +
+                      codeDisplayHTML + '</div><div class="vizLayout vizLayoutRight">' +
+                      codeVizHTML + '</div>' + codeOutputs);
     this.domControls.html(codeButtons);
   }
 
@@ -2236,8 +2237,8 @@ var hoverBreakpointColor = connectorBaseColor;
 
 
 // Unicode arrow types: '\u21d2', '\u21f0', '\u2907'
-var darkArrowColor = brightRed;
-var lightArrowColor = '#c9e6ca';
+var darkArrowColor = '#bb1142';
+var lightArrowColor = '#74a927';
 
 
 function assert(cond) {

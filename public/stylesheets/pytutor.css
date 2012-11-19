@@ -40,18 +40,13 @@ div.ExecutionVisualizer {
   position:relative;
   height: 100%;
   width: 100%;
-}
-
-div.ExecutionVisualizer table.visualizer {
-  width: 100%;
-  height: 100%;
   font-family: verdana, arial, helvetica, sans-serif;
   font-size: 10pt;
+  background-color: white;
+}
+
+div.ExecutionVisualizer table {
   vertical-align: top;
-  border-width: 0 0 0 0;
-  border-spacing: 0;
-  border-collapse: collapse;
-  border: none !important;
 }
 
 div.ExecutionVisualizer table.visualizer td {
@@ -59,12 +54,31 @@ div.ExecutionVisualizer table.visualizer td {
 }
 
 div.ExecutionVisualizer table.visualizer .vizLayoutTd {
-  width: 50%;
+  text-align:left;
   background-color: white;
+
 }
 
-div.ExecutionVisualizer table.visualizer #codeDisplayDiv {
-  height: 100%;
+div.ExecutionVisualizer .vizLayoutLeft {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 147px;
+  width: 50%;
+  border-right: 1px solid #8D8D8D;
+  overflow: auto;
+}
+
+div.ExecutionVisualizer .vizLayoutRight {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 147px;
+  width: 50%;
+  overflow: auto;
+}
+
+div.ExecutionVisualizer #codeDisplayDiv {
   background-color: white;
 }
 
@@ -78,27 +92,31 @@ div.ExecutionVisualizer #dataViz {
   margin-left: 30px;
 }
 
+div.ExecutionVisualizer div#codeDisplayDiv {
+  
+}
+
+div.ExecutionVisualizer div#pyCodeOutputDivGutter {
+  position: absolute;
+  left: 0;
+  width: 43px;
+  top: 0;
+  bottom: 0;
+  background-color: #8d8d8d;
+}
+
 div.ExecutionVisualizer div#pyCodeOutputDiv {
-  width: 500px;
-  height: 100%;
-  /*max-height: 620px;*/
-  overflow: auto;
+  position: relative;
   /*margin-bottom: 4px;*/
 }
 
 div.ExecutionVisualizer table#pyCodeOutput {
-  width: 100%;
   height: 100%;
   font-family: Andale mono, monospace;
   font-size:12pt;
   line-height:1.0em;
-  padding-top: 3px;
   background-color: white;
   color: black;
-  border-width: 0 0 0 0;
-  border-spacing: 0;
-  border-style: none;
-  border-collapse: collapse;  
   /*margin-top: 6px;*/
   margin: 0; /* Center code in its pane */
 }
@@ -146,9 +164,9 @@ div.ExecutionVisualizer table#pyCodeOutput .cod {
 }
 
 div#trace-bar span#legendDiv {
-  float: right;
+  float: left;
   margin-top: -10px;
-  padding-right: 10px;
+  padding-right: 15px;
   margin-bottom: 0;
   color: #666;
   font-size: 9pt;
@@ -164,10 +182,6 @@ div#trace-bar .close-trace {
 
 div#trace-bar #curInstr {
   margin-right: 20px;
-}
-
-div#trace-bar span#legendDiv span {
-  padding-left: 10px;
 }
 
 div.ExecutionVisualizer div#editCodeLinkDiv {
@@ -522,11 +536,13 @@ div.ExecutionVisualizer .ui-slider .ui-slider-handle {
 
 div.ExecutionVisualizer div#progOutputs {
   position: absolute;
-  background-color: black;
-  color: white;
+  width: 100%;
   bottom: 0;
   left: 0;
   right: 0;
+  height: 150px;
+  background-color: black;
+  color: white;
 }
 
 div.ExecutionVisualizer div#progOutputs .outputTitleBar {
@@ -536,9 +552,8 @@ div.ExecutionVisualizer div#progOutputs .outputTitleBar {
 }
 
 div.ExecutionVisualizer div#progOutputs .outputTitleBar .outputTitle{
-  float: right;
   font-size: 11px;
-  padding-right: 10px;
+  padding-left: 10px;
 }
 
 div.ExecutionVisualizer div#progOutputs textarea {

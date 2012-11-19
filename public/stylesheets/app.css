@@ -362,14 +362,16 @@ a.navigator-settings i.settings-enabled {
   left: 300px;
   right: 0;
   top: 50px;
-  bottom: 80px;
+  bottom: 40px;
   border-bottom: 1px solid #EDEDED;
 }
 
 #trace-container {
-  position:relative;
-  height: 100%;
-  width: 100%;
+  position: absolute;
+  top: 41px;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 /* Editor Section */
 
@@ -395,8 +397,12 @@ a.navigator-settings i.settings-enabled {
   height: 39px;
 }
 
-#editor-bar p, #trace-bar p {
+#editor-bar p {
   padding: 10px 10px 10px 20px;
+}
+
+#trace-bar p {
+  padding: 10px 10px 10px 2px;
 }
 
 #editor-bar p.editor-bar-actions a, #trace-bar p.trace-bar-actions a {
