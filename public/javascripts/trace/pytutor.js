@@ -197,7 +197,8 @@ ExecutionVisualizer.prototype.render = function() {
 
   var codeOutputs =
     '<div id="progOutputs">\
-      Program output:<br/>\
+      <div class="dragbar"></div>\
+      <div class="outputTitleBar"><span class="outputTitle">Program output</span></div>\
       <textarea id="pyStdout" wrap="off" readonly></textarea>\
     </div>';
 
@@ -209,8 +210,8 @@ ExecutionVisualizer.prototype.render = function() {
          <span id="curInstr">Step ? of ?</span>\
          <a id="jmpStepFwd", href="">Forward <i class="icon-step-forward"></i></a>\
          <a id="jmpLastInstr", href="">Last <i class="icon-fast-forward"></i></a>\
-         <a id="close-trace", href=""><i class="icon-remove"></i> Back to Editor</a>\
          <span id="legendDiv"></span>\
+         <a class="close-trace", href=""><i class="icon-remove"></i> Back to Editor</a>\
        </p>';
 
   var codeVizHTML =

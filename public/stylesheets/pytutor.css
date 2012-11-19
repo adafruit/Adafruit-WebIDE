@@ -51,7 +51,7 @@ div.ExecutionVisualizer table.visualizer {
   border-width: 0 0 0 0;
   border-spacing: 0;
   border-collapse: collapse;
-  border-style: none;
+  border: none !important;
 }
 
 div.ExecutionVisualizer table.visualizer td {
@@ -147,12 +147,18 @@ div.ExecutionVisualizer table#pyCodeOutput .cod {
 
 div#trace-bar span#legendDiv {
   float: right;
+  margin-top: -10px;
+  padding-right: 10px;
   margin-bottom: 0;
   color: #666;
   font-size: 9pt;
 }
 
-div#trace-bar #close-trace {
+div#trace-bar span#legendDiv span {
+  display: block;
+}
+
+div#trace-bar .close-trace {
   float: right;
 }
 
@@ -523,12 +529,29 @@ div.ExecutionVisualizer div#progOutputs {
   right: 0;
 }
 
+div.ExecutionVisualizer div#progOutputs .outputTitleBar {
+  background-color: #323233;
+  height: 20px;
+  width: 100%;
+}
+
+div.ExecutionVisualizer div#progOutputs .outputTitleBar .outputTitle{
+  float: right;
+  font-size: 11px;
+  padding-right: 10px;
+}
+
 div.ExecutionVisualizer div#progOutputs textarea {
   width: 100%;
-  height: 100px;
+  height: 150px;
   color: white;
   background-color: black;
   font-size: 12pt;
   border: none;
-  font-family: Andale mono, monospace;  
+  font-family: Andale mono, monospace; 
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0; 
+  padding: 0;
+  margin: 0;
 }

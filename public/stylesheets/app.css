@@ -362,7 +362,7 @@ a.navigator-settings i.settings-enabled {
   left: 300px;
   right: 0;
   top: 50px;
-  bottom: 40px;
+  bottom: 80px;
   border-bottom: 1px solid #EDEDED;
 }
 
@@ -552,7 +552,7 @@ a.navigator-settings i.settings-enabled {
 .ansigrey {color: grey;}
 .ansibold {font-weight: bold;}
 
-#dragbar {
+.dragbar {
   display: none;
   background-color: #1A1A1A;
   width:100%;

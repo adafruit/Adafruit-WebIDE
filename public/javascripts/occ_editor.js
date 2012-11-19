@@ -703,8 +703,24 @@
     var file = $('.file-open').data('file');
     file.content = editor.getSession().getDocument().getValue();
 
+    function close_trace(event) {
+      event.preventDefault();
+
+      $('#trace-wrapper').hide();
+      $('#editor-wrapper').show();
+      occEditor.hide_editor_output();
+      $('#editor').css("bottom", 0);
+      editor.focus();
+      occEditor.populate_editor(file);
+      editor.resize();
+      $(document).off('click touchstart', '.close-trace', close_trace);
+    }
+
     $('#editor-wrapper').hide();
+    $('#trace-wrapper').show();
     socket.emit('trace-file', {file: file});
+    
+    $(document).on('click touchstart', '.close-trace', close_trace);
   };
 
 
@@ -975,7 +991,7 @@
     if (!editor_output_visible) {
       editor_output_visible = true;
       $('#editor-output').height('325px');
-      $('#dragbar').show();
+      $('.dragbar').show();
       $('#editor-output div').css('padding', '10px');
       $('#editor').css('bottom', '328px');
       editor.resize();
@@ -986,7 +1002,7 @@
     if (editor_output_visible) {
       editor_output_visible = false;
       $('#editor-output').height('0px');
-      $('#dragbar').hide();
+      $('.dragbar').hide();
       $('#editor-output div').css('padding', '0px');
       $('#editor').css('bottom', '3px');
       editor.resize();
@@ -1035,7 +1051,7 @@
       dragging = true;
       termOffsetWidth = $('.terminal').width();
       termOffsetHeight = $('.terminal').height();
-      var $editor = $('#editor-output-wrapper');
+      var $editor = $('#editor-output-wrapper, #progOutputs');
       var ghostbar = $('<div>',
                       {id:'ghostbar',
                        css: {
@@ -1054,8 +1070,8 @@
       var bottom = $(document).height() - event.pageY;
 
       if (dragging) {
-        $('#editor').css("bottom", bottom + 3);
-        $('#editor-output').css("height", bottom);
+        $('#editor, .visualizer').css("bottom", bottom + 3);
+        $('#editor-output, #progOutputs').css("height", bottom);
         $('#ghostbar').remove();
         $(document).unbind('mousemove');
         editor.resize();
@@ -1064,7 +1080,7 @@
       }
     }
 
-    $('#dragbar').mousedown(handle_dragbar_mousedown);
+    $('.dragbar').mousedown(handle_dragbar_mousedown);
     $(document).mouseup(handle_dragbar_mouseup);
   }
 
