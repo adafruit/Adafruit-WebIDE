@@ -124,7 +124,10 @@
       editor_startup(message);
     });
     socket.on("self-check-settings", function(data) {
-      settings = data;
+      if (data) {
+        settings = data;
+      }
+    
       editor_startup("Editor settings received");
     });
     socket.on("self-check-complete", function() {
