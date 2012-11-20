@@ -92,8 +92,8 @@ ALLOWED_MODULE_IMPORTS = ('math', 'random', 'datetime',
 # already been imported and cached in memory). Remember that when
 # the user's code runs, resource.setrlimit(resource.RLIMIT_NOFILE, (0, 0))
 # will already be in effect, so no more files can be opened.
-for m in ALLOWED_MODULE_IMPORTS:
-  __import__(m)
+#for m in ALLOWED_MODULE_IMPORTS:
+#  __import__(m)
 
 
 # Restrict imports to a whitelist
@@ -105,10 +105,11 @@ def __restricted_import__(*args):
 
 
 # blacklist of builtins
-BANNED_BUILTINS = ('reload', 'input', 'apply', 'open', 'compile',
-                   'file', 'eval', 'exec', 'execfile',
-                   'exit', 'quit', 'raw_input', 'help',
-                   'dir', 'globals', 'locals', 'vars')
+BANNED_BUILTINS = (#'reload', 'input', 'apply', 'open', 'compile',
+                   #'file', 'eval', 'exec', 'execfile',
+                   #'exit', 'quit', 'raw_input', 'help',
+                   #'dir', 'globals', 'locals', 'vars'
+                   )
 
 
 IGNORE_VARS = set(('__user_stdout__', '__builtins__', '__name__', '__exception__', '__doc__', '__package__'))
@@ -741,17 +742,17 @@ class PGLogger(bdb.Bdb):
         try:
           # enforce resource limits RIGHT BEFORE running script_str
 
-          # set ~200MB virtual memory limit AND a 5-second CPU time
+          # set ~200MB virtual memory limit AND a 10-second CPU time
           # limit (tuned for Webfaction shared hosting) to protect against
           # memory bombs such as:
           #   x = 2
           #   while True: x = x*x
           if resource_module_loaded:
             resource.setrlimit(resource.RLIMIT_AS, (200000000, 200000000))
-            resource.setrlimit(resource.RLIMIT_CPU, (5, 5))
+            resource.setrlimit(resource.RLIMIT_CPU, (10, 10))
 
             # protect against unauthorized filesystem accesses ...
-            resource.setrlimit(resource.RLIMIT_NOFILE, (0, 0)) # no opened files allowed
+            #resource.setrlimit(resource.RLIMIT_NOFILE, (0, 0)) # no opened files allowed
 
             # VERY WEIRD. If you activate this resource limitation, it
             # ends up generating an EMPTY trace for the following program:
