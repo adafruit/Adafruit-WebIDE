@@ -29,12 +29,12 @@
     "editor_bar_interpreted_file":  '<p class="editor-bar-actions">' +
                                       '<a href="" class="open-terminal"><i class="icon-list-alt"></i> Terminal</a>' +
                                       '<a href="" class="run-file"><i class="icon-play"></i> Run</a>' +
-                                      '<a href="" class="trace-file"><i class="icon-sitemap"></i> Trace</a>' +
+                                      '<a href="" class="trace-file"><i class="icon-sitemap"></i> Visualize</a>' +
                                       '<a href="" class="save-file"><i class="icon-cloud"></i> Save</a>' +
                                       '<a href="" class="schedule-file"><i class="icon-time"></i> Schedule</a>' +
                                     '</p>',
     "editor_bar_run_link":          '<a href="" class="run-file"><i class="icon-play"></i> Run</a>',
-    "editor_bar_trace_link":        '<a href="" class="trace-file"><i class="icon-sitemap"></i> Trace</a>',
+    "editor_bar_trace_link":        '<a href="" class="trace-file"><i class="icon-sitemap"></i> Visualize</a>',
     "editor_bar_schedule_link":     '<a href="" class="schedule-file"><i class="icon-time"></i> Schedule</a>',
     "editor_bar_copy_link":         '<a href="" class="copy-project"><i class="icon-copy"></i> Copy this project to My Pi Projects</a>',
     "editor_bar_tutorial_link":     '<a href="" class="open-tutorial" target="_blank"><i class="icon-book"></i> Project Guide Available</a>',
@@ -271,6 +271,11 @@
 
     $('#editor').show();
     $('#schedule-manager').hide();
+    $('#trace-wrapper').hide();
+    //$('#editor-output-wrapper').hide();
+    $('#editor').css("bottom", 0);
+    $('#editor-wrapper').show();
+    editor.resize();
 
     var EditSession = require("ace/edit_session").EditSession;
     var UndoManager = require("ace/undomanager").UndoManager;
@@ -712,7 +717,6 @@
       $('#editor').css("bottom", 0);
       editor.focus();
       occEditor.populate_editor(file);
-      editor.resize();
       $(document).off('click touchstart', '.close-trace', close_trace);
     }
 
@@ -990,6 +994,7 @@
   occEditor.show_editor_output = function() {
     if (!editor_output_visible) {
       editor_output_visible = true;
+      $('#editor-output-wrapper').show();
       $('#editor-output').height('325px');
       $('.dragbar').show();
       $('#editor-output div').css('padding', '10px');
