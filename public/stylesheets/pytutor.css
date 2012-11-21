@@ -96,14 +96,14 @@ div.ExecutionVisualizer div#codeDisplayDiv {
   
 }
 
-div.ExecutionVisualizer div#pyCodeOutputDivGutter {
+/*div.ExecutionVisualizer div#pyCodeOutputDivGutter {
   position: absolute;
   left: 0;
   width: 43px;
   top: 0;
   bottom: 0;
   background-color: #8d8d8d;
-}
+}*/
 
 div.ExecutionVisualizer div#pyCodeOutputDiv {
   position: relative;

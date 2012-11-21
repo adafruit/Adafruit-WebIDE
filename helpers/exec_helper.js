@@ -54,14 +54,13 @@ function execute_python_trace(file_path, socket) {
   });
 
   prog.stderr.on('data', function(data) {
-    socket.emit('program-stderr', {output: data.toString()});
+    socket.emit('trace-program-stderr', {output: data.toString()});
     console.log(data.toString());
   });
 
   prog.on('exit', function(code) {
-    socket.emit('program-exit', {output: program_output});
+    socket.emit('trace-program-exit', {output: program_output});
   });
-
 }
 
 /*function execute_ipython(file, is_job) {

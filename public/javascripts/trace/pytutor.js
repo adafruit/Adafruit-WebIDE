@@ -198,7 +198,7 @@ ExecutionVisualizer.prototype.render = function() {
 
   var codeOutputs =
     '<div id="progOutputs">\
-      <div class="dragbar"></div>\
+      <div class="trace-dragbar"></div>\
       <div class="outputTitleBar"><span class="outputTitle">Program output</span></div>\
       <textarea id="pyStdout" wrap="off" readonly></textarea>\
     </div>';

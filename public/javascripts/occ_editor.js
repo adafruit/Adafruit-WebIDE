@@ -235,9 +235,28 @@
       dirname = data.dirname;
     });
 
-    socket.on('program-exit', function(trace) {
-      var v = new ExecutionVisualizer("trace-container", $.parseJSON(trace.output), {});
-      
+    socket.on('trace-program-exit', function(data) {
+      output = $.parseJSON(data.output);
+      console.log(output);
+
+      if (!output || !output.trace || (output.trace.length === 0) ||
+         (output.trace[output.trace.length - 1].event === 'uncaught_exception')) {
+        //alert(output.trace[output.trace.length - 1].exception_msg);
+
+        var error_line = output.trace[0].line - 1;
+        var error_msg = output.trace[output.trace.length - 1].exception_msg;
+        if (error_line !== undefined && error_msg !== undefined) {
+          editor.getSession().setAnnotations([{
+            row: error_line,
+            text: error_msg,
+            type: "error" // also warning and information
+          }]);
+        }
+      } else {
+        $('#editor-wrapper').hide();
+        $('#trace-wrapper').show();
+        var v = new ExecutionVisualizer("trace-container", output, {});
+      }
     });
   };
 
@@ -272,10 +291,9 @@
 
   occEditor.populate_editor = function(file, content) {
 
+    $('#trace-wrapper').hide();
     $('#editor').show();
     $('#schedule-manager').hide();
-    $('#trace-wrapper').hide();
-    //$('#editor-output-wrapper').hide();
     $('#editor').css("bottom", 0);
     $('#editor-wrapper').show();
     editor.resize();
@@ -708,6 +726,8 @@
   occEditor.trace_file = function(event) {
     event.preventDefault();
 
+    assert("test");
+
     var file = $('.file-open').data('file');
     file.content = editor.getSession().getDocument().getValue();
 
@@ -716,15 +736,12 @@
 
       $('#trace-wrapper').hide();
       $('#editor-wrapper').show();
-      occEditor.hide_editor_output();
-      $('#editor').css("bottom", 0);
+      //occEditor.hide_editor_output();
       editor.focus();
       occEditor.populate_editor(file);
       $(document).off('click touchstart', '.close-trace', close_trace);
     }
 
-    $('#editor-wrapper').hide();
-    $('#trace-wrapper').show();
     socket.emit('trace-file', {file: file});
     
     $(document).on('click touchstart', '.close-trace', close_trace);
@@ -1012,7 +1029,7 @@
       $('#editor-output').height('0px');
       $('.dragbar').hide();
       $('#editor-output div').css('padding', '0px');
-      $('#editor').css('bottom', '3px');
+      $('#editor').css('bottom', '0px');
       editor.resize();
     }
   };
@@ -1022,7 +1039,7 @@
     var dragging = false;
     var buffer = "", buffer_start = false;
     var termOffsetWidth, termOffsetHeight;
-
+    /*
     socket.on('program-stdout', function(data) {
       console.log(data);
       occEditor.show_editor_output();
@@ -1048,7 +1065,7 @@
       //$('#editor-output div pre').append("code: " + data.code + '\n');
       //$("#editor-output").animate({ scrollTop: $(document).height() }, "slow");
       //console.log(data);
-    });
+    });*/
 
     /*
      * pane resize inspired by...

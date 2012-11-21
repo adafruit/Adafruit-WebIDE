@@ -558,7 +558,7 @@ a.navigator-settings i.settings-enabled {
 .ansigrey {color: grey;}
 .ansibold {font-weight: bold;}
 
-.dragbar {
+.dragbar, .trace-dragbar {
   display: none;
   background-color: #1A1A1A;
   width:100%;
@@ -567,6 +567,10 @@ a.navigator-settings i.settings-enabled {
   border-bottom: 1px solid #EDEDED;
   cursor: row-resize;
 }
+.trace-dragbar {
+  display: block;
+}
+
 #ghostbar {
   height: 1px;
   border-top: 1px solid #EDEDED;
