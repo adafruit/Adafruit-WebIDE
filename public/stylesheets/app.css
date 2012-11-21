@@ -366,12 +366,18 @@ a.navigator-settings i.settings-enabled {
   border-bottom: 1px solid #EDEDED;
 }
 
-#trace-container {
+#trace-container, #trace-loader {
   position: absolute;
   top: 41px;
   bottom: 0;
   left: 0;
   right: 0;
+}
+
+#trace-loader div {
+  background:url("/images/ajax-loader.gif") no-repeat center center;
+  height:100%;
+  width:100%;
 }
 /* Editor Section */
 

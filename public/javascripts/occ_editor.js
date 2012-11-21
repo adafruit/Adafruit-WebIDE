@@ -242,7 +242,8 @@
       if (!output || !output.trace || (output.trace.length === 0) ||
          (output.trace[output.trace.length - 1].event === 'uncaught_exception')) {
         //alert(output.trace[output.trace.length - 1].exception_msg);
-
+        $('#trace-wrapper').hide();
+        $('#editor-wrapper').show();
         var error_line = output.trace[0].line - 1;
         var error_msg = output.trace[output.trace.length - 1].exception_msg;
         if (error_line !== undefined && error_msg !== undefined) {
@@ -253,8 +254,8 @@
           }]);
         }
       } else {
-        $('#editor-wrapper').hide();
-        $('#trace-wrapper').show();
+        $('#trace-loader').hide();
+        $('#trace-container').show();
         var v = new ExecutionVisualizer("trace-container", output, {});
       }
     });
@@ -741,6 +742,11 @@
       occEditor.populate_editor(file);
       $(document).off('click touchstart', '.close-trace', close_trace);
     }
+
+    $('#editor-wrapper').hide();
+    $('#trace-wrapper').show();
+    $('#trace-loader').show();
+    $('#trace-container').hide();
 
     socket.emit('trace-file', {file: file});
     
