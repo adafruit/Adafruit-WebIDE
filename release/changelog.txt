@@ -1,6 +1,8 @@
 -0.2.4
+New visualization feature for Python
 Added ability to change font sizes in the editor and the terminal
 New settings manager added, currently only has font size, but more can be added
+Fix for long file names causing strange wrapping
 
 -0.2.3
 Fix server failing to start on reboot of Pi.
