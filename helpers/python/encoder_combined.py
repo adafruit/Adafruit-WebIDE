@@ -1039,8 +1039,8 @@ class PGLogger(bdb.Bdb):
             #
             # Of course, this isn't a foolproof solution by any means,
             # and it might lead to UNEXPECTED FAILURES later in execution.
-            del sys.modules['os']
-            del sys.modules['sys']
+            #del sys.modules['os']
+            #del sys.modules['sys']
 
           self.run(script_str, user_globals, user_globals)
         # sys.exit ...
