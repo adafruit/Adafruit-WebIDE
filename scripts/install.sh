@@ -27,7 +27,7 @@ mkdir -p "$WEBIDE_HOME"
 cd "$WEBIDE_ROOT"
 
 echo "**** Downloading the latest version of the WebIDE ****"
-curl -L https://github.com/downloads/adafruit/Adafruit-WebIDE/editor-0.2.4.tar.gz | tar xzf -
+curl -L https://github.com/downloads/adafruit/Adafruit-WebIDE/editor-0.2.3.tar.gz | tar xzf -
 
 echo "**** Installing required libraries ****"
 echo "**** (nodejs npm redis-server git restartd libcap2-bin avahi-daemon i2c-tools python-smbus) ****"
