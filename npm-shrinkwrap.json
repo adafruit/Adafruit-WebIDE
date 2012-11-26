@@ -179,7 +179,7 @@
     },
     "jsDAV": {
       "version": "0.1.4",
-      "from": "git://github.com/mikedeboer/jsDAV.git",
+      "from": "git://github.com/jwcooper/jsDAV.git",
       "dependencies": {
         "asyncjs": {
           "version": "0.0.8"
