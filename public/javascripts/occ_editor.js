@@ -237,7 +237,6 @@
 
     socket.on('trace-program-exit', function(data) {
       output = $.parseJSON(data.output);
-      console.log(output);
 
       if (!output || !output.trace || (output.trace.length === 0) ||
          (output.trace[output.trace.length - 1].event === 'uncaught_exception')) {

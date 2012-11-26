@@ -549,11 +549,17 @@ div.ExecutionVisualizer div#progOutputs .outputTitleBar {
   background-color: #323233;
   height: 20px;
   width: 100%;
+  font-size: 11px;
 }
 
 div.ExecutionVisualizer div#progOutputs .outputTitleBar .outputTitle{
-  font-size: 11px;
+  
   padding-left: 10px;
+}
+
+div.ExecutionVisualizer div#progOutputs .outputTitleBar .attribution{
+  float: right;
+  padding-right: 10px;
 }
 
 div.ExecutionVisualizer div#progOutputs textarea {
