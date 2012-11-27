@@ -1,3 +1,6 @@
+-0.2.5
+Run visualizer as sudo to allow access to GPIO
+
 -0.2.4
 New visualization feature for Python
 Added ability to change font sizes in the editor and the terminal
