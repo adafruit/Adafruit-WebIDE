@@ -44,9 +44,9 @@ exports.trace_program = function(file, socket) {
 function execute_python_trace(file_path, socket) {
   console.log('execute_python_trace');
   var generator_path = path.resolve(__dirname + "/python/encoder_combined.py");
-  var args = [generator_path, file_path];
+  var args = ["python", generator_path, file_path];
   var program_output = "";
-  var prog = spawn("python", args);
+  var prog = spawn("sudo", args);
 
   prog.stdout.on('data', function(data) {
     program_output += data.toString();
