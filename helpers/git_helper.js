@@ -89,7 +89,14 @@ exports.clone_update_remote_push = function(profile, repository_url, cb) {
         });
       });
     } else {
-      cb("Repository Already Exists in Bitbucket.", false);
+      if (repository_url.toLowerCase().indexOf("bitbucket.org") === -1) {
+        cb("Repository Already Exists in Bitbucket, clone with Bitbucket URL.", false);
+      } else {
+        self.clone_repository(repository_url, function(err, results) {
+          console.log("clone repository locally: " + repository_name);
+          cb(null, true);
+        });
+      }
     }
   });
 };
