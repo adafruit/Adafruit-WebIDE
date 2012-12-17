@@ -258,16 +258,16 @@ class Debugger(bdb.Bdb):
         self.cmd = "STEP"
         self.set_step()
 
-    def send_variables(self, type):
+    def send_variables(self, cmd_type):
         stack_list, size = self.get_stack(self.curframe, None)
         stack_list.reverse()
         stack_element = stack_list[size - 1]
 
-        if type == "LOCALS":
+        if cmd_type == "LOCALS":
             variables = copy.copy(stack_element[0].f_locals)
-        elif type == "GLOBALS":
+        elif cmd_type == "GLOBALS":
             variables = copy.copy(stack_element[0].f_globals)
-        res = []
+        variable_list = []
         print variables
         blocked_variables = set(['bdb', '__builtins__', 'socket', '__file__', '__builtin__', 'types', '__package__',
                                     'Server', 'sys', 'copy', 'Debugger', 'dbg', '__name__', 'traceback', 'json', 'os', '__doc__'])
@@ -276,7 +276,8 @@ class Debugger(bdb.Bdb):
                 variables.pop(key)
 
         for variable in variables.items():
-            res.append(dict(name = variable[0], content = __builtin__.str(variable[1]), type = self.get_var_type(variable[1])))
+            variable_list.append(dict(name=variable[0], content=__builtin__.str(variable[1]), type=self.get_var_type(variable[1])))
+        res = dict(cmd=cmd_type, variables=variable_list)
         self._connection.send_json(res)
 
     def quit(self):

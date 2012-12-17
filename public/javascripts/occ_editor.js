@@ -766,6 +766,10 @@
     var markerId;
     file.content = editor.getSession().getDocument().getValue();
 
+    function is_link_active($link) {
+      return !$link.hasClass('debug-link-disabled');
+    }
+
     function toggle_buttons(active) {
       if (active) {
         $('.debug-run, .debug-step-over, .debug-step-in').removeClass('debug-link-disabled');
@@ -776,27 +780,58 @@
 
     socket.on('debug-file-response', function(data) {
       toggle_buttons(true);
-      var Range = require("ace/range").Range;
-      var rg = new Range(data.line_no - 1, 0, data.line_no, 0);
-      editor.session.removeMarker(markerId);
-      markerId = editor.session.addMarker(rg, "debug-line", "line", false);
-      editor.renderer.scrollToLine(data.line_no, true, true, function() {
+      if (data.cmd === "NEXT") {
+        var Range = require("ace/range").Range;
+        var rg = new Range(data.line_no - 1, 0, data.line_no, 0);
+        editor.session.removeMarker(markerId);
+        markerId = editor.session.addMarker(rg, "debug-line", "line", false);
+        editor.renderer.scrollToLine(data.line_no, true, true, function() {
 
-      });
-      editor.focus();
+        });
+        editor.focus();
+      } else if (data.cmd === "LOCALS" || data.cmd === "GLOBALS") {
+        console.log(data);
+      }
     });
+
+    function get_breakpoints() {
+      var editor_breakpoints = editor.getSession().getBreakpoints();
+      var breakpoints = [];
+
+      for (var i = 0; i < editor_breakpoints.length; i++) {
+          if (editor_breakpoints[i]) {
+            breakpoints.push(i+1);
+          }
+      }
+      console.log(breakpoints);
+
+      return breakpoints;
+    }
+
+    function debug_run(event) {
+      event.preventDefault();
+      if (is_link_active($(this))) {
+        toggle_buttons(false);
+
+        console.log('debug run');
+
+        socket.emit('debug-command', {command: "RUN", breakpoints: get_breakpoints()});
+      }
+    }
 
     function debug_step_over(event) {
       event.preventDefault();
-      toggle_buttons(false);
-      console.log('step over');
-      socket.emit('debug-command', "NEXT");
+      if (is_link_active($(this))) {
+        toggle_buttons(false);
+        console.log('step over');
+        socket.emit('debug-command', {command: "NEXT"});
+      }
     }
 
     function debug_close(event) {
       event.preventDefault();
       //$('#editor-wrapper').show();
-      socket.emit('debug-command', "QUIT");
+      socket.emit('debug-command', {command: "QUIT"});
       editor.session.removeMarker(markerId);
       occEditor.hide_editor_output();
       editor.resize();
@@ -811,9 +846,11 @@
     $('#editor-bar').html(templates.editor_bar_debug_file);
     socket.emit('debug-file', {file: file});
 
-    $(document).off('click touchstart', '.debug-step-over', debug_step_over);
-    $(document).off('click touchstart', '.debug-stop', debug_close);
+    $(document).off('click touchstart', '.debug-run');
+    $(document).off('click touchstart', '.debug-step-over');
+    $(document).off('click touchstart', '.debug-stop');
     $(document).on('click touchstart', '.debug-step-over', debug_step_over);
+    $(document).on('click touchstart', '.debug-run', debug_run);
     $(document).on('click touchstart', '.debug-stop', debug_close);
   };
 

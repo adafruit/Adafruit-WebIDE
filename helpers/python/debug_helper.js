@@ -106,11 +106,15 @@ function connect_client(file, socket) {
   }
 }
 
-exports.debug_command = function(command, socket) {
-  console.log(command);
+exports.debug_command = function(data, socket) {
+  console.log(data.command);
+  if (data.breakpoints) {
+    console.log(data.breakpoints);
+  }
   if (debug_client) {
-    if (VALID_COMMANDS.indexOf(command) !== -1) {
-      debug_client.write('NEXT\n');
+    if (VALID_COMMANDS.indexOf(data.command) !== -1) {
+      debug_client.write(data.command + '\n');
+      debug_client.write("LOCALS\n");
     }
   } else {
     //TODO, handle re-connect

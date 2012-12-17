@@ -674,6 +674,10 @@ a.navigator-settings i.settings-enabled {
   padding: 10px 0 0 10px;
 }
 
+.ace_gutter-cell.ace_breakpoint{ 
+  background-color: #BB1142;
+}
+
 .debug-line {
   position: absolute;
   z-index: 5;  
