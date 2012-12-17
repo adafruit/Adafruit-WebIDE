@@ -677,5 +677,13 @@ a.navigator-settings i.settings-enabled {
 .debug-line {
   position: absolute;
   z-index: 5;  
-  background-color: red;
+  background-color: #BB1142;
+}
+
+.debug-link-disabled {
+  opacity: 0.5;
+}
+
+.debug-link-disabled:hover {
+  cursor: wait;
 }

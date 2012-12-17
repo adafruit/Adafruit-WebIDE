@@ -99,7 +99,9 @@ function connect_client(file, socket) {
 
     return;
   } else {
-    console.log('already connected, do something');
+    debug_client.write('QUIT\n'); //Ensure the last debug session is cleared out
+    debug_client.write('DEBUG,' + file_path + '\n');
+    console.log('already connected, initiating new debug session');
     return;
   }
 }

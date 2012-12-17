@@ -766,19 +766,29 @@
     var markerId;
     file.content = editor.getSession().getDocument().getValue();
 
+    function toggle_buttons(active) {
+      if (active) {
+        $('.debug-run, .debug-step-over, .debug-step-in').removeClass('debug-link-disabled');
+      } else {
+        $('.debug-run, .debug-step-over, .debug-step-in').addClass('debug-link-disabled');
+      }
+    }
+
     socket.on('debug-file-response', function(data) {
-      console.log(data.line_no);
+      toggle_buttons(true);
       var Range = require("ace/range").Range;
       var rg = new Range(data.line_no - 1, 0, data.line_no, 0);
-      console.log(rg);
       editor.session.removeMarker(markerId);
       markerId = editor.session.addMarker(rg, "debug-line", "line", false);
+      editor.renderer.scrollToLine(data.line_no, true, true, function() {
+
+      });
       editor.focus();
-      console.log(markerId);
     });
 
     function debug_step_over(event) {
       event.preventDefault();
+      toggle_buttons(false);
       console.log('step over');
       socket.emit('debug-command', "NEXT");
     }
@@ -786,7 +796,10 @@
     function debug_close(event) {
       event.preventDefault();
       //$('#editor-wrapper').show();
+      socket.emit('debug-command', "QUIT");
+      editor.session.removeMarker(markerId);
       occEditor.hide_editor_output();
+      editor.resize();
       editor.focus();
       occEditor.populate_editor(file);
       $(document).off('click touchstart', '.debug-step-over', debug_step_over);
