@@ -29,11 +29,19 @@
     "editor_bar_interpreted_file":  '<p class="editor-bar-actions">' +
                                       '<a href="" class="open-terminal"><i class="icon-list-alt"></i> Terminal</a>' +
                                       '<a href="" class="run-file"><i class="icon-play"></i> Run</a>' +
+                                      '<a href="" class="debug-file"><i class="icon-cogs"></i> Debug</a>' +
                                       '<a href="" class="trace-file"><i class="icon-sitemap"></i> Visualize</a>' +
                                       '<a href="" class="save-file"><i class="icon-cloud"></i> Save</a>' +
                                       '<a href="" class="schedule-file"><i class="icon-time"></i> Schedule</a>' +
                                     '</p>',
+    "editor_bar_debug_file":        '<p class="editor-bar-actions">' +
+                                      '<a href="" class="debug-stop"><i class="icon-list-alt"></i> Stop</a>' +
+                                      '<a href="" class="debug-run"><i class="icon-play"></i> Run</a>' +
+                                      '<a href="" class="debug-step-over"><i class="icon-cogs"></i> Step Over</a>' +
+                                      '<a href="" class="debug-step-in"><i class="icon-sitemap"></i> Step In</a>' +
+                                    '</p>',
     "editor_bar_run_link":          '<a href="" class="run-file"><i class="icon-play"></i> Run</a>',
+    "editor_bar_debug_link":        '<a href="" class="debug-file"><i class="icon-debug"></i> Debug</a>',
     "editor_bar_trace_link":        '<a href="" class="trace-file"><i class="icon-sitemap"></i> Visualize</a>',
     "editor_bar_schedule_link":     '<a href="" class="schedule-file"><i class="icon-time"></i> Schedule</a>',
     "editor_bar_copy_link":         '<a href="" class="copy-project"><i class="icon-copy"></i> Copy this project to My Pi Projects</a>',
@@ -413,6 +421,7 @@
           $editor_bar.html(templates.editor_bar_blank);
           if (is_script(file.extension)) {
             $(templates.editor_bar_run_link).appendTo('.editor-bar-actions');
+            $(templates.editor_bar_debug_link).appendTo('.editor-bar-actions');
             //$(templates.editor_bar_trace_link).appendTo('.editor-bar-actions');
           }
 
@@ -726,8 +735,6 @@
   occEditor.trace_file = function(event) {
     event.preventDefault();
 
-    assert("test");
-
     var file = $('.file-open').data('file');
     file.content = editor.getSession().getDocument().getValue();
 
@@ -752,6 +759,41 @@
     $(document).on('click touchstart', '.close-trace', close_trace);
   };
 
+  occEditor.debug_file = function(event) {
+    event.preventDefault();
+
+    var file = $('.file-open').data('file');
+    file.content = editor.getSession().getDocument().getValue();
+
+    socket.on('debug-file-response', function(data) {
+      console.log(data);
+    });
+
+    function debug_step_over(event) {
+      event.preventDefault();
+      console.log('step over');
+      socket.emit('debug-command', "NEXT");
+    }
+
+    function debug_close(event) {
+      event.preventDefault();
+      //$('#editor-wrapper').show();
+      occEditor.hide_editor_output();
+      editor.focus();
+      occEditor.populate_editor(file);
+      $(document).off('click touchstart', '.debug-step-over', debug_step_over);
+      $(document).off('click touchstart', '.debug-stop', debug_close);
+    }
+
+    occEditor.show_editor_output();
+    $('#editor-bar').html(templates.editor_bar_debug_file);
+    socket.emit('debug-file', {file: file});
+
+    $(document).off('click touchstart', '.debug-step-over', debug_step_over);
+    $(document).off('click touchstart', '.debug-stop', debug_close);
+    $(document).on('click touchstart', '.debug-step-over', debug_step_over);
+    $(document).on('click touchstart', '.debug-stop', debug_close);
+  };
 
   occEditor.run_file = function(event) {
     if (event) {
@@ -868,6 +910,7 @@
     $(document).on('click touchstart', '.save-file', occEditor.save_file);
     $(document).on('click touchstart', '.trace-file', occEditor.trace_file);
     $(document).on('click touchstart', '.run-file', occEditor.run_file);
+    $(document).on('click touchstart', '.debug-file', occEditor.debug_file);
     $(document).on('click touchstart', '.stop-file', occEditor.stop_file);
     $(document).on('click touchstart', '.schedule-file', open_scheduler);
   }

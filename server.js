@@ -20,6 +20,7 @@ var express = require('express'),
     fs_helper = require('./helpers/fs_helper'),
     exec_helper = require('./helpers/exec_helper'),
     request_helper = require('./helpers/request_helper'),
+    debug_helper = require('./helpers/python/debug_helper'),
     RedisStore = require('connect-redis')(express),
     redis = require("redis"),
     client = redis.createClient(),
@@ -44,7 +45,7 @@ if (!exists) {
 }
 
 winston.add(winston.transports.File, { filename: __dirname + '/logs/output.log', json: false });
-//winston.handleExceptions(new winston.transports.File({ filename: __dirname + '/logs/errors.log', json: false }));
+winston.handleExceptions(new winston.transports.File({ filename: __dirname + '/logs/errors.log', json: false }));
 winston.info('Logger initialized!');
 //winston.remove(winston.transports.Console);
 
@@ -344,6 +345,18 @@ function socket_listeners() {
       exec_helper.trace_program(data.file, socket);
     });
 
+    socket.on('debug-command', function(data) {
+      console.log('debug-command');
+      debug_helper.debug_command(data, socket);
+      console.log('after-debug-command');
+    });
+
+    socket.on('debug-file', function(data) {
+      console.log('debug-file');
+      debug_helper.start_debug(data.file, socket);
+      console.log('after-debug-file');
+    });
+
     socket.on('commit-run-file', function(data) {
       console.log(data);
       if (data && data.file) {
@@ -407,3 +420,14 @@ exports.get_socket = function (username, cb) {
     });
   }
 };
+
+process.on('SIGINT', function() {
+  console.log("\nShutting down from  SIGINT");
+  // some other closing procedures go here
+  debug_helper.kill_debug();
+  process.exit();
+});
+
+process.on('uncaughtException', function(err) {
+  debug_helper.kill_debug();
+});
