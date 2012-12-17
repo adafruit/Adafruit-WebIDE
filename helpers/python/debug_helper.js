@@ -48,6 +48,7 @@ exports.start_debug = function(file, socket) {
 };
 
 function connect_client(file, socket) {
+  var file_path = path.resolve(__dirname + "/../../repositories/" + file.path.replace('/filesystem/', ''));
   console.log("connect_client");
   if (!debug_client) {
     debug_client = new net.Socket();
@@ -55,10 +56,9 @@ function connect_client(file, socket) {
       socket.emit('debug-client-connected');
       client_connected = true;
       console.log('connected to python debugger: ' + HOST + ':' + PORT);
+      console.log(file_path);
 
-      debug_client.write('DEBUG,/Users/jwcooper/dev/apps/OccEditor/helpers/python/temp/test.py\n');
-      debug_client.write('NEXT\n');
-      console.log("connect_client after NEXT");
+      debug_client.write('DEBUG,' + file_path + '\n');
 
       /*client.write('NEXT\n');
       client.write('LOCALS\n');

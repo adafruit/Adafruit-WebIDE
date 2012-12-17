@@ -763,10 +763,18 @@
     event.preventDefault();
 
     var file = $('.file-open').data('file');
+    var markerId;
     file.content = editor.getSession().getDocument().getValue();
 
     socket.on('debug-file-response', function(data) {
-      console.log(data);
+      console.log(data.line_no);
+      var Range = require("ace/range").Range;
+      var rg = new Range(data.line_no - 1, 0, data.line_no, 0);
+      console.log(rg);
+      editor.session.removeMarker(markerId);
+      markerId = editor.session.addMarker(rg, "debug-line", "line", false);
+      editor.focus();
+      console.log(markerId);
     });
 
     function debug_step_over(event) {
@@ -786,6 +794,7 @@
     }
 
     occEditor.show_editor_output();
+    editor.resize();
     $('#editor-bar').html(templates.editor_bar_debug_file);
     socket.emit('debug-file', {file: file});
 
@@ -910,7 +919,10 @@
     $(document).on('click touchstart', '.save-file', occEditor.save_file);
     $(document).on('click touchstart', '.trace-file', occEditor.trace_file);
     $(document).on('click touchstart', '.run-file', occEditor.run_file);
+
+    $(document).off('click touchstart', '.debug-file', occEditor.debug_file);
     $(document).on('click touchstart', '.debug-file', occEditor.debug_file);
+
     $(document).on('click touchstart', '.stop-file', occEditor.stop_file);
     $(document).on('click touchstart', '.schedule-file', open_scheduler);
   }

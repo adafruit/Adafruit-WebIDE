@@ -673,3 +673,9 @@ a.navigator-settings i.settings-enabled {
   float: left;
   padding: 10px 0 0 10px;
 }
+
+.debug-line {
+  position: absolute;
+  z-index: 5;  
+  background-color: red;
+}
