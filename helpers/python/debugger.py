@@ -72,6 +72,8 @@ class Debugger(bdb.Bdb):
         self._connection = None
         self._socket = None
         self.cmd = None
+        self.saved_stdout = None
+        self.saved_stdin = None
 
     def reset(self):
         bdb.Bdb.reset(self)
@@ -101,7 +103,7 @@ class Debugger(bdb.Bdb):
         if not name:
             name = '???'
         fn = self.canonic(frame.f_code.co_filename)
-        print "user_call"
+        #print "user_call"
         if not fn:
             fn = '???'
         """This method is called when there is the remote possibility
@@ -109,14 +111,15 @@ class Debugger(bdb.Bdb):
         if self._wait_for_mainpyfile:
             return
         if self.stop_here(frame):
-            #print >>self.stdout, '--Call--'
-            ret = dict(cmd = __builtin__.str(self.cmd), method="user_call", fn=fn, name=name,
-                        line_no = __builtin__.str(frame.f_lineno))
+            local_variables = self.get_variables("LOCALS", frame)
+            #print self.stdout
+            ret = dict(cmd=__builtin__.str(self.cmd), method="user_call", fn=fn, name=name,
+                        line_no=__builtin__.str(frame.f_lineno), locals=local_variables)
             self._connection.send_json(ret)
             self.interaction(frame, None)
 
     def user_line(self, frame):
-        print "user_line"
+        #print "user_line"
         """This function is called when we stop or break at this line."""
         if self._wait_for_mainpyfile:
             if (self.mainpyfile != self.canonic(frame.f_code.co_filename)
@@ -133,9 +136,11 @@ class Debugger(bdb.Bdb):
             fn = '???'
         # populate info to client side
         line = linecache.getline(fn, frame.f_lineno)
-        ret = dict(cmd = __builtin__.str(self.cmd), fn = fn, name = name, 
-                    line = line, line_no = __builtin__.str(frame.f_lineno))
+        local_variables = self.get_variables("LOCALS", frame)
+        ret = dict(cmd=__builtin__.str(self.cmd), fn=fn, name=name,
+                    line=line, line_no=__builtin__.str(frame.f_lineno), locals=local_variables)
         self._connection.send_json(ret)
+        #print self.stdout
         self.interaction(frame, None)
 
     def bp_commands(self, frame):
@@ -163,16 +168,17 @@ class Debugger(bdb.Bdb):
         return 1
 
     def user_return(self, frame, return_value):
-        print "user_return"
+        #print "user_return"
         """This function is called when a return trap is set here."""
         if self._wait_for_mainpyfile:
             return
         frame.f_locals['__return__'] = return_value
+        #print self.stdout
         #print >>self.stdout, '--Return--'
         self.interaction(frame, None)
 
     def user_exception(self, frame, exc_info):
-        print "user_exception"
+        #print "user_exception"
         """This function is called if an exception occurs,
         but only if we are to stop at or just below this level."""
         if self._wait_for_mainpyfile:
@@ -183,13 +189,14 @@ class Debugger(bdb.Bdb):
             exc_type_name = exc_type
         else:
             exc_type_name = exc_type.__name__
+        #print self.stdout
         #print >>self.stdout, exc_type_name + ':', _saferepr(exc_value)
         self.interaction(frame, exc_traceback)
 
     def interaction(self, frame, traceback):
         self.setup(frame, traceback)
         self.set_until(self.curframe)
-        print "interaction"
+        #print "interaction"
         self.loop()
         self.forget()
 
@@ -204,13 +211,13 @@ class Debugger(bdb.Bdb):
         except:
             cmd = input
             arg = ''
-        print cmd
+        #print cmd
         #print arg
 
         if cmd:
             return self.handle_input(cmd, arg)
         else:
-            print "restarting"
+            #print "restarting"
             #self._socket.shutdown(socket.SHUT_RDWR)
             #self._connection.close()
             #self._socket.close()
@@ -230,10 +237,10 @@ class Debugger(bdb.Bdb):
             self.step()
             return 0
         elif cmd == "LOCALS":
-            self.send_variables(cmd)
+            self.get_variables(cmd)
             return 1
         elif cmd == "GLOBALS":
-            self.send_variables(cmd)
+            self.get_variables(cmd)
             return 1
         elif cmd == "QUIT":
             self.quit()
@@ -242,6 +249,10 @@ class Debugger(bdb.Bdb):
 
     def start_debug(self, filename):
         self.cmd = "DEBUG"
+        self.saved_stdout = sys.stdout
+        self.saved_stdin = sys.stdin
+        sys.stdout = self
+        sys.stdin = self
         self._wait_for_mainpyfile = 1
         self.mainpyfile = self.canonic(filename)
         self._user_requested_quit = 0
@@ -249,17 +260,20 @@ class Debugger(bdb.Bdb):
         self.run(statement)
 
     def next(self):
-        print "in next"
+        #print "in next"
         self.cmd = "NEXT"
         self.set_next(self.curframe)
 
     def step(self):
-        print "in step"
+        #print "in step"
         self.cmd = "STEP"
         self.set_step()
 
-    def send_variables(self, cmd_type):
-        stack_list, size = self.get_stack(self.curframe, None)
+    def get_variables(self, cmd_type, frame):
+        stack_list, size = self.get_stack(frame, None)
+        if not stack_list:
+            return []
+
         stack_list.reverse()
         stack_element = stack_list[size - 1]
 
@@ -268,7 +282,7 @@ class Debugger(bdb.Bdb):
         elif cmd_type == "GLOBALS":
             variables = copy.copy(stack_element[0].f_globals)
         variable_list = []
-        print variables
+        #print variables
         blocked_variables = set(['bdb', '__builtins__', 'socket', '__file__', '__builtin__', 'types', '__package__',
                                     'Server', 'sys', 'copy', 'Debugger', 'dbg', '__name__', 'traceback', 'json', 'os', '__doc__'])
         for key in variables.keys():
@@ -277,10 +291,30 @@ class Debugger(bdb.Bdb):
 
         for variable in variables.items():
             variable_list.append(dict(name=variable[0], content=__builtin__.str(variable[1]), type=self.get_var_type(variable[1])))
-        res = dict(cmd=cmd_type, variables=variable_list)
-        self._connection.send_json(res)
+        #res = dict(cmd=cmd_type, variables=variable_list)
+        #self._connection.send_json(res)
+        return variable_list
+
+    # acting as stdout => redirect to client side
+    def write(self, toPrint):
+        # transform eol pattern
+        #if (toPrint == "\n"):
+            #toPrint = "/EOL/"
+        self._connection.send_json(dict(cmd="STDOUT", content=toPrint))
+
+    # acting as stdout => redirect to client side
+    def writeline(self, toPrint):
+        # stdout redirection
+        self.write(toPrint)
+        self.write('\n')
+
+      # stdout flush override
+    def flush(self):
+        pass
 
     def quit(self):
+        sys.stdout = self.saved_stdout
+        sys.stdin = self.saved_stdin
         self.cmd = "QUIT"
         self.set_quit()
 

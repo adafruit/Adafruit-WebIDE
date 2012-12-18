@@ -780,7 +780,8 @@
 
     socket.on('debug-file-response', function(data) {
       toggle_buttons(true);
-      if (data.cmd === "NEXT") {
+      console.log(data);
+      if (data.cmd === "NEXT" || data.cmd === "STEP" || data.cmd === "DEBUG") {
         var Range = require("ace/range").Range;
         var rg = new Range(data.line_no - 1, 0, data.line_no, 0);
         editor.session.removeMarker(markerId);
@@ -790,7 +791,9 @@
         });
         editor.focus();
       } else if (data.cmd === "LOCALS" || data.cmd === "GLOBALS") {
-        console.log(data);
+        //console.log(data);
+      } else if (data.cmd === "STDOUT") {
+        //console.log(data.content);
       }
     });
 
@@ -828,6 +831,15 @@
       }
     }
 
+    function debug_step_in(event) {
+      event.preventDefault();
+      if (is_link_active($(this))) {
+        toggle_buttons(false);
+        console.log('step in');
+        socket.emit('debug-command', {command: "STEP"});
+      }
+    }
+
     function debug_close(event) {
       event.preventDefault();
       //$('#editor-wrapper').show();
@@ -848,7 +860,9 @@
 
     $(document).off('click touchstart', '.debug-run');
     $(document).off('click touchstart', '.debug-step-over');
+    $(document).off('click touchstart', '.debug-step-in');
     $(document).off('click touchstart', '.debug-stop');
+    $(document).on('click touchstart', '.debug-step-in', debug_step_in);
     $(document).on('click touchstart', '.debug-step-over', debug_step_over);
     $(document).on('click touchstart', '.debug-run', debug_run);
     $(document).on('click touchstart', '.debug-stop', debug_close);
