@@ -778,7 +778,7 @@
       }
     }
 
-    socket.on('debug-file-response', function(data) {
+    function debug_file_response(data) {
       toggle_buttons(true);
       console.log(data);
       if (data.cmd === "NEXT" || data.cmd === "STEP" || data.cmd === "DEBUG") {
@@ -786,16 +786,24 @@
         var rg = new Range(data.line_no - 1, 0, data.line_no, 0);
         editor.session.removeMarker(markerId);
         markerId = editor.session.addMarker(rg, "debug-line", "line", false);
+        if (data.locals) {
+          $('#variables-wrapper').text(data.variables);
+        }
         editor.renderer.scrollToLine(data.line_no, true, true, function() {
-
         });
-        editor.focus();
-      } else if (data.cmd === "LOCALS" || data.cmd === "GLOBALS") {
-        //console.log(data);
       } else if (data.cmd === "STDOUT") {
         //console.log(data.content);
+        $('#editor-output div pre').append(webide_utils.fix_console(data.content));
+        $("#editor-output").animate({ scrollTop: $(document).height() }, "fast");
+        $("#editor-output").scrollTop($(document).height());
       }
-    });
+      editor.focus();
+    }
+
+    //clear out any listeners hanging around before creating a new one for this debug session.
+    socket.removeListener('debug-file-response', debug_file_response);
+
+    socket.on('debug-file-response', debug_file_response);
 
     function get_breakpoints() {
       var editor_breakpoints = editor.getSession().getBreakpoints();
@@ -853,6 +861,8 @@
       $(document).off('click touchstart', '.debug-stop', debug_close);
     }
 
+    $('#editor-output .outputTitleBar .left-title').html('Debug Output');
+    $('#editor-output .outputTitleBar .right-title').html('Debug Variables');
     occEditor.show_editor_output();
     editor.resize();
     $('#editor-bar').html(templates.editor_bar_debug_file);
@@ -1139,9 +1149,11 @@
     if (!editor_output_visible) {
       editor_output_visible = true;
       $('#editor-output-wrapper').show();
+      $('#editor-output pre').html('');
+      $('#editor-output #variables-wrapper').html('');
       $('#editor-output').height('325px');
       $('.dragbar').show();
-      $('#editor-output div').css('padding', '10px');
+      $('#editor-output #pre-wrapper, #editor-output #variables-wrapper').css('padding', '10px');
       $('#editor').css('bottom', '328px');
       editor.resize();
     }

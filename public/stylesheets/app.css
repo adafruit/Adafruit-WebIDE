@@ -534,6 +534,56 @@ a.navigator-settings i.settings-enabled {
   height: 0;
 }
 
+#editor-output .outputTitleBar {
+  position: absolute;
+  background-color: #323233;
+  height: 20px;
+  top: 0;
+  right: 0;
+  left: 0;
+  padding: 0;
+  font-size: 11px;
+  color: #E4E5E7;
+}
+
+#editor-output .outputTitleBar .left-title {
+  position: absolute;
+  left: 0;
+  right: 50%;
+  bottom: 0;
+  top: 0;
+  padding-left: 10px;
+}
+
+#editor-output .outputTitleBar .right-title {
+  position: absolute;
+  left: 50%;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  padding-left: 10px;
+  border-left: 1px solid #EDEDED;
+}
+
+#pre-wrapper {
+  position: absolute;
+  left: 0;
+  right: 50%;
+  bottom: 0;
+  top: 20px;
+}
+
+#variables-wrapper {
+  position: absolute;
+  left: 50%;
+  right: 0;
+  top: 20px;
+  bottom: 0;
+  border-left: 1px solid #EDEDED;
+  background-color: #1A1A1A;
+  color: #E4E5E7;
+}
+
 #editor-output pre {
   display: inline;
   color: #E4E5E7;
