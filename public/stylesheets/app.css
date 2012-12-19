@@ -571,6 +571,7 @@ a.navigator-settings i.settings-enabled {
   right: 50%;
   bottom: 0;
   top: 20px;
+  overflow: auto;
 }
 
 #variables-wrapper {
