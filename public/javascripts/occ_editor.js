@@ -793,9 +793,9 @@
         });
       } else if (data.cmd === "STDOUT") {
         //console.log(data.content);
-        $('#editor-output div pre').append(webide_utils.fix_console(data.content));
-        $("#editor-output").animate({ scrollTop: $(document).height() }, "fast");
-        $("#editor-output").scrollTop($(document).height());
+        $('#editor-output div pre').append(data.content);
+        $("#pre-wrapper").animate({ scrollTop: $(document).height() }, "fast");
+        $("#pre-wrapper").scrollTop($(document).height());
       }
       editor.focus();
     }
