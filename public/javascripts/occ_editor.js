@@ -800,11 +800,6 @@
       editor.focus();
     }
 
-    //clear out any listeners hanging around before creating a new one for this debug session.
-    socket.removeListener('debug-file-response', debug_file_response);
-
-    socket.on('debug-file-response', debug_file_response);
-
     function get_breakpoints() {
       var editor_breakpoints = editor.getSession().getBreakpoints();
       var breakpoints = [];
@@ -857,7 +852,12 @@
       editor.resize();
       editor.focus();
       occEditor.populate_editor(file);
+
+      //clean up listeners
+      socket.removeAllListeners('debug-file-response');
       $(document).off('click touchstart', '.debug-step-over', debug_step_over);
+      $(document).off('click touchstart', '.debug-step-in', debug_step_in);
+      $(document).off('click touchstart', '.debug-run', debug_run);
       $(document).off('click touchstart', '.debug-stop', debug_close);
     }
 
@@ -867,6 +867,10 @@
     editor.resize();
     $('#editor-bar').html(templates.editor_bar_debug_file);
     socket.emit('debug-file', {file: file});
+
+    //clear out any listeners hanging around before creating a new one for this debug session.
+    socket.removeAllListeners('debug-file-response');
+    socket.on('debug-file-response', debug_file_response);
 
     $(document).off('click touchstart', '.debug-run');
     $(document).off('click touchstart', '.debug-step-over');

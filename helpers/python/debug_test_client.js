@@ -12,8 +12,13 @@ debug_client.connect(PORT, HOST, function() {
   debug_client.write('DEBUG,' + file_path + '\n');
   debug_client.write('NEXT\n');
   debug_client.write('NEXT\n');
-  debug_client.write('NEXT\n');
-  debug_client.write('NEXT\n');
+  debug_client.write('QUIT\n');
+
+  setTimeout(function() {
+    debug_client.write('QUIT\n');
+    debug_client.write('DEBUG,' + file_path + '\n');
+    debug_client.write('NEXT\n');
+  }, 2000);
 
   //debug_client.write('NEXT\n');
   //debug_client.write('NEXT\n');

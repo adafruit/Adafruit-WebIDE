@@ -2,7 +2,6 @@
 # It is also inspired, and contains code snippets from the GNU GPL v2 jpydbg remote debugging library plugin for jedit and netbeans.
 
 import bdb
-import os
 import sys
 import traceback
 import socket
@@ -10,6 +9,7 @@ import types
 import __builtin__
 import json
 import copy
+
 
 #class Restart(Exception):
 #    """Causes a debugger to be restarted for the debugged python program."""
@@ -25,7 +25,13 @@ class Server:
 
     def send_json(self, data):
         res = json.dumps(data, indent=None)
-        self._connection.send(res + '\n')
+        try:
+            self._connection.send(res + '\n')
+        except socket.error:
+            #not much we can do here...maybe TODO...
+            pass
+        except IOError:
+            pass
 
     def read_net_buffer(self):
         """ reading on network socket """
@@ -64,11 +70,13 @@ class Server:
     def close(self):
         self._connection.close()
 
+
 # Debugger is inspired by pdb and jpydbg.  Methods used, and modified.  Mostly a big fork of jpydbg
 class Debugger(bdb.Bdb):
     def __init__(self, skip=None):
         bdb.Bdb.__init__(self, skip=skip)
         self._wait_for_mainpyfile = 0
+        self._debug_active = 0
         self._connection = None
         self._socket = None
         self.cmd = None
@@ -217,13 +225,9 @@ class Debugger(bdb.Bdb):
         if cmd:
             return self.handle_input(cmd, arg)
         else:
-            #print "restarting"
-            #self._socket.shutdown(socket.SHUT_RDWR)
-            #self._connection.close()
-            #self._socket.close()
-            #self.forget()
-            #self.quit()
-            self._runscript()
+            #connection reset, let's setup a new listener
+            self._socket.close()
+            self.start_debugger()
         return 1
 
     def handle_input(self, cmd, arg):
@@ -243,12 +247,12 @@ class Debugger(bdb.Bdb):
             self.get_variables(cmd)
             return 1
         elif cmd == "QUIT":
-            self.quit()
-            return 0
+            return self.quit()
         return 1
 
     def start_debug(self, filename):
         self.cmd = "DEBUG"
+        self._debug_active = 1
         self.saved_stdout = sys.stdout
         self.saved_stdin = sys.stdin
         sys.stdout = self
@@ -257,6 +261,7 @@ class Debugger(bdb.Bdb):
         self.mainpyfile = self.canonic(filename)
         self._user_requested_quit = 0
         statement = 'execfile(%r)' % filename
+        self.reset()
         self.run(statement)
 
     def next(self):
@@ -313,12 +318,17 @@ class Debugger(bdb.Bdb):
         pass
 
     def quit(self):
-        sys.stdout = self.saved_stdout
-        sys.stdin = self.saved_stdin
-        self.cmd = "QUIT"
-        self.set_quit()
+        if self._debug_active:
+            self.cmd = "QUIT"
+            sys.stdout = self.saved_stdout
+            sys.stdin = self.saved_stdin
+            self.set_quit()
+            self._debug_active = 0
+            return 0
+        else:
+            return 1
 
-    def _runscript(self):
+    def start_debugger(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind(('127.0.0.1', 5000))
@@ -402,4 +412,4 @@ class Debugger(bdb.Bdb):
 # When invoked as main program, invoke the debugger on a script
 if __name__ == '__main__':
     dbg = Debugger()
-    dbg._runscript()
+    dbg.start_debugger()
