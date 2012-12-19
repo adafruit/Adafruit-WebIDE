@@ -11,6 +11,7 @@ var spawn = require('child_process').spawn,
 exports.kill_debug = function() {
   if (debug_program && debug_program.pid) {
     debug_program.kill('SIGHUP');
+    debug_program = null;
   }
 };
 
@@ -51,6 +52,7 @@ exports.start_debug = function(file, socket) {
 function connect_client(file, socket) {
   var file_path = path.resolve(__dirname + "/../../repositories/" + file.path.replace('/filesystem/', ''));
   console.log("connect_client");
+
   if (!debug_client) {
     debug_client = new net.Socket();
     debug_client.connect(PORT, HOST, function() {
@@ -94,6 +96,15 @@ function connect_client(file, socket) {
     return;
   }
 }
+
+exports.client_disconnect = function() {
+  console.log("111111111CLIENT DESTROYED CLIENT DESTROYED CLIENT DESTROYED");
+  if (debug_client && client_connected) {
+    debug_client.destroy();
+    console.log("CLIENT DESTROYED CLIENT DESTROYED CLIENT DESTROYED");
+    debug_client = null;    
+  }
+};
 
 exports.debug_command = function(data, socket) {
   console.log(data.command);
