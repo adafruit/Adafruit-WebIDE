@@ -310,6 +310,11 @@ function socket_listeners() {
     socket.emit('cwd-init', {dirname: REPOSITORY_PATH});
     scheduler.emit_scheduled_jobs(socket.handshake.session.username, socket);
 
+    socket.on('disconnect', function() {
+      debug_helper.client_disconnect();
+      debug_helper.kill_debug();
+    });
+
     //listen for events
     socket.on('git-delete', function(data) {
       git_helper.remove_commit_push(data.file, function(err, status) {
