@@ -63,6 +63,7 @@ echo "**** (to uninstall service, execute: 'sudo update-rc.d -f adafruit-webide.
 cp "$WEBIDE_ROOT/scripts/adafruit-webide.sh" "/etc/init.d"
 cd /etc/init.d
 chmod 755 adafruit-webide.sh
+sed -i 's/which node/which nodejs/g' adafruit-webide.sh
 update-rc.d adafruit-webide.sh defaults
 
 #Check if port 80 is in use, use 3000 if so.
