@@ -11,10 +11,6 @@ import json
 import copy
 
 
-#class Restart(Exception):
-#    """Causes a debugger to be restarted for the debugged python program."""
-#    pass
-
 # Server class heavily inspired by jpydbg, a GPL'd debugging framework for
 # python that interfaces with java front-ends
 # http://jpydbg.cvs.sourceforge.net/viewvc/jpydbg/jpydebugforge/src/python/jpydbg/dbgutils.py?view=markup
@@ -148,7 +144,6 @@ class Debugger(bdb.Bdb):
         ret = dict(cmd=__builtin__.str(self.cmd), fn=fn, name=name,
                     line=line, line_no=__builtin__.str(frame.f_lineno), locals=local_variables)
         self._connection.send_json(ret)
-        #print self.stdout
         self.interaction(frame, None)
 
     def bp_commands(self, frame):
@@ -180,9 +175,16 @@ class Debugger(bdb.Bdb):
         """This function is called when a return trap is set here."""
         if self._wait_for_mainpyfile:
             return
+        import linecache
+        fn = self.canonic(frame.f_code.co_filename)
+        if not fn:
+            fn = '???'
         frame.f_locals['__return__'] = return_value
-        #print self.stdout
-        #print >>self.stdout, '--Return--'
+        line = linecache.getline(fn, frame.f_lineno)
+        local_variables = self.get_variables("LOCALS", frame)
+        ret = dict(cmd=__builtin__.str(self.cmd), fn=fn, return_value=__builtin__.str(return_value),
+                    line=line, line_no=__builtin__.str(frame.f_lineno), locals=local_variables)
+        self._connection.send_json(ret)
         self.interaction(frame, None)
 
     def user_exception(self, frame, exc_info):
@@ -211,7 +213,6 @@ class Debugger(bdb.Bdb):
     def loop(self):
         while (self.wait_for_input(self._connection.receive())):
             pass
-        #self._connection.close()
 
     def wait_for_input(self, input):
         try:
@@ -235,11 +236,9 @@ class Debugger(bdb.Bdb):
             self.start_debug(arg)
             return 1
         elif cmd == "NEXT":
-            self.next()
-            return 0
+            return self.next()
         elif cmd == "STEP":
-            self.step()
-            return 0
+            return self.step()
         elif cmd == "LOCALS":
             self.get_variables(cmd)
             return 1
@@ -262,17 +261,28 @@ class Debugger(bdb.Bdb):
         self._user_requested_quit = 0
         statement = 'execfile(%r)' % filename
         self.reset()
-        self.run(statement)
+        try:
+            self.run(statement)
+            self._connection.send_json(dict(cmd="COMPLETE", content="EMPTY"))
+            sys.stdout = self.saved_stdout
+            sys.stdin = self.saved_stdin
+            self._debug_active = 0
+        except:
+            self._connection.send_json(dict(cmd="ERROR_COMPLETE", content="EMPTY"))
 
     def next(self):
-        #print "in next"
-        self.cmd = "NEXT"
-        self.set_next(self.curframe)
+        if self._debug_active:
+            self.cmd = "NEXT"
+            self.set_next(self.curframe)
+            return 0
+        return 1
 
     def step(self):
-        #print "in step"
-        self.cmd = "STEP"
-        self.set_step()
+        if self._debug_active:
+            self.cmd = "STEP"
+            self.set_step()
+            return 0
+        return 1
 
     def get_variables(self, cmd_type, frame):
         stack_list, size = self.get_stack(frame, None)
