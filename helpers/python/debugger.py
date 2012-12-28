@@ -116,9 +116,10 @@ class Debugger(bdb.Bdb):
             return
         if self.stop_here(frame):
             local_variables = self.get_variables("LOCALS", frame)
+            global_variables = self.get_variables("GLOBALS", frame)
             #print self.stdout
             ret = dict(cmd=__builtin__.str(self.cmd), method="user_call", fn=fn, name=name,
-                        line_no=__builtin__.str(frame.f_lineno), locals=local_variables)
+                        line_no=__builtin__.str(frame.f_lineno), locals=local_variables, globals=global_variables)
             self._connection.send_json(ret)
             self.interaction(frame, None)
 
@@ -141,8 +142,9 @@ class Debugger(bdb.Bdb):
         # populate info to client side
         line = linecache.getline(fn, frame.f_lineno)
         local_variables = self.get_variables("LOCALS", frame)
+        global_variables = self.get_variables("GLOBALS", frame)
         ret = dict(cmd=__builtin__.str(self.cmd), fn=fn, name=name,
-                    line=line, line_no=__builtin__.str(frame.f_lineno), locals=local_variables)
+                    line=line, line_no=__builtin__.str(frame.f_lineno), locals=local_variables, globals=global_variables)
         self._connection.send_json(ret)
         self.interaction(frame, None)
 
@@ -182,8 +184,9 @@ class Debugger(bdb.Bdb):
         frame.f_locals['__return__'] = return_value
         line = linecache.getline(fn, frame.f_lineno)
         local_variables = self.get_variables("LOCALS", frame)
+        global_variables = self.get_variables("GLOBALS", frame)
         ret = dict(cmd=__builtin__.str(self.cmd), fn=fn, return_value=__builtin__.str(return_value),
-                    line=line, line_no=__builtin__.str(frame.f_lineno), locals=local_variables)
+                    line=line, line_no=__builtin__.str(frame.f_lineno), locals=local_variables, globals=global_variables)
         self._connection.send_json(ret)
         self.interaction(frame, None)
 
