@@ -538,6 +538,12 @@
     }
   };
 
+  occEditor.close_terminal = function() {
+    if (is_terminal_open) {
+      terminal_win.destroy();
+    }
+  };
+
   occEditor.open_terminal = function(path, command) {
     if (is_terminal_open) {
       if (command) {
@@ -872,6 +878,7 @@
       $(document).off('click touchstart', '.debug-stop', debug_close);
     }
 
+    occEditor.close_terminal();
     $('#editor-output .outputTitleBar .left-title').html('Debug Output');
     $('#editor-output .outputTitleBar .right-title').html('Debug Variables');
     occEditor.show_editor_output();
