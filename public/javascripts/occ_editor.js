@@ -304,6 +304,13 @@
     $('#schedule-manager').hide();
     $('#editor').css("bottom", 0);
     $('#editor-wrapper').show();
+    $('#variables-wrapper pre').text('');
+    $('#pre-wrapper pre').text('');
+
+    if ($('#variables-wrapper').is(':visible')) {
+      //hide the debugger
+      $('#editor-output-wrapper').hide();
+    }
     editor.resize();
 
     var EditSession = require("ace/edit_session").EditSession;
