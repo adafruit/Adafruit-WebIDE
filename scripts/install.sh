@@ -30,9 +30,9 @@ echo "**** Downloading the latest version of the WebIDE ****"
 curl -L https://github.com/downloads/adafruit/Adafruit-WebIDE/editor-0.2.5.tar.gz | tar xzf -
 
 echo "**** Installing required libraries ****"
-echo "**** (nodejs npm redis-server git restartd libcap2-bin avahi-daemon i2c-tools python-smbus) ****"
+echo "**** (redis-server git restartd libcap2-bin avahi-daemon i2c-tools python-smbus) ****"
 apt-get update
-apt-get install nodejs npm redis-server git restartd libcap2-bin avahi-daemon i2c-tools python-smbus -y
+apt-get install redis-server git restartd libcap2-bin avahi-daemon i2c-tools python-smbus -y
 
 echo "**** Create webide user and group ****"
 groupadd webide || true
@@ -63,8 +63,19 @@ echo "**** (to uninstall service, execute: 'sudo update-rc.d -f adafruit-webide.
 cp "$WEBIDE_ROOT/scripts/adafruit-webide.sh" "/etc/init.d"
 cd /etc/init.d
 chmod 755 adafruit-webide.sh
-sed -i 's/which node/which nodejs/g' adafruit-webide.sh
+
+NODE_PATH=""
+if (( $(dpkg --print-architecture) == "armhf" )); then
+  NODE_PATH="\/usr\/share\/adafruit\/webide\/bin\/node_hf\/node"
+else
+  NODE_PATH="\/usr\/share\/adafruit\/webide\/bin\/node_sf\/node"
+fi
+sed -i "s/NODE_PATH/$NODE_PATH/g" adafruit-webide.sh
+
 update-rc.d adafruit-webide.sh defaults
+
+#set binaries as executable
+chmod +x NODE_PATH
 
 #Check if port 80 is in use, use 3000 if so.
 PORT_USED=""

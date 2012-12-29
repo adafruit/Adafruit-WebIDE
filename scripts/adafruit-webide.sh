@@ -24,7 +24,9 @@ DESC="Adafruit WebIDE server"
 NODEUSER=webide:webide
 LOCAL_VAR_RUN="/var/run"
 NAME=adafruit-webide
-DAEMON=$(which node)
+# NOTE:
+# If you manually install, you need to set this to the correct path!
+DAEMON=NODE_PATH
 
 # Do NOT "set -e"
 
