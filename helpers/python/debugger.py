@@ -73,6 +73,7 @@ class Debugger(bdb.Bdb):
         bdb.Bdb.__init__(self, skip=skip)
         self._wait_for_mainpyfile = 0
         self._debug_active = 0
+        self.exception_raised = 0
         self._connection = None
         self._socket = None
         self.cmd = None
@@ -196,15 +197,45 @@ class Debugger(bdb.Bdb):
         but only if we are to stop at or just below this level."""
         if self._wait_for_mainpyfile:
             return
-        exc_type, exc_value, exc_traceback = exc_info
-        frame.f_locals['__exception__'] = exc_type, exc_value
-        if type(exc_type) == type(''):
-            exc_type_name = exc_type
+        if self.cmd == "NEXT" or self.cmd == "STEP":
+            self.set_step()
+            sys.settrace(self.trace_dispatch)
         else:
-            exc_type_name = exc_type.__name__
-        #print self.stdout
-        #print >>self.stdout, exc_type_name + ':', _saferepr(exc_value)
-        self.interaction(frame, exc_traceback)
+            self.populate_exception(exc_info)
+            self.set_continue()
+        #self.interaction(frame, None)
+
+    def populate_exception(self, exc_info):
+        # self.trace("exception populated")
+        if (self.exceptionRaised == 0):  # exception not yet processed
+            extype = exc_info[0]
+            details = exc_info[1]
+
+            # Deal With SystemExit in specific way to reflect debuggee's return
+            if issubclass(extype, SystemExit):
+                content = 'System Exit REQUESTED BY DEBUGGEE  =' + str(details)
+            elif issubclass(extype, SyntaxError):
+                content = __builtin__.str(details)
+                error = details[0]
+                compd = details[1]
+                content = 'SOURCE:SYNTAXERROR:"' + \
+                       __builtin__.str(compd[0]) + '":(' + \
+                       __builtin__.str(compd[1]) + ',' + \
+                       __builtin__.str(compd[2]) + \
+                       ')' + ':' + error
+            elif issubclass(extype, NameError):
+                content = 'SOURCE:NAMEERROR:' + __builtin__.str(details)
+            elif issubclass(extype, ImportError):
+                content = 'SOURCE::IMPORTERROR:' + __builtin__.str(details)
+            else:
+                content = __builtin__.str(details)
+
+            self.send_exception(content)
+            self.exception_raised = 1  # set ExceptionFlag On
+
+    def send_exception(self, exc_details):
+        ret = dict(cmd="EXCEPTION", content=exc_details)
+        self._connection.send_json(ret)
 
     def interaction(self, frame, traceback):
         self.setup(frame, traceback)
@@ -271,7 +302,12 @@ class Debugger(bdb.Bdb):
             sys.stdin = self.saved_stdin
             self._debug_active = 0
         except:
+            tb, exctype, value = sys.exc_info()
+            exc_trace = __builtin__.str(traceback.format_exception(tb, exctype, value))
+            self.send_exception(exc_trace)
             self._connection.send_json(dict(cmd="ERROR_COMPLETE", content="EMPTY"))
+            self._debug_active = 0
+            pass
 
     def next(self):
         if self._debug_active:

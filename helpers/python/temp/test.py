@@ -1,2 +1,2 @@
-print "Line 1"
+prints "Line 1"
 print "Line 2"
