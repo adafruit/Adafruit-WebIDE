@@ -35,6 +35,7 @@
                                       '<a href="" class="schedule-file"><i class="icon-time"></i> Schedule</a>' +
                                     '</p>',
     "editor_bar_debug_file":        '<p class="editor-bar-actions">' +
+                                      '<a href="" class="debug-restart"><i class="icon-refresh"></i> Save/Restart</a>' +
                                       '<a href="" class="debug-stop"><i class="icon-list-alt"></i> Stop</a>' +
                                       '<a href="" class="debug-run"><i class="icon-play"></i> Run</a>' +
                                       '<a href="" class="debug-step-over"><i class="icon-cogs"></i> Step Over</a>' +
@@ -84,6 +85,7 @@
   };
 
   occEditor.path = null;
+  occEditor.is_debug_active = false;
 
   occEditor.cwd = function() {
     var cwd;
@@ -151,6 +153,10 @@
         name: "save",
         bindKey: {win: "Ctrl-S", mac: "Command-S"},
         exec: function() {
+          if (occEditor.is_debug_active) {
+            occEditor.debug_save_restart();
+            return;
+          }
           occEditor.save_file();
         }
     });
@@ -298,18 +304,16 @@
   };
 
   occEditor.populate_editor = function(file, content) {
-
     $('#trace-wrapper').hide();
     $('#editor').show();
     $('#schedule-manager').hide();
     $('#editor').css("bottom", 0);
     $('#editor-wrapper').show();
-    $('#variables-wrapper pre').text('');
-    $('#pre-wrapper pre').text('');
 
-    if ($('#variables-wrapper').is(':visible')) {
+
+    if (occEditor.is_debug_active) {
       //hide the debugger
-      $('#editor-output-wrapper').hide();
+      occEditor.debug_close();
     }
     editor.resize();
 
@@ -415,6 +419,10 @@
     }
 
     function editor_bar_actions(event, file) {
+      if (occEditor.is_debug_active) {
+        return;
+      }
+      
       if (file.extension) {
         if (is_script(file.extension)) {
           $editor_bar.html(templates.editor_bar_interpreted_file);
@@ -772,12 +780,21 @@
     $(document).on('click touchstart', '.close-trace', close_trace);
   };
 
+  //called after hitting ctrl-s or clicking save/restart
+  occEditor.debug_save_restart = function() {
+    occEditor.save_file();
+    $('#variables-wrapper pre').text('');
+    $('#pre-wrapper pre').text('');
+
+    var file = $('.file-open').data('file');
+    socket.emit('debug-file', {file: file});
+  };
+
   occEditor.debug_file = function(event) {
     event.preventDefault();
 
     var file = $('.file-open').data('file');
     var markerId;
-    file.content = editor.getSession().getDocument().getValue();
 
     function is_link_active($link) {
       return !$link.hasClass('debug-link-disabled');
@@ -878,25 +895,10 @@
       }
     }
 
-    function debug_close(event) {
-      event.preventDefault();
-      //$('#editor-wrapper').show();
-      socket.emit('debug-command', {command: "QUIT"});
-      editor.session.removeMarker(markerId);
-      occEditor.hide_editor_output();
-      editor.resize();
-      editor.focus();
-      occEditor.populate_editor(file);
 
-      //clean up listeners
-      socket.removeAllListeners('debug-file-response');
-      $(document).off('click touchstart', '.debug-step-over', debug_step_over);
-      $(document).off('click touchstart', '.debug-step-in', debug_step_in);
-      $(document).off('click touchstart', '.debug-run', debug_run);
-      $(document).off('click touchstart', '.debug-stop', debug_close);
-    }
 
     occEditor.close_terminal();
+    occEditor.is_debug_active = true;
     $('#editor-output .outputTitleBar .left-title').html('Debug Output');
     $('#editor-output .outputTitleBar .right-title').html('Debug Variables');
     occEditor.show_editor_output();
@@ -915,7 +917,38 @@
     $(document).on('click touchstart', '.debug-step-in', debug_step_in);
     $(document).on('click touchstart', '.debug-step-over', debug_step_over);
     $(document).on('click touchstart', '.debug-run', debug_run);
-    $(document).on('click touchstart', '.debug-stop', debug_close);
+    $(document).on('click touchstart', '.debug-restart', occEditor.debug_save_restart);
+    $(document).on('click touchstart', '.debug-stop', occEditor.debug_close);
+  };
+
+  occEditor.debug_close = function(event) {
+    if (event) {
+      event.preventDefault();
+    }
+    occEditor.is_debug_active = false;
+
+    $('#variables-wrapper pre').text('');
+    $('#pre-wrapper pre').text('');
+    $('#editor-output-wrapper').hide();
+
+    //$('#editor-wrapper').show();
+    socket.emit('debug-command', {command: "QUIT"});
+    var markers = editor.session.getMarkers();
+    console.log(markers);
+    editor.session.removeMarker(markers);
+    occEditor.hide_editor_output();
+    editor.resize();
+    editor.focus();
+
+    var file = $('.file-open').data('file');
+    occEditor.populate_editor(file);
+
+    //clean up listeners
+    socket.removeAllListeners('debug-file-response');
+    $(document).off('click touchstart', '.debug-step-over');
+    $(document).off('click touchstart', '.debug-step-in');
+    $(document).off('click touchstart', '.debug-run');
+    $(document).off('click touchstart', '.debug-stop');
   };
 
   occEditor.run_file = function(event) {
