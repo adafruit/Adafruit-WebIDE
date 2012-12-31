@@ -371,6 +371,7 @@ class Debugger(bdb.Bdb):
             self.cmd = "QUIT"
             sys.stdout = self.saved_stdout
             sys.stdin = self.saved_stdin
+            self.reset()
             self.set_quit()
             self._debug_active = 0
             return 0
