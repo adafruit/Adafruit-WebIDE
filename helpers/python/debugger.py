@@ -303,7 +303,7 @@ class Debugger(bdb.Bdb):
             self._debug_active = 0
         except:
             tb, exctype, value = sys.exc_info()
-            exc_trace = __builtin__.str(traceback.format_exception(tb, exctype, value))
+            exc_trace = traceback.format_exception(tb, exctype, value)
             self.send_exception(exc_trace)
             self._connection.send_json(dict(cmd="ERROR_COMPLETE", content="EMPTY"))
             self._debug_active = 0

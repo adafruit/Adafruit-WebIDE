@@ -817,9 +817,20 @@
         });
       } else if (data.cmd === "STDOUT") {
         //console.log(data.content);
-        $('#editor-output div pre').append(data.content);
+        $('#editor-output #pre-wrapper pre').append(document.createTextNode(data.content));
         $("#pre-wrapper").animate({ scrollTop: $(document).height() }, "fast");
         $("#pre-wrapper").scrollTop($(document).height());
+      } else if (data.cmd === "EXCEPTION") {
+        if (data.content) {
+          for (var d in data.content) {
+            $('#editor-output #pre-wrapper pre').append(document.createTextNode(data.content[d]));
+          }
+        }
+        
+        $("#pre-wrapper").animate({ scrollTop: $(document).height() }, "fast");
+        $("#pre-wrapper").scrollTop($(document).height());
+      } else if (data.cmd === "COMPLETE" || data.cmd === "ERROR_COMPLETE") {
+
       }
       editor.focus();
     }
