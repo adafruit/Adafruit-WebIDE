@@ -1,12 +1,12 @@
 var spawn = require('child_process').spawn,
     net = require('net'),
-    path = require('path'), 
+    path = require('path'),
     debug_program, debug_client,
     client_connected = false,
     HOST = '127.0.0.1',
     PORT = 5000,
     buffer = '',
-    VALID_COMMANDS = ['NEXT', 'STEP', 'QUIT', 'LOCALS', 'GLOBALS'];
+    VALID_COMMANDS = ['NEXT', 'STEP', 'RUN', 'QUIT', 'LOCALS', 'GLOBALS', 'ADD_BP', 'REMOVE_BP'];
 
 exports.kill_debug = function() {
   if (debug_program && debug_program.pid) {
@@ -49,8 +49,12 @@ exports.start_debug = function(file, socket) {
   }
 };
 
+function get_file_path(file) {
+  return path.resolve(__dirname + "/../../repositories/" + file.path.replace('/filesystem/', ''));
+}
+
 function connect_client(file, socket) {
-  var file_path = path.resolve(__dirname + "/../../repositories/" + file.path.replace('/filesystem/', ''));
+  var file_path = get_file_path(file);
   console.log("connect_client");
 
   if (!debug_client) {
@@ -61,7 +65,7 @@ function connect_client(file, socket) {
       console.log('connected to python debugger: ' + HOST + ':' + PORT);
       console.log(file_path);
 
-      debug_client.write('DEBUG,' + file_path + '\n');
+      debug_client.write('DEBUG\t' + file_path + '\n');
     });
 
     debug_client.on('data', function(data) {
@@ -98,23 +102,23 @@ function connect_client(file, socket) {
 }
 
 exports.client_disconnect = function() {
-  console.log("111111111CLIENT DESTROYED CLIENT DESTROYED CLIENT DESTROYED");
   if (debug_client && client_connected) {
     debug_client.destroy();
-    console.log("CLIENT DESTROYED CLIENT DESTROYED CLIENT DESTROYED");
-    debug_client = null;    
+    debug_client = null;
   }
 };
 
 exports.debug_command = function(data, socket) {
   console.log(data.command);
-  if (data.breakpoints) {
-    console.log(data.breakpoints);
-  }
+
   if (debug_client) {
     if (VALID_COMMANDS.indexOf(data.command) !== -1) {
+      if (data.command === "ADD_BP" || data.command === "REMOVE_BP") {
+        var file_path = get_file_path(data.file);
+        data.command = data.command + '\t' + file_path + '~' + data.line_no;
+      }
+
       debug_client.write(data.command + '\n');
-      //debug_client.write("LOCALS\n");
     }
   } else {
     //TODO, handle re-connect

@@ -250,7 +250,7 @@ class Debugger(bdb.Bdb):
 
     def wait_for_input(self, input):
         try:
-            cmd, arg = input.split(",")
+            cmd, arg = input.split("\t")
         except:
             cmd = input
             arg = ''
@@ -273,6 +273,14 @@ class Debugger(bdb.Bdb):
             return self.next()
         elif cmd == "STEP":
             return self.step()
+        elif cmd == "RUN":
+            return self.start_run()
+        elif cmd == "ADD_BP":
+            self.add_breakpoint(arg)
+            return 1
+        elif cmd == "REMOVE_BP":
+            self.remove_breakpoint(arg)
+            return 1
         elif cmd == "LOCALS":
             self.get_variables(cmd)
             return 1
@@ -309,6 +317,11 @@ class Debugger(bdb.Bdb):
             self._debug_active = 0
             pass
 
+    def start_run(self):
+        if self._debug_active:
+            self.cmd = "RUN"
+            self.set_continue()
+
     def next(self):
         if self._debug_active:
             self.cmd = "NEXT"
@@ -322,6 +335,16 @@ class Debugger(bdb.Bdb):
             self.set_step()
             return 0
         return 1
+
+    def add_breakpoint(self, arg):
+        filename, line_no = arg.split('~')
+        canonic_file = self.canonic(filename)
+        self.set_break(canonic_file, int(line_no))
+
+    def remove_breakpoint(self, arg):
+        filename, line_no = arg.split('~')
+        canonic_file = self.canonic(filename)
+        self.clear_break(canonic_file, int(line_no))
 
     def get_variables(self, cmd_type, frame):
         stack_list, size = self.get_stack(frame, None)

@@ -12,13 +12,13 @@ function connect() {
     console.log('connected to python debugger: ' + HOST + ':' + PORT);
     console.log(file_path);
 
-    debug_client.write('DEBUG,' + file_path + '\n');
-    debug_client.write('NEXT\n');
-    debug_client.write('NEXT\n');
+    debug_client.write('DEBUG\t' + file_path + '\n');
+    debug_client.write('ADD_BP\t' + file_path + '~13\n');
+    debug_client.write('RUN\n');
     debug_client.write('NEXT\n');
  
- debug_client.write('NEXT\n');
- debug_client.write('NEXT\n');
+    debug_client.write('NEXT\n');
+    debug_client.write('NEXT\n');
     //debug_client.write('NEXT\n');
     //debug_client.write('NEXT\n');
     //debug_client.write('NEXT\n');
@@ -27,20 +27,6 @@ function connect() {
     //debug_client.write('NEXT\n');
     //debug_client.write('NEXT\n');
 
-    /*client.write('NEXT\n');
-    client.write('LOCALS\n');
-    client.write('NEXT\n');
-    client.write('LOCALS\n');
-    client.write('NEXT\n');
-    client.write('LOCALS\n');
-    client.write('NEXT\n');
-    client.write('GLOBALS\n'); 
-    client.write('NEXT\n');
-    client.write('NEXT\n');
-    client.write('NEXT\n');      
-    client.write('QUIT\n');*/
-    //client.write('DEBUG,/Users/jwcooper/dev/apps/OccEditor/helpers/python/temp/test.py\n');
-    //client.write('NEXT\n');    
   });
 
   // Add a 'data' event handler for the client socket

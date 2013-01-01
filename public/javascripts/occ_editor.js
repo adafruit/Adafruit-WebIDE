@@ -36,7 +36,7 @@
                                     '</p>',
     "editor_bar_debug_file":        '<p class="editor-bar-actions">' +
                                       '<a href="" class="debug-restart"><i class="icon-refresh"></i> Save/Restart</a>' +
-                                      '<a href="" class="debug-stop"><i class="icon-list-alt"></i> Stop</a>' +
+                                      '<a href="" class="debug-stop"><i class="icon-list-alt"></i> Exit</a>' +
                                       '<a href="" class="debug-run"><i class="icon-play"></i> Run</a>' +
                                       '<a href="" class="debug-step-over"><i class="icon-cogs"></i> Step Over</a>' +
                                       '<a href="" class="debug-step-in"><i class="icon-sitemap"></i> Step In</a>' +
@@ -200,26 +200,38 @@
     });
 
     editor.on("guttermousedown", function(e) {
-        var target = e.domEvent.target;
-        if (target.className.indexOf("ace_gutter-cell") == -1) {
-            return;
-        }
-        if (!editor.isFocused()) {
-            return;
-        }
-        if (e.clientX > 25 + target.getBoundingClientRect().left) {
-            return;
-        }
+      if (!occEditor.is_debug_active) {
+        return;
+      }
 
-        var row = e.getDocumentPosition().row;
-        var breakpoints = e.editor.session.getBreakpoints();
+      var target = e.domEvent.target;
+      if (target.className.indexOf("ace_gutter-cell") == -1) {
+          return;
+      }
+      if (!editor.isFocused()) {
+          return;
+      }
+      if (e.clientX > 25 + target.getBoundingClientRect().left) {
+          return;
+      }
 
-        if (breakpoints.length > row && breakpoints[row]) {
-          e.editor.session.clearBreakpoint(row);
-        } else {
-          e.editor.session.setBreakpoint(row);
+      var row = e.getDocumentPosition().row;
+      var breakpoints = e.editor.session.getBreakpoints();
+
+      var file = $('.file-open').data('file');
+
+      if (breakpoints.length > row && breakpoints[row]) {
+        e.editor.session.clearBreakpoint(row);
+        if (occEditor.is_debug_active) {
+          socket.emit('debug-command', {command: "REMOVE_BP", file: file, line_no: (row+1)});
         }
-        e.stop();
+      } else {
+        e.editor.session.setBreakpoint(row);
+        if (occEditor.is_debug_active) {
+          socket.emit('debug-command', {command: "ADD_BP", file: file, line_no: (row+1)});
+        }
+      }
+      e.stop();
     });
 
     socket.on('connect', function () {
@@ -422,7 +434,7 @@
       if (occEditor.is_debug_active) {
         return;
       }
-      
+
       if (file.extension) {
         if (is_script(file.extension)) {
           $editor_bar.html(templates.editor_bar_interpreted_file);
@@ -780,9 +792,26 @@
     $(document).on('click touchstart', '.close-trace', close_trace);
   };
 
+  occEditor.debug_toggle_buttons = function(active, completed) {
+    if (active) {
+      $('.debug-run, .debug-step-over, .debug-step-in, .debug-restart').removeClass('debug-link-disabled');
+    } else {
+      $('.debug-run, .debug-step-over, .debug-step-in, .debug-restart').addClass('debug-link-disabled');
+    }
+
+    if (completed) {
+      $('.debug-restart').removeClass('debug-link-disabled');
+    }
+  };
+
   //called after hitting ctrl-s or clicking save/restart
-  occEditor.debug_save_restart = function() {
+  occEditor.debug_save_restart = function(event) {
+    if (event) {
+      event.preventDefault();
+    }
+    occEditor.debug_toggle_buttons(false);
     occEditor.save_file();
+
     $('#variables-wrapper pre').text('');
     $('#pre-wrapper pre').text('');
 
@@ -800,14 +829,6 @@
       return !$link.hasClass('debug-link-disabled');
     }
 
-    function toggle_buttons(active) {
-      if (active) {
-        $('.debug-run, .debug-step-over, .debug-step-in').removeClass('debug-link-disabled');
-      } else {
-        $('.debug-run, .debug-step-over, .debug-step-in').addClass('debug-link-disabled');
-      }
-    }
-
     function populate_variables(data) {
       $('#variables-wrapper pre').text("");
       for (var i=0; i<data.length; i++) {
@@ -820,9 +841,9 @@
     }
 
     function debug_file_response(data) {
-      toggle_buttons(true);
+      occEditor.debug_toggle_buttons(true);
       console.log(data);
-      if (data.cmd === "NEXT" || data.cmd === "STEP" || data.cmd === "DEBUG") {
+      if (data.cmd === "NEXT" || data.cmd === "STEP" || data.cmd === "DEBUG" || data.cmd === "RUN") {
         var Range = require("ace/range").Range;
         var rg = new Range(data.line_no - 1, 0, data.line_no, 0);
         editor.session.removeMarker(markerId);
@@ -835,8 +856,6 @@
       } else if (data.cmd === "STDOUT") {
         //console.log(data.content);
         $('#editor-output #pre-wrapper pre').append(document.createTextNode(data.content));
-        $("#pre-wrapper").animate({ scrollTop: $(document).height() }, "fast");
-        $("#pre-wrapper").scrollTop($(document).height());
       } else if (data.cmd === "EXCEPTION") {
         if (data.content) {
           for (var d in data.content) {
@@ -844,21 +863,38 @@
           }
         }
         
-        $("#pre-wrapper").animate({ scrollTop: $(document).height() }, "fast");
-        $("#pre-wrapper").scrollTop($(document).height());
-      } else if (data.cmd === "COMPLETE" || data.cmd === "ERROR_COMPLETE") {
 
+      } else if (data.cmd === "COMPLETE" || data.cmd === "ERROR_COMPLETE") {
+        occEditor.debug_toggle_buttons(false, true);
+        var markers = editor.session.getMarkers();
+        for (var id in markers) {
+          if (markers[id].clazz === "debug-line") {
+            editor.session.removeMarker(id);
+          }
+        }
+        
+        var message = "";
+        if (data.cmd === "COMPLETE") {
+          message = "--- Program Completed Successfully ---";
+        } else {
+          message = "--- Program Exited with an Exception ---";
+        }
+        
+        $('#editor-output #pre-wrapper pre').append(document.createTextNode(message));
       }
+
+      $("#pre-wrapper").animate({ scrollTop: $(document).height() }, "fast");
+      $("#pre-wrapper").scrollTop($(document).height());
       editor.focus();
     }
 
     function get_breakpoints() {
       var editor_breakpoints = editor.getSession().getBreakpoints();
-      var breakpoints = [];
+      var breakpoints = "";
 
       for (var i = 0; i < editor_breakpoints.length; i++) {
           if (editor_breakpoints[i]) {
-            breakpoints.push(i+1);
+            breakpoints = breakpoints + (i+1) + "~";
           }
       }
       console.log(breakpoints);
@@ -869,18 +905,18 @@
     function debug_run(event) {
       event.preventDefault();
       if (is_link_active($(this))) {
-        toggle_buttons(false);
+        occEditor.debug_toggle_buttons(false);
 
         console.log('debug run');
 
-        socket.emit('debug-command', {command: "RUN", breakpoints: get_breakpoints()});
+        socket.emit('debug-command', {command: "RUN"});
       }
     }
 
     function debug_step_over(event) {
       event.preventDefault();
       if (is_link_active($(this))) {
-        toggle_buttons(false);
+        occEditor.debug_toggle_buttons(false);
         console.log('step over');
         socket.emit('debug-command', {command: "NEXT"});
       }
@@ -889,7 +925,7 @@
     function debug_step_in(event) {
       event.preventDefault();
       if (is_link_active($(this))) {
-        toggle_buttons(false);
+        occEditor.debug_toggle_buttons(false);
         console.log('step in');
         socket.emit('debug-command', {command: "STEP"});
       }
@@ -934,7 +970,6 @@
     //$('#editor-wrapper').show();
     socket.emit('debug-command', {command: "QUIT"});
     var markers = editor.session.getMarkers();
-    console.log(markers);
     editor.session.removeMarker(markers);
     occEditor.hide_editor_output();
     editor.resize();
