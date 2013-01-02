@@ -13,10 +13,11 @@ function connect() {
     console.log(file_path);
 
     debug_client.write('DEBUG\t' + file_path + '\n');
-    debug_client.write('ADD_BP\t' + file_path + '~13\n');
-    debug_client.write('RUN\n');
-    debug_client.write('NEXT\n');
- 
+    //debug_client.write('ADD_BP\t' + file_path + '~13\n');
+    //debug_client.write('RUN\n');
+    debug_client.write('QUIT\n');
+    debug_client.write('QUIT\n');
+    debug_client.write('DEBUG\t' + file_path + '\n');
     debug_client.write('NEXT\n');
     debug_client.write('NEXT\n');
     //debug_client.write('NEXT\n');
