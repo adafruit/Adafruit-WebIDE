@@ -3,6 +3,7 @@
 
 import bdb
 import sys
+import os
 import traceback
 import socket
 import types
@@ -294,20 +295,27 @@ class Debugger(bdb.Bdb):
     def start_debug(self, filename):
         self.cmd = "DEBUG"
         self._debug_active = 1
-        self.saved_stdout = sys.stdout
-        self.saved_stdin = sys.stdin
-        sys.stdout = self
-        sys.stdin = self
+        #self.saved_stdout = sys.stdout
+        #self.saved_stdin = sys.stdin
+        #sys.stdout = self
+        #sys.stdin = self
         self._wait_for_mainpyfile = 1
         self.mainpyfile = self.canonic(filename)
         self._user_requested_quit = 0
         statement = 'execfile(%r)' % filename
         self.reset()
+        #change running directory to location of file
+        print filename
+        print os.getcwd()
+        debug_path = os.path.dirname(filename)
+        sys.path.insert(0, debug_path)
+        os.chdir(debug_path)
+        print os.getcwd()
         try:
             self.run(statement)
             self._connection.send_json(dict(cmd="COMPLETE", content="EMPTY"))
-            sys.stdout = self.saved_stdout
-            sys.stdin = self.saved_stdin
+            #sys.stdout = self.saved_stdout
+            #sys.stdin = self.saved_stdin
             self._debug_active = 0
         except:
             tb, exctype, value = sys.exc_info()
