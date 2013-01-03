@@ -65,17 +65,20 @@ cd /etc/init.d
 chmod 755 adafruit-webide.sh
 
 NODE_PATH=""
-if (( $(dpkg --print-architecture) == "armhf" )); then
+ARCH=$(dpkg --print-architecture)
+if [ "$ARCH" == 'armhf' ]; then
   NODE_PATH="\/usr\/share\/adafruit\/webide\/bin\/node_hf\/node"
+  chmod +x "$WEBIDE_ROOT/bin/node_hf/node"
 else
   NODE_PATH="\/usr\/share\/adafruit\/webide\/bin\/node_sf\/node"
+  chmod +x "$WEBIDE_ROOT/bin/node_sf/node"
 fi
 sed -i "s/NODE_PATH/$NODE_PATH/g" adafruit-webide.sh
 
 update-rc.d adafruit-webide.sh defaults
 
 #set binaries as executable
-chmod +x "$NODE_PATH"
+
 
 #Check if port 80 is in use, use 3000 if so.
 PORT_USED=""
