@@ -1,5 +1,5 @@
 var net = require('net');
-var file_path = "/Users/jwcooper/dev/apps/OccEditor/helpers/python/temp/test.py";
+var file_path = "/Users/jwcooper/dev/apps/OccEditor/repositories/my-pi-projects/Adafruit_BMP085/Adafruit_BMP085_example.py";
 var debug_client;
 var HOST = '127.0.0.1',
     PORT = 5000,
@@ -15,12 +15,12 @@ function connect() {
     debug_client.write('DEBUG\t' + file_path + '\n');
     //debug_client.write('ADD_BP\t' + file_path + '~13\n');
     //debug_client.write('RUN\n');
-    debug_client.write('QUIT\n');
-    debug_client.write('QUIT\n');
-    debug_client.write('DEBUG\t' + file_path + '\n');
+    //debug_client.write('QUIT\n');
+    //debug_client.write('QUIT\n');
+    //debug_client.write('DEBUG\t' + file_path + '\n');
     debug_client.write('NEXT\n');
     debug_client.write('NEXT\n');
-    //debug_client.write('NEXT\n');
+    debug_client.write('NEXT\n');
     //debug_client.write('NEXT\n');
     //debug_client.write('NEXT\n');
     //debug_client.write('NEXT\n');

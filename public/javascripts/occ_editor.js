@@ -327,7 +327,6 @@
       //hide the debugger
       occEditor.debug_close();
     }
-    editor.resize();
 
     var EditSession = require("ace/edit_session").EditSession;
     var UndoManager = require("ace/undomanager").UndoManager;
@@ -351,6 +350,7 @@
       }
 
       editor.setSession(session);
+      editor.resize();
       editor.focus();
 
       editor_startup("Populating Editor");
