@@ -75,7 +75,7 @@ sed -i "s/NODE_PATH/$NODE_PATH/g" adafruit-webide.sh
 update-rc.d adafruit-webide.sh defaults
 
 #set binaries as executable
-chmod +x NODE_PATH
+chmod +x "$NODE_PATH"
 
 #Check if port 80 is in use, use 3000 if so.
 PORT_USED=""
