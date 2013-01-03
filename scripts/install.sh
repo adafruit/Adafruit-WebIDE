@@ -66,7 +66,7 @@ chmod 755 adafruit-webide.sh
 
 NODE_PATH=""
 ARCH=$(dpkg --print-architecture)
-if [ "$ARCH" == 'armhf' ]; then
+if [ $ARCH = armhf ]; then
   NODE_PATH="\/usr\/share\/adafruit\/webide\/bin\/node_hf\/node"
   chmod +x "$WEBIDE_ROOT/bin/node_hf/node"
 else
