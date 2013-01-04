@@ -40,7 +40,7 @@
                                       '<a href="" class="debug-run"><i class="icon-play"></i> Run</a>' +
                                       '<a href="" class="debug-step-over"><i class="icon-cogs"></i> Step Over</a>' +
                                       '<a href="" class="debug-step-in"><i class="icon-sitemap"></i> Step In</a>' +
-                                      '<span class="debug-status"></a>' +
+                                      '<span class="debug-status">Initializing...</a>' +
                                     '</p>',
     "editor_bar_run_link":          '<a href="" class="run-file"><i class="icon-play"></i> Run</a>',
     "editor_bar_debug_link":        '<a href="" class="debug-file"><i class="icon-debug"></i> Debug</a>',
