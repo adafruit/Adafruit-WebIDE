@@ -5,7 +5,7 @@
 
 WEBIDE_ROOT="/usr/share/adafruit"
 WEBIDE_HOME="/home/webide"
-NODE=$(which node)
+NODE_PATH=""
 
 echo "**** Removing restartd WebIDE configuration ****"
 sed -i '/adafruit-webide.sh/ d' /etc/restartd.conf
@@ -27,7 +27,14 @@ fi
 rm /etc/sudoers.tmp
 
 echo "**** Removing access to port 80 for node ****"
-setcap -r "$NODE"
+NODE_PATH=""
+ARCH=$(dpkg --print-architecture)
+if [ $ARCH = armhf ]; then
+  NODE_PATH="/usr/share/adafruit/webide/bin/node_hf/node"
+else
+  NODE_PATH="/usr/share/adafruit/webide/bin/node_sf/node"
+fi
+setcap -r "$NODE_PATH"
 
 echo "**** Stopping the Adafruit WebIDE ****"
 service adafruit-webide.sh stop
