@@ -1,6 +1,6 @@
 from time import sleep
 
-sleep(2)
+sleep(1)
 
 print "THIS IS STDOUT23"
 x = [1, 2, 3]

@@ -240,10 +240,7 @@ class Debugger(bdb.Bdb):
 
     def interaction(self, frame, traceback):
         self.setup(frame, traceback)
-        self.set_until(self.curframe)
-        #print "interaction"
         self.loop()
-        self.forget()
 
     def loop(self):
         while (self.wait_for_input(self._connection.receive())):
