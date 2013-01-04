@@ -319,12 +319,10 @@
     $('#trace-wrapper').hide();
     $('#editor').show();
     $('#schedule-manager').hide();
-    $('#editor').css("bottom", 0);
     $('#editor-wrapper').show();
 
-
     if (occEditor.is_debug_active) {
-      //hide the debugger
+      //hide, and exit the debugger
       occEditor.debug_close();
     }
 
@@ -842,7 +840,7 @@
 
     function debug_file_response(data) {
       occEditor.debug_toggle_buttons(true);
-      console.log(data);
+      //console.log(data);
       if (data.cmd === "NEXT" || data.cmd === "STEP" || data.cmd === "DEBUG" || data.cmd === "RUN") {
         var Range = require("ace/range").Range;
         var rg = new Range(data.line_no - 1, 0, data.line_no, 0);
@@ -875,9 +873,9 @@
         
         var message = "";
         if (data.cmd === "COMPLETE") {
-          message = "--- Program Completed Successfully ---";
+          message = "--- Program Completed Successfully ---\n";
         } else {
-          message = "--- Program Exited with an Exception ---";
+          message = "--- Program Exited with an Exception ---\n";
         }
         
         $('#editor-output #pre-wrapper pre').append(document.createTextNode(message));
@@ -897,7 +895,6 @@
             breakpoints = breakpoints + (i+1) + "~";
           }
       }
-      console.log(breakpoints);
 
       return breakpoints;
     }
@@ -907,8 +904,6 @@
       if (is_link_active($(this))) {
         occEditor.debug_toggle_buttons(false);
 
-        console.log('debug run');
-
         socket.emit('debug-command', {command: "RUN"});
       }
     }
@@ -917,7 +912,7 @@
       event.preventDefault();
       if (is_link_active($(this))) {
         occEditor.debug_toggle_buttons(false);
-        console.log('step over');
+        //console.log('step over');
         socket.emit('debug-command', {command: "NEXT"});
       }
     }
@@ -926,7 +921,7 @@
       event.preventDefault();
       if (is_link_active($(this))) {
         occEditor.debug_toggle_buttons(false);
-        console.log('step in');
+        //console.log('step in');
         socket.emit('debug-command', {command: "STEP"});
       }
     }
@@ -950,11 +945,13 @@
     $(document).off('click touchstart', '.debug-step-over');
     $(document).off('click touchstart', '.debug-step-in');
     $(document).off('click touchstart', '.debug-stop');
+    $(document).off('click touchstart', '.debug-restart');
     $(document).on('click touchstart', '.debug-step-in', debug_step_in);
     $(document).on('click touchstart', '.debug-step-over', debug_step_over);
     $(document).on('click touchstart', '.debug-run', debug_run);
     $(document).on('click touchstart', '.debug-restart', occEditor.debug_save_restart);
     $(document).on('click touchstart', '.debug-stop', occEditor.debug_close);
+    //console.log('debugging');
   };
 
   occEditor.debug_close = function(event) {
