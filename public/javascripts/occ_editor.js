@@ -40,6 +40,7 @@
                                       '<a href="" class="debug-run"><i class="icon-play"></i> Run</a>' +
                                       '<a href="" class="debug-step-over"><i class="icon-cogs"></i> Step Over</a>' +
                                       '<a href="" class="debug-step-in"><i class="icon-sitemap"></i> Step In</a>' +
+                                      '<span class="debug-status"></a>' +
                                     '</p>',
     "editor_bar_run_link":          '<a href="" class="run-file"><i class="icon-play"></i> Run</a>',
     "editor_bar_debug_link":        '<a href="" class="debug-file"><i class="icon-debug"></i> Debug</a>',
@@ -808,6 +809,7 @@
       event.preventDefault();
     }
     occEditor.debug_toggle_buttons(false);
+    occEditor.debug_message("Initializing...");
     occEditor.save_file();
 
     $('#variables-wrapper pre').text('');
@@ -815,6 +817,10 @@
 
     var file = $('.file-open').data('file');
     socket.emit('debug-file', {file: file});
+  };
+
+  occEditor.debug_message = function(message) {
+    $('.debug-status').html(message);
   };
 
   occEditor.debug_file = function(event) {
@@ -840,6 +846,7 @@
 
     function debug_file_response(data) {
       occEditor.debug_toggle_buttons(true);
+      occEditor.debug_message('Ready');
       //console.log(data);
       if (data.cmd === "NEXT" || data.cmd === "STEP" || data.cmd === "DEBUG" || data.cmd === "RUN") {
         var Range = require("ace/range").Range;
@@ -903,6 +910,7 @@
       event.preventDefault();
       if (is_link_active($(this))) {
         occEditor.debug_toggle_buttons(false);
+        occEditor.debug_message('Running');
 
         socket.emit('debug-command', {command: "RUN"});
       }
@@ -912,6 +920,7 @@
       event.preventDefault();
       if (is_link_active($(this))) {
         occEditor.debug_toggle_buttons(false);
+        occEditor.debug_message('Stepping');
         //console.log('step over');
         socket.emit('debug-command', {command: "NEXT"});
       }
@@ -921,13 +930,14 @@
       event.preventDefault();
       if (is_link_active($(this))) {
         occEditor.debug_toggle_buttons(false);
+        occEditor.debug_message('Stepping');
         //console.log('step in');
         socket.emit('debug-command', {command: "STEP"});
       }
     }
 
 
-
+    occEditor.debug_message('Initializing...');
     occEditor.close_terminal();
     occEditor.is_debug_active = true;
     $('#editor-output .outputTitleBar .left-title').html('Debug Output');
@@ -959,7 +969,7 @@
       event.preventDefault();
     }
     occEditor.is_debug_active = false;
-
+    occEditor.debug_message('Stopping...');
     $('#variables-wrapper pre').text('');
     $('#pre-wrapper pre').text('');
     $('#editor-output-wrapper').hide();

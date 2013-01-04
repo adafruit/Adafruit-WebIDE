@@ -422,9 +422,13 @@ a.navigator-settings i.settings-enabled {
   margin-right: 10px;
 }
 
-#editor-bar .schedule-file {
+#editor-bar .schedule-file, #editor-bar .debug-status {
   float: right;
   margin-right: 10px !important;
+}
+
+#editor-bar .debug-status {
+  color: #74A927;
 }
 
 #editor-bar p.editor-bar-actions a:hover, #trace-bar p.trace-bar-actions a:hover {
