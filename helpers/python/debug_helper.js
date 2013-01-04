@@ -6,16 +6,20 @@ var spawn = require('child_process').spawn,
     HOST = '127.0.0.1',
     PORT = 5000,
     buffer = '',
+    enable_debug = false,
     VALID_COMMANDS = ['NEXT', 'STEP', 'RUN', 'QUIT', 'LOCALS', 'GLOBALS', 'ADD_BP', 'REMOVE_BP'];
 
-exports.kill_debug = function() {
+exports.kill_debug = function kill_debug(should_enable) {
   if (debug_program && debug_program.pid) {
-    debug_program.kill('SIGHUP');
-    debug_program = null;
+    debug_program.kill();
+    enable_debug = should_enable;
+    console.log('killed debugger');
   }
+  return;
 };
 
-exports.start_debug = function(file, socket) {
+exports.start_debug = function start_debug(file, socket) {
+  var self = this;
   console.log("start_debug");
   console.log(!debug_program);
   if (!debug_program) {
@@ -24,7 +28,7 @@ exports.start_debug = function(file, socket) {
     var buffer = "";
     debug_program.stdout.on('data', function(data) {
       console.log(data.toString());
-      //socket.emit('program-stdout', {output: data.toString()});
+
       buffer += data.toString();
 
       if (buffer.indexOf("DEBUGGER READY") !== -1 && !client_connected) {
@@ -41,11 +45,17 @@ exports.start_debug = function(file, socket) {
     });
 
     debug_program.on('exit', function(code) {
+      console.log('Debug Program Exit');
       console.log(code);
-      socket.emit('debug-exit', {code: code});
+      debug_program = null;
+
+      if (enable_debug) {
+        self.start_debug(file, socket);
+      }
     });
   } else {
-    connect_client(file, socket);
+    //console.log('resetting debugger');
+    self.kill_debug(true);
   }
 };
 
@@ -89,7 +99,9 @@ function connect_client(file, socket) {
     debug_client.on('close', function() {
         console.log('Connection closed');
         client_connected = false;
+        debug_client.destroy();
         debug_client = null;
+        console.log('after connection close');
     });
 
     return;
@@ -101,7 +113,7 @@ function connect_client(file, socket) {
   }
 }
 
-exports.client_disconnect = function() {
+exports.client_disconnect = function client_disconnect() {
   if (debug_client && client_connected) {
     debug_client.destroy();
     debug_client = null;
@@ -110,6 +122,11 @@ exports.client_disconnect = function() {
 
 exports.debug_command = function(data, socket) {
   console.log(data.command);
+
+  if (data.command === "QUIT") {
+    this.kill_debug(false);
+    return;
+  }
 
   if (debug_client) {
     if (VALID_COMMANDS.indexOf(data.command) !== -1) {
