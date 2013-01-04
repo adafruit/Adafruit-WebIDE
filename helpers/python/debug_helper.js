@@ -1,4 +1,5 @@
 var spawn = require('child_process').spawn,
+    exec = require('child_process').exec,
     net = require('net'),
     path = require('path'),
     debug_program, debug_client,
@@ -9,11 +10,14 @@ var spawn = require('child_process').spawn,
     enable_debug = false,
     VALID_COMMANDS = ['NEXT', 'STEP', 'RUN', 'QUIT', 'LOCALS', 'GLOBALS', 'ADD_BP', 'REMOVE_BP'];
 
-exports.kill_debug = function kill_debug(should_enable) {
+exports.kill_debug = function kill_debug(should_enable, cb) {
   if (debug_program && debug_program.pid) {
-    debug_program.kill();
     enable_debug = should_enable;
-    console.log('killed debugger');
+    var killer = exec('sudo kill ' + debug_program.pid, function(err, stdout, stderr) {
+      console.log(err, stdout, stderr);
+      console.log("Killed Debugger");
+      cb();
+    });
   }
   return;
 };
@@ -44,6 +48,11 @@ exports.start_debug = function start_debug(file, socket) {
       socket.emit('debug-error', {file: file, error: data});
     });
 
+    debug_program.on('error', function(data) {
+      console.log("DEBUG PROGRAM ERROR:");
+      console.log(data);
+    });
+
     debug_program.on('exit', function(code) {
       console.log('Debug Program Exit');
       console.log(code);
@@ -55,7 +64,9 @@ exports.start_debug = function start_debug(file, socket) {
     });
   } else {
     //console.log('resetting debugger');
-    self.kill_debug(true);
+    self.kill_debug(true, function() {
+      //nothing to wait for here...exit will start a new process to debug
+    });
   }
 };
 
@@ -124,7 +135,9 @@ exports.debug_command = function(data, socket) {
   console.log(data.command);
 
   if (data.command === "QUIT") {
-    this.kill_debug(false);
+    this.kill_debug(false, function() {
+      //nothing to wait for here...
+    });
     return;
   }
 

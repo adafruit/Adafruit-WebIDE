@@ -429,10 +429,14 @@ exports.get_socket = function (username, cb) {
 process.on('SIGINT', function() {
   console.log("\nShutting down from  SIGINT");
   // some other closing procedures go here
-  debug_helper.kill_debug(false);
+  debug_helper.kill_debug(false, function() {
+    //no need to wait for this
+  });
   process.exit();
 });
 
 process.on('uncaughtException', function(err) {
-  debug_helper.kill_debug(false);
+  debug_helper.kill_debug(false, function() {
+    //no need to wait for this
+  });
 });
