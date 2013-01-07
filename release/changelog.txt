@@ -1,4 +1,7 @@
--0.2.6
+-0.3.0
+New Python Debugger
+Upgrade Node.js to 0.8 (new installations only)
+Include Node.js binaries with WebIDE
 Fix Cloning repositories originating from Bitbucket.
 
 -0.2.5
