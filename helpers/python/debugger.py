@@ -1,3 +1,5 @@
+# The debugger.py file is open sourced as GNU GPL v2.
+# License details found here: http://www.gnu.org/licenses/gpl-2.0.html
 # The debugger.py contains methods from the Python built-in pdb debugger.
 # It is also inspired, and contains code snippets from the GNU GPL v2 jpydbg remote debugging library plugin for jedit and netbeans.
 
