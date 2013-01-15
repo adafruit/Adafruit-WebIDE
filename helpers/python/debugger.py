@@ -81,6 +81,7 @@ class Debugger(bdb.Bdb):
         self._socket = None
         self.cmd = None
         self.saved_stdout = None
+        self.saved_stderr = None
         self.saved_stdin = None
 
     def reset(self):
@@ -295,8 +296,10 @@ class Debugger(bdb.Bdb):
         self.cmd = "DEBUG"
         self._debug_active = 1
         self.saved_stdout = sys.stdout
+        self.saved_stderr = sys.stderr
         self.saved_stdin = sys.stdin
         sys.stdout = self
+        sys.stderr = self
         sys.stdin = self
         self._wait_for_mainpyfile = 1
         self.mainpyfile = self.canonic(filename)
@@ -311,6 +314,7 @@ class Debugger(bdb.Bdb):
             self.run(statement)
             self._connection.send_json(dict(cmd="COMPLETE", content="EMPTY"))
             sys.stdout = self.saved_stdout
+            sys.stderr = self.saved_stderr
             sys.stdin = self.saved_stdin
             self._debug_active = 0
         except:
@@ -397,6 +401,7 @@ class Debugger(bdb.Bdb):
         if self._debug_active:
             self.cmd = "QUIT"
             sys.stdout = self.saved_stdout
+            sys.stderr = self.saved_stderr
             sys.stdin = self.saved_stdin
             self.reset()
             self.set_quit()
