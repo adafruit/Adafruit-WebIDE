@@ -1,3 +1,6 @@
+-0.3.1
+Fix for debugger hanging when stderr is written from script being debug.
+
 -0.3.0
 New Python Debugger
 Upgrade Node.js to 0.8 (new installations only)
