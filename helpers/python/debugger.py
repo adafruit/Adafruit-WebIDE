@@ -355,17 +355,13 @@ class Debugger(bdb.Bdb):
         self.clear_break(canonic_file, int(line_no))
 
     def get_variables(self, cmd_type, frame):
-        stack_list, size = self.get_stack(frame, None)
-        if not stack_list:
-            return []
-
-        stack_list.reverse()
-        stack_element = stack_list[size - 1]
+        self.stack, self.curindex = self.get_stack(frame, None)
+        self.curframe = self.stack[self.curindex][0]
 
         if cmd_type == "LOCALS":
-            variables = copy.copy(stack_element[0].f_locals)
+            variables = copy.copy(self.curframe.f_locals)
         elif cmd_type == "GLOBALS":
-            variables = copy.copy(stack_element[0].f_globals)
+            variables = copy.copy(self.curframe.f_globals)
         variable_list = []
         #print variables
         blocked_variables = set(['bdb', '__builtins__', 'socket', '__file__', '__builtin__', 'types', '__package__',
