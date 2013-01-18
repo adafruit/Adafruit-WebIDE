@@ -596,6 +596,16 @@
         tty.off('open tab');
         tty.off('tab-ready');
 
+        terminal_win.maximize();
+        terminal_win.tabs[0].sizeToFit();
+
+        $(window).smartresize(function() {
+          if (is_terminal_open) {
+            terminal_win.maximize();
+            terminal_win.tabs[0].sizeToFit();
+          }
+        });
+
         if (typeof settings !== 'undefined' && settings.font_size) {
           $('.terminal').css('font-size', settings.font_size + "px");
         }
