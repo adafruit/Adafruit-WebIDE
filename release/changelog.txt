@@ -1,3 +1,10 @@
+-0.3.2
+Navigator: Add ability to create folders at all levels.
+Debugger: Fix display of local vs global variables.
+Terminal: Set terminal width based on containing parent, use entire width and height.
+Terminal: Resize browser window resizes terminal appropriately.
+Remove file creation and uploads in adafruit repository (it would fail anyways) project
+
 -0.3.1
 Fix for debugger hanging when stderr is written from script being debug.
 
