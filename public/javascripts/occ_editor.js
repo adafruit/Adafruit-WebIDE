@@ -69,9 +69,17 @@
                                         '<input name="folder_name" placeholder="Project Name" type="text">' +
                                       '</div>' +
                                     '</form>',
+    "create_nested_folder":        '<form class="create-form" id="create-project-form">' +
+                                      '<a href="" class="create-cancel"><i class="icon-remove-sign"></i></a>' +
+                                      '<label for="folder_name">+ Create Folder</label>' +
+                                      '<div class="create-input-wrapper">' +
+                                        '<a class="create-save" href="">Submit</a>' +
+                                        '<input name="folder_name" placeholder="Folder Name" type="text">' +
+                                      '</div>' +
+                                    '</form>',
     "create_file_folder":         '<form class="create-form" id="create-file-form">' +
                                       '<a href="" class="create-cancel"><i class="icon-remove-sign"></i></a>' +
-                                      '<label for="file_name">+ Create File Folder</label>' +
+                                      '<label for="file_name">+ Create File</label>' +
                                       '<div class="create-input-wrapper">' +
                                         '<a class="create-save" href="">Submit</a>' +
                                         '<input name="file_name" placeholder="File Name" type="text">' +
@@ -732,18 +740,27 @@
   function build_navigator_bottom(item) {
     //console.log(item);
     $('.create-form').remove();
-    $('.navigator-item-create').html('<a class="create-link"></a>');
-    var $create_link = $('.navigator-item-create .create-link');
+    $('.navigator-item-create:first-child').html('<a class="create-link"></a>');
+    var $create_link = $('.navigator-item-create:first-child .create-link');
     var $create_modal = $('#create-modal');
     if (item.name === 'filesystem') {
+      $('.navigator-item-create:nth-child(2)').remove();
+      $('.navigator-item-upload').remove();
       $create_link.text('+ Clone Repository');
       $('h3', $create_modal).text("Clone Repository");
       $('.modal-body p', $create_modal).html(templates.create_clone_repository);
       $('.modal-submit', $create_modal).text('Clone Repository');
     } else if (item.parent_name === 'filesystem') {
+      $('.navigator-item-create:nth-child(2)').remove();
+      $('.navigator-item-upload').remove();
       $create_link.text('+ Create Project Folder');
     } else {
       $create_link.text('+ Create New File');
+
+      if ($('.navigator-item-create:nth-child(2)').length === 0) {
+        var $create_folder_link = $('<p class="navigator-item-create"><a class="create-link">+ Create New Folder</a></p>');
+        $create_folder_link.appendTo($('#navigator-bottom'));
+      }
 
       if ($('.navigator-item-upload').length === 0) {
         var $upload_form = $('<p class="navigator-item-upload"></p>');
@@ -1501,6 +1518,9 @@
       } else if (/project/i.test(link_text)) {
         $(this).data('link', $(this).html()).html(templates.create_project_folder);
         $('input[name="folder_name"]').focus();
+      } else if (/folder/i.test(link_text)) {
+        $(this).data('link', $(this).html()).html(templates.create_nested_folder);
+        $('input[name="folder_name"]').focus();
       } else if (/file/i.test(link_text)) {
         $(this).data('link', $(this).html()).html(templates.create_file_folder);
         $('input[name="file_name"]').focus();
@@ -1528,8 +1548,7 @@
       occEditor.handle_navigator_scroll();
     }
 
-    function create_fs_response(err, status) {
-      var $create_wrapper = $('.navigator-item-create');
+    function create_fs_response(err, status, $create_wrapper) {
       var folder_name = $('input[name="folder_name"]').val();
       var parent_folder = $('.navigator-item-back').data("file");
 
@@ -1555,7 +1574,7 @@
       $('.create-save').text('Working');
       $('.create-input-wrapper input').prop('disabled', true);
 
-      var $create_wrapper = $('.navigator-item-create');
+      var $create_wrapper = $(this).closest('.navigator-item-create');
       var folder_name = $('input[name="folder_name"]').val();
       folder_name = folder_name.replace(" ", "_");
       var parent_folder = $('.navigator-item-back').data("file");
@@ -1564,7 +1583,7 @@
 
       davFS.mkDir(path, function(err, status) {
         socket.emit('commit-file', { file: item });
-        create_fs_response(err, status);
+        create_fs_response(err, status, $create_wrapper);
       });
     }
 
@@ -1573,7 +1592,7 @@
       $('.create-save').text('Working');
       $('.create-input-wrapper input').prop('disabled', true);
             
-      var $create_wrapper = $('.navigator-item-create');
+      var $create_wrapper = $(this).closest('.navigator-item-create');
       var file_name = $('input[name="file_name"]').val();
       file_name = file_name.replace(" ", "_");
       var parent_folder = $('.navigator-item-back').data("file");
@@ -1581,7 +1600,7 @@
 
       davFS.write(parent_folder.path + file_name, '', function(err, status) {
         socket.emit('commit-file', { file: {path: path, name: file_name, type: "file"}});
-        create_fs_response(err, status);
+        create_fs_response(err, status, $create_wrapper);
       });
     }
 

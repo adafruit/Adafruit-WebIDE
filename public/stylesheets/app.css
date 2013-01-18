@@ -248,7 +248,7 @@ a.navigator-settings i.settings-enabled {
   font-weight: bold;  
 }
 
-.navigator-item-upload {
+.navigator-item-upload, .navigator-item-create:nth-child(2) {
   border-top: 1px solid #EDEDED;
 }
 
