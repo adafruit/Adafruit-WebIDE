@@ -738,6 +738,12 @@
   }
 
   function build_navigator_bottom(item) {
+    $('#navigator-bottom').show();
+
+    if (is_adafruit_repository(item.path)) {
+      $('#navigator-bottom').hide();
+      return;
+    }
     //console.log(item);
     $('.create-form').remove();
     $('.navigator-item-create:first-child').html('<a class="create-link"></a>');
