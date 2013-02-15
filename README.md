@@ -20,7 +20,7 @@ On the Raspberry PI:
 
     git clone git://github.com/adafruit/Adafruit-WebIDE.git
     cd Adafruit-WebIDE
-    sudo apt-get install nodejs npm redis-server git -y
+    sudo apt-get install nodejs nodejs-legacy npm redis-server git -y
     mkdir tmp
     npm config set tmp tmp
     npm install
