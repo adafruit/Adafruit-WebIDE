@@ -202,10 +202,13 @@
 
     editor_startup("Initializing Editor Events");
     editor.on('change', function() {
-      var editor_content = editor.getSession().getDocument().getValue();
       var $file_element = $('.filesystem li.file-open');
-      $file_element.data('content', editor_content).addClass('edited');
-      $('a', $file_element).css('font-style', 'italic').text($file_element.data('file').name + '*');
+      var file = $file_element.data('file');
+      if (!is_adafruit_project(file.path)) {
+        var editor_content = editor.getSession().getDocument().getValue();
+        $file_element.data('content', editor_content).addClass('edited');
+        $('a', $file_element).css('font-style', 'italic').text(file.name + '*');
+      }
     });
 
     editor.on("guttermousedown", function(e) {
@@ -547,6 +550,12 @@
     }
 
     var file = $('.filesystem li.file-open').data('file');
+
+    if (is_adafruit_project(file.path)) {
+      //don't allow saving of adafruit project files
+      return;
+    }
+
     $('.filesystem li.file-open').removeClass('edited');
     //reset from italic file
     $('.filesystem li.file-open a').css('font-style', 'normal').text(file.name);
