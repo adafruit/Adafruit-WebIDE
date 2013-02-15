@@ -32,7 +32,7 @@ curl -L http://adafruit-download.s3.amazonaws.com/webide-0.3.2.tar.gz | tar xzf 
 echo "**** Installing required libraries ****"
 echo "**** (redis-server git restartd libcap2-bin avahi-daemon i2c-tools python-smbus) ****"
 apt-get update
-apt-get install redis-server git restartd libcap2-bin avahi-daemon i2c-tools python-smbus -y
+apt-get install nodejs nodejs-legacy redis-server git restartd libcap2-bin avahi-daemon i2c-tools python-smbus -y
 
 echo "**** Create webide user and group ****"
 groupadd webide || true
