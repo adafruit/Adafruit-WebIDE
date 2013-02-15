@@ -122,12 +122,31 @@ exports.move_uploaded_file = function(temp_path, new_path, cb) {
 exports.create_project_readme = function(cb) {
   var source = path.resolve(__dirname + '/../config/README.md');
   var destination = path.resolve(__dirname + '/../repositories/' + config.defaults.repository + '/' + config.defaults.readme);
-  console.log(source);
-  console.log(destination);
   var file = {repository: config.defaults.repository, path: config.defaults.readme, name: config.defaults.readme};
 
   fs.lstat(destination, function(err, stat) {
     if (stat) cb("README already exists", file); //file exists
+
+    var is = fs.createReadStream(source);
+    var os = fs.createWriteStream(destination);
+    util.pump(is, os, function(err) {
+      console.log(err);
+      cb(err, file);
+    });
+
+  });
+};
+
+/*
+ * Copies the stock .gitignore into the my-pi-projects root folder.
+ */
+exports.create_project_gitignore = function(cb) {
+  var source = path.resolve(__dirname + '/../config/.gitignore');
+  var destination = path.resolve(__dirname + '/../repositories/' + config.defaults.repository + '/' + config.defaults.gitignore);
+  var file = {repository: config.defaults.repository, path: config.defaults.gitignore, name: config.defaults.gitignore};
+
+  fs.lstat(destination, function(err, stat) {
+    if (stat) cb(".gitignore already exists", file); //file exists
 
     var is = fs.createReadStream(source);
     var os = fs.createWriteStream(destination);

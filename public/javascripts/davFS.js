@@ -9,7 +9,7 @@ $.fn.filterNode = function(name) {
   //Public Methods
   davFS.listDir = function(path, cb) {
     function filter(item) {
-      var filter_list = ['.git', 'DS_Store', 'pyc'];
+      var filter_list = ['.git', 'DS_Store', 'pyc', '.gitignore'];
       if ($.inArray(item.name, filter_list) !== -1) return true;
       if ($.inArray(item.extension, filter_list) !== -1) return true;
       return false;

@@ -15,7 +15,8 @@ exports.adafruit = {
 
 exports.defaults = {
   "repository": "my-pi-projects",
-  "readme": "README.md"
+  "readme": "README.md",
+  "gitignore": ".gitignore"
 };
 
 exports.term = {

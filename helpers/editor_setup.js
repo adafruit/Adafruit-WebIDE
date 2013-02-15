@@ -54,14 +54,17 @@ var exec = require('child_process').exec,
 
             git_helper.clone_repository(project_repository, function(err, response) {
               socket.emit("self-check-message", "Cloned my-pi-projects on local system");
-              fs_helper.create_project_readme(function(err, file) {
-                socket.emit("self-check-message", "Added README.md in my-pi-projects");
-                if (err) console.log(err);
-                console.log(file);
+              fs_helper.create_project_gitignore(function(err, file) {
+                socket.emit("self-check-message", "Added .gitignore in my-pi-projects");
+                fs_helper.create_project_readme(function(err, file) {
+                  socket.emit("self-check-message", "Added README.md in my-pi-projects");
+                  if (err) console.log(err);
+                  console.log(file);
 
-                git_helper.commit_push_and_save(file, function(err, response) {
-                  socket.emit("self-check-message", "Pushed changes to my-pi-projects to Bitbucket");
-                  socket.emit('self-check-complete');
+                  git_helper.commit_push_and_save(file, function(err, response) {
+                    socket.emit("self-check-message", "Pushed changes to my-pi-projects to Bitbucket");
+                    socket.emit('self-check-complete');
+                  });
                 });
               });
             });
@@ -79,14 +82,17 @@ var exec = require('child_process').exec,
             } else {
               git_helper.clone_repository(project_repository, function(err, response) {
                 socket.emit("self-check-message", "Cloned my-pi-projects on local system");
-                fs_helper.create_project_readme(function(err, file) {
-                  socket.emit("self-check-message", "Added README.md in my-pi-projects");
-                  console.log(file);
-                  if (err) console.log(err);
+                fs_helper.create_project_gitignore(function(err, file) {
+                  socket.emit("self-check-message", "Added .gitignore in my-pi-projects");
+                  fs_helper.create_project_readme(function(err, file) {
+                    socket.emit("self-check-message", "Added README.md in my-pi-projects");
+                    console.log(file);
+                    if (err) console.log(err);
 
-                  git_helper.commit_push_and_save(file, function(err, response) {
-                    socket.emit("self-check-message", "Pushed changes to my-pi-projects to Bitbucket");
-                    socket.emit('self-check-complete');
+                    git_helper.commit_push_and_save(file, function(err, response) {
+                      socket.emit("self-check-message", "Pushed changes to my-pi-projects to Bitbucket");
+                      socket.emit('self-check-complete');
+                    });
                   });
                 });
               });
