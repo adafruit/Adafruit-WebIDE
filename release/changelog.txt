@@ -1,3 +1,10 @@
+-0.3.3
+Add three new settings to the Settings Page
+  -Use Soft Tabs (on or off)
+  -Tab Size (2, 4, 6, or 8)
+  -Show Invisibles (on or off) (shows whitespaces, tabs and spaces, etc)
+Set editor defaults to use soft tabs with a setting of 4 tab size, and show invisibles off
+
 -0.3.2
 Navigator: Add ability to create folders at all levels.
 Debugger: Fix display of local vs global variables.

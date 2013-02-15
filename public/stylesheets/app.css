@@ -501,7 +501,8 @@ a.navigator-settings i.settings-enabled {
 }
 
 #settings-manager .settings-element {
-  margin-top: 9px;
+  margin-top: 8px;
+  margin-bottom: 17px;
 }
 
 #settings-manager span {
@@ -514,7 +515,7 @@ a.navigator-settings i.settings-enabled {
   margin: 0 1px 0 0;
 }
 
-.settings-element .font-size-value {
+.settings-element .font-size-value, .soft-tab-value, .tab-size-value, .invisibles-value {
   cursor: pointer;
 }
 

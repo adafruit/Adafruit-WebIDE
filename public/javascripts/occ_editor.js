@@ -344,19 +344,40 @@
       $(document).trigger('file_open', file);
       var session = new EditSession(data);
       session.setUndoManager(new UndoManager());
-      session.setUseSoftTabs(false);
 
-      if (typeof settings !== 'undefined' && settings.font_size) {
-        editor.setFontSize(settings.font_size + "px");
-      }
 
       if (file.path) {
         var file_mode = getModeFromPath(file.path);
         session.setMode(file_mode.mode);
         occEditor.handle_scheduled_file(file);
       }
-
       editor.setSession(session);
+
+      //default settings (may get overridden below)
+      editor.getSession().setUseSoftTabs(true);
+      editor.getSession().setTabSize(4);
+      editor.setShowInvisibles(false);
+
+      if (typeof settings !== 'undefined') {
+        if (settings.font_size) {
+          editor.setFontSize(settings.font_size + "px");
+        }
+
+        if (settings.use_soft_tabs) {
+          var soft_tabs = settings.use_soft_tabs == "on" ? true : false;
+          editor.getSession().setUseSoftTabs(soft_tabs);
+        }
+
+        if (settings.tab_size) {
+          editor.getSession().setTabSize(parseInt(settings.tab_size, 10));
+        }
+
+        if (settings.show_invisibles) {
+          var show_invisibles = settings.show_invisibles == "on" ? true : false;
+          editor.setShowInvisibles(show_invisibles);
+        }
+      }
+
       editor.resize();
       editor.focus();
 
@@ -1466,6 +1487,7 @@
           settings = {};
         }
         settings = $.extend({}, settings, value);
+        console.log(settings);
 
         socket.emit("set-settings", value);
         $('.saved-setting').html('<i class="icon-ok"></i> Saved').delay(100).fadeIn('slow').fadeOut();
@@ -1493,10 +1515,50 @@
         set_settings({"font_size": $(this).text()});
       }
 
-      if (typeof settings !== 'undefined' && settings.font_size) {
-        $('.font-size-value.' + settings.font_size + 'px').addClass('selected');
+      function set_soft_tabs(event) {
+        $('.soft-tab-value').removeClass('selected');
+        $(this).addClass('selected');
+        set_settings({"use_soft_tabs": $(this).text().toLowerCase()});
+      }
+
+      function set_tab_size(event) {
+        $('.tab-size-value').removeClass('selected');
+        $(this).addClass('selected');
+        set_settings({"tab_size": $(this).text()});
+      }
+
+      function set_show_invisibles(event) {
+        $('.invisibles-value').removeClass('selected');
+        $(this).addClass('selected');
+        set_settings({"show_invisibles": $(this).text().toLowerCase()});
+      }
+
+      if (typeof settings !== 'undefined') {
+        if (settings.font_size) {
+          $('.font-size-value.' + settings.font_size + 'px').addClass('selected');
+        } else {
+          $('.font-size-value.12px').addClass('selected');
+        }
+        if (settings.use_soft_tabs) {
+          console.log(settings.use_soft_tabs);
+          $('.soft-tab-value.' + settings.use_soft_tabs).addClass('selected');
+        } else {
+          $('.soft-tab-value.on').addClass('selected');
+        }
+        if (settings.tab_size) {
+          $('.tab-size-value.' + settings.tab_size + "-value").addClass('selected');
+        } else {
+          $('.tab-size-value.4-value').addClass('selected');
+        }
+        if (settings.show_invisibles) {
+          $('.invisibles-value.' + settings.show_invisibles).addClass('selected');
+        } else {
+          $('.invisibles-value.off').addClass('selected');
+        }
       } else {
         $('.font-size-value.12px').addClass('selected');
+        $('.soft-tab-value.on').addClass('selected');
+        $('.tab-size.4').addClass('selected');
       }
 
       $('#editor').hide();
@@ -1504,6 +1566,9 @@
       $('#editor-bar').html(templates.editor_bar_settings_manager);
       
       $(document).on('click touchstart', '.font-size-value', set_font_size);
+      $(document).on('click touchstart', '.soft-tab-value', set_soft_tabs);
+      $(document).on('click touchstart', '.tab-size-value', set_tab_size);
+      $(document).on('click touchstart', '.invisibles-value', set_show_invisibles);
       $(document).on('click touchstart', '.close-settings-manager', close_settings_manager);
     }
 
