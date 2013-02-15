@@ -1468,7 +1468,10 @@
 
       if (file.type === 'directory') {
         alert_changed_file();
-        occEditor.send_terminal_command('cd ' + file.name);
+        
+        var path = occEditor.cwd() + '/' + file.name;
+        path = path.replace('//', '/');
+        occEditor.send_terminal_command('cd ' + path);
         occEditor.populate_navigator(file.path);
       } else {
         $('.filesystem li').removeClass('file-open');
@@ -1486,7 +1489,6 @@
           settings = {};
         }
         settings = $.extend({}, settings, value);
-        console.log(settings);
 
         socket.emit("set-settings", value);
         $('.saved-setting').html('<i class="icon-ok"></i> Saved').delay(100).fadeIn('slow').fadeOut();
@@ -1539,7 +1541,6 @@
           $('.font-size-value.12px').addClass('selected');
         }
         if (settings.use_soft_tabs) {
-          console.log(settings.use_soft_tabs);
           $('.soft-tab-value.' + settings.use_soft_tabs).addClass('selected');
         } else {
           $('.soft-tab-value.on').addClass('selected');
@@ -1585,7 +1586,8 @@
       occEditor.set_page_title(file.parent_name);
 
       //console.log(file);
-      occEditor.send_terminal_command('cd ..');
+      var path = dirname + file.parent_path.replace('/filesystem', '');
+      occEditor.send_terminal_command('cd ' + path);
       occEditor.populate_navigator(file.parent_path);
     }
 
