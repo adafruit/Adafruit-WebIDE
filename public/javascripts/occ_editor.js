@@ -603,7 +603,7 @@
     if (is_terminal_open) {
       if (command) {
         terminal_win.tabs[0].sendString(command);
-        editor.focus();
+        terminal_win.focus();
       }
       return;
     }
@@ -633,10 +633,9 @@
 
         if (command) {
           terminal_win.tabs[0].sendString(command);
-          editor.focus();
-        } else {
-          terminal_win.focus();
         }
+        terminal_win.focus();
+
       });
     });
 
