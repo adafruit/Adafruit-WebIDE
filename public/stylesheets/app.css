@@ -515,7 +515,7 @@ a.navigator-settings i.settings-enabled {
   margin: 0 1px 0 0;
 }
 
-.settings-element .font-size-value, .soft-tab-value, .tab-size-value, .invisibles-value {
+.settings-element .font-size-value, .soft-tab-value, .tab-size-value, .invisibles-value, .manual-git-value {
   cursor: pointer;
 }
 

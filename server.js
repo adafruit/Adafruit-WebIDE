@@ -322,8 +322,23 @@ function socket_listeners() {
       });
     });
 
-    socket.on('commit-file', function (data) {
-      git_helper.commit_push_and_save(data.file, function(err, status) {
+    //listen for events
+    socket.on('git-is-modified', function(data) {
+      console.log('git-is-modified');
+      git_helper.is_modified(data.file, function(err, status) {
+        socket.emit('git-is-modified-complete', {is_modified: status});
+      });
+    });
+
+    socket.on('commit-file', function (data, message) {
+      var commit_message = "";
+      if (message) {
+        commit_message = message;
+      } else {
+        commit_message = "Modified " + data.file.name;
+      }
+
+      git_helper.commit_push_and_save(data.file, commit_message, function(err, status) {
         socket.emit('commit-file-complete', {message: "Save was successful"});
       });
     });

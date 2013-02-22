@@ -1,10 +1,17 @@
 -0.3.3
-Add three new settings to the Settings Page
+Add four new settings to the Settings Page
   -Use Soft Tabs (on or off)
   -Tab Size (2, 4, 6, or 8)
   -Show Invisibles (on or off) (shows whitespaces, tabs and spaces, etc)
+  -Manual Git Commits and Pushes
+Add ability to manually commit and push file changes.  This includes adding comments.
+  -Do a git status on the file to check if it is in need of a commit and push, and populate editor bar.
 Set editor defaults to use soft tabs with a setting of 4 tab size, and show invisibles off
 Add a default .gitignore file to reduce chance of .pyc files getting pushed out to bitbucket.
+Fix for the terminal getting out of sync with the editor
+Prevent overwriting of Adafruit project files
+Update manual installation instructions
+Install node.js as part of installation again.
 
 -0.3.2
 Navigator: Add ability to create folders at all levels.

@@ -43,6 +43,7 @@
                                       '<span class="debug-status">Initializing...</a>' +
                                     '</p>',
     "editor_bar_run_link":          '<a href="" class="run-file"><i class="icon-play"></i> Run</a>',
+    "editor_bar_git_link":          '<a href="" class="git-file"><i class="icon-cloud"></i> Commit and Push</a>',
     "editor_bar_debug_link":        '<a href="" class="debug-file"><i class="icon-debug"></i> Debug</a>',
     "editor_bar_trace_link":        '<a href="" class="trace-file"><i class="icon-sitemap"></i> Visualize</a>',
     "editor_bar_schedule_link":     '<a href="" class="schedule-file"><i class="icon-time"></i> Schedule</a>',
@@ -469,6 +470,19 @@
       if (file.extension) {
         if (is_script(file.extension)) {
           $editor_bar.html(templates.editor_bar_interpreted_file);
+
+          //manually committing and pushing of git files is enabled
+          if (typeof settings !== "undefined" && settings.manual_git === 'on') {
+            $('.save-file i').removeClass().addClass('icon-save');
+            socket.emit("git-is-modified", { file: file});
+
+            socket.on("git-is-modified-complete", function(data) {
+              socket.removeAllListeners("git-is-modified-complete");
+              if (data.is_modified && ($('.git-file').length <= 0)) {
+                $(templates.editor_bar_git_link).appendTo('.editor-bar-actions');
+              }
+            });
+          }
         } else {
           $editor_bar.html(templates.editor_bar_file);
         }
@@ -504,8 +518,8 @@
       }
     }
     $editor_bar.html(templates.editor_bar_init);
-    
-    $(document).off('file_open', editor_bar_actions);
+
+    $(document).off('file_open');
     $(document).on('file_open', editor_bar_actions);
   };
 
@@ -526,7 +540,7 @@
     occEditor.clear_editor();
     $('#editor').show();
     $('#schedule-manager').hide();
-
+    
     $(document).trigger('file_open', {path: path});
     davFS.listDir(path, populateFileSystem);
   };
@@ -575,7 +589,9 @@
       //console.log(status);
 
       //$('.save-file i').removeClass('icon-cloud').addClass('icon-ok');
-      socket.emit('commit-file', { file: file});
+      if (typeof settings !== 'undefined' && settings.manual_git === 'off') {
+        socket.emit('commit-file', { file: file});
+      }
     }
 
     davFS.write(file.path, content, save_callback);
@@ -1055,6 +1071,27 @@
     $(document).off('click touchstart', '.debug-stop');
   };
 
+  occEditor.manual_git_file = function(event) {
+    event.preventDefault();
+    $('#manual-git-modal').modal('show');
+
+    function handle_commit_push(event) {
+      $('#manual-git-modal .modal-submit').off('click');
+      event.preventDefault();
+      var file = $('.file-open').data('file');
+      socket.emit('commit-file', { file: file});
+      $('.git-file').remove();
+      $('#manual-git-modal .modal-submit').text('Working...');
+      socket.on('commit-file-complete', function(data) {
+        socket.removeListener('commit-file-complete');
+        $('#manual-git-modal').modal('hide');
+        $('#manual-git-modal .modal-submit').text('Commit and Push');
+      });
+    }
+
+    $('#manual-git-modal .modal-submit').click(handle_commit_push);
+  };
+
   occEditor.run_file = function(event) {
     if (event) {
       event.preventDefault();
@@ -1170,6 +1207,7 @@
     $(document).on('click touchstart', '.save-file', occEditor.save_file);
     $(document).on('click touchstart', '.trace-file', occEditor.trace_file);
     $(document).on('click touchstart', '.run-file', occEditor.run_file);
+    $(document).on('click touchstart', '.git-file', occEditor.manual_git_file);
 
     $(document).off('click touchstart', '.debug-file', occEditor.debug_file);
     $(document).on('click touchstart', '.debug-file', occEditor.debug_file);
@@ -1498,7 +1536,7 @@
           settings = {};
         }
         settings = $.extend({}, settings, value);
-
+        //console.log(settings);
         socket.emit("set-settings", value);
         $('.saved-setting').html('<i class="icon-ok"></i> Saved').delay(100).fadeIn('slow').fadeOut();
       }
@@ -1543,6 +1581,12 @@
         set_settings({"show_invisibles": $(this).text().toLowerCase()});
       }
 
+      function set_manual_git(event) {
+        $('.manual-git-value').removeClass('selected');
+        $(this).addClass('selected');
+        set_settings({"manual_git": $(this).text().toLowerCase()});
+      }
+
       if (typeof settings !== 'undefined') {
         if (settings.font_size) {
           $('.font-size-value.' + settings.font_size + 'px').addClass('selected');
@@ -1564,10 +1608,17 @@
         } else {
           $('.invisibles-value.off').addClass('selected');
         }
+        if (settings.manual_git) {
+          $('.manual-git-value.' + settings.manual_git).addClass('selected');
+        } else {
+          $('.manual-git-value.off').addClass('selected');
+        }
       } else {
         $('.font-size-value.12px').addClass('selected');
         $('.soft-tab-value.on').addClass('selected');
         $('.tab-size.4').addClass('selected');
+        $('.invisibles-value.off').addClass('selected');
+        $('.manual-git-value.off').addClass('selected');
       }
 
       $('#editor').hide();
@@ -1578,6 +1629,7 @@
       $(document).on('click touchstart', '.soft-tab-value', set_soft_tabs);
       $(document).on('click touchstart', '.tab-size-value', set_tab_size);
       $(document).on('click touchstart', '.invisibles-value', set_show_invisibles);
+      $(document).on('click touchstart', '.manual-git-value', set_manual_git);
       $(document).on('click touchstart', '.close-settings-manager', close_settings_manager);
     }
 

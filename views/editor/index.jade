@@ -33,7 +33,6 @@ block content
             span.font-size-value.14px 14
             span.font-size-value.16px 16
             span.font-size-value.20px 20
-          .clear
           .settings-element
             span Use Soft Tabs:
             span.soft-tab-value.on On
@@ -48,6 +47,10 @@ block content
             span Show Invisibles:
             span.invisibles-value.on On
             span.invisibles-value.off Off
+          .settings-element
+            span Manual Git commit and push (advanced)
+            span.manual-git-value.on On
+            span.manual-git-value.off Off
       #editor
       #editor-output-wrapper
         .dragbar
@@ -65,12 +68,24 @@ block content
         div.schedule-footer
           span.schedule-status Scheduler Active
           a(href="", class="schedule-manager-link") Schedule Manager
+    #manual-git-modal(class="modal hide fade")
+      .modal-header
+        button.close(type="button", data-dismiss-"modal", aria-hidden="true") &times;
+        h3#create-modal-label Git Commit and Push
+      .modal-body
+        p Add a comment to your edited filed, and click Commit and Push.
+        div.scheduler-form
+          form
+            input(type="text", name="comment", value="")
+      .modal-footer
+        button.btn(data-dismiss="modal", aria-hidden="true") Close
+        button.btn.btn-primary.modal-submit Commit and Push          
     #create-modal(class="modal hide fade")
       .modal-header
         button.close(type="button", data-dismiss-"modal", aria-hidden="true") &times;
         h3#create-modal-label
       .modal-body
-        p
+        p 
       .modal-footer
         button.btn(data-dismiss="modal", aria-hidden="true") Close
         button.btn.btn-primary.modal-submit Save

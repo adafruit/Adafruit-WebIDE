@@ -241,6 +241,36 @@ exports.commit = function commit(repository, message, cb) {
 };
 
 /*
+ * git status a single file.
+ * repository: the name of the repository that resides in the repositories folder.
+ * file: the relative path of the file from the root of the repository.
+ */
+exports.is_modified = function (file, cb) {
+  var path_array = file.path.split('/');
+  var repository = path_array[2];
+  var repository_path = path.resolve(REPOSITORY_PATH, repository);
+  var item_path = path_array.slice(3).join('/');
+
+  var is_modified = false;
+  git.status(repository_path, function(output) {
+
+    if (output.not_staged.length > 0) {
+      output.not_staged.forEach(function(item, index) {
+        if (item.file === item_path) {
+          is_modified = true;
+        }
+      });
+    }
+
+    if (output.untracked.indexOf(item_path) !== -1) {
+      is_modified = true;
+    }
+
+    cb(output.errors, is_modified);
+  });
+};
+
+/*
  * git push the committed changes.  Adds it to the push queue.
  * repository: the name of the repository that resides in the repositories folder.
  */
@@ -349,7 +379,7 @@ exports.move_commit_push = function(item, cb) {
 /*
  * Simply commits a file or directory, commits it, and pushes it out.
  */
-exports.commit_push_and_save = function(file, cb) {
+exports.commit_push_and_save = function(file, commit_message, cb) {
   var self = this,
       path_array, repository, file_path;
   if (!file.repository) {
@@ -363,7 +393,6 @@ exports.commit_push_and_save = function(file, cb) {
 
   self.add(repository, file_path, function(err, status) {
     console.log("added", err, status);
-    var commit_message = "Modified " + file.name;
     self.commit(repository, commit_message,  function(err, status) {
       console.log("committed", err, status);
       self.push(repository, "origin", "master", function(err, status) {
