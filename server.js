@@ -330,10 +330,11 @@ function socket_listeners() {
       });
     });
 
-    socket.on('commit-file', function (data, message) {
+    socket.on('commit-file', function (data) {
       var commit_message = "";
-      if (message) {
-        commit_message = message;
+      
+      if (data.message) {
+        commit_message = data.message;
       } else {
         commit_message = "Modified " + data.file.name;
       }

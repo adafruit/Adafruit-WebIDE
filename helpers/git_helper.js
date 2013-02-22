@@ -391,6 +391,8 @@ exports.commit_push_and_save = function(file, commit_message, cb) {
     file_path = file.path;
   }
 
+  console.log(commit_message);
+
   self.add(repository, file_path, function(err, status) {
     console.log("added", err, status);
     self.commit(repository, commit_message,  function(err, status) {

@@ -540,7 +540,7 @@
     occEditor.clear_editor();
     $('#editor').show();
     $('#schedule-manager').hide();
-    
+
     $(document).trigger('file_open', {path: path});
     davFS.listDir(path, populateFileSystem);
   };
@@ -1079,7 +1079,8 @@
       $('#manual-git-modal .modal-submit').off('click');
       event.preventDefault();
       var file = $('.file-open').data('file');
-      socket.emit('commit-file', { file: file});
+      var comment = $('input[name="comment"]').val();
+      socket.emit('commit-file', { file: file, message: comment});
       $('.git-file').remove();
       $('#manual-git-modal .modal-submit').text('Working...');
       socket.on('commit-file-complete', function(data) {
