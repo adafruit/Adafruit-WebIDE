@@ -77,13 +77,6 @@ exports.list_repositories = function(profile, cb) {
   }, function (e, r, body) {
     console.log(e);
     //console.log(r.statusCode);
-    if (body && Array.isArray(body)) {
-      body.forEach(function(repo) {
-        if (repo.slug === "my-pi-projects") {
-          self.set_repository_private(profile, repo.slug);
-        }
-      });
-    }
     //console.log(body);
     cb (e, body);
   });
