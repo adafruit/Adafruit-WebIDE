@@ -527,11 +527,11 @@
     editor_startup("Populating Navigator");
     occEditor.path = path;
     path = path || '/filesystem';
-    function populateFileSystem(err, list) {
+    function populateFileSystem(err, list, parent) {
       //console.log(list);
-      build_navigator_top(list[0]);
+      build_navigator_top(parent);
       build_navigator_list(list);
-      build_navigator_bottom(list[0]);
+      build_navigator_bottom(parent);
       editor_startup("Navigator Populated", true);
       
       occEditor.handle_navigator_scroll();
@@ -764,13 +764,13 @@
         item_icon = "";
         item_name = item.name.slice(0, 30) + "...";
       }
-      if (i > 0) {
+      //if (i > 0) {
         item.id = i + "-item";
         $("<li id='" + i + "-item' class='navigator-item'></li>")
         .data( "file", item )
         .append("<a href='' title='" + item.name + "'>" + item_name + item_icon)
         .appendTo(ul);
-      }
+      //}
     });
   }
 

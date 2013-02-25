@@ -27,7 +27,7 @@ $.fn.filterNode = function(name) {
       'Content-type': 'text/xml; charset=UTF-8'
     };
     _request(options, function(err, data, jqXHR) {
-      var list = [], item = {};
+      var list = [], item = {}, parent;
       //console.log(data);
       $(data).filterNode("d:response").each(function(i, result) {
         var item ={};
@@ -55,8 +55,19 @@ $.fn.filterNode = function(name) {
           list.push(item);
         }
       });
-      //console.log(list);
-      cb(null, list);
+      
+      parent = list.shift();
+
+      list.sort(function(a, b) {
+        var nameA=a.name.toLowerCase(), nameB=b.name.toLowerCase();
+        if (nameA < nameB)
+          return -1;
+        if (nameA > nameB)
+          return 1;
+        return 0;
+      });
+
+      cb(null, list, parent);
     });
   };
 
