@@ -385,7 +385,7 @@ function socket_listeners() {
       }
 
       exec_helper.execute_program(data.file, false);
-      git_helper.commit_push_and_save(data.file, function(err, status) {
+      git_helper.commit_push_and_save(data.file, "Modified " + data.file.name, function(err, status) {
         socket.emit('commit-file-complete', {message: "Save was successful"});
       });
     });

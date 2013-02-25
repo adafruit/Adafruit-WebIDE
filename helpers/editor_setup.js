@@ -61,7 +61,7 @@ var exec = require('child_process').exec,
                   if (err) console.log(err);
                   console.log(file);
 
-                  git_helper.commit_push_and_save(file, function(err, response) {
+                  git_helper.commit_push_and_save(file, "Added README.md and .gitignore", function(err, response) {
                     socket.emit("self-check-message", "Pushed changes to my-pi-projects to Bitbucket");
                     socket.emit('self-check-complete');
                   });
@@ -89,7 +89,7 @@ var exec = require('child_process').exec,
                     console.log(file);
                     if (err) console.log(err);
 
-                    git_helper.commit_push_and_save(file, function(err, response) {
+                    git_helper.commit_push_and_save(file, "Added README.md and .gitignore", function(err, response) {
                       socket.emit("self-check-message", "Pushed changes to my-pi-projects to Bitbucket");
                       socket.emit('self-check-complete');
                     });
