@@ -1,3 +1,6 @@
+-0.3.5
+Fix crashing on startup of new installations.
+
 -0.3.4
 Fix for code not getting pushed out to remote repository.
 List folders and files alphabetically.
