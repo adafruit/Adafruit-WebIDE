@@ -1,3 +1,8 @@
+-0.3.4
+Fix for code not getting pushed out to remote repository.
+List folders and files alphabetically.
+Remove long running call causing slowdowns.
+
 -0.3.3
 Add four new settings to the Settings Page
   -Use Soft Tabs (on or off)
