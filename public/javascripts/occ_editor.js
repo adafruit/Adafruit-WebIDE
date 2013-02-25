@@ -589,7 +589,7 @@
       //console.log(status);
 
       //$('.save-file i').removeClass('icon-cloud').addClass('icon-ok');
-      if (typeof settings !== 'undefined' && settings.manual_git === 'off') {
+      if (typeof settings === 'undefined' || (typeof settings === 'undefined' && settings.manual_git !== 'on')) {
         socket.emit('commit-file', { file: file});
       }
     }
