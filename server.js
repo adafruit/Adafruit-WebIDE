@@ -98,6 +98,7 @@ passport.deserializeUser(function(obj, done) {
 
 //redirect anything with /filesystem in the url to the WebDav server.
 app.use(function(req, res, next) {
+  //res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
   if (req.path.indexOf("/filesystem") != -1) {
     davServer.exec(req, res);
   } else {
@@ -109,6 +110,7 @@ var sessionStore = new RedisStore();
 app.set('view engine', 'jade');
 app.set('views', __dirname + '/views');
 app.use(express.logger());
+//app.use(express.logger("dev"));
 app.use(express.static(__dirname + '/public'));
 app.use(express.static(__dirname + '/node_modules/tty.js/static'));
 app.use(express.cookieParser());
@@ -265,6 +267,12 @@ function serverInitialization(app) {
 function start_server(cb) {
   server = require('http').createServer(app);
   io = io.listen(server);
+  io.configure(function() {
+    io.enable('browser client minification');
+    io.enable('browser client etag');
+    io.set('transports', ['websocket']);
+  });
+
   new tty.Server(config.term, app, server, io);
 
   client.hgetall('server', function (err, server_data) {
