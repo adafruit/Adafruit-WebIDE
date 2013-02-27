@@ -8,7 +8,7 @@
     "passport": "0.1.15",
     "passport-bitbucket": "0.1.2",
     "jade": "0.28.1",
-    "request": "2.14.1",
+    "request": "2.14.0",
     "socket.io": "0.9.13",
     "gitty": "git://github.com/jwcooper/Gitty.git",
     "jsDAV": "git://github.com/jwcooper/jsDAV.git",
