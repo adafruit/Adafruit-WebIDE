@@ -1,6 +1,7 @@
 -0.3.6
 Update Font Awesome to latest version
 Fix for git commit and push when settings are already configured
+Modify socket.io for better performance
 
 -0.3.5
 Fix crashing on startup of new installations.
