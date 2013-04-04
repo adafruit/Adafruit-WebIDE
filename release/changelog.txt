@@ -1,3 +1,11 @@
+-0.3.7
+New Offline mode
+ - ability to install with --offline as the default
+ - need to manually commit, and push changes (similar to the manual git setting)
+ - Bypasses bitbucket OAuth
+New option to clone repositories without updating remote to bitbucket
+Errors cloning repositories are sent to the front-end now.
+
 -0.3.6
 Update Font Awesome to latest version
 Fix for git commit and push when settings are already configured
