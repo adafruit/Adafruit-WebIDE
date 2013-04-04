@@ -11,12 +11,24 @@ var exec = require('child_process').exec,
   fs.exists || (fs.exists = path.exists);
 
   exports.offline_health_check = function(socket) {
+    client.hgetall('editor:settings', function(err, settings) {
 
+      if (settings) {
+        settings.offline = true;
+      } else {
+        settings = {offline: true};
+      }
+      console.log("getting settings", settings);
+      socket.emit("self-check-settings", settings);
+    });
+
+    console.log('self-check-complete');
     socket.emit('self-check-complete');
   };
 
   //TODO this is a terrible mess..clean this up, no reason to have these big blocks of callbacks...uffda.
   exports.health_check = function(socket, profile) {
+    console.log(config.editor.offline);
     if (config.editor.offline) {
       this.offline_health_check(socket);
       return;
@@ -26,6 +38,10 @@ var exec = require('child_process').exec,
     console.log(project_repository);
 
     client.hgetall('editor:settings', function(err, settings) {
+      if (typeof settings === 'undefined' || !settings) {
+        settings = {};
+      }
+
       console.log("getting settings", settings);
       socket.emit("self-check-settings", settings);
     });

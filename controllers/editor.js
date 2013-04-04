@@ -18,7 +18,6 @@ exports.index = function(req, res) {
     }
     res.render('editor/index', {profile: req.user, version: config.editor.version, shown_notification: shown_notification});
   });
-  
 };
 
 exports.create_repository = function(req, res) {

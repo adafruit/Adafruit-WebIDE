@@ -254,6 +254,8 @@ exports.is_modified = function (file, cb) {
   var is_modified = false;
   git.status(repository_path, function(output) {
 
+    console.log(output);
+
     if (output.not_staged.length > 0) {
       output.not_staged.forEach(function(item, index) {
         if (item.file === item_path) {
@@ -302,7 +304,7 @@ exports.push = function push(repository, remote, branch, cb) {
       repository: repository,
       remote: remote,
       branch: branch
-    });    
+    });
   }
   cb();
 };

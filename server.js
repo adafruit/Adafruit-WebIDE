@@ -44,10 +44,9 @@ if (!exists) {
   console.log('created logs folder');
 }
 
-winston.add(winston.transports.File, { filename: __dirname + '/logs/output.log', json: false });
-winston.handleExceptions(new winston.transports.File({ filename: __dirname + '/logs/errors.log', json: false }));
-winston.info('Logger initialized!');
-winston.remove(winston.transports.Console);
+//winston.add(winston.transports.File, { filename: __dirname + '/logs/output.log', json: false });
+//winston.handleExceptions(new winston.transports.File({ filename: __dirname + '/logs/errors.log', json: false }));
+//winston.remove(winston.transports.Console);
 
 // Passport session setup.
 //   To support persistent login sessions, Passport needs to be able to
@@ -183,11 +182,13 @@ serverInitialization(app);
 function ensureAuthenticated(req, res, next) {
   setHostName(req);
 
+  if (config.editor.offline) {
+    req.user = { provider: 'offline',
+                 username: 'offline user' };
+    return next();
+  }
+
   function authRoute(req, res, next) {
-    if (config.editor.offline) {
-      //TODO: create a dummy session here
-      return next();
-    }
     if (req.isAuthenticated()) {
       return next();
     }
@@ -218,7 +219,8 @@ function ensureOauth(req, res, next) {
   setHostName(req);
 
   if (config.editor.offline) {
-    //TODO: create a dummy session here
+    req.user = { provider: 'offline',
+                 username: 'offline user' };
     return next();
   }
 
@@ -283,7 +285,11 @@ function start_server(cb) {
     } else {
       port = config.editor.port;
     }
-    
+
+    if (server_data && server_data.offline) {
+      config.editor.offline = (server_data.offline == 1) ? true : false;
+    }
+
     winston.info('listening on port ' + port);
     cb(server.listen(port));
   });
@@ -297,17 +303,19 @@ function socket_listeners() {
 
     sessionStore.get(handshakeData.cookies['sid'], function(err, session) {
       if (config.editor.offline) {
+        handshakeData.session = { provider: 'offline', username: 'offline user' };
         return callback(null, true);
+      } else {
+        client.get(session.passport.user, function(err, user) {
+          if (err || !session) return callback('socket.io: session not found.', false);
+          handshakeData.session = JSON.parse(user);
+          if (handshakeData.session) {
+            return callback(null, true);
+          } else {
+            return callback('socket.io: session user not found', false);
+          }
+        });
       }
-      client.get(session.passport.user, function(err, user) {
-        if (err || !session) return callback('socket.io: session not found.', false);
-        handshakeData.session = JSON.parse(user);
-        if (handshakeData.session) {
-          return callback(null, true);
-        } else {
-          return callback('socket.io: session user not found', false);
-        }
-      });
     });
   });
 
@@ -340,7 +348,7 @@ function socket_listeners() {
 
     socket.on('commit-file', function (data) {
       var commit_message = "";
-      
+
       if (data.message) {
         commit_message = data.message;
       } else {

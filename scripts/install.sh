@@ -9,6 +9,38 @@
 #scp pi@raspberrypi.local:/home/pi/Adafruit-WebIDE-Update/editor-update.tar.gz editor-0.2.4-update.tar.gz
 #sudo -u webide -g webide node server
 
+#http://stackoverflow.com/a/6946864/629189
+# translate long options to short
+OFFLINE=false
+
+for arg
+do
+    delim=""
+    case "$arg" in
+       --offline) args="${args}-o ";;
+       --help) args="${args}-h ";;
+       #--config) args="${args}-c ";;
+       # pass through anything else
+       *) [[ "${arg:0:1}" == "-" ]] || delim="\""
+           args="${args}${delim}${arg}${delim} ";;
+    esac
+done
+# reset the translated args
+eval set -- $args
+# now we can process with getopt
+while getopts ":hovc:" opt; do
+    case $opt in
+        h)  usage ;;
+        o)  OFFLINE=true ;;
+        #c)  source $OPTARG ;;
+        #\?) usage ;;
+        :)
+        echo "option -$OPTARG requires an argument"
+        usage
+        ;;
+    esac
+done
+
 set -e
 WEBIDE_ROOT="/usr/share/adafruit/webide"
 
@@ -90,6 +122,11 @@ then
   echo "**** TO CHOOSE A DIFFERENT PORT USE THE FOLLOWING COMMAND: ****"
   echo "**** redis-cli HMSET server port 3000 ****"
   echo "**** AND RESTART THE SERVER ****"
+fi
+
+if $OFFLINE
+then
+  redis-cli HMSET server offline 1
 fi
 
 service adafruit-webide.sh start

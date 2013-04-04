@@ -109,11 +109,11 @@
 
   occEditor.init = function(id) {
     occEditor.set_page_title("All Repositories");
-    
+
     editor = ace.edit("editor");
     editor.setTheme("ace/theme/merbivore_soft");
     editor.getSession().setMode("ace/mode/python");
-    
+
     occEditor.init_commands(editor);
     occEditor.init_events(editor);
 
@@ -147,7 +147,7 @@
       if (data) {
         settings = data;
       }
-    
+
       editor_startup("Editor settings received");
     });
     socket.on("self-check-complete", function() {
@@ -472,7 +472,7 @@
           $editor_bar.html(templates.editor_bar_interpreted_file);
 
           //manually committing and pushing of git files is enabled
-          if (typeof settings !== "undefined" && settings.manual_git === 'on') {
+          if (settings.offline || settings.manual_git === 'on') {
             $('.save-file i').removeClass().addClass('icon-save');
             socket.emit("git-is-modified", { file: file});
 
@@ -589,7 +589,9 @@
       //console.log(status);
 
       //$('.save-file i').removeClass('icon-cloud').addClass('icon-ok');
-    if (typeof settings === 'undefined' || (typeof settings !== 'undefined' && settings.manual_git !== 'on')) {
+      if (settings.offline || settings.manual_git === 'on') {
+        //don't commit and push files
+      } else {
         socket.emit('commit-file', { file: file});
       }
     }
@@ -1484,11 +1486,19 @@
 
       if (file.type === 'directory') {
         davFS.remove(file.path, function(err, status) {
-          socket.emit('git-delete', { file: file});
+          if (settings.offline || settings.manual_git === 'on') {
+            //don't push folders
+          } else {
+            socket.emit('git-delete', { file: file});
+          }
        });
       } else {
         davFS.remove(file.path, function(err, status) {
-          socket.emit('git-delete', { file: file});
+          if (settings.offline || settings.manual_git === 'on') {
+            //don't push folders
+          } else {
+            socket.emit('git-delete', { file: file});
+          }
         });
       }
 
@@ -1726,7 +1736,11 @@
       var item = {path: path, name: folder_name, type: "file"};
 
       davFS.mkDir(path, function(err, status) {
-        socket.emit('commit-file', { file: item });
+        if (settings.offline || settings.manual_git === 'on') {
+          //don't push folders
+        } else {
+          socket.emit('commit-file', { file: item });
+        }
         create_fs_response(err, status, $create_wrapper);
       });
     }
@@ -1735,7 +1749,7 @@
       event.preventDefault();
       $('.create-save').text('Working');
       $('.create-input-wrapper input').prop('disabled', true);
-            
+
       var $create_wrapper = $(this).closest('.navigator-item-create');
       var file_name = $('input[name="file_name"]').val();
       file_name = file_name.replace(" ", "_");
@@ -1743,7 +1757,12 @@
       var path = parent_folder.path + file_name;
 
       davFS.write(parent_folder.path + file_name, '', function(err, status) {
-        socket.emit('commit-file', { file: {path: path, name: file_name, type: "file"}});
+        if (settings.offline || settings.manual_git === 'on') {
+          //don't push files
+        } else {
+          socket.emit('commit-file', { file: {path: path, name: file_name, type: "file"}});
+        }
+
         create_fs_response(err, status, $create_wrapper);
       });
     }
