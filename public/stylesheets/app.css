@@ -288,7 +288,7 @@ a.navigator-settings i.settings-enabled {
   font-size: 12px;
 }
 
-#create-modal .modal-body input {
+#create-modal .modal-body input[type="text"] {
   width: 97%;
 }
 

@@ -59,8 +59,13 @@
                                     '<span class="small">Example Read-Write: git@bitbucket.org:adafruit/adafruit-raspberry-pi-python-code.git</span><br/><br/>' +
                                     'This will also push the latest version of this repository to your Bitbucket account, if it doesn\'t already exist.<br/><br/>' +
                                     '<form id="clone-repository-form" method="post" action="/create/repository">' +
+                                      '<fieldset>' +
                                       '<label for="repository_url">Remote Repository URL:</label>' +
                                       '<input name="repository_url" type="text">' +
+                                      '<label class="checkbox">' +
+                                        '<input name="retain_remote" type="checkbox"> Clone without changing remote repository to bitbucket [not recommended]' +
+                                      '</label>' +
+                                      '</fieldset>' +
                                     '</form>',
     "create_project_folder":        '<form class="create-form" id="create-project-form">' +
                                       '<a href="" class="create-cancel"><i class="icon-remove-sign"></i></a>' +

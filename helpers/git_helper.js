@@ -62,46 +62,60 @@ exports.clone_adafruit_libraries = function(adafruit_repository, remote, cb) {
  * 4. It then updates the git remote for that repository to your bitbucket repository.
  * 5. Finally, it pushes the cloned repository to your remote account.
  */
-exports.clone_update_remote_push = function(profile, repository_url, cb) {
+exports.clone_update_remote_push = function(profile, repository_url, retain_remote, cb) {
   var self = this;
   //console.log(profile);
   var repository_name = path.basename(repository_url, '.git');
   console.log(repository_name);
   console.log(repository_url);
+  console.log(retain_remote);
 
-  request_helper.list_repositories(profile, function(err, list) {
-    var exists = list.some(function(repository) {
-      return (repository.name === repository_name);
+  if (config.editor.offline || (retain_remote === 'on')) {
+    self.clone_repository(repository_url, function(err, results) {
+      console.log(err, results);
+      console.log("clone repository locally: " + repository_name);
+      cb(err, true);
     });
-    if (!exists) {
-      //TODO need better error handling eventually
-      request_helper.create_repository(profile, repository_name, function(err, response) {
-        console.log("created repository in bitbucket: " + repository_name);
-        self.clone_repository(repository_url, function(err, results) {
-          console.log("clone repository locally: " + repository_name);
-          self.update_remote(profile, repository_name, function(err, response) {
-            console.log("updated remote for repository: " + repository_name);
-            self.push(repository_name, "origin", "master", function(err, response) {
-              console.log("git push for repository: " + repository_name);
-              cb(null, true);
+  } else {
+    request_helper.list_repositories(profile, function(err, list) {
+      var exists = list.some(function(repository) {
+        return (repository.name === repository_name);
+      });
+      if (!exists) {
+        console.log('doesnt exist');
+        //TODO need better error handling eventually
+        request_helper.create_repository(profile, repository_name, function(err, response) {
+          console.log("created repository in bitbucket: " + repository_name);
+          self.clone_repository(repository_url, function(err, results) {
+            console.log("clone repository locally: " + repository_name);
+            self.update_remote(profile, repository_name, function(err, response) {
+              console.log("updated remote for repository: " + repository_name);
+              self.push(repository_name, "origin", "master", function(err, response) {
+                console.log("git push for repository: " + repository_name);
+                cb(err, true);
+              });
             });
           });
         });
-      });
-    } else {
-      if (repository_url.toLowerCase().indexOf("bitbucket.org") === -1) {
-        cb("Repository Already Exists in Bitbucket, clone with Bitbucket URL.", false);
       } else {
-        self.clone_repository(repository_url, function(err, results) {
-          console.log("clone repository locally: " + repository_name);
-          cb(null, true);
-        });
+        console.log('before if, exist');
+        if (repository_url.toLowerCase().indexOf("bitbucket.org") === -1) {
+          cb("Repository Already Exists in Bitbucket, clone with Bitbucket URL.", false);
+        } else {
+          console.log('here');
+          self.clone_repository(repository_url, function(err, results) {
+            console.log("clone repository locally: " + repository_name);
+            cb(err, true);
+          });
+        }
       }
-    }
-  });
+    });
+  }
+
 };
 
 exports.clone_repository = function(repository_path, cb) {
+  console.log("clone_repository");
   console.log(repository_path);
   var repository_url = url.parse(repository_path);
 
