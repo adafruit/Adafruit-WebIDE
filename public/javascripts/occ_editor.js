@@ -788,6 +788,7 @@
 
   function attach_file_upload_listener() {
     var file = $('.navigator-item-back').data('file');
+
     var $upload_span = $('.fileinput-button span');
 
     $('#fileupload').fileupload({
@@ -839,8 +840,8 @@
         var $upload_form = $('<p class="navigator-item-upload"></p>');
         $upload_form.html(templates.upload_file_form);
         $upload_form.appendTo($('#navigator-bottom'));
-        attach_file_upload_listener();
       }
+      attach_file_upload_listener();
     }
   }
 
