@@ -6,6 +6,7 @@ var express = require('express'),
     passport = require('passport'),
     util = require('util'),
     BitbucketStrategy = require('passport-bitbucket').Strategy,
+    GitHubStrategy = require('passport-github').Strategy,
     site = require('./controllers/site'),
     editor = require('./controllers/editor'),
     user = require('./controllers/user'),
@@ -61,9 +62,7 @@ if (!exists) {
 //   Strategies in passport require a `verify` function, which accept
 //   credentials (in this case, a token, tokenSecret, and Bitbucket profile),
 //   and invoke a callback with a user object.
-function setup_passport(consumer_key, consumer_secret) {
-  console.log(consumer_key);
-  console.log(consumer_secret);
+function setup_bitbucket_passport(consumer_key, consumer_secret) {
   console.log("http://" + HOSTNAME + "/auth/bitbucket/callback");
   passport.use(new BitbucketStrategy({
       consumerKey: consumer_key,
@@ -75,6 +74,31 @@ function setup_passport(consumer_key, consumer_secret) {
       process.nextTick(function () {
         profile.token = token;
         profile.token_secret = tokenSecret;
+        profile.consumer_key = consumer_key;
+        profile.consumer_secret = consumer_secret;
+
+        return done(null, profile);
+      });
+    }
+  ));
+}
+
+// Use the GitHubStrategy within Passport.
+//   Strategies in passport require a `verify` function, which accept
+//   credentials (in this case, a token, tokenSecret, and Github profile),
+//   and invoke a callback with a user object.
+function setup_github_passport(consumer_key, consumer_secret) {
+  console.log("http://" + HOSTNAME + "/auth/github/callback");
+  passport.use(new GitHubStrategy({
+      clientID: consumer_key,
+      clientSecret: consumer_secret,
+      callbackURL: "http://" + HOSTNAME + "/auth/github/callback"
+    },
+    function(accessToken, refreshToken, profile, done) {
+      // asynchronous verification, for effect...
+      process.nextTick(function () {
+        profile.token = accessToken;
+        profile.refresh_token = refreshToken;
         profile.consumer_key = consumer_key;
         profile.consumer_secret = consumer_secret;
 
@@ -169,6 +193,21 @@ app.get('/auth/bitbucket/callback',
     res.redirect('/editor');
   });
 
+// GET /auth/github
+app.get('/auth/github',
+  passport.authenticate('github'),
+  function(req, res){
+    // The request will be redirected to Github for authentication, so this
+    // function will not be called.
+  });
+
+// GET /auth/github/callback
+app.get('/auth/github/callback',
+  passport.authenticate('github', { failureRedirect: '/login' }),
+  function(req, res) {
+    res.redirect('/editor');
+  });
+
 serverInitialization(app);
 
 
@@ -204,8 +243,13 @@ function ensureAuthenticated(req, res, next) {
     //need to setup passport on server startup, if the bitbucket oauth is already setup
     client.hgetall('bitbucket_oauth', function (err, bitbucket) {
       if (bitbucket) {
-        setup_passport(bitbucket.consumer_key, bitbucket.consumer_secret);
+        if (config.editor.github) {
+          setup_github_passport(bitbucket.consumer_key, bitbucket.consumer_secret);
+        } else {
+          setup_bitbucket_passport(bitbucket.consumer_key, bitbucket.consumer_secret);
+        }
         IS_PASSPORT_SETUP = true;
+
       }
       authRoute(req, res, next);
     });
@@ -228,7 +272,11 @@ function ensureOauth(req, res, next) {
     if (!bitbucket) {
       res.redirect('/setup');
     } else {
-      setup_passport(bitbucket.consumer_key, bitbucket.consumer_secret);
+      if (config.editor.github) {
+        setup_github_passport(bitbucket.consumer_key, bitbucket.consumer_secret);
+      } else {
+        setup_bitbucket_passport(bitbucket.consumer_key, bitbucket.consumer_secret);
+      }
       return next();
     }
   });
@@ -288,6 +336,10 @@ function start_server(cb) {
 
     if (server_data && server_data.offline) {
       config.editor.offline = (server_data.offline == 1) ? true : false;
+    }
+
+    if (server_data && server_data.github) {
+      config.editor.github = (server_data.github == 1) ? true : false;
     }
 
     winston.info('listening on port ' + port);

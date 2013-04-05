@@ -1,11 +1,12 @@
 var redis = require("redis"),
     client = redis.createClient(),
     scripts_helper = require('../helpers/scripts_helper'),
+    config = require('../config/config'),
     check = require('validator').check,
     sanitize = require('validator').sanitize;
 
 exports.login = function(req, res){
-  res.render('users/login', { title: 'test', user: req.user });
+  res.render('users/login', { title: 'test', user: req.user, github: config.editor.github });
 };
 
 exports.logout = function(req, res){
@@ -23,9 +24,10 @@ exports.setup = function(req, res) {
         consumer_secret: "",
         name: "",
         email: "",
-        hostname: ""
+        hostname: "",
+        github: config.editor.github
       };
-      
+
       res.render('users/setup', locals);
     });
   });

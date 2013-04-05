@@ -12,12 +12,14 @@
 #http://stackoverflow.com/a/6946864/629189
 # translate long options to short
 OFFLINE=false
+GITHUB=false
 
 for arg
 do
     delim=""
     case "$arg" in
        --offline) args="${args}-o ";;
+       --github) args="${args}-g ";;
        --help) args="${args}-h ";;
        #--config) args="${args}-c ";;
        # pass through anything else
@@ -28,10 +30,11 @@ done
 # reset the translated args
 eval set -- $args
 # now we can process with getopt
-while getopts ":hovc:" opt; do
+while getopts ":hogvc:" opt; do
     case $opt in
         h)  usage ;;
         o)  OFFLINE=true ;;
+        g)  GITHUB=true ;;
         #c)  source $OPTARG ;;
         #\?) usage ;;
         :)
@@ -127,6 +130,11 @@ fi
 if $OFFLINE
 then
   redis-cli HMSET server offline 1
+fi
+
+if $GITHUB
+then
+  redis-cli HMSET server github 1
 fi
 
 service adafruit-webide.sh start

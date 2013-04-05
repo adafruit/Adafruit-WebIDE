@@ -10,27 +10,30 @@ block content
       p Setting up your Raspberry Pi will only take a few minutes.  Let's get started.
       p Are you setting up more than one Raspberry Pi?  Visit the config to 
         a(href="/config") change hostname and WiFi.
-      p One of the many useful features of the WebIDE is that all of your code will be
-        | stored in the cloud over at bitbucket.org. So, before we can go any further, you
-        | will want to create your free Bitbucket account.  If you already have one, you can use
-        | your existing account, or create one specifically for the Raspberry Pi WebIDE.
-      p
-        a.btn.btn-large.btn-info.bitbucket-signup(href="https://bitbucket.org/account/signup/", target="_blank") Click here to create your free bitbucket account
-      p
-        img(src="/images/setup/step1.png")
-      p In your Account page, click on the Integrated Applications link in the left column:
-      p
-        img(src="/images/setup/step2.png")
-      p Now, click on the '+ Add consumer' button:
-      p
-        img(src="/images/setup/step3.png")
-      p For the name, type in Raspberry Pi WebIDE, then click the 'Add consumer' button:
-      p
-        img(src="/images/setup/step4.png")
-      p What we are after is the Key, and the Secret text. Copy each of those and paste in the boxes below.
-      p
-        img(src="/images/setup/step5.png")
-      p Copy the key and Secret codes into these text boxes, and then click submit:
+      if !github
+        p One of the many useful features of the WebIDE is that all of your code will be
+          | stored in the cloud over at bitbucket.org. So, before we can go any further, you
+          | will want to create your free Bitbucket account.  If you already have one, you can use
+          | your existing account, or create one specifically for the Raspberry Pi WebIDE.
+        p
+          a.btn.btn-large.btn-info.bitbucket-signup(href="https://bitbucket.org/account/signup/", target="_blank") Click here to create your free bitbucket account
+        p
+          img(src="/images/setup/step1.png")
+        p In your Account page, click on the Integrated Applications link in the left column:
+        p
+          img(src="/images/setup/step2.png")
+        p Now, click on the '+ Add consumer' button:
+        p
+          img(src="/images/setup/step3.png")
+        p For the name, type in Raspberry Pi WebIDE, then click the 'Add consumer' button:
+        p
+          img(src="/images/setup/step4.png")
+        p What we are after is the Key, and the Secret text. Copy each of those and paste in the boxes below.
+        p
+          img(src="/images/setup/step5.png")
+        p Copy the key and Secret codes into these text boxes, and then click submit:
+      if github
+        p Enter your Github OAuth Consumer Key and Secret here:
       form(method="post", action="/setup", class="form-horizontal")
         div.control-group
           label(for="key", class="control-label") Key:
@@ -40,7 +43,10 @@ block content
           label(for="secret", class="control-label") Secret:
           div.controls
             input(type="text", name="secret", value=consumer_secret)
-        p Add your Full Name and Email to attach to saved files at Bitbucket (git config)
+        if github
+          p Add your Full Name and Email to attach to saved files at Github (git config)
+        else
+          p Add your Full Name and Email to attach to saved files at Bitbucket (git config)
         div.control-group
           label(for="name", class="control-label") Full Name:
           div.controls

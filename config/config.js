@@ -1,11 +1,13 @@
 //NOTE: Changes in this file will not persist between updates at this point.
 //Change port number in /config.
 //Change offline in /config.
+//Change github in /config.
 exports.editor = {
   "port": 80,
   "version": "0.3.6",
   "version_url": "https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/release/version.txt",
-  "offline": false
+  "offline": false,
+  "github": false
 };
 
 exports.adafruit = {
