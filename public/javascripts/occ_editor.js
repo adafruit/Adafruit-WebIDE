@@ -192,7 +192,6 @@
     });
 
     $(document).on('click', '#editor, #editor-bar, #navigator', function() {
-      //console.log('here');
       occEditor.focus_terminal(false);
       if (terminal_win) {
         terminal_win.blur();
@@ -403,7 +402,7 @@
         davFS.read(file.path, handler);
       }
     }
-    
+
   };
 
   occEditor.focus_terminal = function(should_focus) {
@@ -468,6 +467,7 @@
     }
 
     function editor_bar_actions(event, file) {
+      //console.log('editor_bar_actions', file);
       if (occEditor.is_debug_active) {
         return;
       }
@@ -528,7 +528,8 @@
     $(document).on('file_open', editor_bar_actions);
   };
 
-  occEditor.populate_navigator = function(path) {
+  occEditor.populate_navigator = function(path, cb) {
+    //console.log(path);
     editor_startup("Populating Navigator");
     occEditor.path = path;
     path = path || '/filesystem';
@@ -538,8 +539,12 @@
       build_navigator_list(list);
       build_navigator_bottom(parent);
       editor_startup("Navigator Populated", true);
-      
+
       occEditor.handle_navigator_scroll();
+
+      if (cb) {
+        cb();
+      }
     }
 
     occEditor.clear_editor();
@@ -1531,7 +1536,7 @@
 
       if (file.type === 'directory') {
         alert_changed_file();
-        
+
         var path = occEditor.cwd() + '/' + file.name;
         path = path.replace('//', '/');
         occEditor.send_terminal_command('cd ' + path);
@@ -1564,7 +1569,7 @@
 
         $('#settings-manager').hide();
         $('#editor').show();
-        
+
         var file = $('.filesystem li.file-open').data('file');
         if (file) {
           $(document).trigger('file_open', file);
@@ -1707,7 +1712,7 @@
       occEditor.handle_navigator_scroll();
     }
 
-    function create_fs_response(err, status, $create_wrapper) {
+    function create_fs_response(err, status, $create_wrapper, item) {
       var folder_name = $('input[name="folder_name"]').val();
       var parent_folder = $('.navigator-item-back').data("file");
 
@@ -1723,7 +1728,23 @@
         occEditor.handle_navigator_scroll();
       } else {
         create_replace($create_wrapper);
-        occEditor.populate_navigator(parent_folder.path);
+
+        occEditor.set_page_title(item.name);
+
+        if (item.type === 'file') {
+          occEditor.populate_navigator(parent_folder.path, function() {
+            var file = $('.filesystem li a[title="' + item.name + '"]').closest('li').addClass('file-open').data('file');
+            occEditor.populate_editor(file);
+            occEditor.populate_editor_bar();
+          });
+        } else {
+          var path = occEditor.cwd() + '/' + item.name;
+          path = path.replace('//', '/');
+          occEditor.send_terminal_command('cd ' + path);
+
+          occEditor.populate_navigator(item.path);
+        }
+
         occEditor.populate_editor_bar();
       }
     }
@@ -1738,7 +1759,7 @@
       folder_name = folder_name.replace(" ", "_");
       var parent_folder = $('.navigator-item-back').data("file");
       var path = parent_folder.path + folder_name;
-      var item = {path: path, name: folder_name, type: "file"};
+      var item = {path: path, name: folder_name, type: "folder"};
 
       davFS.mkDir(path, function(err, status) {
         if (settings.offline || settings.manual_git === 'on') {
@@ -1746,7 +1767,7 @@
         } else {
           socket.emit('commit-file', { file: item });
         }
-        create_fs_response(err, status, $create_wrapper);
+        create_fs_response(err, status, $create_wrapper, item);
       });
     }
 
@@ -1760,15 +1781,16 @@
       file_name = file_name.replace(" ", "_");
       var parent_folder = $('.navigator-item-back').data("file");
       var path = parent_folder.path + file_name;
+      var file = {path: path, name: file_name, type: "file"};
 
       davFS.write(parent_folder.path + file_name, '', function(err, status) {
         if (settings.offline || settings.manual_git === 'on') {
           //don't push files
         } else {
-          socket.emit('commit-file', { file: {path: path, name: file_name, type: "file"}});
+          socket.emit('commit-file', { file: file});
         }
 
-        create_fs_response(err, status, $create_wrapper);
+        create_fs_response(err, status, $create_wrapper, file);
       });
     }
 
