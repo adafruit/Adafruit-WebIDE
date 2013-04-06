@@ -10,6 +10,24 @@ var exec = require('child_process').exec,
 
   fs.exists || (fs.exists = path.exists);
 
+  exports.setup_github = function(socket) {
+    git_helper.set_config(function() {
+      this.setup_adafruit_libraries(socket);
+    });
+  };
+
+  exports.setup_adafruit_libraries = function(socket) {
+    git_helper.clone_adafruit_libraries(config.adafruit.repository, config.adafruit.remote, function(cloned_libraries) {
+      socket.emit("self-check-message", "Cloning remote Adafruit repository");
+      //cloned_libraries is false if they already existed...if false, let's pull the latest version of the adafruit libraries
+      if (!cloned_libraries) {
+        git_helper.pull(config.adafruit.repository, "origin", "master", function() {
+          socket.emit("self-check-message", "Adafruit repository updated");
+        });
+      }
+    });
+  };
+
   exports.offline_health_check = function(socket) {
     client.hgetall('editor:settings', function(err, settings) {
 
@@ -29,6 +47,11 @@ var exec = require('child_process').exec,
   //TODO this is a terrible mess..clean this up, no reason to have these big blocks of callbacks...uffda.
   exports.health_check = function(socket, profile) {
     console.log(config.editor.offline);
+
+    if (config.editor.github) {
+      this.setup_github(socket);
+    }
+
     if (config.editor.offline || config.editor.github) {
       this.offline_health_check(socket);
       return;
@@ -48,15 +71,7 @@ var exec = require('child_process').exec,
 
     //check if the adafruit libraries exist, if not, clone them.
     request_helper.post_ssh_key(profile, function(err, response) {
-      git_helper.clone_adafruit_libraries(config.adafruit.repository, config.adafruit.remote, function(cloned_libraries) {
-        socket.emit("self-check-message", "Cloning remote Adafruit repository");
-        //cloned_libraries is false if they already existed...if false, let's pull the latest version of the adafruit libraries
-        if (!cloned_libraries) {
-          git_helper.pull(config.adafruit.repository, "origin", "master", function() {
-            socket.emit("self-check-message", "Adafruit repository updated");
-          });
-        }
-      });
+      this.setup_adafruit_libraries(socket);
 
     git_helper.set_config(function() {
       request_helper.list_repositories(profile, function(err, list) {
