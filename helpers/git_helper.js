@@ -23,7 +23,7 @@ function push_queue_interval() {
   }
 
   pushInterval = setInterval(function() {
-    if (config.editor.offline) {
+    if (config.editor.offline || config.editor.github) {
       return;
     }
     
@@ -67,7 +67,7 @@ exports.clone_update_remote_push = function(profile, repository_url, retain_remo
 
   var repository_name = path.basename(repository_url, '.git');
 
-  if (config.editor.offline || (retain_remote === 'on')) {
+  if (config.editor.offline || config.editor.github || (retain_remote === 'on')) {
     self.clone_repository(repository_url, function(err, results) {
       console.log("clone repository locally: " + repository_name);
       cb(err, true);
