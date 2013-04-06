@@ -46,6 +46,7 @@ var exec = require('child_process').exec,
 
   //TODO this is a terrible mess..clean this up, no reason to have these big blocks of callbacks...uffda.
   exports.health_check = function(socket, profile) {
+    var that = this;
     console.log(config.editor.offline);
 
     if (config.editor.github) {
@@ -71,7 +72,7 @@ var exec = require('child_process').exec,
 
     //check if the adafruit libraries exist, if not, clone them.
     request_helper.post_ssh_key(profile, function(err, response) {
-      this.setup_adafruit_libraries(socket);
+      that.setup_adafruit_libraries(socket);
 
     git_helper.set_config(function() {
       request_helper.list_repositories(profile, function(err, list) {
