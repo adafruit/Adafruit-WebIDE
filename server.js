@@ -33,7 +33,7 @@ var davServer,
     IS_PASSPORT_SETUP = false,
     REPOSITORY_PATH = path.resolve(__dirname + "/repositories");
 
-console.log("REPOSITORY_PATH", REPOSITORY_PATH);
+winston.info("REPOSITORY_PATH", REPOSITORY_PATH);
 
 //exec_helper.spawn_ipython();
 
@@ -42,11 +42,11 @@ console.log("REPOSITORY_PATH", REPOSITORY_PATH);
 var exists = path.existsSync(__dirname + '/logs');
 if (!exists) {
   fs.mkdirSync(__dirname + '/logs', 0755);
-  console.log('created logs folder');
+  winston.info('created logs folder');
 }
 
-//winston.add(winston.transports.File, { filename: __dirname + '/logs/output.log', json: false });
-//winston.handleExceptions(new winston.transports.File({ filename: __dirname + '/logs/errors.log', json: false }));
+winston.add(winston.transports.File, { filename: __dirname + '/logs/output.log', json: false });
+winston.handleExceptions(new winston.transports.File({ filename: __dirname + '/logs/errors.log', json: false }));
 //winston.remove(winston.transports.Console);
 
 // Passport session setup.
@@ -63,7 +63,7 @@ if (!exists) {
 //   credentials (in this case, a token, tokenSecret, and Bitbucket profile),
 //   and invoke a callback with a user object.
 function setup_bitbucket_passport(consumer_key, consumer_secret) {
-  console.log("http://" + HOSTNAME + "/auth/bitbucket/callback");
+  winston.info("http://" + HOSTNAME + "/auth/bitbucket/callback");
   passport.use(new BitbucketStrategy({
       consumerKey: consumer_key,
       consumerSecret: consumer_secret,
@@ -88,7 +88,7 @@ function setup_bitbucket_passport(consumer_key, consumer_secret) {
 //   credentials (in this case, a token, tokenSecret, and Github profile),
 //   and invoke a callback with a user object.
 function setup_github_passport(consumer_key, consumer_secret) {
-  console.log("http://" + HOSTNAME + "/auth/github/callback");
+  winston.info("http://" + HOSTNAME + "/auth/github/callback");
   passport.use(new GitHubStrategy({
       clientID: consumer_key,
       clientSecret: consumer_secret,
@@ -404,7 +404,6 @@ function socket_listeners() {
 
     //listen for events
     socket.on('git-is-modified', function(data) {
-      console.log('git-is-modified');
       git_helper.is_modified(data.file, function(err, status) {
         socket.emit('git-is-modified-complete', {is_modified: status});
       });
@@ -447,19 +446,14 @@ function socket_listeners() {
     });
 
     socket.on('debug-command', function(data) {
-      console.log('debug-command');
       debug_helper.debug_command(data, socket);
-      console.log('after-debug-command');
     });
 
     socket.on('debug-file', function(data) {
-      console.log('debug-file');
       debug_helper.start_debug(data.file, socket);
-      console.log('after-debug-file');
     });
 
     socket.on('commit-run-file', function(data) {
-      console.log(data);
       if (data && data.file) {
         data.file.username = socket.handshake.session.username;
       }
@@ -488,7 +482,7 @@ function socket_listeners() {
 
     socket.on('set-settings', function(value) {
       client.hmset("editor:settings", value, function(err) {
-        console.log(err);
+        if (err) winston.error(err);
       });
     });
   });
@@ -509,7 +503,7 @@ function mount_dav(server) {
     standalone: false,
     tree: new jsDAV_Tree_Filesystem(REPOSITORY_PATH)
   });
-  console.log('webdav filesystem mounted');
+  winston.info('webdav filesystem mounted');
 }
 
 exports.get_socket = function (username, cb) {
@@ -523,7 +517,7 @@ exports.get_socket = function (username, cb) {
 };
 
 process.on('SIGINT', function() {
-  console.log("\nShutting down from  SIGINT");
+  winston.info("\nShutting down from  SIGINT");
   // some other closing procedures go here
   debug_helper.kill_debug(false, function() {
     //no need to wait for this
