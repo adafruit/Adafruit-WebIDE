@@ -10,6 +10,7 @@ New Offline mode
  - Bypasses bitbucket OAuth
 New option to clone repositories without updating remote to bitbucket
 Errors cloning repositories are sent to the front-end now.
+Error handling for most git commands now.  Notifications visible in webide for failures.
 Creating files and folders will automatically open them in the editor and navigator.
 Uploaded files will always use the current working directory, instead of uploading to the parent directory now.
 

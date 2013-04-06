@@ -278,6 +278,36 @@
       dirname = data.dirname;
     });
 
+    socket.on('commit-file-complete', function(data) {
+      if (data.err) {
+        $('.connection-state').removeClass('connected').addClass('disconnected').text(data.err);
+
+        setTimeout(function() {
+          $('.connection-state').removeClass('disconnected').addClass('connected').text('Connected');
+        },15000);
+      }
+    });
+
+    socket.on('git-delete-complete', function(data) {
+      if (data.err) {
+        $('.connection-state').removeClass('connected').addClass('disconnected').text(data.err);
+
+        setTimeout(function() {
+          $('.connection-state').removeClass('disconnected').addClass('connected').text('Connected');
+        },15000);
+      }
+    });
+
+    socket.on('git-push-error', function(data) {
+      if (data.err) {
+        $('.connection-state').removeClass('connected').addClass('disconnected').text(data.err);
+
+        setTimeout(function() {
+          $('.connection-state').removeClass('disconnected').addClass('connected').text('Connected');
+        },15000);
+      }
+    });
+
     socket.on('trace-program-exit', function(data) {
       output = $.parseJSON(data.output);
 
@@ -615,7 +645,15 @@
 
     socket.emit('move-file', { file: item });
 
-    function move_file_callback() {
+    function move_file_callback(data) {
+      if (data.err) {
+        $('.connection-state').removeClass('connected').addClass('disconnected').text(data.err);
+
+        setTimeout(function() {
+          $('.connection-state').removeClass('disconnected').addClass('connected').text('Connected');
+        },15000);
+      }
+
       socket.removeListener('move-file-complete', move_file_callback);
       occEditor.populate_navigator(item.parent_path);
     }
@@ -1095,12 +1133,8 @@
       var comment = $('input[name="comment"]').val();
       socket.emit('commit-file', { file: file, message: comment});
       $('.git-file').remove();
-      $('#manual-git-modal .modal-submit').text('Working...');
-      socket.on('commit-file-complete', function(data) {
-        socket.removeListener('commit-file-complete');
-        $('#manual-git-modal').modal('hide');
-        $('#manual-git-modal .modal-submit').text('Commit and Push');
-      });
+      $('#manual-git-modal').modal('hide');
+      $('#manual-git-modal .modal-submit').text('Commit and Push');
     }
 
     $('#manual-git-modal .modal-submit').click(handle_commit_push);

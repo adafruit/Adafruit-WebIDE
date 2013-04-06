@@ -46,7 +46,7 @@ if (!exists) {
 }
 
 winston.add(winston.transports.File, { filename: __dirname + '/logs/output.log', json: false });
-winston.handleExceptions(new winston.transports.File({ filename: __dirname + '/logs/errors.log', json: false }));
+//winston.handleExceptions(new winston.transports.File({ filename: __dirname + '/logs/errors.log', json: false }));
 //winston.remove(winston.transports.Console);
 
 // Passport session setup.
@@ -397,8 +397,8 @@ function socket_listeners() {
 
     //listen for events
     socket.on('git-delete', function(data) {
-      git_helper.remove_commit_push(data.file, function(err, status) {
-        socket.emit('git-delete-complete', {message: ""});
+      git_helper.remove_commit_push(data.file, socket.handshake.session, function(err, status) {
+        socket.emit('git-delete-complete', {err: err, status: status});
       });
     });
 
@@ -418,13 +418,14 @@ function socket_listeners() {
         commit_message = "Modified " + data.file.name;
       }
 
-      git_helper.commit_push_and_save(data.file, commit_message, function(err, status) {
-        socket.emit('commit-file-complete', {message: "Save was successful"});
+      git_helper.commit_push_and_save(data.file, commit_message, socket.handshake.session, function(err, status) {
+        socket.emit('commit-file-complete', {err: err, status: status});
       });
     });
 
     socket.on('move-file', function (data) {
-      git_helper.move_commit_push(data.file, function(err, status) {
+      git_helper.move_commit_push(data.file, socket.handshake.session, function(err, status) {
+        console.log('move-file', err);
         socket.emit('move-file-complete', {err: err, status: status});
       });
     });
@@ -459,7 +460,7 @@ function socket_listeners() {
       }
 
       exec_helper.execute_program(data.file, false);
-      git_helper.commit_push_and_save(data.file, "Modified " + data.file.name, function(err, status) {
+      git_helper.commit_push_and_save(data.file, "Modified " + data.file.name, socket.handshake.session, function(err, status) {
         socket.emit('commit-file-complete', {message: "Save was successful"});
       });
     });
@@ -525,8 +526,9 @@ process.on('SIGINT', function() {
   process.exit();
 });
 
-process.on('uncaughtException', function(err) {
+/*process.on('uncaughtException', function(err) {
   debug_helper.kill_debug(false, function() {
     //no need to wait for this
   });
 });
+*/

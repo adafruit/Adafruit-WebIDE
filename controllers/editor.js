@@ -58,7 +58,7 @@ exports.upload_file = function(req, res) {
     res.send(false, 200);
     } else {
       var comment = "Uploaded new File.";
-      git_helper.commit_push_and_save({path: folder_path + file_name}, comment, function(err, status) {
+      git_helper.commit_push_and_save({path: folder_path + file_name}, comment, null, function(err, status) {
         res.send(true, 200);
       });
     }

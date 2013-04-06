@@ -1,6 +1,7 @@
 var git = require('gitty'),
     url = require('url'),
     path = require('path'),
+    winston = require('winston'),
     fs_helper = require('./fs_helper'),
     redis = require("redis"),
     client = redis.createClient(),
@@ -16,9 +17,15 @@ var push_queue = [], pushInterval, PUSH_TIMER = 30000;
  */
 function push_queue_interval() {
   console.log('git push queue init');
-  function push(repository_path, remote, branch) {
+  function push(repository_path, remote, branch, username) {
     git.push(repository_path, remote, branch, function(obj) {
-      console.log(obj);
+      require('../server').get_socket(username, function(socket) {
+        if (obj.error) {
+          winston.error(obj);
+          socket.emit('git-push-error', {err: "Error: Failure pushing code to remote repository"});
+        }
+        //console.log(obj);
+      });
     });
   }
 
@@ -26,11 +33,11 @@ function push_queue_interval() {
     if (config.editor.offline || config.editor.github) {
       return;
     }
-    
+
     while(push_queue.length > 0) {
       console.log('pushing code to remote repository');
       var element = push_queue.shift();
-      push(element.repository_path, element.remote, element.branch);
+      push(element.repository_path, element.remote, element.branch, element.username);
     }
   }, PUSH_TIMER);
 }
@@ -85,7 +92,7 @@ exports.clone_update_remote_push = function(profile, repository_url, retain_remo
             console.log("clone repository locally: " + repository_name);
             self.update_remote(profile, repository_name, function(err, response) {
               console.log("updated remote for repository: " + repository_name);
-              self.push(repository_name, "origin", "master", function(err, response) {
+              self.push(repository_name, "origin", "master", profile, function(err, response) {
                 console.log("git push for repository: " + repository_name);
                 cb(err, true);
               });
@@ -120,7 +127,7 @@ exports.clone_repository = function(repository_path, cb) {
 exports.validate_config = function validate_config(cb) {
   git.config("user.email", null, function(err, email) {
     git.config("user.name", null, function(err, name) {
-      if (err) console.log("validate_config err", err);
+      if (err) winston.error("git_helper.validate_config err", err);
 
       if (name && email) {
         cb(true);
@@ -138,7 +145,7 @@ exports.set_config = function(cb) {
       console.log('git config is valid');
       cb();
     } else {
-      console.log('git config is invalid');
+      winston.error('git config is invalid');
       client.hgetall('user', function (err, user) {
         console.log("set_config user", user);
         git.config("user.email", user.email, function(err, email) {
@@ -185,6 +192,7 @@ exports.add = function add(repository, files, cb) {
   }
   var repository_path = REPOSITORY_PATH + repository;
   git.add(repository_path, files, function(output) {
+    //console.log(output.errors);
     //console.log(output);
     cb(output.errors, output.added);
   });
@@ -201,7 +209,7 @@ exports.remove = function remove(repository, files, cb) {
   }
   var repository_path = REPOSITORY_PATH + repository;
   git.remove(repository_path, files, function(output) {
-    console.log(output);
+    //console.log(output.errors);
     cb(output.errors, output.added);
   });
 };
@@ -282,7 +290,7 @@ exports.is_modified = function (file, cb) {
  * git push the committed changes.  Adds it to the push queue.
  * repository: the name of the repository that resides in the repositories folder.
  */
-exports.push = function push(repository, remote, branch, cb) {
+exports.push = function push(repository, remote, branch, profile, cb) {
   var repository_path = REPOSITORY_PATH + repository;
   var key = repository + remote + branch;
   console.log('called push ' + key);
@@ -299,7 +307,8 @@ exports.push = function push(repository, remote, branch, cb) {
           repository_path: repository_path,
           repository: repository,
           remote: remote,
-          branch: branch
+          branch: branch,
+          username: profile ? profile.username : ''
         });
       }
     }
@@ -309,7 +318,8 @@ exports.push = function push(repository, remote, branch, cb) {
       repository_path: repository_path,
       repository: repository,
       remote: remote,
-      branch: branch
+      branch: branch,
+      username: profile ? profile.username : ''
     });
   }
   cb();
@@ -330,7 +340,7 @@ exports.pull = function pull(repository, remote, branch, cb) {
 /*
  * Simply removes a file or directory, commits it, and pushes it out.
  */
-exports.remove_commit_push = function(item, cb) {
+exports.remove_commit_push = function(item, profile, cb) {
   var self = this;
   console.log(item);
   var path_array = item.path.split('/');
@@ -343,18 +353,34 @@ exports.remove_commit_push = function(item, cb) {
   if (item.type === 'directory') {
     self.remove_recursive(repository, item_path, function(err, status) {
       var commit_message = "Removed " + item.name;
+      if (err && err.length > 0) {
+        cb({err: "Error: Failure removing folder from git"}, status);
+        return;
+      }
       self.commit(repository, commit_message,  function(err, status) {
-        self.push(repository, "origin", "master", function(err, status) {
-          cb(err, status);
+        if (err && err.length > 0) {
+          cb({err: "Error: Failure comitting removed folder"}, status);
+          return;
+        }
+        self.push(repository, "origin", "master", profile, function() {
+          cb();
         });
       });
     });
   } else {
     self.remove(repository, item_path, function(err, status) {
+      if (err && err.length > 0) {
+        cb({err: "Error: Failure removing file from git"}, status);
+        return;
+      }
       var commit_message = "Removed " + item.name;
       self.commit(repository, commit_message,  function(err, status) {
-        self.push(repository, "origin", "master", function(err, status) {
-          cb(err, status);
+        if (err && err.length > 0) {
+          cb({err: "Error: Failure comitting removed file"}, status);
+          return;
+        }
+        self.push(repository, "origin", "master", profile, function() {
+          cb();
         });
       });
     });
@@ -364,7 +390,7 @@ exports.remove_commit_push = function(item, cb) {
 /*
  * Simply moves a file or directory, commits it, and pushes it out.
  */
-exports.move_commit_push = function(item, cb) {
+exports.move_commit_push = function(item, profile, cb) {
   var self = this;
   var path_array = item.path.split('/');
   var repository = path_array[2];
@@ -373,12 +399,19 @@ exports.move_commit_push = function(item, cb) {
 
   self.move(repository, item_path, destination_path, function(err, status) {
     var commit_message = "Moved " + item.name;
-    console.log(commit_message);
+    if (err && err.length > 0) {
+      cb({err: "Error: Failure moving file (renaming)"}, status);
+      return;
+    }
     self.commit(repository, commit_message,  function(err, status) {
       console.log("Committed Moved File");
-      self.push(repository, "origin", "master", function(err, status) {
+      if (err && err.length > 0) {
+        cb({err: "Error: Failure comitting file into git"}, status);
+        return;
+      }
+      self.push(repository, "origin", "master", profile, function() {
         console.log("Pushed latest changes");
-        cb(err, status);
+        cb();
       });
     });
   });
@@ -387,7 +420,7 @@ exports.move_commit_push = function(item, cb) {
 /*
  * Simply commits a file or directory, commits it, and pushes it out.
  */
-exports.commit_push_and_save = function(file, commit_message, cb) {
+exports.commit_push_and_save = function(file, commit_message, profile, cb) {
   var self = this,
       path_array, repository, file_path;
   if (!file.repository) {
@@ -401,13 +434,23 @@ exports.commit_push_and_save = function(file, commit_message, cb) {
 
   console.log(commit_message);
 
+
+
   self.add(repository, file_path, function(err, status) {
     console.log("added", err, status);
+    if (err && err.length > 0) {
+      cb({err: "Error: Failure adding file to git"}, status);
+      return;
+    }
     self.commit(repository, commit_message,  function(err, status) {
       console.log("committed", err, status);
-      self.push(repository, "origin", "master", function(err, status) {
-        console.log("pushed");
-        cb(status);
+      if (err && err.length > 0) {
+        cb({err: "Error: Failure comitting file into git"}, status);
+        return;
+      }
+      self.push(repository, "origin", "master", profile, function() {
+        console.log("added to push queue");
+        cb();
       });
     });
   });
