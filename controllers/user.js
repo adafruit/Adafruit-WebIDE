@@ -17,20 +17,16 @@ exports.logout = function(req, res){
 // Instructional page that displays the bitbucket setup steps,
 // and inputs for OAuth and Git config
 exports.setup = function(req, res) {
-  client.hgetall('bitbucket_oauth', function (err, bitbucket) {
-    client.hgetall('user', function (err, user) {
-      var locals = {
-        consumer_key: "",
-        consumer_secret: "",
-        name: "",
-        email: "",
-        hostname: "",
-        github: config.editor.github
-      };
+  var locals = {
+    consumer_key: "",
+    consumer_secret: "",
+    name: "",
+    email: "",
+    hostname: "",
+    github: config.editor.github
+  };
 
-      res.render('users/setup', locals);
-    });
-  });
+  res.render('users/setup', locals);
 };
 
 // Saves the bitbucket and git config setup information in Redis,
@@ -38,6 +34,13 @@ exports.setup = function(req, res) {
 exports.submit_setup = function(req, res) {
   var key, secret, name, email, message;
   req.session.message = undefined;
+
+  function common_setup(name, email) {
+    client.hmset("user", "name", name, "email", email, function() {
+      req.session.message = "Settings Successfully Configured.";
+      res.redirect('/login');
+    });
+  }
 
   try {
     key = sanitize(req.body.key).xss().trim();
@@ -51,12 +54,15 @@ exports.submit_setup = function(req, res) {
   }
 
   if (key && secret && name && email) {
-    client.hmset("bitbucket_oauth", "consumer_key", key, "consumer_secret", secret, function() {
-      client.hmset("user", "name", name, "email", email, function() {
-        req.session.message = "Settings Successfully Configured.";
-        res.redirect('/login');
+    if (config.editor.github) {
+      client.hmset("github_oauth", "consumer_key", key, "consumer_secret", secret, function() {
+        common_setup(name, email);
       });
-    });
+    } else {
+      client.hmset("bitbucket_oauth", "consumer_key", key, "consumer_secret", secret, function() {
+        common_setup(name, email);
+      });
+    }
   } else {
     if (!req.session.message) {
       req.session.message = "Please set all fields, at the bottom of this page, in order to continue.";

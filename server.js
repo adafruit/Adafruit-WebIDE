@@ -239,14 +239,20 @@ function ensureAuthenticated(req, res, next) {
     }
   }
 
+  //use the correct key for redis, either github or bitbucket
+  var oauth_key = 'bitbucket_oauth';
+  if (config.editor.github) {
+    oauth_key = 'github_oauth';
+  }
+
   if (!IS_PASSPORT_SETUP) {
-    //need to setup passport on server startup, if the bitbucket oauth is already setup
-    client.hgetall('bitbucket_oauth', function (err, bitbucket) {
-      if (bitbucket) {
+    //need to setup passport on server startup, if the oauth is already setup
+    client.hgetall(oauth_key, function (err, oauth) {
+      if (oauth) {
         if (config.editor.github) {
-          setup_github_passport(bitbucket.consumer_key, bitbucket.consumer_secret);
+          setup_github_passport(oauth.consumer_key, oauth.consumer_secret);
         } else {
-          setup_bitbucket_passport(bitbucket.consumer_key, bitbucket.consumer_secret);
+          setup_bitbucket_passport(oauth.consumer_key, oauth.consumer_secret);
         }
         IS_PASSPORT_SETUP = true;
 
@@ -268,14 +274,20 @@ function ensureOauth(req, res, next) {
     return next();
   }
 
-  client.hgetall('bitbucket_oauth', function (err, bitbucket) {
-    if (!bitbucket) {
+  //use the correct key for redis, either github or bitbucket
+  var oauth_key = 'bitbucket_oauth';
+  if (config.editor.github) {
+    oauth_key = 'github_oauth';
+  }
+
+  client.hgetall(oauth_key, function (err, oauth) {
+    if (!oauth) {
       res.redirect('/setup');
     } else {
       if (config.editor.github) {
-        setup_github_passport(bitbucket.consumer_key, bitbucket.consumer_secret);
+        setup_github_passport(oauth.consumer_key, oauth.consumer_secret);
       } else {
-        setup_bitbucket_passport(bitbucket.consumer_key, bitbucket.consumer_secret);
+        setup_bitbucket_passport(oauth.consumer_key, oauth.consumer_secret);
       }
       return next();
     }
