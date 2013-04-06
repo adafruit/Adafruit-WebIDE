@@ -13,6 +13,17 @@ Note: As part of the installation process, the 'webide' user is given access to 
 similar to the 'pi' user.  This is needed in order to easily access GPIO pins from the Editor.  
 If you don't need these features, feel free to manually install the editor below.
 
+Advanced Installation Options
+============
+
+Offline Mode:
+
+    curl https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/install.sh | sudo sh -s - --offline
+
+GitHub Mode:
+
+    curl https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/install.sh | sudo sh -s - --github
+
 Manual Installation (without process monitor)
 ============
 
