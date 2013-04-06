@@ -2,6 +2,7 @@
 
 # curl https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/install.sh | sudo sh
 # curl https://raw.github.com/adafruit/Adafruit-WebIDE/test/scripts/install.sh | sudo sh
+# curl https://raw.github.com/adafruit/Adafruit-WebIDE/offline/scripts/install.sh | sudo sh --offline
 
 #tar -zcvf editor.tar.gz * --exclude .git --exclude .gitignore
 #tar -zcvf editor-update.tar.gz * --exclude .git --exclude .gitignore
@@ -43,6 +44,8 @@ while getopts ":hogvc:" opt; do
         ;;
     esac
 done
+
+echo "$OFFLINE"
 
 set -e
 WEBIDE_ROOT="/usr/share/adafruit/webide"
