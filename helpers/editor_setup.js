@@ -29,7 +29,7 @@ var exec = require('child_process').exec,
   //TODO this is a terrible mess..clean this up, no reason to have these big blocks of callbacks...uffda.
   exports.health_check = function(socket, profile) {
     console.log(config.editor.offline);
-    if (config.editor.offline) {
+    if (config.editor.offline || config.editor.github) {
       this.offline_health_check(socket);
       return;
     }
