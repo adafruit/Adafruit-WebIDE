@@ -20,6 +20,9 @@ Offline Mode:
 
     curl https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/install.sh | sudo sh -s - --offline
 
+Note: Offline mode does not setup git in any way other than installing it.  You'll want to git config your
+email and name, and setup your ssh keys.
+
 GitHub Mode:
 
     curl https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/install.sh | sudo sh -s - --github
