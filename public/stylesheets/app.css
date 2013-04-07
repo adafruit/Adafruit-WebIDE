@@ -599,6 +599,7 @@ a.navigator-settings i.settings-enabled {
   border-left: 1px solid #EDEDED;
   background-color: #1A1A1A;
   color: #E4E5E7;
+  overflow: auto;
 }
 
 #editor-output pre {
