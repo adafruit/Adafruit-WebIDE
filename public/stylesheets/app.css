@@ -171,6 +171,17 @@ a.navigator-settings i.settings-enabled {
   font-size: 12px;
 }
 
+#navigator-folder .refresh-directory {
+  float: right;
+  color: #fff;
+  text-decoration: none;
+  padding-right: 15px;
+}
+
+#navigator-folder .refresh-directory:hover {
+  color: #b4b4b4;
+}
+
 #navigator ul {
   margin: 0;
   height: auto;

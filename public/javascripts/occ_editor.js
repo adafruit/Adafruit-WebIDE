@@ -783,9 +783,9 @@
     //console.log("item", item);
     if (item.name === 'filesystem') {
       var username = $('input[name="username"]').val();
-      $nav_top = $('#navigator-top p').addClass('navigator-item-back').html("<a class='editor-settings' href=''><i class='icon-user'></i> " + username + " (settings)</a>");
+      $nav_top = $('#navigator-top p').addClass('navigator-item-back').data("file", null).html("<a class='editor-settings' href=''><i class='icon-user'></i> " + username + " (settings)</a>");
 
-      $('#navigator-folder p').text('All Repositories');
+      $('#navigator-folder p').html('').text('All Repositories').append('<a href="#" class="refresh-directory" title="Refresh Directory"><i class="icon-refresh"></i></a>');
     } else {
       var title = "";
       if (item.parent_name === 'filesystem') {
@@ -795,7 +795,7 @@
       }
       $nav_top = $('#navigator-top p').addClass('navigator-item-back').data("file", item).html("<a href=''><i class='icon-chevron-left'></i> " + title + "</a>");
 
-      $('#navigator-folder p').text(item.name);
+      $('#navigator-folder p').html('').text(item.name).append('<a href="#" class="refresh-directory" title="Refresh Directory"><i class="icon-refresh"></i></a>');
     }
   }
 
@@ -1708,6 +1708,15 @@
       occEditor.populate_navigator(file.parent_path);
     }
 
+    function navigator_refresh(event) {
+      event.preventDefault();
+      var parent = $('.navigator-item-back').data("file");
+
+      var path = parent ? parent.path : null;
+
+      occEditor.populate_navigator(path);
+    }
+
     function navigator_create_selected(event) {
       event.preventDefault();
       var link_text = $('a', this).text();
@@ -1833,6 +1842,7 @@
     $(document).on('click touchstart', '.navigator-item', navigator_item_selected);
     $(document).on('click touchstart', '.navigator-item-back', navigator_back_selected);
     $(document).on('click touchstart', '.navigator-item-create', navigator_create_selected);
+    $(document).on('click touchstart', '#navigator-folder .refresh-directory', navigator_refresh);
     $(document).on('click touchstart', '#create-modal .modal-submit', create_modal_submit);
     $(document).on('click touchstart', '#create-project-form .create-save', create_folder);
     $(document).on('click touchstart', '#create-project-form .create-cancel', create_cancel);
