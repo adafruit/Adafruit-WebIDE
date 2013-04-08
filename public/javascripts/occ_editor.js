@@ -280,31 +280,27 @@
 
     socket.on('commit-file-complete', function(data) {
       if (data.err) {
-        $('.connection-state').removeClass('connected').addClass('disconnected').text(data.err);
-
-        setTimeout(function() {
-          $('.connection-state').removeClass('disconnected').addClass('connected').text('Connected');
-        },15000);
+        occEditor.display_error(data.err);
       }
     });
 
     socket.on('git-delete-complete', function(data) {
       if (data.err) {
-        $('.connection-state').removeClass('connected').addClass('disconnected').text(data.err);
-
-        setTimeout(function() {
-          $('.connection-state').removeClass('disconnected').addClass('connected').text('Connected');
-        },15000);
+        occEditor.display_error(data.err);
       }
     });
 
     socket.on('git-push-error', function(data) {
       if (data.err) {
-        $('.connection-state').removeClass('connected').addClass('disconnected').text(data.err);
+        occEditor.display_error(data.err);
+      }
+    });
 
-        setTimeout(function() {
-          $('.connection-state').removeClass('disconnected').addClass('connected').text('Connected');
-        },15000);
+    socket.on('git-pull-complete', function(data) {
+      if (data.err) {
+        occEditor.display_error(data.err);
+      } else {
+        occEditor.display_notification("Update Repository Complete");
       }
     });
 
@@ -331,6 +327,26 @@
         var v = new ExecutionVisualizer("trace-container", output, {});
       }
     });
+  };
+
+  occEditor.display_notification = function(text) {
+    if (text) {
+      $('.connection-state').text(text);
+
+      setTimeout(function() {
+        $('.connection-state').text('Connected');
+      },5000);
+    }
+  };
+
+  occEditor.display_error = function(error_text) {
+    if (error_text) {
+      $('.connection-state').removeClass('connected').addClass('disconnected').text(error_text);
+
+      setTimeout(function() {
+        $('.connection-state').removeClass('disconnected').addClass('connected').text('Connected');
+      },15000);
+    }
   };
 
   occEditor.check_for_updates = function() {
@@ -785,7 +801,7 @@
       var username = $('input[name="username"]').val();
       $nav_top = $('#navigator-top p').addClass('navigator-item-back').data("file", null).html("<a class='editor-settings' href=''><i class='icon-user'></i> " + username + " (settings)</a>");
 
-      $('#navigator-folder p').html('').text('All Repositories').append('<a href="#" class="refresh-directory" title="Refresh Directory"><i class="icon-refresh"></i></a>');
+      $('#navigator-folder p').html('').text('All Repositories').append('<a href="#" class="refresh-directory" title="Refresh Directory and Repositories"><i class="icon-refresh"></i></a>');
     } else {
       var title = "";
       if (item.parent_name === 'filesystem') {

@@ -333,7 +333,13 @@ exports.pull = function pull(repository, remote, branch, cb) {
   var repository_path = REPOSITORY_PATH + repository;
   git.pull(repository_path, remote, branch, function(obj) {
     //console.log(obj);
-    cb(obj.error, obj.message);
+    if (obj.error) {
+      winston.error(obj.error);
+      cb("Error: Failure updating from remote repository", obj.message);
+    } else {
+      cb(null, obj.message);
+    }
+    
   });
 };
 
@@ -354,12 +360,12 @@ exports.remove_commit_push = function(item, profile, cb) {
     self.remove_recursive(repository, item_path, function(err, status) {
       var commit_message = "Removed " + item.name;
       if (err && err.length > 0) {
-        cb({err: "Error: Failure removing folder from git"}, status);
+        cb("Error: Failure removing folder from git", status);
         return;
       }
       self.commit(repository, commit_message,  function(err, status) {
         if (err && err.length > 0) {
-          cb({err: "Error: Failure comitting removed folder"}, status);
+          cb("Error: Failure comitting removed folder", status);
           return;
         }
         self.push(repository, "origin", "master", profile, function() {
@@ -370,13 +376,13 @@ exports.remove_commit_push = function(item, profile, cb) {
   } else {
     self.remove(repository, item_path, function(err, status) {
       if (err && err.length > 0) {
-        cb({err: "Error: Failure removing file from git"}, status);
+        cb("Error: Failure removing file from git", status);
         return;
       }
       var commit_message = "Removed " + item.name;
       self.commit(repository, commit_message,  function(err, status) {
         if (err && err.length > 0) {
-          cb({err: "Error: Failure comitting removed file"}, status);
+          cb("Error: Failure comitting removed file", status);
           return;
         }
         self.push(repository, "origin", "master", profile, function() {
@@ -400,13 +406,13 @@ exports.move_commit_push = function(item, profile, cb) {
   self.move(repository, item_path, destination_path, function(err, status) {
     var commit_message = "Moved " + item.name;
     if (err && err.length > 0) {
-      cb({err: "Error: Failure moving file (renaming)"}, status);
+      cb("Error: Failure moving file (renaming)", status);
       return;
     }
     self.commit(repository, commit_message,  function(err, status) {
       console.log("Committed Moved File");
       if (err && err.length > 0) {
-        cb({err: "Error: Failure comitting file into git"}, status);
+        cb("Error: Failure comitting file into git", status);
         return;
       }
       self.push(repository, "origin", "master", profile, function() {
@@ -439,13 +445,13 @@ exports.commit_push_and_save = function(file, commit_message, profile, cb) {
   self.add(repository, file_path, function(err, status) {
     console.log("added", err, status);
     if (err && err.length > 0) {
-      cb({err: "Error: Failure adding file to git"}, status);
+      cb("Error: Failure adding file to git", status);
       return;
     }
     self.commit(repository, commit_message,  function(err, status) {
       console.log("committed", err, status);
       if (err && err.length > 0) {
-        cb({err: "Error: Failure comitting file into git"}, status);
+        cb("Error: Failure comitting file into git", status);
         return;
       }
       self.push(repository, "origin", "master", profile, function() {

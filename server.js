@@ -403,6 +403,15 @@ function socket_listeners() {
     });
 
     //listen for events
+    socket.on('git-pull', function(data) {
+      console.log(data);
+      var name = data.file ? data.file.name : "";
+      git_helper.pull(name, "origin", "master", function(err, status) {
+        socket.emit('git-pull-complete', {err: err, status: status});
+      });
+    });
+
+    //listen for events
     socket.on('git-is-modified', function(data) {
       git_helper.is_modified(data.file, function(err, status) {
         socket.emit('git-is-modified-complete', {is_modified: status});

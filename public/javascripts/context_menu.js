@@ -3,13 +3,16 @@
 
   var templates = {
     "context_menu":               '<ul class="context-menu">' +
-                                    '<li class="context-menu-rename">' +
-                                      '<a href=""><i class="icon-edit"></i> Rename</a>' +
-                                    '</li>' +
-                                    '<li class="context-menu-delete">' +
-                                      '<a href=""><i class="icon-remove-sign"></i> Delete</a>' +
-                                    '</li>' +
                                   '</ul>',
+    "menu_rename":                '<li class="context-menu-rename">' +
+                                    '<a href=""><i class="icon-edit"></i> Rename</a>' +
+                                  '</li>',
+    "menu_delete":                '<li class="context-menu-delete">' +
+                                    '<a href=""><i class="icon-remove-sign"></i> Delete</a>' +
+                                  '</li>',
+    "update_repository":         '<li class="context-menu-update">' +
+                                    '<a href=""><i class="icon-refresh"></i> Update Repository</a>' +
+                                  '</li>',
     "rename_file_folder":         '<form class="rename-form" id="rename-file-folder-form">' +
                                       '<div class="rename-input-wrapper">' +
                                         '<a class="rename-submit" href="">Save</a>' +
@@ -42,23 +45,35 @@
   function show_menu(event) {
     event.preventDefault();
 
-    if(is_adafruit_repository($(this).data('file').path)) {
-      return;
-    }
+    var is_adafruit = is_adafruit_repository($(this).data('file').path);
 
     $(document).off('click', '.context-menu-rename');
     $(document).off('click', '.context-menu-delete');
+    $(document).off('click', '.context-menu-update');
 
     $(".context-menu").remove();
 
     var $menu = $(templates.context_menu);
+
+    if(!is_adafruit) {
+      $menu.append(templates.menu_rename);
+      $menu.append(templates.menu_delete);
+    }
+
+    if ($('#navigator-folder p').text().indexOf('All Repositories') !== -1) {
+      $menu.append(templates.update_repository);
+    } else if (is_adafruit) {
+      return;
+    }
+
     $menu.appendTo('body');
-    
+
     $menu.css({'top': event.pageY, 'left': event.pageX - 10});
 
     // create and show menu
     $(document).on('click', '.context-menu-rename', $.proxy(rename_option, this));
     $(document).on('click', '.context-menu-delete', $.proxy(delete_option, this));
+    $(document).on('click', '.context-menu-update', $.proxy(update_repository_option, this));
   }
 
   function is_adafruit_repository(path) {
@@ -131,6 +146,15 @@
     }
 
     occEditor.navigator_remove_item($(this));
-  }  
+  }
+
+  function update_repository_option(event) {
+    event.preventDefault();
+    $(".context-menu").remove();
+    var socket = occEditor.get_socket();
+    var file = $(this).data('file');
+
+    socket.emit("git-pull", { file: file});
+  }
 
 }( window.context_menu = window.context_menu || {}, jQuery ));
