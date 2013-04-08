@@ -5,7 +5,7 @@ This is a simple editor designed to help learn the Raspberry PI components, and 
 Easiest Installation
 ============
 
-On the Raspberry PI:
+On the Raspberry PI (after expanding the file system):
 
     curl https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/install.sh | sudo sh
 
