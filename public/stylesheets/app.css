@@ -742,6 +742,15 @@ a.navigator-settings i.settings-enabled {
   padding: 10px 0 0 10px;
 }
 
+.editor-version a {
+  color: #999999;
+  text-decoration: none;
+}
+
+.editor-version a:hover {
+  color: #E4E5E7;
+}
+
 .ace_gutter-cell.ace_breakpoint{ 
   background-color: #BB1142;
 }

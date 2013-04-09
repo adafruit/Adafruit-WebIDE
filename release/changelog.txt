@@ -11,6 +11,7 @@ New Offline mode
 Ability to refresh directories from within the navigator
 New option to clone repositories without updating remote to bitbucket
 New right-click context menu option to update repositories from remote (origin/master for now)
+New Report Bug Link added to footer
 Errors cloning repositories are sent to the front-end now.
 Error handling for most git commands now.  Notifications visible in webide for failures.
 Creating files and folders will automatically open them in the editor and navigator.
