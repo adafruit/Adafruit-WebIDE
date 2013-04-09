@@ -1,6 +1,7 @@
 var exec = require('child_process').exec,
   fs = require ('fs'),
   path = require('path'),
+  winston = require('winston'),
   exec_helper = require('./exec_helper'),
   redis = require('redis'),
   client = redis.createClient(),
@@ -11,13 +12,24 @@ var exec = require('child_process').exec,
   fs.exists || (fs.exists = path.exists);
 
 function execute_job(file) {
-  exec_helper.execute_program(file, true);
-  console.log("execute_job");
-  console.log(file.key);
+  var file_path = path.resolve(__dirname + "/../" + file.path.replace('\/filesystem\/', '\/repositories\/'));
 
-  client.hmset(file.key, "last_run", new Date(), function() {
-    //repopulate the job list in the editor
+  fs.exists(file_path, function(exists) {
+    if (exists) {
+      exec_helper.execute_program(file, true);
+      console.log("execute_job");
+      console.log(file.key);
+
+      client.hmset(file.key, "last_run", new Date(), function() {
+        //repopulate the job list in the editor
+      });
+    } else {
+      winston.info('scheduled job no longer exists, deleting from queue: ' + file_path);
+      client.del(file.key);
+      client.srem("jobs", file.key);
+    }
   });
+
 }
 
 function schedule_job(key, job) {
