@@ -406,6 +406,11 @@
         occEditor.handle_scheduled_file(file);
       }
       editor.setSession(session);
+      editor.setReadOnly(false);
+
+      if (file.read_only) {
+        editor.setReadOnly(true);
+      }
 
       //default settings (may get overridden below)
       editor.getSession().setUseSoftTabs(true);
@@ -500,6 +505,7 @@
     var session = new EditSession('');
     session.setUndoManager(new UndoManager());
     editor.setSession(session);
+    editor.setReadOnly(true);
     //reset editor bar as well
     $('#editor-bar').html(templates.editor_bar_init);
   };
@@ -609,7 +615,8 @@
   occEditor.open_readme = function() {
     editor_startup("Opening Readme");
     var file = {
-      path: '/filesystem/my-pi-projects/README.md'
+      path: '/filesystem/my-pi-projects/README.md',
+      read_only: true
     };
     occEditor.populate_editor(file);
   };
@@ -1384,7 +1391,7 @@
   function handle_update_action() {
     function load_update_notes() {
       var update_data = $('.update-wrapper').data('update');
-      occEditor.populate_editor({name: "notes.md", path: "notes.md"}, update_data.notes);
+      occEditor.populate_editor({name: "notes.md", path: "notes.md", read_only: true}, update_data.notes);
     }
 
     function update_editor(event) {
