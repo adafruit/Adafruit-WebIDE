@@ -1524,20 +1524,39 @@
   }
 
   function handle_navigator_actions() {
-    function alert_changed_file() {
+    function alert_changed_file(cb) {
+
       var $edited_elements = $('.filesystem  li.edited');
       if ($('.filesystem li.edited').length > 0) {
-        var result = confirm("You have unsaved files in this project.  Would you like to save them?");
-        if (result) {
+        $('#confirm-modal').removeData("modal").modal({'show': true, 'backdrop': 'static', 'keyboard': false});
+        $('#confirm-modal .modal-yes').click(function() {
+          $('#confirm-modal .modal-yes').off('click');
+          $('#confirm-modal').modal('hide');
+
           $edited_elements.each(function() {
             var file = $(this).data('file');
             var content = $(this).data('content');
             $(this).removeClass('edited');
             occEditor.save_edited_files(file, content);
           });
-        } else {
-          //do nothing, they didn't want to save
-        }
+          cb(true);
+        });
+
+        $('#confirm-modal .modal-no').click(function() {
+          $('#confirm-modal .modal-no').off('click');
+          $('#confirm-modal').modal('hide');
+
+          cb(true);
+        });
+
+        $('#confirm-modal .modal-cancel').click(function() {
+          $('#confirm-modal .modal-cancel').off('click');
+          $('#confirm-modal').modal('hide');
+
+          cb(false);
+        });
+      } else {
+        cb(true);
       }
     }
 
@@ -1586,12 +1605,16 @@
       }
 
       if (file.type === 'directory') {
-        alert_changed_file();
+        alert_changed_file(function(should_navigate) {
+          if (should_navigate) {
+            var path = occEditor.cwd() + '/' + file.name;
+            path = path.replace('//', '/');
+            occEditor.send_terminal_command('cd ' + path);
+            occEditor.populate_navigator(file.path);
+          }
+        });
 
-        var path = occEditor.cwd() + '/' + file.name;
-        path = path.replace('//', '/');
-        occEditor.send_terminal_command('cd ' + path);
-        occEditor.populate_navigator(file.path);
+
       } else {
         $('.filesystem li').removeClass('file-open');
         $(this).addClass('file-open');
@@ -1696,7 +1719,7 @@
       $('#editor').hide();
       $('#settings-manager').show();
       $('#editor-bar').html(templates.editor_bar_settings_manager);
-      
+
       $(document).on('click touchstart', '.font-size-value', set_font_size);
       $(document).on('click touchstart', '.soft-tab-value', set_soft_tabs);
       $(document).on('click touchstart', '.tab-size-value', set_tab_size);
@@ -1708,20 +1731,25 @@
     function navigator_back_selected(event) {
       event.preventDefault();
 
+      var that = this;
+
       if ($('a', this).hasClass("editor-settings")) {
         view_settings();
         return;
       }
 
-      alert_changed_file();
-      var file = $('a', this).parent().data('file');
+        alert_changed_file(function(should_navigate) {
+          if (should_navigate) {
+            var file = $('a', that).parent().data('file');
 
-      occEditor.set_page_title(file.parent_name);
+            occEditor.set_page_title(file.parent_name);
 
-      //console.log(file);
-      var path = dirname + file.parent_path.replace('/filesystem', '');
-      occEditor.send_terminal_command('cd ' + path);
-      occEditor.populate_navigator(file.parent_path);
+            //console.log(file);
+            var path = dirname + file.parent_path.replace('/filesystem', '');
+            occEditor.send_terminal_command('cd ' + path);
+            occEditor.populate_navigator(file.parent_path);
+          }
+        });
     }
 
     function navigator_refresh(event) {

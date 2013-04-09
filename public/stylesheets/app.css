@@ -303,6 +303,10 @@ a.navigator-settings i.settings-enabled {
   width: 97%;
 }
 
+#confirm-modal p {
+  margin-bottom: 0;
+}
+
 .rename-form {
   margin: 0;
 }

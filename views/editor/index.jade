@@ -69,6 +69,13 @@ block content
         div.schedule-footer
           span.schedule-status Scheduler Active
           a(href="", class="schedule-manager-link") Schedule Manager
+    #confirm-modal(class="modal hide")
+      .modal-body
+        p You have unsaved files in this project.  Would you like to save them?
+      .modal-footer
+        button.btn.btn-primary.modal-yes Save Files
+        button.btn.btn-danger.modal-no Don't Save
+        button.btn.modal-cancel Cancel  
     #manual-git-modal(class="modal hide fade")
       .modal-header
         button.close(type="button", data-dismiss-"modal", aria-hidden="true") &times;
