@@ -13,23 +13,6 @@ Note: As part of the installation process, the 'webide' user is given access to 
 similar to the 'pi' user.  This is needed in order to easily access GPIO pins from the Editor.  
 If you don't need these features, feel free to manually install the editor below.
 
-Advanced Installation Options
-============
-
-Offline Mode:
-
-    curl https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/install.sh | sudo sh -s - --offline
-
-Note: Offline mode does not setup git in any way other than installing it.  You'll want to git config your
-email and name, and setup your ssh keys.
-
-GitHub Mode:
-
-    curl https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/install.sh | sudo sh -s - --github
-
-Note: GitHub mode does not automatically create, and post an ssh key to your GitHub account.  It requires
-a bit more manual setup at this time.
-
 Manual Installation (without process monitor)
 ============
 
@@ -79,10 +62,30 @@ If for any reason you need to restart the editor, you can execute the following 
 
 Sudo is required to restart due to the editor running as the 'webide' user.
 
-Offline Mode
+Advanced Options
 ============
 
-Yup, there is basic support for offline mode.  Just switch the 'offline' flag in the editor/config/config.js file to true when you're coding on a boat, in a submarine, or on your bicycle (not recommended).
+Offline Mode Installation:
+
+    curl https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/install.sh | sudo sh -s - --offline
+
+Note: Offline mode does not setup git in any way other than installing it.  You'll want to git config your
+email and name, and setup your ssh keys.
+
+GitHub Mode Installation:
+
+    curl https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/install.sh | sudo sh -s - --github
+
+Note: GitHub mode does not automatically create, and post an ssh key to your GitHub account.  It requires
+a bit more manual setup at this time.
+
+Enable support for Makefiles (execute on the Pi in the terminal, post-installation):
+
+    redis-cli hmset editor:settings enable_make "on"
+
+Disable:
+
+    redis-cli hmset editor:settings enable_make "off"
 
 License
 ============

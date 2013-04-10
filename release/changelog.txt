@@ -23,6 +23,7 @@ Attempt to set the date on the Pi during installation to prevent OAuth errors.
 Creating files and folders will automatically open them in the editor and navigator.
 Uploaded files will always use the current working directory, instead of uploading to the parent directory now.
 git pull commands are now using the quiet (-q) flag.
+Editor setting for supporting adding a Make link in the editor action bar if a Makefile is detected in the cwd.  Not enabled by default.
 
 -0.3.6
 Update Font Awesome to latest version
