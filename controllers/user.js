@@ -136,3 +136,9 @@ exports.submit_config = function(req, res) {
     }
   }
 };
+
+exports.set_datetime = function(req, res) {
+  scripts_helper.set_datetime(function() {
+    res.redirect('/login');
+  });
+};

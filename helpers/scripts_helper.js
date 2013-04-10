@@ -34,3 +34,18 @@ exports.change_wifi = function(ssid, password, cb) {
     });
   });
 };
+
+/*
+ * Changes the WiFi of the system
+ */
+exports.set_datetime = function(cb) {
+  var self = this;
+  var script_path = path.resolve(__dirname + "/../scripts/set-datetime.sh");
+  var command = "sudo " + script_path;
+  console.log(command);
+  exec("chmod +x " + script_path, function(err, stdout, stderr) {
+    exec(command, function(err, stdout, stderr) {
+      cb();
+    });
+  });
+};

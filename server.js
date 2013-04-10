@@ -154,6 +154,8 @@ app.use(function(req, res, next) {
 
 app.use(app.router);
 
+app.use(errorHandler);
+
 
 app.get('/', ensureAuthenticated, site.index);
 
@@ -167,6 +169,7 @@ app.get('/setup', user.setup);
 app.post('/setup', user.submit_setup);
 app.get('/config', user.config);
 app.post('/config', user.submit_config);
+app.get('/set-datetime', user.set_datetime);
 app.get('/login', ensureOauth, user.login);
 app.get('/logout', user.logout);
 
@@ -211,7 +214,16 @@ app.get('/auth/github/callback',
 serverInitialization(app);
 
 
-
+function errorHandler(err, req, res, next) {
+  winston.error(err);
+  if (err.name === "InternalOAuthError") {
+    res.status(500);
+    res.render('oauth_error', { error: err });
+  } else {
+    res.status(500);
+    res.render('error', { error: err });
+  }
+}
 
 // Simple route middleware to ensure user is authenticated.
 //   Use this route middleware on any resource that needs to be protected.  If
@@ -289,7 +301,13 @@ function ensureOauth(req, res, next) {
       } else {
         setup_bitbucket_passport(oauth.consumer_key, oauth.consumer_secret);
       }
-      return next();
+
+      if (!IS_PASSPORT_SETUP) {
+        IS_PASSPORT_SETUP = true;
+        res.redirect('/login');
+      } else {
+        next();
+      }
     }
   });
 }
