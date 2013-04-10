@@ -2,7 +2,7 @@
 
 # curl https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/install.sh | sudo sh
 # curl https://raw.github.com/adafruit/Adafruit-WebIDE/test/scripts/install.sh | sudo sh
-# curl https://raw.github.com/adafruit/Adafruit-WebIDE/offline/scripts/install.sh | sudo sh --offline
+# curl https://raw.github.com/adafruit/Adafruit-WebIDE/offline/scripts/install.sh | sudo sh -s - --offline
 
 #tar -zcvf editor.tar.gz * --exclude .git --exclude .gitignore
 #tar -zcvf editor-update.tar.gz * --exclude .git --exclude .gitignore
@@ -65,7 +65,7 @@ mkdir -p "$WEBIDE_HOME"
 cd "$WEBIDE_ROOT"
 
 echo "**** Downloading the latest version of the WebIDE ****"
-curl -L https://dl.dropbox.com/s/uwp67lmwvjyff51/webide-0.3.7.tar.gz | tar xzf -
+curl -L TODO | tar xzf -
 
 echo "**** Installing required libraries ****"
 echo "**** (redis-server git restartd libcap2-bin avahi-daemon i2c-tools python-smbus) ****"
@@ -117,6 +117,8 @@ update-rc.d adafruit-webide.sh defaults
 
 #set binaries as executable
 
+echo "Attempting to force reload date and time from ntp server"
+/etc/init.d/ntp force-reload
 
 #Check if port 80 is in use, use 3000 if so.
 PORT_USED=""
