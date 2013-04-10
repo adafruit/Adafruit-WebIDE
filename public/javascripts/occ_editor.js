@@ -43,6 +43,7 @@
                                       '<span class="debug-status">Initializing...</a>' +
                                     '</p>',
     "editor_bar_run_link":          '<a href="" class="run-file"><i class="icon-play"></i> Run</a>',
+    "editor_bar_make_link":          '<a href="" class="make-file"><i class="icon-play"></i> Make</a>',
     "editor_bar_git_link":          '<a href="" class="git-file"><i class="icon-cloud"></i> Commit and Push</a>',
     "editor_bar_debug_link":        '<a href="" class="debug-file"><i class="icon-debug"></i> Debug</a>',
     "editor_bar_trace_link":        '<a href="" class="trace-file"><i class="icon-sitemap"></i> Visualize</a>',
@@ -572,6 +573,18 @@
           var $tutorial_link = $(templates.editor_bar_tutorial_link).attr('href', als_link[1]);
           $tutorial_link.appendTo($('.editor-bar-actions'));
         }
+      }
+
+      if (settings.enable_make === 'on') {
+        var path = file.parent_path ? file.parent_path : file.path;
+        davFS.listDir(path, function(err, list, parent) {
+          $.each(list, function(index, f) {
+            var make_names = ["makefile", "GNUmakefile", "Makefile"];
+            if ($.inArray(f.name, make_names) !== -1) {
+              $(templates.editor_bar_make_link).appendTo('.editor-bar-actions');
+            }
+          });
+        });
       }
     }
     $editor_bar.html(templates.editor_bar_init);
@@ -1163,6 +1176,13 @@
     $('#manual-git-modal .modal-submit').click(handle_commit_push);
   };
 
+  occEditor.make_file = function(event) {
+    event.preventDefault();
+
+    var command = "sudo make run";
+    occEditor.open_terminal(occEditor.cwd(), command);
+  };
+
   occEditor.run_file = function(event) {
     if (event) {
       event.preventDefault();
@@ -1278,6 +1298,7 @@
     $(document).on('click touchstart', '.save-file', occEditor.save_file);
     $(document).on('click touchstart', '.trace-file', occEditor.trace_file);
     $(document).on('click touchstart', '.run-file', occEditor.run_file);
+    $(document).on('click touchstart', '.make-file', occEditor.make_file);
     $(document).on('click touchstart', '.git-file', occEditor.manual_git_file);
 
     $(document).off('click touchstart', '.debug-file', occEditor.debug_file);
