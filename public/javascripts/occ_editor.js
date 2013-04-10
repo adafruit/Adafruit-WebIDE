@@ -43,7 +43,7 @@
                                       '<span class="debug-status">Initializing...</a>' +
                                     '</p>',
     "editor_bar_run_link":          '<a href="" class="run-file"><i class="icon-play"></i> Run</a>',
-    "editor_bar_make_link":          '<a href="" class="make-file"><i class="icon-play"></i> Make</a>',
+    "editor_bar_make_link":          '<a href="" class="make-file"><i class="icon-wrench"></i> Make</a>',
     "editor_bar_git_link":          '<a href="" class="git-file"><i class="icon-cloud"></i> Commit and Push</a>',
     "editor_bar_debug_link":        '<a href="" class="debug-file"><i class="icon-debug"></i> Debug</a>',
     "editor_bar_trace_link":        '<a href="" class="trace-file"><i class="icon-sitemap"></i> Visualize</a>',
