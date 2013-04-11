@@ -124,9 +124,9 @@ echo "Attempting to force reload date and time from ntp server"
 PORT_USED=""
 if netstat -lnt | awk '$6 == "LISTEN" && $4 ~ ".80"' | grep -q "LISTEN"
 then
-  redis-cli HMSET server port 3000
+  redis-cli HMSET server port 8080
   PORT_USED=":3000"
-  echo "**** WARNING: PORT 80 IN USE. FALLING BACK TO 3000. ****"
+  echo "**** WARNING: PORT 80 IN USE. FALLING BACK TO 8080. ****"
   echo "**** TO CHOOSE A DIFFERENT PORT USE THE FOLLOWING COMMAND: ****"
   echo "**** redis-cli HMSET server port 3000 ****"
   echo "**** AND RESTART THE SERVER ****"
