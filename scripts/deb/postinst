@@ -1,0 +1,19 @@
+#!/bin/bash
+WEBIDE_ROOT="/usr/share/adafruit/webide"
+#needed for SSH key and config access at this point.
+WEBIDE_HOME="/home/webide"
+
+echo "**** Create webide user and group ****"
+groupadd webide || true
+useradd -g webide webide || true
+usermod -a -G i2c,sudo webide || true
+
+chown -R webide:webide "$WEBIDE_HOME"
+chown -R webide:webide "$WEBIDE_ROOT"
+
+echo 'webide "node" "service adafruit-webide.sh restart" ""' >> /etc/restartd.conf
+
+update-rc.d adafruit-webide.sh defaults
+service adafruit-webide.sh start
+
+exit 0

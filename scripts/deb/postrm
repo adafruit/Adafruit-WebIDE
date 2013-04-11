@@ -1,0 +1,8 @@
+#!/bin/bash
+echo "**** Removing user and group webide ****"
+deluser webide
+delgroup webide
+echo "**** Removing restartd.conf entry ****"
+sed -i '/webide "node" "service adafruit-webide.sh restart" ""/ d' /etc/restartd.conf
+
+exit 0
