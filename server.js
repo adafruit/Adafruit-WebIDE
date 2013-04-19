@@ -46,8 +46,8 @@ if (!exists) {
 }
 
 winston.add(winston.transports.File, { filename: __dirname + '/logs/output.log', json: false });
-//winston.handleExceptions(new winston.transports.File({ filename: __dirname + '/logs/errors.log', json: false }));
-//winston.remove(winston.transports.Console);
+winston.handleExceptions(new winston.transports.File({ filename: __dirname + '/logs/errors.log', json: false }));
+winston.remove(winston.transports.Console);
 
 // Passport session setup.
 //   To support persistent login sessions, Passport needs to be able to
@@ -553,9 +553,8 @@ process.on('SIGINT', function() {
   process.exit();
 });
 
-/*process.on('uncaughtException', function(err) {
+process.on('uncaughtException', function(err) {
   debug_helper.kill_debug(false, function() {
     //no need to wait for this
   });
 });
-*/
