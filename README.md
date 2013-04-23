@@ -18,7 +18,7 @@ Manual Installation (without process monitor)
 
 On the Raspberry PI:
 
-    sudo apt-get update && sudo apt-get -y install nodejs nodejs-legacy npm redis-server git
+    sudo apt-get update && sudo apt-get -y install build-essential nodejs nodejs-legacy npm redis-server git
     git clone git://github.com/adafruit/Adafruit-WebIDE.git
     cd Adafruit-WebIDE
     mkdir tmp
