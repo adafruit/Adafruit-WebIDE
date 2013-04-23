@@ -7,7 +7,7 @@ Easiest Installation
 
 On the Raspberry PI (after expanding the file system):
 
-    curl https://raw.github.com/adafruit/Adafruit-WebIDE/scripts/install.sh | sudo sh
+    curl https://raw.github.com/adafruit/Adafruit-WebIDE/release/scripts/install.sh | sudo sh
 
 Note: As part of the installation process, the 'webide' user is given access to sudo and sudoers, 
 similar to the 'pi' user.  This is needed in order to easily access GPIO pins from the Editor.  
@@ -24,7 +24,7 @@ On the Raspberry PI:
     mkdir tmp
     npm config set tmp tmp
     npm install
-    vim editor/config/config.js (change port 80 to your port of choice)
+    editor config/config.js (change port 80 to your port of choice)
     node server.js
 
 You can look at the install.sh script if you'd like a process monitor, and to install it
@@ -35,7 +35,7 @@ Uninstallation
 
 On the Raspberry PI:
 
-    curl https://raw.github.com/adafruit/Adafruit-WebIDE/scripts/uninstall.sh | sudo sh
+    curl https://raw.github.com/adafruit/Adafruit-WebIDE/release/scripts/uninstall.sh | sudo sh
 
 Manual Uninstallation
 ============
@@ -67,7 +67,7 @@ Advanced Options
 
 Offline Mode Installation:
 
-    curl https://raw.github.com/adafruit/Adafruit-WebIDE/scripts/install.sh | sudo sh -s - --offline
+    curl https://raw.github.com/adafruit/Adafruit-WebIDE/release/scripts/install.sh | sudo sh -s - --offline
 
 Note: Offline mode does not setup git in any way other than installing it.  You'll want to git config your
 email and name, and setup your ssh keys.
