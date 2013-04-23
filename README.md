@@ -18,9 +18,9 @@ Manual Installation (without process monitor)
 
 On the Raspberry PI:
 
+    sudo apt-get update && sudo apt-get -y install nodejs nodejs-legacy npm redis-server git
     git clone git://github.com/adafruit/Adafruit-WebIDE.git
     cd Adafruit-WebIDE
-    sudo apt-get install nodejs nodejs-legacy npm redis-server git -y
     mkdir tmp
     npm config set tmp tmp
     npm install
@@ -74,7 +74,7 @@ email and name, and setup your ssh keys.
 
 GitHub Mode Installation:
 
-    curl https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/install.sh | sudo sh -s - --github
+    curl https://raw.github.com/adafruit/Adafruit-WebIDE/release/scripts/install.sh | sudo sh -s - --github
 
 Note: GitHub mode does not automatically create, and post an ssh key to your GitHub account.  It requires
 a bit more manual setup at this time.
