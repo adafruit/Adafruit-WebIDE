@@ -25,7 +25,7 @@ On the Raspberry PI:
     npm config set tmp tmp
     npm install
     editor config/config.js (change port 80 to your port of choice)
-    node server.js
+    nodejs server.js
 
 You can look at the install.sh script if you'd like a process monitor, and to install it
 as a daemon.
