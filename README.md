@@ -18,14 +18,14 @@ Manual Installation (without process monitor)
 
 On the Raspberry PI:
 
+    sudo apt-get update && sudo apt-get -y install build-essential nodejs nodejs-legacy npm redis-server git
     git clone git://github.com/adafruit/Adafruit-WebIDE.git
     cd Adafruit-WebIDE
-    sudo apt-get install nodejs nodejs-legacy npm redis-server git -y
     mkdir tmp
     npm config set tmp tmp
     npm install
-    vim editor/config/config.js (change port 80 to your port of choice)
-    node server.js
+    editor config/config.js (change port 80 to your port of choice)
+    nodejs server.js
 
 You can look at the install.sh script if you'd like a process monitor, and to install it
 as a daemon.
