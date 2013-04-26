@@ -350,7 +350,7 @@ function start_server(cb) {
   io.configure(function() {
     io.enable('browser client minification');
     io.enable('browser client etag');
-    io.set('transports', ['websocket']);
+    io.set('transports', ['websocket', 'htmlfile', 'xhr-polling', 'jsonp-polling']);
   });
 
   new tty.Server(config.term, app, server, io);
