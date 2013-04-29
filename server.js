@@ -451,9 +451,9 @@ function socket_listeners() {
     });
 
     socket.on('move-file', function (data) {
-      git_helper.move_commit_push(data.file, socket.handshake.session, function(err, status) {
+      git_helper.move_commit_push(data.file, socket.handshake.session, function(err) {
         console.log('move-file', err);
-        socket.emit('move-file-complete', {err: err, status: status});
+        socket.emit('move-file-complete', {err: err});
       });
     });
 

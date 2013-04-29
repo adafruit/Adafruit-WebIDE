@@ -116,6 +116,13 @@ exports.move_uploaded_file = function(temp_path, new_path, cb) {
 };
 
 /*
+ * Copies recently uploaded file from tmp to the valid repositories folder
+ */
+exports.rename_file = function(old_path, new_path, cb) {
+  fs.rename(old_path, new_path, cb);
+};
+
+/*
  * Copies the stock README into the my-pi-projects root folder.  This file is
  * opened when the editor is opened.
  */

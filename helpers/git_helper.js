@@ -256,7 +256,6 @@ exports.commit = function commit(repository, message, cb) {
 
 /*
  * git status a single file.
- * repository: the name of the repository that resides in the repositories folder.
  * file: the relative path of the file from the root of the repository.
  */
 exports.is_modified = function (file, cb) {
@@ -283,6 +282,31 @@ exports.is_modified = function (file, cb) {
     }
 
     cb(output.errors, is_modified);
+  });
+};
+
+/*
+ * git status a single file to check if it's untracked.
+ * file: the relative path of the file from the root of the repository.
+ */
+exports.is_untracked = function (file, cb) {
+  var path_array = file.path.split('/');
+  var repository = path_array[2];
+  var repository_path = path.resolve(REPOSITORY_PATH, repository);
+  var item_path = path_array.slice(3).join('/');
+
+  console.log(item_path);
+
+  var is_untracked = false;
+  git.status(repository_path, function(output) {
+
+    console.log(output);
+
+    if (output.untracked.indexOf(item_path) !== -1) {
+      is_untracked = true;
+    }
+
+    cb(output.errors, is_untracked);
   });
 };
 
@@ -403,24 +427,36 @@ exports.move_commit_push = function(item, profile, cb) {
   var item_path = path_array.slice(3).join('/');
   var destination_path = item.destination.split('/').slice(3).join('/');
 
-  self.move(repository, item_path, destination_path, function(err, status) {
-    var commit_message = "Moved " + item.name;
-    if (err && err.length > 0) {
-      cb("Error: Failure moving file (renaming)", status);
-      return;
-    }
-    self.commit(repository, commit_message,  function(err, status) {
-      console.log("Committed Moved File");
-      if (err && err.length > 0) {
-        cb("Error: Failure comitting file into git", status);
-        return;
-      }
-      self.push(repository, "origin", "master", profile, function() {
-        console.log("Pushed latest changes");
-        cb();
+  self.is_untracked(item, function(err, is_untracked) {
+    if (is_untracked) {
+      item_path = path.resolve(REPOSITORY_PATH, repository, item_path);
+
+      destination_path = path.resolve(REPOSITORY_PATH, repository, destination_path);
+      fs_helper.rename_file(item_path, destination_path, function(err) {
+        cb(err);
       });
-    });
+    } else {
+      self.move(repository, item_path, destination_path, function(err, status) {
+        var commit_message = "Moved " + item.name;
+        if (err && err.length > 0) {
+          cb("Error: Failure moving file (renaming)", status);
+          return;
+        }
+        self.commit(repository, commit_message,  function(err, status) {
+          console.log("Committed Moved File");
+          if (err && err.length > 0) {
+            cb("Error: Failure comitting file into git", status);
+            return;
+          }
+          self.push(repository, "origin", "master", profile, function() {
+            console.log("Pushed latest changes");
+            cb();
+          });
+        });
+      });
+    }
   });
+
 };
 
 /*

@@ -1,3 +1,9 @@
+-0.3.8
+Update README with better manual installation instructions (Thanks adamboutcher!)
+Update tty.js dependencies for issue #178
+Add more transports for socket.io to resolve websocket issues.
+Fix for renaming file selection deleting unsaved editor file contents.
+
 -0.3.7
 Github support.
  - Ability to enable with --github as the default
