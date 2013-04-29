@@ -432,7 +432,7 @@ exports.move_commit_push = function(item, profile, cb) {
       item_path = path.resolve(REPOSITORY_PATH, repository, item_path);
 
       destination_path = path.resolve(REPOSITORY_PATH, repository, destination_path);
-      fs_helper.rename_file(item_path, destination_path, function(err) {
+      fs_helper.rename(item_path, destination_path, function(err) {
         cb(err);
       });
     } else {

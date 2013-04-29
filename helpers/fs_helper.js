@@ -116,9 +116,9 @@ exports.move_uploaded_file = function(temp_path, new_path, cb) {
 };
 
 /*
- * Copies recently uploaded file from tmp to the valid repositories folder
+ * Simply renames a file or folder.
  */
-exports.rename_file = function(old_path, new_path, cb) {
+exports.rename = function(old_path, new_path, cb) {
   fs.rename(old_path, new_path, cb);
 };
 
