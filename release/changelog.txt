@@ -3,6 +3,7 @@ Update README with better manual installation instructions (Thanks adamboutcher!
 Update tty.js dependencies for issue #178
 Add more transports for socket.io to resolve websocket issues.
 Fix for renaming file selection deleting unsaved editor file contents.
+Handle file rename errors, including detecting renames with same name.
 
 -0.3.7
 Github support.
