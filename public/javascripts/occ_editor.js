@@ -682,27 +682,30 @@
     socket.emit('move-file', { file: item });
 
     function move_file_callback(data) {
-      item.path = item.destination;
-      item.name = new_name;
-
-      $('.rename-form').parent().data('file', item);
-
       var item_html = $('.rename-form').parent().data('old');
 
-      if (item.type === 'file') {
-        item_html = $(item_html).html(new_name + '<i class="icon-chevron-right"></i>').attr('title', new_name);
-      } else {
-        item_html = $(item_html).html(new_name + '<i class="icon-folder-open"></i>').attr('title', new_name);
-      }
-
-      $('.rename-form').replaceWith(item_html);
-
       if (data.err) {
+        $('.rename-form').replaceWith(item_html);
+
         $('.connection-state').removeClass('connected').addClass('disconnected').text(data.err);
 
         setTimeout(function() {
           $('.connection-state').removeClass('disconnected').addClass('connected').text('Connected');
         },15000);
+      } else {
+        item.path = item.destination;
+        item.name = new_name;
+
+        $('.rename-form').parent().data('file', item);
+
+
+        if (item.type === 'file') {
+          item_html = $(item_html).html(new_name + '<i class="icon-chevron-right"></i>').attr('title', new_name);
+        } else {
+          item_html = $(item_html).html(new_name + '<i class="icon-folder-open"></i>').attr('title', new_name);
+        }
+
+        $('.rename-form').replaceWith(item_html);
       }
 
       socket.removeListener('move-file-complete', move_file_callback);

@@ -119,7 +119,14 @@ exports.move_uploaded_file = function(temp_path, new_path, cb) {
  * Simply renames a file or folder.
  */
 exports.rename = function(old_path, new_path, cb) {
-  fs.rename(old_path, new_path, cb);
+  fs.stat(new_path, function(err, stat) {
+    if (stat) {
+      cb("File already exists with that name");
+    } else {
+      fs.rename(old_path, new_path, cb);
+    }
+  });
+
 };
 
 /*

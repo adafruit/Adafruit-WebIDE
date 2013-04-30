@@ -438,14 +438,15 @@ exports.move_commit_push = function(item, profile, cb) {
     } else {
       self.move(repository, item_path, destination_path, function(err, status) {
         var commit_message = "Moved " + item.name;
-        if (err && err.length > 0) {
-          cb("Error: Failure moving file (renaming)", status);
+        if (err) {
+          console.log ("has error returning");
+          cb("Error: Failure moving file (renaming)");
           return;
         }
         self.commit(repository, commit_message,  function(err, status) {
           console.log("Committed Moved File");
-          if (err && err.length > 0) {
-            cb("Error: Failure comitting file into git", status);
+          if (err) {
+            cb("Error: Failure comitting file into git");
             return;
           }
           self.push(repository, "origin", "master", profile, function() {
