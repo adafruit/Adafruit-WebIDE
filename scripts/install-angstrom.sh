@@ -133,7 +133,7 @@ cd /etc/init.d
 chmod 755 adafruit-webide-angstrom.sh
 
 
-update-rc.d adafruit-webide.sh defaults
+update-rc.d adafruit-webide-angstrom.sh defaults
 
 
 #Check if port 80 is in use, use 3000 if so.
