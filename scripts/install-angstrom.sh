@@ -84,8 +84,8 @@ cp src/redis-server /usr/bin/redis-server
 cp src/redis-cli /usr/bin/redis-cli
 mkdir -p /etc/redis
 mkdir -p /var/redis
-cp "$WEBIDE_ROOT/scripts/redis/redis_6379" "/etc/init.d/redis_6379"
-cp "$WEBIDE_ROOT/scripts/redis/redis.conf" "/etc/redis/6379.conf"
+curl -k https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/redis/redis_6379 > /etc/init.d/redis_6379
+curl -k https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/redis/redis.conf > /etc/redis/6379.conf
 mkdir -p /var/redis/6379
 chmod +x /etc/init.d/redis_6379 
 update-rc.d redis_6379 defaults
