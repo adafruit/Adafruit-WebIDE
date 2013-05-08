@@ -75,21 +75,24 @@ echo "**** (redis-server git avahi-daemon i2c-tools python-smbus) ****"
 opkg update
 opkg install nodejs git avahi-daemon i2c-tools python-smbus libcap2 libcap-bin
 
-curl http://download.redis.io/redis-stable.tar.gz | tar xvzf -
-cd redis-stable
-make
-cp src/redis-server /usr/bin/redis-server
-cp src/redis-cli /usr/bin/redis-cli
-mkdir -p /etc/redis
-mkdir -p /var/redis
-curl -k https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/redis/redis_6379 > /etc/init.d/redis_6379
-curl -k https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/redis/redis.conf > /etc/redis/6379.conf
-mkdir -p /var/redis/6379
-chmod +x /etc/init.d/redis_6379 
-update-rc.d redis_6379 defaults
-/etc/init.d/redis_6379 start
-cd "$WEBIDE_ROOT"
-rm -rf redis-stable
+if ! redis-cli PING
+then
+    curl http://download.redis.io/redis-stable.tar.gz | tar xvzf -
+    cd redis-stable
+    make
+    cp src/redis-server /usr/bin/redis-server
+    cp src/redis-cli /usr/bin/redis-cli
+    mkdir -p /etc/redis
+    mkdir -p /var/redis
+    curl -k https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/redis/redis_6379 > /etc/init.d/redis_6379
+    curl -k https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/redis/redis.conf > /etc/redis/6379.conf
+    mkdir -p /var/redis/6379
+    chmod +x /etc/init.d/redis_6379 
+    update-rc.d redis_6379 defaults
+    /etc/init.d/redis_6379 start
+    cd "$WEBIDE_ROOT"
+    rm -rf redis-stable
+fi
 
 wget http://www.angstrom-distribution.org/feeds/next/ipk/eglibc/all/lsb-base_3.2-r0.9_all.ipk
 opkg install lsb-base_3.2-r0.9_all.ipk
