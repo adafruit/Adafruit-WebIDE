@@ -2,7 +2,7 @@ Adafruit WebIDE
 ================
 This is a simple editor designed to help learn the Raspberry PI components, and more.
 
-Easiest Installation
+Raspberry Pi Installation
 ============
 
 On the Raspberry PI (after expanding the file system):
@@ -12,6 +12,17 @@ On the Raspberry PI (after expanding the file system):
 Note: As part of the installation process, the 'webide' user is given access to sudo and sudoers, 
 similar to the 'pi' user.  This is needed in order to easily access GPIO pins from the Editor.  
 If you don't need these features, feel free to manually install the editor below.
+Note: This is also the default installation for any Debian or Ubuntu operating systems
+
+Beaglebone Installation (Angstrom)
+============
+
+On the Beaglebone (as the default root user):
+
+    curl -k https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/install-angstrom.sh | sh
+
+Note: The curl -k command is used due to the Beaglebone not having the github SSL certificate in the default installation.
+Note: If you've replaced the default operating system (Angstrom) with Debian or Ubuntu, use the Raspberry Pi installation instructions.
 
 Manual Installation (without process monitor)
 ============
@@ -36,6 +47,10 @@ Uninstallation
 On the Raspberry PI:
 
     curl https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/uninstall.sh | sudo sh
+
+On the Beaglebone (as the default root user):
+
+    curl https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/uninstall-angstrom.sh | sh
 
 Manual Uninstallation
 ============
