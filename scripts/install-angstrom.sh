@@ -6,8 +6,6 @@
 
 #tar -zcvf editor.tar.gz * --exclude .git --exclude .gitignore
 #tar -zcvf editor-update.tar.gz * --exclude .git --exclude .gitignore
-#scp pi@raspberrypi.local:/home/pi/Adafruit-WebIDE/editor.tar.gz editor-0.2.4.tar.gz
-#scp pi@raspberrypi.local:/home/pi/Adafruit-WebIDE-Update/editor-update.tar.gz editor-0.2.4-update.tar.gz
 #sudo -u webide -g webide node server
 
 #curl -k https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/install.sh | sh
@@ -127,6 +125,7 @@ cp "$WEBIDE_ROOT/scripts/.bashrc" "$WEBIDE_HOME"
 
 echo "**** Installing the WebIDE as a service ****"
 echo "**** (to uninstall service, execute: 'sudo update-rc.d -f adafruit-webide-angstrom.sh remove') ****"
+curl -k https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/adafruit-webide-angstrom.sh > /etc/init.d/adafruit-webide-angstrom.sh
 cp "$WEBIDE_ROOT/scripts/adafruit-webide-angstrom.sh" "/etc/init.d"
 cd /etc/init.d
 chmod 755 adafruit-webide-angstrom.sh
