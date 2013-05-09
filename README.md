@@ -9,6 +9,12 @@ On the Raspberry PI (after expanding the file system):
 
     curl https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/install.sh | sudo sh
 
+Alternatively, you can install using the .deb file:
+
+    curl -O http://adafruit-download.s3.amazonaws.com/adafruitwebide-0.3.8-Linux.deb
+    sudo dpkg -i adafruitwebide-0.3.8-Linux.deb
+    sudo apt-get -f install
+
 Note: As part of the installation process, the 'webide' user is given access to sudo and sudoers, 
 similar to the 'pi' user.  This is needed in order to easily access GPIO pins from the Editor.  
 If you don't need these features, feel free to manually install the editor below.
@@ -50,9 +56,13 @@ On the Raspberry PI:
 
     curl https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/uninstall.sh | sudo sh
 
+Or if you installed with the .deb file:
+
+    sudo apt-get remove adafruitwebide
+
 On the Beaglebone (as the default root user):
 
-    curl https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/uninstall-angstrom.sh | sh
+    curl -k https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/uninstall-angstrom.sh | sh
 
 Manual Uninstallation
 ============
