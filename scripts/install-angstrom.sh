@@ -160,17 +160,26 @@ fi
 
 /etc/init.d/adafruit-webide-angstrom.sh start
 
-#if grep -q adafruit-webide-angstrom.sh /etc/restartd.conf
-#then
-#  echo "restartd already configured"
-#else
-#  echo 'webide "node" "service adafruit-webide-angstrom.sh restart" ""' >> /etc/restartd.conf
-#fi
+#installing restartd
+
+
+
+if grep -q adafruit-webide-angstrom.sh /etc/restartd.conf
+then
+  echo "restartd already configured"
+else
+  git clone git://github.com/jwcooper/restartd.git
+  cd restartd
+  make
+  cp restartd.conf /etc/restartd.conf
+  cp restartd /usr/bin/restartd  
+  echo 'webide "node" "service adafruit-webide.sh restart" ""' >> /etc/restartd.conf
+fi
 
 #kill all restartd processes, and restart one
-#pkill -f restartd || true
-#sleep 5s
-#restartd
+pkill -f restartd || true
+sleep 5s
+restartd
 
 echo "**** Starting the server...(please wait) ****"
 sleep 20s
