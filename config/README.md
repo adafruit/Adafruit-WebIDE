@@ -1,4 +1,4 @@
-Welcome to the Adafruit WebIDE.
+Welcome to the Adafruit webIDE.
 
 We've pre-loaded the Adafruit Python libraries that you may find useful.  
 

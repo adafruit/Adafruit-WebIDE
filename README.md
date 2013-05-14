@@ -1,6 +1,6 @@
-Adafruit WebIDE
+Adafruit webIDE
 ================
-This is a simple editor designed to help learn the Raspberry PI components, and more.
+This is a simple editor designed to help learn the Raspberry Pi and Beaglebone components, and more.
 
 Raspberry Pi Installation
 ============

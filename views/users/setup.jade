@@ -3,18 +3,18 @@ extends ../layout
 block content
   #setup-wrapper
     #setup-content
-      h3 Welcome to the Raspberry Pi WebIDE powered by the Adafruit Learning System
+      h3 Welcome to the Adafruit webIDE powered by the Adafruit Learning System
       if (typeof(session.message) != 'undefined')
         div.alert.alert-error
           p #{session.message}
-      p Setting up your Raspberry Pi will only take a few minutes.  Let's get started.
-      p Are you setting up more than one Raspberry Pi?  Visit the config to 
+      p Setting up your Raspberry Pi or Beaglebone will only take a few minutes.  Let's get started.
+      p Are you setting up more than one Raspberry Pi or Beaglebone?  Visit the config to 
         a(href="/config") change hostname and WiFi.
       if !github
-        p One of the many useful features of the WebIDE is that all of your code will be
+        p One of the many useful features of the webIDE is that all of your code will be
           | stored in the cloud over at bitbucket.org. So, before we can go any further, you
           | will want to create your free Bitbucket account.  If you already have one, you can use
-          | your existing account, or create one specifically for the Raspberry Pi WebIDE.
+          | your existing account, or create one specifically for the webIDE.
         p
           a.btn.btn-large.btn-info.bitbucket-signup(href="https://bitbucket.org/account/signup/", target="_blank") Click here to create your free bitbucket account
         p
@@ -25,7 +25,7 @@ block content
         p Now, click on the '+ Add consumer' button:
         p
           img(src="/images/setup/step3.png")
-        p For the name, type in Raspberry Pi WebIDE, then click the 'Add consumer' button:
+        p For the name, type in Adafruit webIDE, then click the 'Add consumer' button:
         p
           img(src="/images/setup/step4.png")
         p What we are after is the Key, and the Secret text. Copy each of those and paste in the boxes below.

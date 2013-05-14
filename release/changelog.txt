@@ -1,3 +1,7 @@
+-0.3.9
+Include support for Angstrom (Beaglebone)
+Re-brand as the Adafruit webIDE
+
 -0.3.8
 Update README with better manual installation instructions (Thanks adamboutcher!)
 Update tty.js dependencies for issue #178
