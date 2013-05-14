@@ -173,7 +173,7 @@ else
   make
   cp restartd.conf /etc/restartd.conf
   cp restartd /usr/bin/restartd  
-  echo 'webide "node" "service adafruit-webide.sh restart" ""' >> /etc/restartd.conf
+  echo 'webide "node" "service adafruit-webide-angstrom.sh restart" ""' >> /etc/restartd.conf
 fi
 
 #kill all restartd processes, and restart one
@@ -185,8 +185,5 @@ echo "**** Starting the server...(please wait) ****"
 sleep 20s
 
 echo "**** The Adafruit WebIDE is installed and running! ****"
-echo "**** Commands: sudo service adafruit-webide-angstrom.sh {start,stop,restart} ****"
+echo "**** Commands: /etc/init.d/adafruit-webide-angstrom.sh {start,stop} ****"
 echo "**** Navigate to http://$(hostname).local$PORT_USED to use the WebIDE"
-#echo "**** To run the editor: ****"
-#echo "**** cd ~/Adafruit/WebIDE ****"
-#echo "**** node webide ****"
