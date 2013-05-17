@@ -150,7 +150,7 @@ then
 fi
 
 echo "**** Setting up systemd scripts"
-cp "$WEBIDE_HOME/scripts/adafruit-webide-angstrom.service" /lib/systemd/system/adafruit-webide-angstrom.service
+curl -k https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/adafruit-webide-angstrom.service > /lib/systemd/system/adafruit-webide-angstrom.service
 cd /etc/systemd/system/multi-user.target.wants
 ln -s /lib/systemd/system/adafruit-webide-angstrom.service adafruit-webide-angstrom.service
 systemctl daemon-reload
