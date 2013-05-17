@@ -19,16 +19,21 @@ if [ "$?" -eq "0" ]; then
 fi
 rm /etc/sudoers.tmp
 
+echo "**** Stopping webIDE ****"
+pkill -u webide
+sleep 5s
+
 echo "**** Removing systemd service ****"
 cd /etc/systemd/system/multi-user.target.wants
-systemctl disable adafruit-webide-angstrom.service
+rm adafruit-webide-angstrom.service
 rm /lib/systemd/system/adafruit-webide-angstrom.service
+systemctl daemon-reload
 echo "**** Removing the WebIDE Folder ****"
 rm -rf "$WEBIDE_ROOT"
 echo "**** Removing webide user ****"
 userdel -r webide
 
-echo "**** The Adafruit WebIDE is now uninstalled! ****"
+echo "**** The Adafruit webIDE is now uninstalled! ****"
 echo "**** During the installation process, there were a few ****"
 echo "**** libraries installed that we did not uninstall as ****"
 echo "**** we're not able to determine if other applications are dependent ****"
