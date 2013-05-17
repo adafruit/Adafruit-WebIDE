@@ -127,7 +127,7 @@ echo "**** Adding default .bashrc file for webide user ****"
 cp "$WEBIDE_ROOT/scripts/.bashrc" "$WEBIDE_HOME"
 
 
-#Check if port 80 is in use, use 3000 if so.
+#Check if port 80 is in use, use 8080 if so.
 PORT_USED=""
 if netstat -lnt | awk '$6 == "LISTEN" && $4 ~ ".80"' | grep -q "LISTEN"
 then
@@ -155,7 +155,6 @@ cd /etc/systemd/system/multi-user.target.wants
 ln -s /lib/systemd/system/adafruit-webide-angstrom.service adafruit-webide-angstrom.service
 systemctl daemon-reload
 systemctl start adafruit-webide-angstrom.service
-systemctl enable adafruit-webide-angstrom.service
 
 echo "**** Starting the server...(please wait) ****"
 sleep 20s
