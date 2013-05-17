@@ -24,8 +24,9 @@ Note: This is also the default installation for any Debian or Ubuntu operating s
 Beaglebone Installation (Angstrom)
 ============
 
-On the Beaglebone (as the default root user):
+On the Beaglebone (as the default root user), execute each line independently:
 
+    echo "nameserver 8.8.8.8" >> /etc/resolv.conf
     curl -k https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/install-angstrom.sh | sh
 
 Note: The curl -k command is used due to the Beaglebone not having the github SSL certificate in the default installation.
