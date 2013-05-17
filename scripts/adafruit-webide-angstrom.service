@@ -1,0 +1,11 @@
+Unit]
+Description=Adafruit webIDE
+ConditionPathExists=|/usr/share/adafruit/webide
+
+[Service]
+Restart=always
+EnvironmentFile=-/etc/default/node
+ExecStart=/usr/bin/sudo -u webide -g webide /usr/bin/node /usr/share/adafruit/webide/server.js
+
+[Install]
+WantedBy=multi-user.target

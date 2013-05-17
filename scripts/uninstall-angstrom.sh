@@ -7,13 +7,6 @@ WEBIDE_ROOT="/usr/share/adafruit"
 WEBIDE_HOME="/home/webide"
 NODE_PATH=""
 
-echo "**** Removing restartd WebIDE configuration ****"
-sed -i '/adafruit-webide.sh/ d' /etc/restartd.conf
-kill all restartd processes, and restart one
-pkill -f restartd || true
-sleep 5s
-restartd
-
 echo "**** Removing webide user from sudoers ****"
 if [ -f "/etc/sudoers.tmp" ]; then
     rm /etc/sudoers.tmp
@@ -26,13 +19,10 @@ if [ "$?" -eq "0" ]; then
 fi
 rm /etc/sudoers.tmp
 
-echo "**** Stopping the Adafruit WebIDE ****"
-/etc/init.d/adafruit-webide-angstrom.sh stop
-sleep 5s
-
-echo "**** Removing update-rc.d service ****"
-update-rc.d -f adafruit-webide-angstrom.sh remove
-rm /etc/init.d/adafruit-webide-angstrom.sh
+echo "**** Removing systemd service ****"
+cd /etc/systemd/system/multi-user.target.wants
+systemctl disable adafruit-webide-angstrom.service
+rm /lib/systemd/system/adafruit-webide-angstrom.service
 echo "**** Removing the WebIDE Folder ****"
 rm -rf "$WEBIDE_ROOT"
 echo "**** Removing webide user ****"

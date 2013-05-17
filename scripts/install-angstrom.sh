@@ -71,9 +71,9 @@ echo "**** Downloading the latest version of the WebIDE ****"
 curl -L http://adafruit-download.s3.amazonaws.com/webide-0.3.8.tar.gz | tar xzf -
 
 echo "**** Installing required libraries ****"
-echo "**** (redis-server git avahi-daemon i2c-tools python-smbus) ****"
+echo "**** (redis-server git avahi-daemon i2c-tools python-smbus openssh-keygen) ****"
 opkg update
-opkg install nodejs git avahi-daemon i2c-tools python-smbus libcap2 libcap-bin
+opkg install nodejs git avahi-daemon i2c-tools python-smbus libcap2 libcap-bin openssh-keygen
 
 if ! redis-cli PING
 then
@@ -126,15 +126,6 @@ chmod 775 "$WEBIDE_ROOT"
 echo "**** Adding default .bashrc file for webide user ****"
 cp "$WEBIDE_ROOT/scripts/.bashrc" "$WEBIDE_HOME"
 
-echo "**** Installing the WebIDE as a service ****"
-echo "**** (to uninstall service, execute: 'sudo update-rc.d -f adafruit-webide-angstrom.sh remove') ****"
-curl -k https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/adafruit-webide-angstrom.sh > /etc/init.d/adafruit-webide-angstrom.sh
-cd /etc/init.d
-chmod 755 adafruit-webide-angstrom.sh
-
-
-update-rc.d adafruit-webide-angstrom.sh defaults
-
 
 #Check if port 80 is in use, use 3000 if so.
 PORT_USED=""
@@ -158,32 +149,16 @@ then
   redis-cli HMSET server github 1
 fi
 
-/etc/init.d/adafruit-webide-angstrom.sh start
-
-#installing restartd
-
-
-
-if grep -q adafruit-webide-angstrom.sh /etc/restartd.conf
-then
-  echo "restartd already configured"
-else
-  git clone git://github.com/jwcooper/restartd.git
-  cd restartd
-  make
-  cp restartd.conf /etc/restartd.conf
-  cp restartd /usr/bin/restartd  
-  echo 'webide "node" "service adafruit-webide-angstrom.sh restart" ""' >> /etc/restartd.conf
-fi
-
-#kill all restartd processes, and restart one
-pkill -f restartd || true
-sleep 5s
-restartd
+echo "**** Setting up systemd scripts"
+cp "$WEBIDE_HOME/scripts/adafruit-webide-angstrom.service" /lib/systemd/system/adafruit-webide-angstrom.service
+cd /etc/systemd/system/multi-user.target.wants
+ln -s /lib/systemd/system/adafruit-webide-angstrom.service adafruit-webide-angstrom.service
+systemctl daemon-reload
+systemctl start adafruit-webide-angstrom.service
+systemctl enable adafruit-webide-angstrom.service
 
 echo "**** Starting the server...(please wait) ****"
 sleep 20s
 
-echo "**** The Adafruit WebIDE is installed and running! ****"
-echo "**** Commands: /etc/init.d/adafruit-webide-angstrom.sh {start,stop} ****"
+echo "**** The Adafruit webIDE is installed and running! ****"
 echo "**** Navigate to http://$(hostname).local$PORT_USED to use the WebIDE"
