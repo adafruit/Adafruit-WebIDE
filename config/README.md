@@ -2,7 +2,7 @@ Welcome to the Adafruit webIDE.
 
 We've pre-loaded the Adafruit Python libraries that you may find useful.  
 
-By navigating into those libraries, you can choose to copy them into you 
+By navigating into those libraries, you can choose to copy them into your 
 project folder, so you can edit, and save them.  If you ever need to start 
 over, just delete your copied project folder, and grab the 
 Adafruit libraries again.
