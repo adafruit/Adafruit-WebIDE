@@ -1,3 +1,6 @@
+-0.3.10
+Fix for settings being undefined in offline mode
+
 -0.3.9
 Include support for Angstrom (Beaglebone)
 Re-brand as the Adafruit webIDE
