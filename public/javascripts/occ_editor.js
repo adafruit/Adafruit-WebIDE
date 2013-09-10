@@ -7,7 +7,7 @@
       editor_output_visible = false,
       is_terminal_open = false,
       terminal_win,
-      job_list, settings;
+      job_list, settings = {};
 
   var templates = {
     "editor_bar_init":              '<p class="editor-bar-actions">' +
