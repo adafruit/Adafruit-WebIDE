@@ -48,6 +48,9 @@ rm -rf "$WEBIDE_ROOT"
 echo "**** Removing webide user ****"
 userdel -r webide
 
+echo "**** Removing redis server setting ****"
+redis-cli del server
+
 echo "**** The Adafruit WebIDE is now uninstalled! ****"
 echo "**** During the installation process, there were a few ****"
 echo "**** libraries installed that we did not uninstall as ****"
