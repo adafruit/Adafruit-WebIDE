@@ -94,7 +94,7 @@ then
     rm -rf redis-stable
 fi
 
-wget http://www.angstrom-distribution.org/feeds/next/ipk/eglibc/all/lsb-base_3.2-r0.9_all.ipk
+wget http://feeds.angstrom-distribution.org/feeds/next/ipk/eglibc/all/lsb-base_3.2-r0.9_all.ipk
 opkg install lsb-base_3.2-r0.9_all.ipk
 rm lsb-base_3.2-r0.9_all.ipk
 
