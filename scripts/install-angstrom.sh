@@ -98,7 +98,7 @@ wget http://feeds.angstrom-distribution.org/feeds/next/ipk/eglibc/all/lsb-base_3
 opkg install lsb-base_3.2-r0.9_all.ipk
 rm lsb-base_3.2-r0.9_all.ipk
 
-wget http://www.angstrom-distribution.org/feeds/v2012.05/ipk/eglibc/armv7a/base/sudo_1.8.4p4-r1_armv7a.ipk
+wget http://feeds.angstrom-distribution.org/feeds/v2012.05/ipk/eglibc/armv7a/base/sudo_1.8.4p4-r1_armv7a.ipk
 opkg install sudo_1.8.4p4-r1_armv7a.ipk
 rm sudo_1.8.4p4-r1_armv7a.ipk
 
