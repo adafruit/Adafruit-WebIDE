@@ -92,7 +92,8 @@ function setup_github_passport(consumer_key, consumer_secret) {
   passport.use(new GitHubStrategy({
       clientID: consumer_key,
       clientSecret: consumer_secret,
-      callbackURL: "http://" + HOSTNAME + "/auth/github/callback"
+      callbackURL: "http://" + HOSTNAME + "/auth/github/callback",
+      userAgent: HOSTNAME
     },
     function(accessToken, refreshToken, profile, done) {
       // asynchronous verification, for effect...
