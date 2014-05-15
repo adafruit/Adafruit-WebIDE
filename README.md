@@ -7,7 +7,7 @@ Raspberry Pi Installation
 
 On the Raspberry PI (after expanding the file system):
 
-    curl https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/install.sh | sudo sh
+    curl https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/alpha/scripts/install.sh | sudo sh
 
 Alternatively, you can install using the .deb file:
 
@@ -27,7 +27,7 @@ Beaglebone Installation (Angstrom)
 On the Beaglebone (as the default root user), execute each line independently:
 
     echo "nameserver 8.8.8.8" >> /etc/resolv.conf
-    curl -k https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/install-angstrom.sh | sh
+    curl -k https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/alpha/scripts/install-angstrom.sh | sh
 
 Note: The curl -k command is used due to the Beaglebone not having the github SSL certificate in the default installation.
 
@@ -55,7 +55,7 @@ Uninstallation
 
 On the Raspberry PI:
 
-    curl https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/uninstall.sh | sudo sh
+    curl https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/alpha/scripts/uninstall.sh | sudo sh
 
 Or if you installed with the .deb file:
 
@@ -63,7 +63,7 @@ Or if you installed with the .deb file:
 
 On the Beaglebone (as the default root user):
 
-    curl -k https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/uninstall-angstrom.sh | sh
+    curl -k https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/alpha/scripts/uninstall-angstrom.sh | sh
 
 Manual Uninstallation
 ============
@@ -101,14 +101,14 @@ Advanced Options
 
 Offline Mode Installation:
 
-    curl https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/install.sh | sudo sh -s - --offline
+    curl https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/alpha/scripts/install.sh | sudo sh -s - --offline
 
 Note: Offline mode does not setup git in any way other than installing it.  You'll want to git config your
 email and name, and setup your ssh keys.
 
 GitHub Mode Installation:
 
-    curl https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/install.sh | sudo sh -s - --github
+    curl https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/alpha/scripts/install.sh | sudo sh -s - --github
 
 Note: GitHub mode does not automatically create, and post an ssh key to your GitHub account.  It requires
 a bit more manual setup at this time.
