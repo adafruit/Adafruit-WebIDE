@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-# curl https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/install.sh | sudo sh
-# curl https://raw.github.com/adafruit/Adafruit-WebIDE/test/scripts/install.sh | sudo sh
-# curl https://raw.github.com/adafruit/Adafruit-WebIDE/offline/scripts/install.sh | sudo sh -s - --offline
+# curl https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/alpha/scripts/install.sh | sudo sh
+# curl https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/test/scripts/install.sh | sudo sh
+# curl https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/offline/scripts/install.sh | sudo sh -s - --offline
 
 #tar -zcvf editor.tar.gz * --exclude .git --exclude .gitignore
 #tar -zcvf editor-update.tar.gz * --exclude .git --exclude .gitignore

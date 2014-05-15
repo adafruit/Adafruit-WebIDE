@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# curl https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/uninstall.sh | sudo sh
+# curl https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/alpha/scripts/uninstall.sh | sudo sh
 
 
 WEBIDE_ROOT="/usr/share/adafruit"

@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 
-# curl https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/install.sh | sudo sh
-# curl https://raw.github.com/adafruit/Adafruit-WebIDE/test/scripts/install.sh | sudo sh
-# curl https://raw.github.com/adafruit/Adafruit-WebIDE/offline/scripts/install.sh | sudo sh -s - --offline
+# curl https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/alpha/scripts/install.sh | sudo sh
+# curl https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/test/scripts/install.sh | sudo sh
+# curl https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/offline/scripts/install.sh | sudo sh -s - --offline
 
 #tar -zcvf editor.tar.gz * --exclude .git --exclude .gitignore
 #tar -zcvf editor-update.tar.gz * --exclude .git --exclude .gitignore
 #sudo -u webide -g webide node server
 
-#curl -k https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/install.sh | sh
+#curl -k https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/alpha/scripts/install.sh | sh
 
 #http://stackoverflow.com/a/6946864/629189
 # translate long options to short
@@ -84,8 +84,8 @@ then
     cp src/redis-cli /usr/bin/redis-cli
     mkdir -p /etc/redis
     mkdir -p /var/redis
-    curl -k https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/redis/redis_6379 > /etc/init.d/redis_6379
-    curl -k https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/redis/redis.conf > /etc/redis/6379.conf
+    curl -k https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/alpha/scripts/redis/redis_6379 > /etc/init.d/redis_6379
+    curl -k https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/alpha/scripts/redis/redis.conf > /etc/redis/6379.conf
     mkdir -p /var/redis/6379
     chmod +x /etc/init.d/redis_6379 
     update-rc.d redis_6379 defaults
@@ -150,7 +150,7 @@ then
 fi
 
 echo "**** Setting up systemd scripts"
-curl -k https://raw.github.com/adafruit/Adafruit-WebIDE/alpha/scripts/adafruit-webide-angstrom.service > /lib/systemd/system/adafruit-webide-angstrom.service
+curl -k https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/alpha/scripts/adafruit-webide-angstrom.service > /lib/systemd/system/adafruit-webide-angstrom.service
 cd /etc/systemd/system/multi-user.target.wants
 ln -s /lib/systemd/system/adafruit-webide-angstrom.service adafruit-webide-angstrom.service
 systemctl daemon-reload
