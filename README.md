@@ -1,9 +1,9 @@
 Adafruit webIDE
-================
+===============
 This is a simple editor designed to help learn the Raspberry Pi and Beaglebone components, and more.
 
 Raspberry Pi Installation
-============
+-------------------------
 
 On the Raspberry PI (after expanding the file system):
 
@@ -22,7 +22,7 @@ If you don't need these features, feel free to manually install the editor below
 Note: This is also the default installation for any Debian or Ubuntu operating systems
 
 Beaglebone Installation (Angstrom)
-============
+----------------------------------
 
 On the Beaglebone (as the default root user), execute each line independently:
 
@@ -34,7 +34,7 @@ Note: The curl -k command is used due to the Beaglebone not having the github SS
 Note: If you've replaced the default operating system (Angstrom) with Debian or Ubuntu, use the Raspberry Pi installation instructions.
 
 Manual Installation (without process monitor)
-============
+---------------------------------------------
 
 On the Raspberry PI:
 
@@ -51,7 +51,7 @@ You can look at the install.sh script if you'd like a process monitor, and to in
 as a daemon.
 
 Uninstallation
-============
+--------------
 
 On the Raspberry PI:
 
@@ -65,8 +65,7 @@ On the Beaglebone (as the default root user):
 
     curl -k https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/alpha/scripts/uninstall-angstrom.sh | sh
 
-Manual Uninstallation
-============
+### Manual Uninstallation
 
 On the Raspberry PI:
 
@@ -74,7 +73,7 @@ On the Raspberry PI:
     rm ~/.ssh/id_rsa_bitbucket*
 
 Running the Editor
-============
+------------------
 
 Using Firefox or Chrome (and likely any other webkit browser) on any computer in your internal network:
 
@@ -86,8 +85,7 @@ BeagleBone:
 
     http://beaglebone.local:8080
 
-Restart the Editor
-============
+###Restart the Editor
 
 If for any reason you need to restart the editor, you can execute the following commands in order
     
@@ -97,7 +95,7 @@ If for any reason you need to restart the editor, you can execute the following 
 Sudo is required to restart due to the editor running as the 'webide' user.
 
 Advanced Options
-============
+----------------
 
 Offline Mode Installation:
 
@@ -122,11 +120,11 @@ Disable:
     redis-cli hmset editor:settings enable_make "off"
 
 License
-============
+-------
 
 The editor is licensed with AGPL Version 3.
 http://www.gnu.org/licenses/agpl-3.0.html
 
 SCREENSHOTS
-===========
+-----------
 ![ScreenShot](http://www.adafruit.com/adablog/wp-content/uploads/2012/10/WebIDE_Alpha.jpg)
