@@ -2,10 +2,10 @@ Adafruit webIDE
 ================
 This is a simple editor designed to help learn the Raspberry Pi and Beaglebone components, and more.
 
-Raspberry Pi Installation
+Debian Installation (Raspberry Pi and BeagleBone Black)
 ============
 
-On the Raspberry PI (after expanding the file system):
+On the Raspberry PI or BeagleBone Black (after expanding the file system):
 
     curl https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/alpha/scripts/install.sh | sudo sh
 
@@ -21,7 +21,7 @@ If you don't need these features, feel free to manually install the editor below
 
 Note: This is also the default installation for any Debian or Ubuntu operating systems
 
-Beaglebone Installation (Angstrom)
+Angstrom Installation (BeagleBone Black)
 ============
 
 On the Beaglebone (as the default root user), execute each line independently:
@@ -53,7 +53,7 @@ as a daemon.
 Uninstallation
 ============
 
-On the Raspberry PI:
+Debian (Raspberry PI and BeagleBone Black):
 
     curl https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/alpha/scripts/uninstall.sh | sudo sh
 
@@ -61,14 +61,14 @@ Or if you installed with the .deb file:
 
     sudo apt-get remove adafruitwebide
 
-On the Beaglebone (as the default root user):
+Angstrom (BeagleBone Black, as default root user):
 
     curl -k https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/alpha/scripts/uninstall-angstrom.sh | sh
 
 Manual Uninstallation
 ============
 
-On the Raspberry PI:
+On the Raspberry PI or BeagleBone Black:
 
     rm -r Adafruit-WebIDE
     rm ~/.ssh/id_rsa_bitbucket*
