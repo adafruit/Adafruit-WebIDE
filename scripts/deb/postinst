@@ -8,17 +8,18 @@ groupadd webide || true
 useradd -g webide webide || true
 usermod -a -G i2c,sudo webide || true
 
-cd $WEBIDE_ROOT
-/usr/local/bin/npm install
-
 chown -R webide:webide "$WEBIDE_HOME"
 chown -R webide:webide "$WEBIDE_ROOT"
+
+echo "**** Installing npm packages  ****"
+cd $WEBIDE_ROOT
+sudo -u webide /usr/local/bin/npm install
 
 echo 'webide "node" "service adafruit-webide.sh restart" ""' >> /etc/restartd.conf
 
 cd /etc/init.d
 
-NODE_PATH="/usr/local/bin/node"
+NODE_PATH="\/usr\/local\/bin\/node"
 sed -i "s/NODE_PATH/$NODE_PATH/g" adafruit-webide.sh
 
 update-rc.d adafruit-webide.sh defaults
