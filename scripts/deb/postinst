@@ -8,6 +8,9 @@ groupadd webide || true
 useradd -g webide webide || true
 usermod -a -G i2c,sudo webide || true
 
+cd $WEBIDE_ROOT
+/usr/local/bin/npm install
+
 chown -R webide:webide "$WEBIDE_HOME"
 chown -R webide:webide "$WEBIDE_ROOT"
 
