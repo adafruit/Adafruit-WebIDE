@@ -11,10 +11,6 @@ usermod -a -G i2c,sudo webide || true
 chown -R webide:webide "$WEBIDE_HOME"
 chown -R webide:webide "$WEBIDE_ROOT"
 
-echo "**** Installing npm packages  ****"
-cd $WEBIDE_ROOT
-sudo -u webide /usr/local/bin/npm install
-
 echo 'webide "node" "service adafruit-webide.sh restart" ""' >> /etc/restartd.conf
 
 cd /etc/init.d
