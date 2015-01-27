@@ -1,0 +1,9 @@
+# Test for Savannah bug #18222
+#
+# That bug was a case were the expansion of %H is truncated if the name
+# of the second start point is longer than that of the first.
+exec rm -rf tmp
+exec mkdir tmp
+exec touch tmp/short tmp/longer
+find_start p { tmp/short tmp/longer -printf "%H\n" }
+

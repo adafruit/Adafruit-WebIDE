@@ -1,0 +1,11 @@
+# tests for -execdir ... \+ in a directory which is not readable
+if { [ safe_path ] } {
+    exec rm -rf tmp
+    exec mkdir tmp
+    exec chmod 755 tmp
+    exec mkdir tmp/sub
+    exec chmod 300 tmp/sub
+    find_start p { tmp -maxdepth 1 -execdir true \{\} \+ }
+    exec chmod 700 tmp/sub
+    exec rm -rf tmp
+}

@@ -1,0 +1,4 @@
+# tests for invalid argument to -user
+foreach user { : "" 14JJ 10.3 -4 } {
+    find_start f ". -user $user"
+}

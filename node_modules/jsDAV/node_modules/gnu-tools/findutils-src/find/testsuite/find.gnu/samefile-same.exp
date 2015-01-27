@@ -1,0 +1,6 @@
+# test for -samefile
+exec rm -rf tmp
+exec mkdir tmp tmp/one tmp/two
+exec touch tmp/file
+find_start p {tmp tmp/file -samefile tmp/file -print}
+exec rm -rf tmp

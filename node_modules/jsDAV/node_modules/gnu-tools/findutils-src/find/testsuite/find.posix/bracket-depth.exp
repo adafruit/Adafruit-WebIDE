@@ -1,0 +1,5 @@
+exec rm -rf tmp
+exec mkdir tmp
+# shoud not result in a fatal error.  
+find_start p { tmp \( -depth \) -false -print }
+

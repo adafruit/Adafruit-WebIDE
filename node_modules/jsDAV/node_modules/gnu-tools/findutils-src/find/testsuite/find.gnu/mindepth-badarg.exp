@@ -1,0 +1,12 @@
+# Argument validation for -mindepth and -maxdepth
+
+exec rm -rf tmp
+exec mkdir tmp tmp/top tmp/top/one
+
+foreach predicate { -mindepth -maxdepth } {
+    # Try a variety of bad arguments.
+    foreach arg { x 0x01 Fnord "" +1 1.2 -3 3e1 } {
+	find_start f "tmp/top $predicate $arg -quit"
+    }
+}
+exec rm -rf tmp

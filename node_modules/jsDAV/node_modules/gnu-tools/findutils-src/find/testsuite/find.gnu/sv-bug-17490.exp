@@ -1,0 +1,5 @@
+# test for Savannah bug #17490
+#
+# That bug was a coredump if the argument to -regex was the final argument.
+find_start p {. -maxdepth 0 -regex x }
+

@@ -1,0 +1,4 @@
+# test for diagnosis of the fact that the argument to -samefile is missing
+find_start f ". -samefile"
+
+

@@ -1,0 +1,25 @@
+# tests for -links
+exec rm -rf tmp
+exec mkdir tmp
+touch tmp/file1 tmp/file2 tmp/file3
+
+# four links including the original file
+exec ln tmp/file1 tmp/1a
+exec ln tmp/file1 tmp/1b
+exec ln tmp/file1 tmp/1c
+
+# five links including the original file
+exec ln tmp/file2 tmp/2a
+exec ln tmp/file2 tmp/2b
+exec ln tmp/file2 tmp/2c
+exec ln tmp/file2 tmp/2d
+
+# six links including the original file
+exec ln tmp/file3 tmp/3a
+exec ln tmp/file3 tmp/3b
+exec ln tmp/file3 tmp/3c
+exec ln tmp/file3 tmp/3d
+exec ln tmp/file3 tmp/3e
+
+find_start p { tmp/file1 tmp/file2 tmp/file3  -type f ( ( -links -5 -exec echo under5 \{\} \; ) -o ( -links 5 -exec echo exactly5 \{\} \; ) -o ( -links +5 -exec echo over5 \{\} \; ) ) }
+exec rm -rf tmp

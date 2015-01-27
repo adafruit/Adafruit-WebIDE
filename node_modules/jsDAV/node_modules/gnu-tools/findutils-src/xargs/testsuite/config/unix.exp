@@ -1,0 +1,181 @@
+# -*- TCL -*-
+# Test-specific TCL procedures required by DejaGNU.
+# Copyright (C) 1994, 2005, 2007 Free Software Foundation, Inc.
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# Modified by David MacKenzie <djm@gnu.ai.mit.edu> from the gcc files
+# written by Rob Savoye <rob@cygnus.com>.
+
+
+verbose "base_dir is $base_dir" 2
+
+set objfile "xargs.o"
+set dir "$base_dir/.."
+set path "$dir/$objfile"
+if ![file exists $path] then {
+    error "$path does not exist"
+} else {
+    set XARGS [findfile $base_dir/../xargs [transform xargs]]
+}
+
+global XARGS
+
+
+set XARGS [findfile $base_dir/../xargs $base_dir/../xargs [transform xargs]]
+if [ string match "/*" $XARGS ] {
+    verbose "XARGS is set to $XARGS" 1
+} else {
+    error "Failed to find a binary to test"
+}
+
+global XARGSFLAGS
+if ![info exists XARGSFLAGS] then {
+    set XARGSFLAGS ""
+}
+
+# Called by runtest.
+# Extract and print the version number of xargs.
+proc xargs_version {} {
+    global XARGS
+    global XARGSFLAGS
+
+    if {[which $XARGS] != 0} then {
+	set tmp [ eval exec $XARGS $XARGSFLAGS --version </dev/null | sed 1q ]
+	clone_output $tmp
+    } else {
+	warning "$XARGS, program does not exist"
+    }
+}
+
+# Run xargs and leave the output in $comp_output.
+# Called by individual test scripts.
+proc xargs_start { passfail options {infile ""} {errh ""} {command ""} } {
+    global verbose
+    global XARGS
+    global XARGSFLAGS
+    global comp_output
+
+    if {[which $XARGS] == 0} then {
+	error "$XARGS, program does not exist"
+	exit 1
+    }
+
+    set scriptname [uplevel {info script}]
+    set testbase [file rootname $scriptname]
+    set testname [file tail $testbase]
+
+    if {[string match "\[0-9\]*" $passfail]} then {
+	set execrc "$passfail"
+    } elseif {[string match "p*" $passfail]} then {
+	set execrc "0"
+    } elseif {[string match "f*" $passfail]} then {
+	set execrc "1"
+    } else {
+	fail "$testname, failure in testing framework: passfail=$passfail"
+	return
+    }
+
+    set outfile "$testbase.xo"
+    if {$infile != ""} then {
+	set infile "[file dirname [file dirname $testbase]]/inputs/$infile"
+    } else {
+	set infile /dev/null
+    }
+
+    if {[string match "s*" $errh]} then {
+	set errfile ""
+    } else {
+	set errfile "$testbase.xe"
+    }
+
+    catch "exec rm -f xargs.out xargs.err"
+
+    if {$command != ""} then {
+	set cmd "$command  < $infile > xargs.out 2> xargs.err"
+    } else {
+	set cmd "$XARGS $XARGSFLAGS $options < $infile > xargs.out 2> xargs.err"
+    }
+    send_log "$cmd\n"
+    if $verbose>1 then {
+	send_user "Spawning \"$cmd\"\n"
+    }
+
+    set status 0
+    if {[catch "exec $cmd" comp_output]} then {
+	if {[lindex $::errorCode 0] == "CHILDSTATUS"} then {
+	    set status [lindex $::errorCode 2]
+	} else {
+	    fail "$testname, failure in testing framework, $comp_output"
+	    return
+	}
+    }
+
+    catch "exec cat xargs.err" comp_error
+
+    if {$execrc != $status} then {
+	if {$status == 0} then {
+	    fail "$testname, unexpected success"
+	} elseif {$execrc == 0} then {
+	    fail "$testname, unexpected failure, $comp_output, $comp_error"
+	} else {
+	    fail "$testname, expected exit code $execrc, but got exit code $status"
+	}
+	return
+    }
+    # ok, at least exit code match.
+
+    if [file exists $outfile] then {
+	set cmp_cmd "cmp xargs.out $outfile"
+	send_log "$cmp_cmd\n"
+	catch "exec $cmp_cmd" cmpout
+	if {$cmpout != ""} then {
+	    # stdout is wrong.
+	    catch "exec diff -u xargs.out $outfile" diffs
+	    send_log "stdout diffs: $diffs\n"
+	    fail "$testname, wrong stdout output: $cmpout"
+	    return
+	}
+    } elseif {[file size xargs.out] != 0} then {
+	fail "$testname, output on stdout should be empty"
+	return
+    }
+
+    # if stderr check is enabled,
+    if {$errfile != ""} then {
+	if {[file exists $errfile]} then {
+	    set cmp_cmd "cmp xargs.err $errfile"
+	    send_log "$cmp_cmd\n"
+	    catch "exec $cmp_cmd" cmperr
+	    if {$cmperr != ""} then {
+		# stderr is wrong
+		catch "exec diff -ua xargs.err $errfile" diffs
+		send_log "stderr diffs: $diffs\n"
+		fail "$testname, wrong stderr output: $cmperr"
+		return
+	    }
+	} elseif {[file size xargs.err] != 0} then {
+	    fail "$testname, output on stderr should be empty"
+	    return
+	}
+    }
+
+    pass "$testname"
+}
+
+# Called by runtest.
+# Clean up (remove temporary files) before runtest exits.
+proc xargs_exit {} {
+    catch "exec rm -f xargs.out xargs.err"
+}

@@ -1,0 +1,40 @@
+# List of source files containing translatable strings.
+# Copyright (C) 2000, 2007 Free Software Foundation, Inc.
+
+# Copying and distribution of this file, with or without
+# modification, are permitted provided the copyright notice
+# and this notice are preserved.
+
+# Common library files
+gnulib/lib/argmatch.c
+gnulib/lib/closein.c
+gnulib/lib/closeout.c
+gnulib/lib/error.c
+gnulib/lib/getdate.y
+gnulib/lib/getopt.c
+gnulib/lib/human.c
+gnulib/lib/openat-die.c
+gnulib/lib/quotearg.c
+gnulib/lib/regcomp.c
+gnulib/lib/rpmatch.c
+gnulib/lib/xalloc-die.c
+gnulib/lib/xstrtol-error.c
+
+#Package source files
+find/find.c
+find/fstype.c
+find/ftsfind.c
+find/parser.c
+find/pred.c
+find/tree.c
+find/util.c
+lib/buildcmd.c
+lib/dircallback.c
+lib/findutils-version.c
+lib/listfile.c
+lib/regextype.c
+locate/code.c
+locate/frcode.c
+locate/locate.c
+locate/word_io.c
+xargs/xargs.c

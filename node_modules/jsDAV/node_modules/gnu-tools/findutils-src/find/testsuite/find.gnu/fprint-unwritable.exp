@@ -1,0 +1,9 @@
+# test for -fprint to unwritable dest (we expect this to fail)
+if { ! [ fs_superuser ] } {
+    exec rm -rf tmp
+    file mkdir tmp
+    exec touch tmp/unwritable
+    exec chmod 444 tmp/unwritable
+    find_start f { tmp -fprint tmp/unwritable }
+    exec rm -rf tmp
+}

@@ -1,0 +1,5 @@
+# test for -false.
+exec rm -rf tmp
+exec mkdir tmp tmp/fred tmp/fred/jim
+find_start p { tmp -depth -print -false -print }
+exec rm -rf tmp

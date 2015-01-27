@@ -1,0 +1,3 @@
+# POSIX: If the invoked command succeeds, -exec should return true if
+# it was punctuated with ;
+find_start p { /tmp -exec true \; -printf "yep\n" -quit }

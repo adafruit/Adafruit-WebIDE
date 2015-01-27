@@ -1,0 +1,7 @@
+# test for diagnosis of the fact that the argument to -size is invalid
+exec rm -rf tmp
+exec touch tmp
+foreach size { w b c k m G "" +-1 +-1G 1.2k } {
+    find_start f " tmp -size $size "
+}
+exec rm -rf tmp

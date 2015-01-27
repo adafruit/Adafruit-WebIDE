@@ -1,0 +1,7 @@
+# tests for the bug reported at http://lists.gnu.org/archive/html/bug-findutils/2005-02/msg00077.html
+exec rm -rf tmp
+exec mkdir tmp
+exec mkdir tmp/1 tmp/1/2 tmp/1/2/3 tmp/1/2/20 tmp/1/2/37 tmp/1/2/54 tmp/1/2/55 tmp/1/2/55/56 tmp/1/2/55/57 tmp/1/2/55/58 tmp/1/2/55/59
+touch tmp/1/2/3/4 tmp/1/2/3/5 tmp/1/2/3/6 tmp/1/2/3/7 tmp/1/2/3/8 tmp/1/2/3/9 tmp/1/2/3/10 tmp/1/2/3/11 tmp/1/2/3/12 tmp/1/2/3/13 tmp/1/2/3/14 tmp/1/2/3/15 tmp/1/2/3/16 tmp/1/2/3/17 tmp/1/2/3/18 tmp/1/2/3/19 tmp/1/2/20/21 tmp/1/2/20/22 tmp/1/2/20/23 tmp/1/2/20/24 tmp/1/2/20/25 tmp/1/2/20/26 tmp/1/2/20/27 tmp/1/2/20/28 tmp/1/2/20/29 tmp/1/2/20/30 tmp/1/2/20/31 tmp/1/2/20/32 tmp/1/2/20/33 tmp/1/2/20/34 tmp/1/2/20/35 tmp/1/2/20/36 tmp/1/2/37/38 tmp/1/2/37/39 tmp/1/2/37/40 tmp/1/2/37/41 tmp/1/2/37/42 tmp/1/2/37/43 tmp/1/2/37/44 tmp/1/2/37/45 tmp/1/2/37/46 tmp/1/2/37/47 tmp/1/2/37/48 tmp/1/2/37/49 tmp/1/2/37/50 tmp/1/2/37/51 tmp/1/2/37/52 tmp/1/2/37/53 tmp/1/2/60 tmp/1/2/61 tmp/1/2/62 tmp/1/2/63 tmp/1/2/64 tmp/1/2/65 tmp/1/66 tmp/1/67 tmp/1/68 tmp/1/69 tmp/1/70 tmp/1/71 tmp/1/72 tmp/1/73 tmp/1/74 tmp/1/75 tmp/1/76 tmp/1/77 tmp/1/78 tmp/1/79 tmp/1/80 tmp/1/81
+find_start p {tmp/1 -depth -type d -print}
+exec rm -rf tmp

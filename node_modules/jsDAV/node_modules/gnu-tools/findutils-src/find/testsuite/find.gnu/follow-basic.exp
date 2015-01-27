@@ -1,0 +1,10 @@
+# Verifies that the -follow option is correctly implemented,
+# but does this by using the GNU extension -printf.
+exec rm -rf tmp
+
+exec mkdir tmp
+exec ln -s /etc/passwd  tmp/LINK
+exec ln -s /NOSUCHFILE  tmp/BROKEN
+
+# Links should all be dereferenced unless they are broken.
+find_start p {  tmp/LINK tmp/BROKEN tmp -follow -printf "%y %d %p\n" }

@@ -1,0 +1,9 @@
+global FTSFIND
+global FINDFLAGS
+exec rm -rf tmp
+exec mkdir tmp tmp/top 
+proc touchfile {} {
+    exec touch tmp/top/file
+}
+find_start p {tmp -path tmp/top/file -delete -print} "" "" touchfile
+exec rm -rf tmp

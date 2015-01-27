@@ -1,0 +1,5 @@
+# tests for !
+exec rm -rf tmp
+exec mkdir tmp tmp/fred tmp/jim
+find_start p {tmp -not -name fred -print}
+exec rm -rf tmp

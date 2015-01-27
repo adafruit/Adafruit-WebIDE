@@ -1,0 +1,18 @@
+# tests for -perm
+exec rm -rf tmp 
+exec mkdir tmp 
+
+## set up a selection of test files
+foreach perm  { 400 555 700 } {
+    touch "tmp/$perm"
+    exec chmod $perm "tmp/$perm"
+}
+exec ls -l tmp
+
+# 
+# The -o operator normally has a short-circuit effect,
+# so we have to use "-exec false \;" to make sure that
+# all the parenthesised expression actually fail.
+# 
+find_start p {tmp/400 tmp/555 tmp/700 \( -perm 400 -exec echo p400 \{\} \; -exec false \; \) -o \( -perm -400 -exec echo p-400 \{\} \; -exec false \; \) }
+# exec rm -rf tmp tmp2

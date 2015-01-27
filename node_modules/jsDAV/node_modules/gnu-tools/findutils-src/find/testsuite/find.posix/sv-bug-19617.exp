@@ -1,0 +1,7 @@
+# tests for Savannah bug 19617 (Inability of ftsfind to detect nonexistent command line args)
+exec rm -rf  tmp
+exec mkdir tmp
+find_start f {-P tmp/nosuchfile -print}
+find_start f {-H tmp/nosuchfile -print}
+find_start f {-L tmp/nosuchfile -print}
+exec rm -rf tmp

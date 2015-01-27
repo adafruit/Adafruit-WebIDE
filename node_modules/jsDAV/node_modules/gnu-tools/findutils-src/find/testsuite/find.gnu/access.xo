@@ -1,0 +1,11 @@
+r tmp
+r tmp/r
+r tmp/rw
+r tmp/rwx
+w tmp
+w tmp/rw
+w tmp/rwx
+w tmp/w
+x tmp
+x tmp/rwx
+x tmp/x

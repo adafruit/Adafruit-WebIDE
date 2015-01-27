@@ -1,0 +1,5 @@
+# test for -regex
+exec rm -rf tmp
+exec mkdir tmp tmp/d tmp/d/d tmp/d/d/d tmp/d/d/d/e
+find_start p {tmp  -regex {tmp\(/d\)*} -print }
+exec rm -rf tmp

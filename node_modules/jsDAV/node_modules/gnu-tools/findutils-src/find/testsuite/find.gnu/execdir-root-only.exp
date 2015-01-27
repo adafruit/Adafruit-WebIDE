@@ -1,0 +1,21 @@
+# Bug report by Bas van Gompel:
+# 
+# This appears to work well. However when the rootdir is passed,
+# something looks fishy:
+# 
+# find / -mindepth 0 -maxdepth 0 -execdir echo {} \;
+# .//
+# 
+# I also spotted, when `+' is used:
+# 
+# find / -mindepth 0 -maxdepth 0 -execdir echo == {} +
+# ==
+# == .//
+# 
+# (Notice the first line of output, which should not be there.)
+
+
+# This test checks the second of these two cases.
+if { [ safe_path ] } {
+    find_start p { / -mindepth 0 -maxdepth 0 -execdir echo == "{}" + }
+}

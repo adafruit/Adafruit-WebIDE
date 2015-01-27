@@ -1,0 +1,20 @@
+#!/bin/sh
+# Ensure that --mmap is ignored
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
+
+echo a > in || framework_failure_
+fail=0
+
+echo grep: the --mmap option has been a no-op since 2010 > exp
+
+grep --mmap a in > out 2> err || fail=1
+compare out in || fail=1
+compare exp err || fail=1
+
+grep --mmap b in > out 2>err
+# Expect no match and no output.
+test $? = 1 || fail=1
+compare /dev/null out || fail=1
+compare exp err || fail=1
+
+Exit $fail

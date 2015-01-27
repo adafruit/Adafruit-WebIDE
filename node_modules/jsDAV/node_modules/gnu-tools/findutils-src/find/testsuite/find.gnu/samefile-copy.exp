@@ -1,0 +1,8 @@
+# test for -samefile
+exec rm -rf tmp
+exec mkdir tmp tmp/one tmp/two
+exec touch tmp/file1 tmp/file2
+exec cp    tmp/file1 tmp/one/link
+exec cp    tmp/file2 tmp/two/link
+find_start p {tmp/one tmp/two -samefile tmp/file1 -print}
+# exec rm -rf tmp

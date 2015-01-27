@@ -1,0 +1,1344 @@
+# Czech translation for findutils.
+# Copyright (C) 2007 Free Software Foundation, Inc.
+# This file is distributed under the same license as the findutils package.
+# Petr Pisar <petr.pisar@atlas.cz>, 2008.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: findutils 4.4.0\n"
+"Report-Msgid-Bugs-To: bug-findutils@gnu.org\n"
+"POT-Creation-Date: 2009-05-12 09:47+0100\n"
+"PO-Revision-Date: 2008-09-07 20:44+0200\n"
+"Last-Translator: Petr Pisar <petr.pisar@atlas.cz>\n"
+"Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+
+#: gnulib/lib/argmatch.c:133
+#, c-format
+msgid "invalid argument %s for %s"
+msgstr "neplatný argument %s u %s"
+
+#: gnulib/lib/argmatch.c:134
+#, c-format
+msgid "ambiguous argument %s for %s"
+msgstr "nejednoznačný argument %s u %s"
+
+#: gnulib/lib/argmatch.c:153
+#, c-format
+msgid "Valid arguments are:"
+msgstr "Platné argumenty jsou:"
+
+#: gnulib/lib/closein.c:99
+msgid "error closing file"
+msgstr "chyba při zavírání souboru"
+
+#: gnulib/lib/closeout.c:73 locate/code.c:152 locate/frcode.c:216
+msgid "write error"
+msgstr "chyba zápisu"
+
+#: gnulib/lib/error.c:125
+msgid "Unknown system error"
+msgstr "Neznámá chyba systému"
+
+#: gnulib/lib/getopt.c:530 gnulib/lib/getopt.c:546
+#, c-format
+msgid "%s: option `%s' is ambiguous\n"
+msgstr "%s: přepínač „%s“ není jednoznačný\n"
+
+#: gnulib/lib/getopt.c:579 gnulib/lib/getopt.c:583
+#, c-format
+msgid "%s: option `--%s' doesn't allow an argument\n"
+msgstr "%s: přepínač „--%s“ nepovoluje argument\n"
+
+#: gnulib/lib/getopt.c:592 gnulib/lib/getopt.c:597
+#, c-format
+msgid "%s: option `%c%s' doesn't allow an argument\n"
+msgstr "%s: přepínač „%c%s“ nepovoluje argument\n"
+
+#: gnulib/lib/getopt.c:640 gnulib/lib/getopt.c:659 gnulib/lib/getopt.c:975
+#: gnulib/lib/getopt.c:994
+#, c-format
+msgid "%s: option `%s' requires an argument\n"
+msgstr "%s: přepínač „%s“ vyžaduje argument\n"
+
+#: gnulib/lib/getopt.c:697 gnulib/lib/getopt.c:700
+#, c-format
+msgid "%s: unrecognized option `--%s'\n"
+msgstr "%s: nerozpoznaný přepínač „--%s“\n"
+
+#: gnulib/lib/getopt.c:708 gnulib/lib/getopt.c:711
+#, c-format
+msgid "%s: unrecognized option `%c%s'\n"
+msgstr "%s: nerozpoznaný přepínač „%c%s“\n"
+
+#: gnulib/lib/getopt.c:763 gnulib/lib/getopt.c:766
+#, c-format
+msgid "%s: illegal option -- %c\n"
+msgstr "%s: nedovolený přepínač – %c\n"
+
+#: gnulib/lib/getopt.c:772 gnulib/lib/getopt.c:775
+#, c-format
+msgid "%s: invalid option -- %c\n"
+msgstr "%s: neplatný přepínač – %c\n"
+
+#: gnulib/lib/getopt.c:827 gnulib/lib/getopt.c:843 gnulib/lib/getopt.c:1047
+#: gnulib/lib/getopt.c:1065
+#, c-format
+msgid "%s: option requires an argument -- %c\n"
+msgstr "%s: přepínač vyžaduje argument – %c\n"
+
+#: gnulib/lib/getopt.c:896 gnulib/lib/getopt.c:912
+#, c-format
+msgid "%s: option `-W %s' is ambiguous\n"
+msgstr "%s: přepínač „-W %s“ není jednoznačný\n"
+
+#: gnulib/lib/getopt.c:936 gnulib/lib/getopt.c:954
+#, c-format
+msgid "%s: option `-W %s' doesn't allow an argument\n"
+msgstr "%s: přepínač „-W %s“ nepovoluje argument\n"
+
+#: gnulib/lib/openat-die.c:33
+msgid "unable to record current working directory"
+msgstr "současný pracovní adresář nelze zaznamenat"
+
+#: gnulib/lib/openat-die.c:46
+msgid "failed to return to initial working directory"
+msgstr "návrat do prvotního pracovního adresáře selhal"
+
+#. TRANSLATORS:
+#. Get translations for open and closing quotation marks.
+#.
+#. The message catalog should translate "`" to a left
+#. quotation mark suitable for the locale, and similarly for
+#. "'".  If the catalog has no translation,
+#. locale_quoting_style quotes `like this', and
+#. clocale_quoting_style quotes "like this".
+#.
+#. For example, an American English Unicode locale should
+#. translate "`" to U+201C (LEFT DOUBLE QUOTATION MARK), and
+#. should translate "'" to U+201D (RIGHT DOUBLE QUOTATION
+#. MARK).  A British English Unicode locale should instead
+#. translate these to U+2018 (LEFT SINGLE QUOTATION MARK) and
+#. U+2019 (RIGHT SINGLE QUOTATION MARK), respectively.
+#.
+#. If you don't know what to put here, please see
+#. <http://en.wikipedia.org/wiki/Quotation_mark#Glyphs>
+#. and use glyphs suitable for your language.
+#: gnulib/lib/quotearg.c:228
+msgid "`"
+msgstr "„"
+
+#: gnulib/lib/quotearg.c:229
+msgid "'"
+msgstr "“"
+
+#: gnulib/lib/regcomp.c:131
+msgid "Success"
+msgstr "Úspěch"
+
+#: gnulib/lib/regcomp.c:134
+msgid "No match"
+msgstr "Žádná shoda"
+
+#: gnulib/lib/regcomp.c:137
+msgid "Invalid regular expression"
+msgstr "Neplatný regulární výraz"
+
+#: gnulib/lib/regcomp.c:140
+msgid "Invalid collation character"
+msgstr "Neplatný třídící znak"
+
+#: gnulib/lib/regcomp.c:143
+msgid "Invalid character class name"
+msgstr "Neúplatný název třídy znaků"
+
+#: gnulib/lib/regcomp.c:146
+msgid "Trailing backslash"
+msgstr "Závěrečné zpětné lomítko"
+
+#: gnulib/lib/regcomp.c:149
+msgid "Invalid back reference"
+msgstr "Neplatný zpětný odkaz"
+
+#: gnulib/lib/regcomp.c:152
+msgid "Unmatched [ or [^"
+msgstr "Nepárová [ nebo [^"
+
+#: gnulib/lib/regcomp.c:155
+msgid "Unmatched ( or \\("
+msgstr "Nepárová ( nebo \\("
+
+#: gnulib/lib/regcomp.c:158
+msgid "Unmatched \\{"
+msgstr "Nepárová \\{"
+
+#: gnulib/lib/regcomp.c:161
+msgid "Invalid content of \\{\\}"
+msgstr "Neplatný obsah \\{\\}"
+
+#: gnulib/lib/regcomp.c:164
+msgid "Invalid range end"
+msgstr "Neplatný konec rozsahu"
+
+#: gnulib/lib/regcomp.c:167
+msgid "Memory exhausted"
+msgstr "Paměť vyčerpána"
+
+#: gnulib/lib/regcomp.c:170
+msgid "Invalid preceding regular expression"
+msgstr "Neplatný předchozí regulární výraz"
+
+#: gnulib/lib/regcomp.c:173
+msgid "Premature end of regular expression"
+msgstr "Předčasný konec regulárního výrazu"
+
+#: gnulib/lib/regcomp.c:176
+msgid "Regular expression too big"
+msgstr "Příliš velký regulární výraz"
+
+#: gnulib/lib/regcomp.c:179
+msgid "Unmatched ) or \\)"
+msgstr "Nepárová ) nebo \\)"
+
+#: gnulib/lib/regcomp.c:680
+msgid "No previous regular expression"
+msgstr "Žádný předchozí regulární výraz"
+
+#: gnulib/lib/rpmatch.c:69
+msgid "^[yY]"
+msgstr "^[aA]"
+
+#: gnulib/lib/rpmatch.c:72
+msgid "^[nN]"
+msgstr "^[nN]"
+
+#: gnulib/lib/xalloc-die.c:34
+msgid "memory exhausted"
+msgstr "paměť vyčerpána"
+
+#: gnulib/lib/xstrtol-error.c:63
+#, c-format
+msgid "invalid %s%s argument `%s'"
+msgstr "neplatný argument „%3$s“ u %1$s%2$s"
+
+#: gnulib/lib/xstrtol-error.c:68
+#, c-format
+msgid "invalid suffix in %s%s argument `%s'"
+msgstr "neplatná přípona argument „%3$s“ u %1$s%2$s"
+
+#: gnulib/lib/xstrtol-error.c:72
+#, c-format
+msgid "%s%s argument `%s' too large"
+msgstr "příliš dlouhý argument „%3$s“ u %1$s%2$s"
+
+#: find/find.c:201 find/ftsfind.c:730
+msgid "cannot get current directory"
+msgstr "současný adresář nelze zjistit"
+
+#: find/find.c:205
+msgid "cannot stat current directory"
+msgstr "na současný adresář nelze provést stat(2)"
+
+#: find/find.c:385
+#, c-format
+msgid "Warning: file system %s has recently been unmounted."
+msgstr "Varování: systém soubor %s byl nedávno odpojen."
+
+#: find/find.c:395
+#, c-format
+msgid "Warning: file system %s has recently been mounted."
+msgstr "Varování: systém souborů %s byl nedávno připojen."
+
+#: find/find.c:491
+#, c-format
+msgid ""
+"%s%s changed during execution of %s (old device number %ld, new device "
+"number %ld, file system type is %s) [ref %ld]"
+msgstr ""
+"během provádění %3$s změněn %1$s%2$s (staré číslo zařízení %4$ld, nové číslo "
+"zařízení %5$ld, druh souborového systému je %6$s) [odkaz %7$ld]"
+
+#: find/find.c:528
+#, c-format
+msgid ""
+"%s%s changed during execution of %s (old inode number %<PRIuMAX>, new inode "
+"number %<PRIuMAX>, file system type is %s) [ref %ld]"
+msgstr ""
+"během provádění %3$s změněn %1$s%2$s (staré číslo i-uzlu %4$<PRIuMAX>, nové "
+"číslo i-uzlu %5$<PRIuMAX>, druh souborového systému je %6$s) [odkaz %7$ld]"
+
+#: find/find.c:1012
+#, c-format
+msgid "Failed to safely change directory into %s"
+msgstr "Bezpečný přechod do adresáře %s se nezdařil"
+
+#: find/find.c:1109 find/ftsfind.c:284
+#, c-format
+msgid ""
+"Symbolic link %s is part of a loop in the directory hierarchy; we have "
+"already visited the directory to which it points."
+msgstr ""
+"Symbolický odkaz %s je součástí smyčky v hierarchii adresářů. Adresář, na "
+"který ukazuje, jsme již navštívili."
+
+#: find/find.c:1128
+#, c-format
+msgid ""
+"Filesystem loop detected; %s has the same device number and inode as a "
+"directory which is %d level higher in the file system hierarchy"
+msgid_plural ""
+"Filesystem loop detected; %s has the same device number and inode as a "
+"directory which is %d levels higher in the file system hierarchy"
+msgstr[0] ""
+"Odhalena smyčka souborových systémů: %s má stejné číslo zařízení a i-uzlu "
+"jako adresář, který se nachází o %d úrovni výše v hierarchii souborového "
+"systému"
+msgstr[1] ""
+"Odhalena smyčka souborových systémů: %s má stejné číslo zařízení a i-uzlu "
+"jako adresář, který se nachází o %d úrovně výše v hierarchii souborového "
+"systému"
+msgstr[2] ""
+"Odhalena smyčka souborových systémů: %s má stejné číslo zařízení a i-uzlu "
+"jako adresář, který se nachází o %d úrovní výše v hierarchii souborového "
+"systému"
+
+#: find/find.c:1379
+#, c-format
+msgid "warning: not following the symbolic link %s"
+msgstr "varování: nenásleduji symbolický odkaz %s"
+
+#: find/find.c:1423
+#, c-format
+msgid ""
+"WARNING: Hard link count is wrong for %s (saw only st_nlink=%d but we "
+"already saw %d subdirectories): this may be a bug in your file system "
+"driver.  Automatically turning on find's -noleaf option.  Earlier results "
+"may have failed to include directories that should have been searched."
+msgstr ""
+"VAROVÁNÍ: Počet pevných odkazů na %s je chybný (viděli jsme pouze st_nlink=%"
+"d, avšak již jsme objevili %d podadresářů): toto může být chyba v ovladači "
+"vašeho systému souborů. Automaticky zapínán přepínač findu -noleaf. Dřívější "
+"výsledky mohou být ovlivněny chybou spočívající v nezahrnutí adresářů, které "
+"by měly být prohledány."
+
+#: find/fstype.c:250
+msgid "unknown"
+msgstr "neznámý"
+
+#: find/ftsfind.c:298
+#, c-format
+msgid ""
+"File system loop detected; %s is part of the same file system loop as %s."
+msgstr ""
+"Odhalena smyčka souborových systémů: %s je součástí stejné smyčky "
+"souborových systémů jako %s."
+
+#: find/ftsfind.c:488 find/util.c:201
+#, c-format
+msgid "Warning: file %s appears to have mode 0000"
+msgstr "Varování: zdá se, že soubor %s má mód 0000"
+
+#: find/ftsfind.c:610
+#, c-format
+msgid "cannot search %s"
+msgstr "%s nelze prohledat"
+
+#: find/parser.c:385
+msgid ""
+"The -delete action atomatically turns on -depth, but -prune does nothing "
+"when -depth is in effect.  If you want to carry on anyway, just explicitly "
+"use the -depth option."
+msgstr ""
+"Akce -delete automaticky zapíná -depth, ale -prune nic nedělá, je-li -depth "
+"zapnut. Chcete-li přesto pokračovat, prostě explicitně použijte přepínač -"
+"depth."
+
+#: find/parser.c:529
+#, c-format
+msgid ""
+"warning: you have specified the %s option after a non-option argument %s, "
+"but options are not positional (%s affects tests specified before it as well "
+"as those specified after it).  Please specify options before other "
+"arguments.\n"
+msgstr ""
+"varování: zadali jste přepínač %s po nepřepínačovém argumentu %s, avšak "
+"přepínače nejsou poziční (%s ovlivňuje testy uvedené před ním zrovna tak "
+"jako ty po něm). Prosím, přepínače uvádějte před ostatními argumenty.\n"
+
+#: find/parser.c:820
+msgid ""
+"warning: the -d option is deprecated; please use -depth instead, because the "
+"latter is a POSIX-compliant feature."
+msgstr ""
+"varování: přepínač -d se nedoporučuje, prosím, místo něj použijte -depth, "
+"protože tato druhá forma je podle POSIXU."
+
+#: find/parser.c:1070
+#, c-format
+msgid ""
+"%s is not the name of an existing group and it does not look like a numeric "
+"group ID because it has the unexpected suffix %s"
+msgstr ""
+"%s není jméno existující skupiny, a ani nevypadá jako číselný identifikátor "
+"skupiny, protože obsahuje neočekávanou příponu %s"
+
+#: find/parser.c:1083
+#, c-format
+msgid "%s is not the name of an existing group"
+msgstr "%s není jméno existující skupiny"
+
+#: find/parser.c:1088
+msgid "argument to -group is empty, but should be a group name"
+msgstr "argument u -group je prázdný, měl by představovat jméno skupiny"
+
+#: find/parser.c:1109
+msgid ""
+"\n"
+"default path is the current directory; default expression is -print\n"
+"expression may consist of: operators, options, tests, and actions:\n"
+msgstr ""
+"\n"
+"Implicitní cesta je současný adresář, implicitní výraz je -print\n"
+"Výraz se smí sestávat z: operátorů, přepínačů, testů a akcí:\n"
+
+#: find/parser.c:1112
+msgid ""
+"operators (decreasing precedence; -and is implicit where no others are "
+"given):\n"
+"      ( EXPR )   ! EXPR   -not EXPR   EXPR1 -a EXPR2   EXPR1 -and EXPR2\n"
+"      EXPR1 -o EXPR2   EXPR1 -or EXPR2   EXPR1 , EXPR2\n"
+msgstr ""
+"operátory (v sestupné prioritě; implicitní je -and, není-li jiný uveden):\n"
+"      ( VÝRAZ )   ! VÝRAZ   -not VÝRAZ   VÝRAZ1 -a VÝRAZ2   VÝRAZ1 -and "
+"VÝRAZ2\n"
+"      VÝRAZ1 -o VÝRAZ2   VÝRAZ1 -or VÝRAZ2   VÝRAZ1 , VÝRAZ2\n"
+
+#: find/parser.c:1116
+msgid ""
+"positional options (always true): -daystart -follow -regextype\n"
+"\n"
+"normal options (always true, specified before other expressions):\n"
+"      -depth --help -maxdepth LEVELS -mindepth LEVELS -mount -noleaf\n"
+"      --version -xdev -ignore_readdir_race -noignore_readdir_race\n"
+msgstr ""
+"poziční přepínače (vždy pravdivé): -daystart -follow -regextype\n"
+"\n"
+"normální přepínače (vždy pravdivé, uvádí se před dalšími výrazy):\n"
+"      -depth --help -maxdepth ÚROVNĚ -mindepth ÚROVNĚ -mount -noleaf\n"
+"      --version -xdev -ignore_readdir_race -noignore_readdir_race\n"
+
+#: find/parser.c:1121
+msgid ""
+"tests (N can be +N or -N or N): -amin N -anewer FILE -atime N -cmin N\n"
+"      -cnewer FILE -ctime N -empty -false -fstype TYPE -gid N -group NAME\n"
+"      -ilname PATTERN -iname PATTERN -inum N -iwholename PATTERN -iregex "
+"PATTERN\n"
+"      -links N -lname PATTERN -mmin N -mtime N -name PATTERN -newer FILE"
+msgstr ""
+"testy (N může být +N nebo -N nebo N): -amin N -anewer SOUBOR -atime N -cmin "
+"N\n"
+"      -cnewer SOUBOR -ctime N -empty -false -fstype DRUH -gid N -group "
+"JMÉNO\n"
+"      -ilname VZOR -iname VZOR -inum N -iwholename VZOR -iregex VZOR\n"
+"      -links N -lname VZOR -mmin N -mtime N -name VZOR -newer SOUBOR"
+
+#: find/parser.c:1126
+msgid ""
+"      -nouser -nogroup -path PATTERN -perm [+-]MODE -regex PATTERN\n"
+"      -readable -writable -executable\n"
+"      -wholename PATTERN -size N[bcwkMG] -true -type [bcdpflsD] -uid N\n"
+"      -used N -user NAME -xtype [bcdpfls]\n"
+msgstr ""
+"      -nouser -nogroup -path VZOR -perm [+-]MÓD -regex VZOR\n"
+"      -readable -writable -executable\n"
+"      -wholename VZOR -size N[bcwkMG] -true -type [bcdpflsD] -uid N\n"
+"      -used N -user JMÉNO -xtype [bcdpfls]\n"
+
+#: find/parser.c:1131
+msgid ""
+"actions: -delete -print0 -printf FORMAT -fprintf FILE FORMAT -print \n"
+"      -fprint0 FILE -fprint FILE -ls -fls FILE -prune -quit\n"
+"      -exec COMMAND ; -exec COMMAND {} + -ok COMMAND ;\n"
+"      -execdir COMMAND ; -execdir COMMAND {} + -okdir COMMAND ;\n"
+msgstr ""
+"akce: -delete -print0 -printf FORMÁT -fprintf SOUBOR FORMÁT -print \n"
+"      -fprint0 SOUBOR -fprint SOUBOR -ls -fls SOUBOR -prune -quit\n"
+"      -exec PŘÍKAZ ; -exec PŘÍKAZ {} + -ok PŘÍKAZ ;\n"
+"      -execdir PŘÍKAZ ; -execdir PŘÍKAZ {} + -okdir PŘÍKAZ ;\n"
+
+#: find/parser.c:1137
+msgid ""
+"Report (and track progress on fixing) bugs via the findutils bug-reporting\n"
+"page at http://savannah.gnu.org/ or, if you have no web access, by sending\n"
+"email to <bug-findutils@gnu.org>."
+msgstr ""
+"Chyby hlaste (a postup jejich opravy sledujte) přes stránku určenou na\n"
+"hlášení chyb ve findutils na http://savannah.gnu.org/ nebo, nemáte-li "
+"přístup\n"
+"k webu, odesláním e-mailu na <bug-findutils@gnu.org> (jen anglicky). "
+"Připomínky\n"
+"k překladu zasílejte na <translation-team-cs@lists.sourceforge.net> (česky)."
+
+#: find/parser.c:1191
+msgid "sanity check of the fnmatch() library function failed."
+msgstr "kontrola nezávadnosti knihovní funkce fnmatch() selhala."
+
+#: find/parser.c:1205
+#, c-format
+msgid ""
+"warning: Unix filenames usually don't contain slashes (though pathnames "
+"do).  That means that '%s %s' will probably evaluate to false all the time "
+"on this system.  You might find the '-wholename' test more useful, or "
+"perhaps '-samefile'.  Alternatively, if you are using GNU grep, you could "
+"use 'find ... -print0 | grep -FzZ %s'."
+msgstr ""
+"varování: Unixové názvy souborů obvykle neobsahují lomítka (ačkoliv názvy "
+"cest ano). To znamená, že na tomto systému bude „%s %s“ pravděpodobně "
+"pokaždé vyhodnoceno jako nepravda. Možná by se vám více hodil test „-"
+"wholename“ nebo spíše „-samefile“. Náhradní řešení. pokud používáte GNU "
+"grep, spočívá v použití „find … -print0 | grep -FzZ %s“."
+
+#: find/parser.c:1353
+#, c-format
+msgid "Expected a positive decimal integer argument to %s, but got %s"
+msgstr "U %s očekáván kladný desítkový celočíselný argument, avšak obdrženo %s"
+
+#: find/parser.c:1504
+msgid "This system does not provide a way to find the birth time of a file."
+msgstr "Tento systém neposkytuje způsob, jak zjistit čas vytvoření souboru."
+
+#: find/parser.c:1525
+#, fuzzy, c-format
+msgid "The %s test needs an argument"
+msgstr "%s: přepínač „%s“ vyžaduje argument\n"
+
+#: find/parser.c:1562
+#, c-format
+msgid "I cannot figure out how to interpret %s as a date or time"
+msgstr "Nevím, jak mám vyčíst datum nebo čas z %s"
+
+#: find/parser.c:1578
+#, c-format
+msgid "Cannot obtain birth time of file %s"
+msgstr "Čas vytvoření souboru %s nelze získat."
+
+#: find/parser.c:1779
+#, c-format
+msgid "Mode %s is not valid when POSIXLY_CORRECT is on."
+msgstr "Mód %s není platný, je-li zapnuto POSIXLY_CORRECT."
+
+#: find/parser.c:1862
+#, c-format
+msgid "invalid mode %s"
+msgstr "neplatný mód %s"
+
+#: find/parser.c:1881
+#, c-format
+msgid ""
+"warning: you have specified a mode pattern %s (which is equivalent to /000). "
+"The meaning of -perm /000 has now been changed to be consistent with -perm -"
+"000; that is, while it used to match no files, it now matches all files."
+msgstr ""
+"varování: zadali jste vzor módu %s (což je ekvivalentní /000). Význam -"
+"perm /000 byl nyní pozměněn tak, aby byl jednotný s -perm -000. To jest, "
+"dříve se neshodoval s žádnými soubory, nyní se shoduje se všemi."
+
+#: find/parser.c:2079
+msgid "invalid null argument to -size"
+msgstr "neplatný prázdný argument u -size"
+
+#: find/parser.c:2127
+#, c-format
+msgid "invalid -size type `%c'"
+msgstr "neplatný druh „%c“ u -size"
+
+#: find/parser.c:2133
+#, c-format
+msgid "Invalid argument `%s%c' to -size"
+msgstr "Neplatný argument „%s%c“ u -size"
+
+#: find/parser.c:2312
+msgid ""
+"The -show-control-chars option takes a single argument which must be "
+"'literal' or 'safe'"
+msgstr ""
+"Přepínač -show-control-chars bere jediný argument, který musí být "
+"„literal“ (doslovný) nebo „safe“ (bezpečný)."
+
+#: find/parser.c:2424
+#, c-format
+msgid "Invalid argument %s to -used"
+msgstr "Neplatný argument %s u -used"
+
+#: find/parser.c:2463
+#, fuzzy, c-format
+msgid "%s is not the name of a known user"
+msgstr "%s není jméno existující skupiny"
+
+#: find/parser.c:2469
+#, fuzzy
+msgid "The argument to -user should not be empty"
+msgstr "Argument přepínače --max-database-age nesmí být prázdný"
+
+#: find/parser.c:2494
+#, c-format
+msgid "Features enabled: "
+msgstr "Povolené vlastnosti: "
+
+#: find/parser.c:2603
+msgid "Arguments to -type should contain only one letter"
+msgstr "Argumenty u -type by měly obsahovat pouze jedno písmeno."
+
+#: find/parser.c:2650
+#, c-format
+msgid "Unknown argument to -type: %c"
+msgstr "Neznámý argument u -type: %c"
+
+#: find/parser.c:2771
+#, c-format
+msgid "warning: unrecognized escape `\\%c'"
+msgstr "varování: nerozpoznaný řídicí znak „\\%c“"
+
+#: find/parser.c:2787
+#, c-format
+msgid "error: %s at end of format string"
+msgstr "chyba: na konci formátovací řetězce je %s"
+
+#: find/parser.c:2826
+#, c-format
+msgid "warning: unrecognized format directive `%%%c'"
+msgstr "varování: nerozpoznaná formátovací direktiva „%%%c“"
+
+#: find/parser.c:2970
+#, c-format
+msgid "error: the format directive `%%%c' is reserved for future use"
+msgstr "chyba: formátovací direktiva „%%%c“ je vyhrazena pro budoucí použití"
+
+#: find/parser.c:3004
+#, c-format
+msgid ""
+"The current directory is included in the PATH environment variable, which is "
+"insecure in combination with the %s action of find.  Please remove the "
+"current directory from your $PATH (that is, remove \".\" or leading or "
+"trailing colons)"
+msgstr ""
+"Současný adresář je obsažen v proměnné prostředí PATH, což je nebezpečné ve "
+"spojení s akcí findu %s. Prosím, odstraňte současný adresář z vaší $PATH (to "
+"jest, odeberte „.“ nebo úvodní nebo závěrečné dvojtečky)."
+
+#: find/parser.c:3015
+#, c-format
+msgid ""
+"The relative path %s is included in the PATH environment variable, which is "
+"insecure in combination with the %s action of find.  Please remove that "
+"entry from $PATH"
+msgstr ""
+"Relativní cesta %s je obsažena v proměnné prostředí PATH, což je nebezpečné "
+"ve spojení s akcí findu %s. Prosím, odstraňte tuto položku z $PATH."
+
+#: find/parser.c:3118
+msgid ""
+"You may not use {} within the utility name for -execdir and -okdir, because "
+"this is a potential security problem."
+msgstr ""
+"Neměli byste používat {} uvnitř názvu nástroje u -execdir a -okdir, protože "
+"to představuje možný bezpečnostní problém."
+
+#: find/parser.c:3143
+#, c-format
+msgid "Only one instance of {} is supported with -exec%s ... +"
+msgstr "U -exec%s … + je podporována jen jedna instance {}."
+
+#: find/parser.c:3160
+msgid "The environment is too large for exec()."
+msgstr "Prostředí je příliš veliké na exec()."
+
+#: find/parser.c:3363
+msgid "arithmetic overflow when trying to calculate the end of today"
+msgstr "aritmetické přetečení při pokusu vypočítat konec dnešního dne"
+
+#: find/parser.c:3519
+msgid "standard error"
+msgstr "standardní chybový výstup"
+
+#: find/parser.c:3524
+msgid "standard output"
+msgstr "standardní výstup"
+
+#: find/pred.c:425
+#, c-format
+msgid "cannot delete %s"
+msgstr "%s není možné smazat"
+
+#: find/pred.c:1363
+#, c-format
+msgid "Warning: cannot determine birth time of file %s"
+msgstr "Varování: čas vytvoření souboru %s není možné určit"
+
+#: find/pred.c:1427
+#, c-format
+msgid "< %s ... %s > ? "
+msgstr "< %s … %s > ? "
+
+#: find/pred.c:1877
+msgid "Cannot close standard input"
+msgstr "Standardní vstup nelze uzavřít"
+
+#: find/pred.c:1912
+msgid "Failed to change directory"
+msgstr "Změna adresáře se nezdařila"
+
+#: find/pred.c:1953 xargs/xargs.c:1137
+msgid "cannot fork"
+msgstr "nelze vykonat fork()"
+
+#: find/pred.c:1978
+#, c-format
+msgid "error waiting for %s"
+msgstr "chyba při čekání na %s"
+
+#: find/pred.c:1987
+#, c-format
+msgid "%s terminated by signal %d"
+msgstr "%s ukončen signálem %d"
+
+#: find/tree.c:89 find/tree.c:94 find/tree.c:174 find/tree.c:213
+msgid "invalid expression"
+msgstr "neplatný výraz"
+
+#: find/tree.c:99
+#, c-format
+msgid ""
+"invalid expression; you have used a binary operator '%s' with nothing before "
+"it."
+msgstr ""
+"neplatný výraz: použili jste binární operátor „%s“, aniž by mu cokoliv "
+"předcházelo."
+
+#: find/tree.c:108
+#, c-format
+msgid "expected an expression between '%s' and ')'"
+msgstr "mezi „%s“ a „)“ očekáván výraz"
+
+#: find/tree.c:117
+#, c-format
+msgid "expected an expression after '%s'"
+msgstr "po „%s“ očekáván výraz"
+
+#: find/tree.c:121
+msgid "invalid expression; you have too many ')'"
+msgstr "neplatný výraz: máte moc „)“"
+
+#: find/tree.c:143
+#, c-format
+msgid ""
+"invalid expression; expected to find a ')' but didn't see one.  Perhaps you "
+"need an extra predicate after '%s'"
+msgstr ""
+"neplatný výraz: očekávána „)“, ale nenalezena ani jedna. Za „%s“ asi "
+"potřebujete další predikát"
+
+#: find/tree.c:149
+msgid "invalid expression; empty parentheses are not allowed."
+msgstr "neplatný výraz: prázdné závorky nejsou povoleny."
+
+#: find/tree.c:154
+msgid ""
+"invalid expression; I was expecting to find a ')' somewhere but did not see "
+"one."
+msgstr ""
+"neplatný výraz: Čekal jsem, že někde naleznu „)“, ale nenašel jsem ani jednu."
+
+#: find/tree.c:159 find/tree.c:788
+msgid "oops -- invalid expression type!"
+msgstr "ajaj – neplatný typ výrazu!"
+
+#: find/tree.c:231
+#, c-format
+msgid "oops -- invalid expression type (%d)!"
+msgstr "ajaj – neplatný typ výrazu (%d)!"
+
+#: find/tree.c:1228
+#, c-format
+msgid "paths must precede expression: %s"
+msgstr "cesty musí předcházet výraz: %s"
+
+#: find/tree.c:1237
+#, c-format
+msgid "unknown predicate `%s'"
+msgstr "neznámý predikát „%s“"
+
+#: find/tree.c:1257
+#, c-format
+msgid "invalid predicate `%s'"
+msgstr "neplatný predikát „%s“"
+
+#: find/tree.c:1262
+#, c-format
+msgid "invalid argument `%s' to `%s'"
+msgstr "neplatný argument „%s“ u „%s“"
+
+#: find/tree.c:1269
+#, c-format
+msgid "missing argument to `%s'"
+msgstr "u „%s“ chybí argument"
+
+#: find/tree.c:1345
+msgid "you have too many ')'"
+msgstr "máte moc „)“"
+
+#: find/tree.c:1350
+#, c-format
+msgid "unexpected extra predicate '%s'"
+msgstr "neočekávaný nadbytečný predikát „%s“"
+
+#: find/tree.c:1352
+msgid "unexpected extra predicate"
+msgstr "neočekávaný nadbytečný predikát"
+
+#: find/tree.c:1468
+msgid "oops -- invalid default insertion of and!"
+msgstr "ajaj – neplatné implicitní vložení operátoru and!"
+
+#: find/util.c:158
+#, c-format
+msgid "Usage: %s [-H] [-L] [-P] [-Olevel] [-D "
+msgstr "Užití: %s [-H] [-L] [-P] [-Oúroveň] [-D "
+
+#: find/util.c:160
+#, c-format
+msgid "] [path...] [expression]\n"
+msgstr "] [cesta…] [výraz]\n"
+
+#: find/util.c:749
+#, c-format
+msgid "Ignoring unrecognised debug flag %s"
+msgstr "Ignoruji nerozpoznaný ladicí příznak %s"
+
+#: find/util.c:756
+msgid "Empty argument to the -D option."
+msgstr "Prázdný argument přepínače -D."
+
+#: find/util.c:770
+msgid "The -O option must be immediately followed by a decimal integer"
+msgstr "Přepínač -D musí být bezprostředně následován desítkovým celým číslem."
+
+#: find/util.c:779 find/util.c:789
+msgid "Please specify a decimal number immediately after -O"
+msgstr "Prosím, zadejte desítkové číslo okamžitě po -O"
+
+#: find/util.c:794 find/util.c:798
+#, c-format
+msgid "Invalid optimisation level %s"
+msgstr "Neplatná úroveň optimalizace %s"
+
+#: find/util.c:805
+#, c-format
+msgid ""
+"Optimisation level %lu is too high.  If you want to find files very quickly, "
+"consider using GNU locate."
+msgstr ""
+"Úroveň optimalizace %lu je příliš vysoká. Potřebujte-li hledat soubory velmi "
+"rychle, zvažte použití GNU locate."
+
+#: find/util.c:948
+msgid ""
+"The environment variable FIND_BLOCK_SIZE is not supported, the only thing "
+"that affects the block size is the POSIXLY_CORRECT environment variable"
+msgstr ""
+"Proměnná prostředí FIND_BLOCK_SIZE není podporována. Jediná věc, která "
+"ovlivňuje velikost bloku je proměnná prostředí POSIXLY_CORRECT."
+
+#: lib/buildcmd.c:197
+msgid "command too long"
+msgstr "příkaz je příliš dlouhý"
+
+#: lib/buildcmd.c:289
+msgid "can not fit single argument within argument list size limit"
+msgstr ""
+"s jediným argumentem se nemůžu vejít do limitu velikosti seznamu argumentů"
+
+#: lib/buildcmd.c:294
+msgid "argument list too long"
+msgstr "seznam argumentů je příliš dlouhý"
+
+#: lib/findutils-version.c:60
+msgid "Eric B. Decker"
+msgstr "Eric B. Decker"
+
+#: lib/findutils-version.c:61
+msgid "James Youngman"
+msgstr "James Youngman"
+
+#: lib/findutils-version.c:62
+msgid "Kevin Dalley"
+msgstr "Kevin Dalley"
+
+#: lib/findutils-version.c:64
+#, c-format
+msgid "Built using GNU gnulib version %s\n"
+msgstr "Sestaveno za použití GNU gnulib verze %s\n"
+
+#: lib/regextype.c:106
+#, c-format
+msgid "Unknown regular expression type %s; valid types are %s."
+msgstr "Neznámý typ regulárního výrazu %s, platné typy jsou %s."
+
+#: locate/code.c:130
+#, c-format
+msgid ""
+"Usage: %s [--version | --help]\n"
+"or     %s most_common_bigrams < file-list > locate-database\n"
+msgstr ""
+"Užití: %s [--version | --help]\n"
+"nebo   %s nejčastější_dvojhlásky < soubor_se_seznamem > databáze_locate\n"
+
+#: locate/code.c:134 locate/frcode.c:171 locate/locate.c:1423
+#: xargs/xargs.c:1379
+msgid ""
+"\n"
+"Report bugs to <bug-findutils@gnu.org>.\n"
+msgstr ""
+"\n"
+"Chyby hlaste na <bug-findutils@gnu.org> (jen anglicky). Připomínky\n"
+"k překladu zasílejte na <translation-team-cs@lists.sourceforge.net> "
+"(česky).\n"
+
+#: locate/frcode.c:169
+#, c-format
+msgid "Usage: %s [-0 | --null] [--version] [--help]\n"
+msgstr "Užití: %s [-0 | --null] [--version] [--help]\n"
+
+#: locate/frcode.c:188
+msgid "You need to specify a security level as a decimal integer."
+msgstr "Úroveň zabezpečení je třeba zadat jako desítkové celé číslo."
+
+#: locate/frcode.c:195
+#, c-format
+msgid "Security level %s is outside the convertible range."
+msgstr "Úroveň zabezpečení %s je mimo převoditelný rozsah."
+
+#: locate/frcode.c:202
+#, c-format
+msgid "Security level %s has unexpected suffix %s."
+msgstr "úroveň zabezpečení %s má neočekávanou příponu %s."
+
+#: locate/frcode.c:258
+#, c-format
+msgid "slocate security level %ld is unsupported."
+msgstr "Úroveň zabezpečení slocate %ld není podporována."
+
+#: locate/frcode.c:296
+msgid "Failed to write to standard output"
+msgstr "Zápis na standardní výstup selhal"
+
+# TODO: plural
+#: locate/locate.c:151
+msgid "days"
+msgstr "dnů"
+
+#: locate/locate.c:198
+msgid "The argument for option --max-database-age must not be empty"
+msgstr "Argument přepínače --max-database-age nesmí být prázdný"
+
+#: locate/locate.c:214 locate/locate.c:221
+#, c-format
+msgid "Invalid argument %s for option --max-database-age"
+msgstr "Neplatný argument %s přepínače -max-database-age"
+
+#: locate/locate.c:473
+#, c-format
+msgid "locate database %s contains a filename longer than locate can handle"
+msgstr ""
+"locate databáze %s obsahuje delší název souboru, než s jakým může locate "
+"zacházet"
+
+#: locate/locate.c:608
+#, c-format
+msgid "locate database %s is corrupt or invalid"
+msgstr "locate databáze %s je poškozena nebo není platná"
+
+#: locate/locate.c:898
+#, c-format
+msgid "Locate database size: %s byte\n"
+msgid_plural "Locate database size: %s bytes\n"
+msgstr[0] "Velikost locate databáze: %s bajt\n"
+msgstr[1] "Velikost locate databáze: %s bajty\n"
+msgstr[2] "Velikost locate databáze: %s bajtů\n"
+
+#: locate/locate.c:905
+#, c-format
+msgid "Matching Filenames: %s\n"
+msgstr "Odpovídající názvy souborů: %s\n"
+
+#: locate/locate.c:906
+#, c-format
+msgid "All Filenames: %s\n"
+msgstr "Všechny názvy souborů: %s\n"
+
+# TODO: plural
+#: locate/locate.c:912
+#, c-format
+msgid ""
+"File names have a cumulative length of %s bytes.\n"
+"Of those file names,\n"
+"\n"
+"\t%s contain whitespace, \n"
+"\t%s contain newline characters, \n"
+"\tand %s contain characters with the high bit set.\n"
+msgstr ""
+"Názvy souborů mají celkovou délku %s bajtů.\n"
+"Z těchto názvů,\n"
+"\n"
+"\t%s obsahuje bílé místo, \n"
+"\t%s obsahuje znak nového řádku, \n"
+"\ta %s obsahuje znaky s nastaveným horním bitem.\n"
+
+#: locate/locate.c:926
+#, c-format
+msgid ""
+"Some filenames may have been filtered out, so we cannot compute the "
+"compression ratio.\n"
+msgstr ""
+"Některé názvy souborů mohly být vynechány, takže nemůžeme spočítat kompresní "
+"poměr.\n"
+
+#: locate/locate.c:939
+#, c-format
+msgid "Compression ratio %4.2f%% (higher is better)\n"
+msgstr "Kompresní poměr %4.2f %% (vyšší je lepší)\n"
+
+#: locate/locate.c:946
+#, c-format
+msgid "Compression ratio is undefined\n"
+msgstr "Kompresní poměr není definován\n"
+
+#: locate/locate.c:1001
+#, c-format
+msgid ""
+"locate database %s looks like an slocate database but it seems to have "
+"security level %c, which GNU findutils does not currently support"
+msgstr ""
+"locate databáze %s vypadá jako slocate databáze, akorát má úroveň "
+"zabezpečení %c, což GNU findutils zatím nepodporuje."
+
+#: locate/locate.c:1118
+#, c-format
+msgid ""
+"%s is an slocate database.  Support for these is new, expect problems for "
+"now."
+msgstr ""
+"%s je databáze slocate. Jejich podpora je nová, zatím očekávejte problémy."
+
+#: locate/locate.c:1132
+#, c-format
+msgid ""
+"%s is an slocate database of unsupported security level %d; skipping it."
+msgstr ""
+"%s je slocate databáze s nepodporovanou úrovní zabezpečení %d, vynechávám ji."
+
+#: locate/locate.c:1149
+msgid ""
+"You specified the -E option, but that option cannot be used with slocate-"
+"format databases with a non-zero security level.  No results will be "
+"generated for this database.\n"
+msgstr ""
+"Zadali jste přepínač -E, ale tento přepínač nemůže být použit s databází "
+"v slocate formátu a nenulovou úrovní zabezpečení. Pro tuto databázi nebudou "
+"vytvořeny žádné výsledky.\n"
+
+#: locate/locate.c:1160
+#, c-format
+msgid "%s is an slocate database.  Turning on the '-e' option."
+msgstr "%s je slocate databáze. Zapínám přepínač „-e“."
+
+#: locate/locate.c:1198
+#, c-format
+msgid "Old-format locate database %s is too short to be valid"
+msgstr ""
+"Locate databáze %s ve starém formátu je příliš krátká na to, aby byla platná."
+
+#: locate/locate.c:1350
+#, c-format
+msgid "Database %s is in the %s format.\n"
+msgstr "Databáze %s je ve formátu %s.\n"
+
+#: locate/locate.c:1371
+msgid "The database has little-endian machine-word encoding.\n"
+msgstr "Databáze má strojová slova kódována v malé endianitě.\n"
+
+#: locate/locate.c:1373
+msgid "The database has big-endian machine-word encoding.\n"
+msgstr "Databáze má strojová slova kódována ve velké endianitě.\n"
+
+#: locate/locate.c:1386
+#, c-format
+msgid "The database machine-word encoding order is not obvious.\n"
+msgstr "Kódování strojových slov databáze není zřejmé.\n"
+
+#: locate/locate.c:1414
+#, c-format
+msgid ""
+"Usage: %s [-d path | --database=path] [-e | -E | --[non-]existing]\n"
+"      [-i | --ignore-case] [-w | --wholename] [-b | --basename] \n"
+"      [--limit=N | -l N] [-S | --statistics] [-0 | --null] [-c | --count]\n"
+"      [-P | -H | --nofollow] [-L | --follow] [-m | --mmap ] [ -s | --"
+"stdio ]\n"
+"      [-A | --all] [-p | --print] [-r | --regex ] [--regextype=TYPE]\n"
+"      [--max-database-age D] [--version] [--help]\n"
+"      pattern...\n"
+msgstr ""
+"Užití: %s [-d CESTA | --database=CESTA] [-e | -E | --[non-]existing]\n"
+"      [-i | --ignore-case] [-w | --wholename] [-b | --basename] \n"
+"      [--limit=N | -l N] [-S | --statistics] [-0 | --null] [-c | --count]\n"
+"      [-P | -H | --nofollow] [-L | --follow] [-m | --mmap ] [ -s | --"
+"stdio ]\n"
+"      [-A | --all] [-p | --print] [-r | --regex ] [--regextype=TYP]\n"
+"      [--max-database-age D] [--version] [--help]\n"
+"      VZOR…\n"
+
+#: locate/locate.c:1477
+msgid "failed to drop group privileges"
+msgstr "zbavení se práv skupiny selhalo"
+
+#: locate/locate.c:1495
+msgid "failed to drop setuid privileges"
+msgstr "zbavení se setuid práv selhalo"
+
+#: locate/locate.c:1509
+msgid "Failed to fully drop privileges"
+msgstr "Zbavení se všech práv selhalo"
+
+#: locate/locate.c:1527
+msgid "failed to drop setgid privileges"
+msgstr "zbavení se setgid práv selhalo"
+
+#: locate/locate.c:1794
+msgid "warning: the locate database can only be read from stdin once."
+msgstr "varování: locate databázi lze ze standardního vstupu číst jen jednou."
+
+#: locate/locate.c:1856
+msgid "time system call failed"
+msgstr "služba systému time selhala"
+
+#: locate/locate.c:1867
+#, c-format
+msgid "warning: database %s is more than %d %s old (actual age is %.1f %s)"
+msgstr ""
+"varování: databáze %s je více jak %d %s stará (současný věk je %.1f %s)"
+
+#: locate/word_io.c:97
+#, c-format
+msgid "Warning: locate database %s was built with a different byte order"
+msgstr "Varování: locate databáze %s byla sestaveno v jiném pořadí bajtů"
+
+#: locate/word_io.c:144
+#, c-format
+msgid "unexpected EOF in %s"
+msgstr "neočekávaný EOF v %s"
+
+#: locate/word_io.c:146
+#, c-format
+msgid "error reading a word from %s"
+msgstr "chyba při čtení slova z %s"
+
+#: xargs/xargs.c:303
+#, c-format
+msgid "Invalid escape sequence %s in input delimiter specification."
+msgstr "Neplatná escape posloupnost %s v zadání oddělovače vstupu."
+
+#: xargs/xargs.c:321
+#, c-format
+msgid ""
+"Invalid escape sequence %s in input delimiter specification; character "
+"values must not exceed %lx."
+msgstr ""
+"Neplatná escape posloupnost %s v zadání oddělovače vstupu, hodnoty znaků "
+"nesmí přesáhnout %lx."
+
+#: xargs/xargs.c:327
+#, c-format
+msgid ""
+"Invalid escape sequence %s in input delimiter specification; character "
+"values must not exceed %lo."
+msgstr ""
+"Neplatná escape posloupnost %s v zadání oddělovače vstupu, hodnoty znaků "
+"nesmí přesáhnout %lo."
+
+#: xargs/xargs.c:336
+#, c-format
+msgid ""
+"Invalid escape sequence %s in input delimiter specification; trailing "
+"characters %s not recognised."
+msgstr ""
+"Neplatná escape posloupnost %s v zadání oddělovače vstupu, závěrečné znaky %"
+"s nebyly rozeznány."
+
+#: xargs/xargs.c:381
+#, c-format
+msgid ""
+"Invalid input delimiter specification %s: the delimiter must be either a "
+"single character or an escape sequence starting with \\."
+msgstr ""
+"Neplatné určení oddělovače vstupu %s: oddělovač musí být buď jediný znak, "
+"nebo escape posloupnost začínající \\."
+
+#: xargs/xargs.c:398
+msgid "environment is too large for exec"
+msgstr "prostředí je na exec() příliš velké"
+
+#: xargs/xargs.c:583
+#, c-format
+msgid "Warning: value %ld for -s option is too large, using %ld instead"
+msgstr ""
+"Varování: hodnota %ld přepínače -s je příliš velká, místo toho použiji %ld"
+
+#: xargs/xargs.c:653
+#, c-format
+msgid "Cannot open input file %s"
+msgstr "Vstupní soubor %s nelze otevřít."
+
+#: xargs/xargs.c:689
+#, c-format
+msgid "Your environment variables take up %lu bytes\n"
+msgstr "Vaše proměnné prostředí zabírají %'lu bajtů.\n"
+
+#: xargs/xargs.c:692
+#, c-format
+msgid "POSIX upper limit on argument length (this system): %lu\n"
+msgstr "Horní mez délky argumentů dle POSIXU (tento sytém): %'lu\n"
+
+#: xargs/xargs.c:695
+#, c-format
+msgid ""
+"POSIX smallest allowable upper limit on argument length (all systems): %lu\n"
+msgstr ""
+"Nejmenší možná horní mez délky argumentů dle POSIXU(všechny systémy): %'lu\n"
+
+#: xargs/xargs.c:698
+#, c-format
+msgid "Maximum length of command we could actually use: %ld\n"
+msgstr "Maximální délka příkazu, který vlastně můžeme použít: %'ld\n"
+
+#: xargs/xargs.c:702
+#, c-format
+msgid "Size of command buffer we are actually using: %lu\n"
+msgstr "Velikost bufferu příkazu, který vlastně používáme: %'lu\n"
+
+#: xargs/xargs.c:708
+#, c-format
+msgid ""
+"\n"
+"Execution of xargs will continue now, and it will try to read its input and "
+"run commands; if this is not what you wanted to happen, please type the end-"
+"of-file keystroke.\n"
+msgstr ""
+"\n"
+"Vykonávání xargs bude nyní pokračovat. Bude se pokoušet číst svůj vstup a "
+"spouštět příkazy. Pokud to není to, co chcete, aby se dělo, prosím, "
+"stiskněte klávesy konce souboru.\n"
+
+#: xargs/xargs.c:716
+#, c-format
+msgid ""
+"Warning: %s will be run at least once.  If you do not want that to happen, "
+"then press the interrupt keystroke.\n"
+msgstr ""
+"Varování: %s bude spuštěn alespoň jednou. Pokud nechcete, aby se stalo, pak "
+"stiskněte klávesy přerušení.\n"
+
+# XXX: unmatched {single|double} quote
+#: xargs/xargs.c:842 xargs/xargs.c:935
+#, c-format
+msgid ""
+"unmatched %s quote; by default quotes are special to xargs unless you use "
+"the -0 option"
+msgstr ""
+"neodpovídající %s uvozovka; implicitně jsou pro xargs uvozovky zvláštními "
+"znaky, dokud nepoužijete přepínač -0"
+
+#: xargs/xargs.c:843 xargs/xargs.c:936
+msgid "double"
+msgstr "dvojitá"
+
+#: xargs/xargs.c:843 xargs/xargs.c:936
+msgid "single"
+msgstr "jednoduchá"
+
+#: xargs/xargs.c:955
+msgid ""
+"Warning: a NUL character occurred in the input.  It cannot be passed through "
+"in the argument list.  Did you mean to use the --null option?"
+msgstr ""
+"Varování: Na vstupu se objevil znak NULL. Není možné jej předat do seznamu "
+"argumentů. Nezamýšleli jste použít přepínač --null?"
+
+#: xargs/xargs.c:965 xargs/xargs.c:1022
+msgid "argument line too long"
+msgstr "řádka s argumenty je příliš dlouhá"
+
+#: xargs/xargs.c:1233
+msgid "error waiting for child process"
+msgstr "chyba při čekání na proces potomka"
+
+# TODO: plural
+#: xargs/xargs.c:1255
+#, c-format
+msgid "Warning: Lost track of %d child processes"
+msgstr "Varování: Ztracena stopa %d potomků"
+
+#: xargs/xargs.c:1275
+#, c-format
+msgid "%s: exited with status 255; aborting"
+msgstr "%s: ukončen s kódem 255, končím"
+
+#: xargs/xargs.c:1277
+#, c-format
+msgid "%s: stopped by signal %d"
+msgstr "%s: pozastaven signálem %d"
+
+#: xargs/xargs.c:1279
+#, c-format
+msgid "%s: terminated by signal %d"
+msgstr "%s: ukončen signálem %d"
+
+#: xargs/xargs.c:1329
+#, c-format
+msgid "%s: invalid number for -%c option\n"
+msgstr "%s: neplatné číslo u přepínače -%c\n"
+
+#: xargs/xargs.c:1336
+#, c-format
+msgid "%s: value for -%c option should be >= %ld\n"
+msgstr "%s: hodnota přepínače -%c by měla být >= %ld\n"
+
+#: xargs/xargs.c:1350
+#, c-format
+msgid "%s: value for -%c option should be < %ld\n"
+msgstr "%s: hodnota přepínače -%c by měla být < %ld\n"
+
+#: xargs/xargs.c:1368
+#, c-format
+msgid ""
+"Usage: %s [-0prtx] [--interactive] [--null] [-d|--delimiter=delim]\n"
+"       [-E eof-str] [-e[eof-str]]  [--eof[=eof-str]]\n"
+"       [-L max-lines] [-l[max-lines]] [--max-lines[=max-lines]]\n"
+"       [-I replace-str] [-i[replace-str]] [--replace[=replace-str]]\n"
+"       [-n max-args] [--max-args=max-args]\n"
+"       [-s max-chars] [--max-chars=max-chars]\n"
+"       [-P max-procs]  [--max-procs=max-procs] [--show-limits]\n"
+"       [--verbose] [--exit] [--no-run-if-empty] [--arg-file=file]\n"
+"       [--version] [--help] [command [initial-arguments]]\n"
+msgstr ""
+"Usage: %s [-0prtx] [--interactive] [--null] [-d|--delimiter=oddělovač]\n"
+"       [-E řet-eof] [-e[řet-eof]]  [--eof[=řet-eof]]\n"
+"       [-L max-řádků] [-l[max-řádků]] [--max-lines[=max-řádků]]\n"
+"       [-I řet-nahrazení] [-i[řet-nahrazení]] [--replace[=řet-nahrazení]]\n"
+"       [-n max-argumentů] [--max-args=max-argumentů]\n"
+"       [-s max-znaků] [--max-chars=max-znaků]\n"
+"       [-P max-procesů]  [--max-procs=max-procesů] [--show-limits]\n"
+"       [--verbose] [--exit] [--no-run-if-empty] [--arg-file=soubor]\n"
+"       [--version] [--help] [příkaz [zahajující-argumenty]]\n"

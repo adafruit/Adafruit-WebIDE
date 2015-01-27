@@ -1,0 +1,10 @@
+# test for -samefile
+exec rm -rf tmp
+exec mkdir tmp tmp/one tmp/two
+exec touch tmp/file1 tmp/file2
+exec ln    tmp/file1 tmp/one/link
+exec ln -s ../file1 tmp/one/symlink
+exec ln    tmp/file2 tmp/two/link
+exec ln -s ../file2 tmp/two/symlink
+find_start p { -L tmp/one tmp/two -samefile tmp/file1 -print}
+# exec rm -rf tmp

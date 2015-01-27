@@ -1,0 +1,2 @@
+# Make sure we can read a little-endian old-format database.
+locate_from_db p "-r ." "locateddb.old.x86.xi" 

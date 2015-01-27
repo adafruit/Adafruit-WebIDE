@@ -1,0 +1,875 @@
+# Basque translation of grep.
+# Copyright (C) 2004 Free Software Foundation, Inc.
+# Mikel Olasagasti <hey_neken@mundurat.net>, 2004, 2005.
+# , fuzzy
+#
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: grep 2.5.1a\n"
+"Report-Msgid-Bugs-To: bug-grep@gnu.org\n"
+"POT-Creation-Date: 2012-04-23 16:08+0200\n"
+"PO-Revision-Date: 2005-03-03 21:40+0100\n"
+"Last-Translator: Mikel Olasagasti <hey_neken@mundurat.net>\n"
+"Language-Team: Basque <translation-team-eu@lists.sourceforge.net>\n"
+"Language: eu\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n == 1)\n"
+
+#: lib/argmatch.c:133
+#, fuzzy, c-format
+msgid "invalid argument %s for %s"
+msgstr "baliogabeko gehienezko zenbaketa"
+
+#: lib/argmatch.c:134
+#, c-format
+msgid "ambiguous argument %s for %s"
+msgstr ""
+
+#: lib/argmatch.c:153
+msgid "Valid arguments are:"
+msgstr ""
+
+#: lib/closeout.c:112 src/main.c:894
+#, c-format
+msgid "write error"
+msgstr ""
+
+#: lib/error.c:188
+msgid "Unknown system error"
+msgstr "Sistemaren errore ezezaguna"
+
+#: lib/getopt.c:547 lib/getopt.c:576
+#, fuzzy, c-format
+msgid "%s: option '%s' is ambiguous; possibilities:"
+msgstr "%s: `%s' aukera anbiguoa da\n"
+
+#: lib/getopt.c:624 lib/getopt.c:628
+#, fuzzy, c-format
+msgid "%s: option '--%s' doesn't allow an argument\n"
+msgstr "%s: `--%s' aukerak ez du argumenturik onartzen\n"
+
+#: lib/getopt.c:637 lib/getopt.c:642
+#, fuzzy, c-format
+msgid "%s: option '%c%s' doesn't allow an argument\n"
+msgstr "%s: `%c%s' aukerak ez du argumenturik onartzen\n"
+
+#: lib/getopt.c:685 lib/getopt.c:704
+#, fuzzy, c-format
+msgid "%s: option '--%s' requires an argument\n"
+msgstr "%s: `%s' aukerak argumentu bat behar du\n"
+
+#: lib/getopt.c:742 lib/getopt.c:745
+#, fuzzy, c-format
+msgid "%s: unrecognized option '--%s'\n"
+msgstr "%s: aukera ezezaguna `--%s'\n"
+
+#: lib/getopt.c:753 lib/getopt.c:756
+#, fuzzy, c-format
+msgid "%s: unrecognized option '%c%s'\n"
+msgstr "%s: aukera ezezaguna `%c%s'\n"
+
+#: lib/getopt.c:805 lib/getopt.c:808
+#, fuzzy, c-format
+msgid "%s: invalid option -- '%c'\n"
+msgstr "%s: balio gabeko aukera -- %c\n"
+
+#: lib/getopt.c:861 lib/getopt.c:878 lib/getopt.c:1088 lib/getopt.c:1106
+#, fuzzy, c-format
+msgid "%s: option requires an argument -- '%c'\n"
+msgstr "%s: aukerak argumentu bat behar du -- %c\n"
+
+#: lib/getopt.c:934 lib/getopt.c:950
+#, fuzzy, c-format
+msgid "%s: option '-W %s' is ambiguous\n"
+msgstr "%s: `-W %s' aukera ambiguoa da\n"
+
+#: lib/getopt.c:974 lib/getopt.c:992
+#, fuzzy, c-format
+msgid "%s: option '-W %s' doesn't allow an argument\n"
+msgstr "%s: `-W %s' aukerak ez du argumenturik onartzen\n"
+
+#: lib/getopt.c:1013 lib/getopt.c:1031
+#, fuzzy, c-format
+msgid "%s: option '-W %s' requires an argument\n"
+msgstr "%s: `%s' aukerak argumentu bat behar du\n"
+
+#: lib/obstack.c:413 lib/obstack.c:415 lib/xalloc-die.c:34 src/kwset.c:178
+#: src/kwset.c:186 src/kwset.c:409 src/pcresearch.c:153
+#, c-format
+msgid "memory exhausted"
+msgstr "memoria agortuta"
+
+#: lib/openat-die.c:38
+#, c-format
+msgid "unable to record current working directory"
+msgstr ""
+
+#: lib/openat-die.c:57
+#, c-format
+msgid "failed to return to initial working directory"
+msgstr ""
+
+#. TRANSLATORS:
+#. Get translations for open and closing quotation marks.
+#. The message catalog should translate "`" to a left
+#. quotation mark suitable for the locale, and similarly for
+#. "'".  For example, a French Unicode local should translate
+#. these to U+00AB (LEFT-POINTING DOUBLE ANGLE
+#. QUOTATION MARK), and U+00BB (RIGHT-POINTING DOUBLE ANGLE
+#. QUOTATION MARK), respectively.
+#.
+#. If the catalog has no translation, we will try to
+#. use Unicode U+2018 (LEFT SINGLE QUOTATION MARK) and
+#. Unicode U+2019 (RIGHT SINGLE QUOTATION MARK).  If the
+#. current locale is not Unicode, locale_quoting_style
+#. will quote 'like this', and clocale_quoting_style will
+#. quote "like this".  You should always include translations
+#. for "`" and "'" even if U+2018 and U+2019 are appropriate
+#. for your locale.
+#.
+#. If you don't know what to put here, please see
+#. <http://en.wikipedia.org/wiki/Quotation_marks_in_other_languages>
+#. and use glyphs suitable for your language.
+#: lib/quotearg.c:312
+msgid "`"
+msgstr "`"
+
+#: lib/quotearg.c:313
+msgid "'"
+msgstr "'"
+
+#: lib/regcomp.c:130
+msgid "Success"
+msgstr ""
+
+#: lib/regcomp.c:133
+msgid "No match"
+msgstr ""
+
+#: lib/regcomp.c:136
+msgid "Invalid regular expression"
+msgstr ""
+
+#: lib/regcomp.c:139
+msgid "Invalid collation character"
+msgstr ""
+
+#: lib/regcomp.c:142
+msgid "Invalid character class name"
+msgstr ""
+
+#: lib/regcomp.c:145
+msgid "Trailing backslash"
+msgstr ""
+
+#: lib/regcomp.c:148
+msgid "Invalid back reference"
+msgstr ""
+
+#: lib/regcomp.c:151
+msgid "Unmatched [ or [^"
+msgstr ""
+
+#: lib/regcomp.c:154
+msgid "Unmatched ( or \\("
+msgstr ""
+
+#: lib/regcomp.c:157
+msgid "Unmatched \\{"
+msgstr ""
+
+#: lib/regcomp.c:160 src/dfa.c:1373
+msgid "Invalid content of \\{\\}"
+msgstr ""
+
+#: lib/regcomp.c:163
+msgid "Invalid range end"
+msgstr ""
+
+#: lib/regcomp.c:166
+msgid "Memory exhausted"
+msgstr "Memoria agortuta"
+
+#: lib/regcomp.c:169
+msgid "Invalid preceding regular expression"
+msgstr ""
+
+#: lib/regcomp.c:172
+msgid "Premature end of regular expression"
+msgstr ""
+
+#: lib/regcomp.c:175 src/dfa.c:1376
+msgid "Regular expression too big"
+msgstr ""
+
+#: lib/regcomp.c:178
+msgid "Unmatched ) or \\)"
+msgstr ""
+
+#: lib/regcomp.c:703
+msgid "No previous regular expression"
+msgstr ""
+
+#: lib/version-etc.c:74
+#, c-format
+msgid "Packaged by %s (%s)\n"
+msgstr ""
+
+#: lib/version-etc.c:77
+#, c-format
+msgid "Packaged by %s\n"
+msgstr ""
+
+#. TRANSLATORS: Translate "(C)" to the copyright symbol
+#. (C-in-a-circle), if this symbol is available in the user's
+#. locale.  Otherwise, do not translate "(C)"; leave it as-is.
+#: lib/version-etc.c:84
+msgid "(C)"
+msgstr ""
+
+#: lib/version-etc.c:86
+msgid ""
+"\n"
+"License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl."
+"html>.\n"
+"This is free software: you are free to change and redistribute it.\n"
+"There is NO WARRANTY, to the extent permitted by law.\n"
+"\n"
+msgstr ""
+
+#. TRANSLATORS: %s denotes an author name.
+#: lib/version-etc.c:102
+#, c-format
+msgid "Written by %s.\n"
+msgstr ""
+
+#. TRANSLATORS: Each %s denotes an author name.
+#: lib/version-etc.c:106
+#, c-format
+msgid "Written by %s and %s.\n"
+msgstr ""
+
+#. TRANSLATORS: Each %s denotes an author name.
+#: lib/version-etc.c:110
+#, c-format
+msgid "Written by %s, %s, and %s.\n"
+msgstr ""
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:117
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"and %s.\n"
+msgstr ""
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:124
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, and %s.\n"
+msgstr ""
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:131
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, %s, and %s.\n"
+msgstr ""
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:139
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, %s, %s, and %s.\n"
+msgstr ""
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:147
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, %s, %s, %s,\n"
+"and %s.\n"
+msgstr ""
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:156
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, %s, %s, %s,\n"
+"%s, and %s.\n"
+msgstr ""
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:167
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, %s, %s, %s,\n"
+"%s, %s, and others.\n"
+msgstr ""
+
+#. TRANSLATORS: The placeholder indicates the bug-reporting address
+#. for this package.  Please add _another line_ saying
+#. "Report translation bugs to <...>\n" with the address for translation
+#. bugs (typically your translation team's web or email address).
+#: lib/version-etc.c:245 src/main.c:1572
+#, fuzzy, c-format
+msgid ""
+"\n"
+"Report bugs to: %s\n"
+msgstr ""
+"\n"
+"Programa-erroreen berri emateko idatzi hona <bug-grep@gnu.org>.\n"
+
+#: lib/version-etc.c:247
+#, fuzzy, c-format
+msgid "Report %s bugs to: %s\n"
+msgstr ""
+"\n"
+"Programa-erroreen berri emateko idatzi hona <bug-grep@gnu.org>.\n"
+
+#: lib/version-etc.c:251
+#, c-format
+msgid "%s home page: <%s>\n"
+msgstr ""
+
+#: lib/version-etc.c:253
+#, c-format
+msgid "%s home page: <http://www.gnu.org/software/%s/>\n"
+msgstr ""
+
+#: lib/version-etc.c:256 src/main.c:1575
+msgid "General help using GNU software: <http://www.gnu.org/gethelp/>\n"
+msgstr ""
+
+#: lib/xstrtol-error.c:63
+#, fuzzy, c-format
+msgid "invalid %s%s argument '%s'"
+msgstr "baliogabeko gehienezko zenbaketa"
+
+#: lib/xstrtol-error.c:68
+#, fuzzy, c-format
+msgid "invalid suffix in %s%s argument '%s'"
+msgstr "baliogabeko gehienezko zenbaketa"
+
+#: lib/xstrtol-error.c:72
+#, c-format
+msgid "%s%s argument '%s' too large"
+msgstr ""
+
+#: src/dfa.c:953 src/dfa.c:956 src/dfa.c:976 src/dfa.c:986 src/dfa.c:998
+#: src/dfa.c:1049 src/dfa.c:1058 src/dfa.c:1061 src/dfa.c:1066 src/dfa.c:1079
+#: src/dfa.c:1137
+#, fuzzy
+msgid "unbalanced ["
+msgstr "Parekatu gabeko ["
+
+#: src/dfa.c:1007
+msgid "invalid character class"
+msgstr ""
+
+#: src/dfa.c:1174
+msgid "character class syntax is [[:space:]], not [:space:]"
+msgstr ""
+
+#: src/dfa.c:1226
+#, fuzzy
+msgid "unfinished \\ escape"
+msgstr "Amaitu gabeko \\ eskapea"
+
+#: src/dfa.c:1761
+#, fuzzy
+msgid "unbalanced ("
+msgstr "Parekatu gabeko ("
+
+#: src/dfa.c:1891
+#, fuzzy
+msgid "no syntax specified"
+msgstr "Ez da sintaxirik zehaztu"
+
+#: src/dfa.c:1899
+#, fuzzy
+msgid "unbalanced )"
+msgstr "Parekatu gabeko )"
+
+#: src/egrep.c:16
+msgid "PATTERN is an extended regular expression (ERE).\n"
+msgstr ""
+
+#: src/egrep.c:18
+msgid "Invocation as 'egrep' is deprecated; use 'grep -E' instead.\n"
+msgstr ""
+
+#: src/fgrep.c:10
+msgid "PATTERN is a set of newline-separated fixed strings.\n"
+msgstr ""
+
+#: src/fgrep.c:12
+msgid "Invocation as 'fgrep' is deprecated; use 'grep -F' instead.\n"
+msgstr ""
+
+#: src/grep.c:32
+msgid "PATTERN is, by default, a basic regular expression (BRE).\n"
+msgstr ""
+
+#: src/grep.c:34
+msgid ""
+"'egrep' means 'grep -E'.  'fgrep' means 'grep -F'.\n"
+"Direct invocation as either 'egrep' or 'fgrep' is deprecated.\n"
+msgstr ""
+
+#. This is a proper name. See the gettext manual, section Names.
+#: src/main.c:58
+msgid "Mike Haertel"
+msgstr ""
+
+#: src/main.c:59
+msgid "others, see <http://git.sv.gnu.org/cgit/grep.git/tree/AUTHORS>"
+msgstr ""
+
+#: src/main.c:448
+msgid "invalid context length argument"
+msgstr "balio gabeko testuinguru luzeera argumentua"
+
+#: src/main.c:503
+msgid "lseek failed"
+msgstr ""
+
+#: src/main.c:650
+#, c-format
+msgid "input is too large to count"
+msgstr "sarrera luzeegia da kontatzeko"
+
+#: src/main.c:1205
+#, c-format
+msgid "Binary file %s matches\n"
+msgstr "%s fitxategi binarioa bat dator\n"
+
+#: src/main.c:1256
+#, fuzzy, c-format
+msgid "warning: %s: %s"
+msgstr "abisua: %s: %s\n"
+
+#: src/main.c:1257
+msgid "recursive directory loop"
+msgstr "direktorio bukle errekurtsiboa"
+
+#: src/main.c:1400
+#, c-format
+msgid "input file %s is also the output"
+msgstr ""
+
+#: src/main.c:1458
+msgid "(standard input)"
+msgstr "(sarrera estandarra)"
+
+#: src/main.c:1474 src/main.c:1481
+#, c-format
+msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
+msgstr "Erabilera: %s [AUKERA]... EREDUA [FITXATEGIA]...\n"
+
+#: src/main.c:1476
+#, fuzzy, c-format
+msgid "Try '%s --help' for more information.\n"
+msgstr "Saiatu `%s --help' informazio gehiagorako.\n"
+
+#: src/main.c:1482
+#, c-format
+msgid "Search for PATTERN in each FILE or standard input.\n"
+msgstr ""
+
+#: src/main.c:1485
+#, fuzzy, c-format
+msgid ""
+"Example: %s -i 'hello world' menu.h main.c\n"
+"\n"
+"Regexp selection and interpretation:\n"
+msgstr ""
+"EREDUA bilatzen du FITXATEGI bakoitzean edo sarrera estandarrean.\n"
+"Adibidez: %s -i 'kaixo mundu' menu.h main.c\n"
+"\n"
+"Regexp aukera eta interpretazioa:\n"
+
+#: src/main.c:1490
+#, fuzzy, c-format
+msgid ""
+"  -E, --extended-regexp     PATTERN is an extended regular expression (ERE)\n"
+"  -F, --fixed-strings       PATTERN is a set of newline-separated fixed "
+"strings\n"
+"  -G, --basic-regexp        PATTERN is a basic regular expression (BRE)\n"
+"  -P, --perl-regexp         PATTERN is a Perl regular expression\n"
+msgstr ""
+"  -E, --extended-regexp     EREDUA espresio erregular zabaldu bat da\n"
+"  -F, --fixed-strings       EREDUA lerro berri batekin banatutako kate "
+"multzo bat da\n"
+"  -G, --basic-regexp        EREDUA oinarrizko espresio erregular bat da\n"
+"  -P, --perl-regexp         EREDUA Perl espresio erregular bat da\n"
+
+#: src/main.c:1496
+#, fuzzy, c-format
+msgid ""
+"  -e, --regexp=PATTERN      use PATTERN for matching\n"
+"  -f, --file=FILE           obtain PATTERN from FILE\n"
+"  -i, --ignore-case         ignore case distinctions\n"
+"  -w, --word-regexp         force PATTERN to match only whole words\n"
+"  -x, --line-regexp         force PATTERN to match only whole lines\n"
+"  -z, --null-data           a data line ends in 0 byte, not newline\n"
+msgstr ""
+"  -e, --regexp=EREDUA      erabili EREDUA espresio erregular bezala\n"
+"  -f, --file=FITXATEGIA           lortu EREDUA FITXATEGITIK\n"
+"  -i, --ignore-case         ez ezberdindu letra larri eta xeheak\n"
+"  -w, --word-regexp         behartu EREDUA hitz osoekin bakarrik bat "
+"etortzea\n"
+"  -x, --line-regexp         behartu EREDUA lerro osoekin bakarrik bat "
+"etortzea\n"
+"  -z, --null-data           datu lerroa 0 byte-arekin amaitzen da, eta ez "
+"lerro berriarekin\n"
+
+#: src/main.c:1503
+#, fuzzy, c-format
+msgid ""
+"\n"
+"Miscellaneous:\n"
+"  -s, --no-messages         suppress error messages\n"
+"  -v, --invert-match        select non-matching lines\n"
+"  -V, --version             print version information and exit\n"
+"      --help                display this help and exit\n"
+"      --mmap                deprecated no-op; evokes a warning\n"
+msgstr ""
+"\n"
+"Hainbat:\n"
+"  -s, --no-messages         errore mezuak kentzen ditu\n"
+"  -v, --invert-match        bat ez datozen lerroak aukeratzen ditu\n"
+"  -V, --version             bertsioaren informazioa inprimatu eta irten\n"
+"      --help                laguntza hau erakutsi eta irten\n"
+"      --mmap                erabili asignatutako memoria sarrera posible "
+"bada\n"
+
+#: src/main.c:1511
+#, c-format
+msgid ""
+"\n"
+"Output control:\n"
+"  -m, --max-count=NUM       stop after NUM matches\n"
+"  -b, --byte-offset         print the byte offset with output lines\n"
+"  -n, --line-number         print line number with output lines\n"
+"      --line-buffered       flush output on every line\n"
+"  -H, --with-filename       print the file name for each match\n"
+"  -h, --no-filename         suppress the file name prefix on output\n"
+"      --label=LABEL         use LABEL as the standard input file name "
+"prefix\n"
+msgstr ""
+
+#: src/main.c:1522
+#, c-format
+msgid ""
+"  -o, --only-matching       show only the part of a line matching PATTERN\n"
+"  -q, --quiet, --silent     suppress all normal output\n"
+"      --binary-files=TYPE   assume that binary files are TYPE;\n"
+"                            TYPE is `binary', `text', or `without-match'\n"
+"  -a, --text                equivalent to --binary-files=text\n"
+msgstr ""
+
+#: src/main.c:1529
+#, c-format
+msgid ""
+"  -I                        equivalent to --binary-files=without-match\n"
+"  -d, --directories=ACTION  how to handle directories;\n"
+"                            ACTION is `read', `recurse', or `skip'\n"
+"  -D, --devices=ACTION      how to handle devices, FIFOs and sockets;\n"
+"                            ACTION is `read' or `skip'\n"
+"  -r, --recursive           like --directories=recurse\n"
+"  -R, --dereference-recursive  likewise, but follow all symlinks\n"
+msgstr ""
+
+#: src/main.c:1538
+#, c-format
+msgid ""
+"      --include=FILE_PATTERN  search only files that match FILE_PATTERN\n"
+"      --exclude=FILE_PATTERN  skip files and directories matching "
+"FILE_PATTERN\n"
+"      --exclude-from=FILE   skip files matching any file pattern from FILE\n"
+"      --exclude-dir=PATTERN  directories that match PATTERN will be "
+"skipped.\n"
+msgstr ""
+
+#: src/main.c:1544
+#, c-format
+msgid ""
+"  -L, --files-without-match  print only names of FILEs containing no match\n"
+"  -l, --files-with-matches  print only names of FILEs containing matches\n"
+"  -c, --count               print only a count of matching lines per FILE\n"
+"  -T, --initial-tab         make tabs line up (if needed)\n"
+"  -Z, --null                print 0 byte after FILE name\n"
+msgstr ""
+
+#: src/main.c:1550
+#, c-format
+msgid ""
+"\n"
+"Context control:\n"
+"  -B, --before-context=NUM  print NUM lines of leading context\n"
+"  -A, --after-context=NUM   print NUM lines of trailing context\n"
+"  -C, --context=NUM         print NUM lines of output context\n"
+msgstr ""
+
+#: src/main.c:1557
+#, fuzzy, c-format
+msgid ""
+"  -NUM                      same as --context=NUM\n"
+"      --color[=WHEN],\n"
+"      --colour[=WHEN]       use markers to highlight the matching strings;\n"
+"                            WHEN is `always', `never', or `auto'\n"
+"  -U, --binary              do not strip CR characters at EOL (MSDOS/"
+"Windows)\n"
+"  -u, --unix-byte-offsets   report offsets as if CRs were not there\n"
+"                            (MSDOS/Windows)\n"
+"\n"
+msgstr ""
+"\n"
+"Kontestu kontrola:\n"
+"  -B, --before-context=KOPURUA  inprimatu kontestuaren aurretiko lerro "
+"KOPURUA\n"
+"  -A, --after-context=KOPURUA   inprimatu kontestuaren ondorengo lerro "
+"KOPURUA\n"
+"  -C, --context=KOPURUA         inprimatu kontestuaren lerro KOPURUA\n"
+"  -KOPURUA                      --context=KOPURUA bezala\n"
+"      --color[=NOIZ],\n"
+"      --colour[=NOIZ]       erabili markak bat datozen kateak ezberdintzeko\n"
+"                            NOIZ `always', `never' edo `auto' izan daiteke.\n"
+"  -U, --binary              ez kendu CR karaktereak lerro bukaeran (MSDOS)\n"
+"  -u, --unix-byte-offsets   hartu kontutan offsetak CRak bertan egongo ez "
+"balira bezala (MSDOS)\n"
+"\n"
+"`egrep'-ek`grep -E' esan nahi du.  `fgrep'-ek `grep -F' esan nahi du.\n"
+"Fitxategirik gabe, edo FITXATEGIA - denean, sarrera estandarra irakurtzen "
+"da.  BI fitxategi\n"
+"baina gutxiago ematen badira, -h ulertzen da.  Irteera egoera 0 da bat "
+"badator, 1 ez badator,\n"
+"eta 2 arazorik badago.\n"
+
+#: src/main.c:1567
+#, c-format
+msgid ""
+"When FILE is -, read standard input.  With no FILE, read . if a command-"
+"line\n"
+"-r is given, - otherwise.  If fewer than two FILEs are given, assume -h.\n"
+"Exit status is 0 if any line is selected, 1 otherwise;\n"
+"if any error occurs and -q is not given, the exit status is 2.\n"
+msgstr ""
+
+#: src/main.c:1573
+#, c-format
+msgid "GNU Grep home page: <%s>\n"
+msgstr ""
+
+#: src/main.c:1605
+#, c-format
+msgid "%s can only use the %s pattern syntax"
+msgstr ""
+
+#: src/main.c:1608
+#, c-format
+msgid "conflicting matchers specified"
+msgstr "espresio konfliktiboak espezifikatu dira"
+
+#: src/main.c:1622
+#, fuzzy, c-format
+msgid "invalid matcher %s"
+msgstr "baliogabeko gehienezko zenbaketa"
+
+#: src/main.c:1870
+#, c-format
+msgid "unknown devices method"
+msgstr "gailu metodo ezezaguna"
+
+#: src/main.c:1999
+#, c-format
+msgid "invalid max count"
+msgstr "baliogabeko gehienezko zenbaketa"
+
+#: src/main.c:2056
+#, c-format
+msgid "unknown binary-files type"
+msgstr "fitxategi-binario moeta ezezaguna"
+
+#: src/main.c:2119
+#, c-format
+msgid "the --mmap option has been a no-op since 2010"
+msgstr ""
+
+#: src/pcresearch.c:42
+msgid ""
+"support for the -P option is not compiled into this --disable-perl-regexp "
+"binary"
+msgstr ""
+
+#: src/pcresearch.c:56
+#, fuzzy, c-format
+msgid "the -P option only supports a single pattern"
+msgstr "-P aukerak ez du euskarririk"
+
+#: src/pcresearch.c:110
+#, c-format
+msgid "internal error"
+msgstr ""
+
+#: src/pcresearch.c:138
+#, c-format
+msgid "exceeded PCRE's line length limit"
+msgstr ""
+
+#: src/pcresearch.c:157
+#, c-format
+msgid "exceeded PCRE's backtracking limit"
+msgstr ""
+
+#~ msgid "unfinished repeat count"
+#~ msgstr "amaitu gabeko errepikapen zenbatzailea"
+
+#~ msgid "malformed repeat count"
+#~ msgstr "gaizki eratutako errepikapen zenbatzailea"
+
+#~ msgid "writing output"
+#~ msgstr "irteera idazten"
+
+#, fuzzy
+#~ msgid "%s: option '%s' is ambiguous\n"
+#~ msgstr "%s: `-W %s' aukera ambiguoa da\n"
+
+#, fuzzy
+#~ msgid "warning: %s"
+#~ msgstr "abisua: %s: %s\n"
+
+#~ msgid "unknown directories method"
+#~ msgstr "direktorio metodo ezezaguna"
+
+#~ msgid "The -P and -z options cannot be combined"
+#~ msgstr "-P eta -z aukerak ezin dira konbinatu"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "Output control:\n"
+#~ "  -m, --max-count=NUM       stop after NUM matches\n"
+#~ "  -b, --byte-offset         print the byte offset with output lines\n"
+#~ "  -n, --line-number         print line number with output lines\n"
+#~ "      --line-buffered       flush output on every line\n"
+#~ "  -H, --with-filename       print the filename for each match\n"
+#~ "  -h, --no-filename         suppress the prefixing filename on output\n"
+#~ "      --label=LABEL         print LABEL as filename for standard input\n"
+#~ "  -o, --only-matching       show only the part of a line matching "
+#~ "PATTERN\n"
+#~ "  -q, --quiet, --silent     suppress all normal output\n"
+#~ "      --binary-files=TYPE   assume that binary files are TYPE;\n"
+#~ "                            TYPE is `binary', `text', or `without-match'\n"
+#~ "  -a, --text                equivalent to --binary-files=text\n"
+#~ "  -I                        equivalent to --binary-files=without-match\n"
+#~ "  -d, --directories=ACTION  how to handle directories;\n"
+#~ "                            ACTION is `read', `recurse', or `skip'\n"
+#~ "  -D, --devices=ACTION      how to handle devices, FIFOs and sockets;\n"
+#~ "                            ACTION is `read' or `skip'\n"
+#~ "  -R, -r, --recursive       equivalent to --directories=recurse\n"
+#~ "      --include=FILE_PATTERN  search only files that match FILE_PATTERN\n"
+#~ "      --exclude=FILE_PATTERN  skip files and directories matching "
+#~ "FILE_PATTERN\n"
+#~ "      --exclude-from=FILE   skip files matching any file pattern from "
+#~ "FILE\n"
+#~ "      --exclude-dir=PATTERN  directories that match PATTERN will be "
+#~ "skipped.\n"
+#~ "  -L, --files-without-match  print only names of FILEs containing no "
+#~ "match\n"
+#~ "  -l, --files-with-matches  print only names of FILEs containing matches\n"
+#~ "  -c, --count               print only a count of matching lines per "
+#~ "FILE\n"
+#~ "  -T, --initial-tab         make tabs line up (if needed)\n"
+#~ "  -Z, --null                print 0 byte after FILE name\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Irteera kontrola:\n"
+#~ "  -m, --max-count=KOPURUA       gelditu KOPURUA bilatzean\n"
+#~ "  -b, --byte-offset         inprimatu offset byte-a lerro irteerekin\n"
+#~ "  -n, --line-number         inprimatu lerro zenbakia lerro irteerekin\n"
+#~ "      --line-buffered       irauli irteera lerro bakoitzean\n"
+#~ "  -H, --with-filename       inprimatu fitxategi-izena bat datorren "
+#~ "aurkiketa bakoitzean\n"
+#~ "  -h, --no-filename         fitxategi-izena kendu irteeran\n"
+#~ "      --label=ETIKETA         inprimatu ETIKETA fitxategi-izen bezala "
+#~ "sarrera estandarrean\n"
+#~ "  -o, --only-matching       erakutsi EREDUAREKIN bat datorren lerroaren "
+#~ "zatia bakarrik\n"
+#~ "  -q, --quiet, --silent     kendu irteera normal guztiak\n"
+#~ "      --binary-files=MOETA   fitxategi binarioak MOETA bezala direlakoan "
+#~ "hartu\n"
+#~ "                            MOETA 'binary', 'text', edo 'without-match' "
+#~ "izan daiteke\n"
+#~ "  -a, --text                --binary-files=text bezala\n"
+#~ "  -I                        --binary-files=without-match bezala\n"
+#~ "  -d, --directories=EKINTZA  nola erabili direktorioak\n"
+#~ "                            EKINTZA 'read', 'recurse', edo 'skip' izan "
+#~ "daiteke\n"
+#~ "  -D, --devices=EKINTZA      nola erabili gailuak, FIFO eta socketak\n"
+#~ "                            EKINTZA 'read' edo 'skip' izan daiteke\n"
+#~ "  -R, -r, --recursive       --directories=recurse bezala\n"
+#~ "      --include=EREDUA     EREDUAREKIN bat datozen fitxategiak aztertu\n"
+#~ "      --exclude=EREDUA     EREDUAREKIN bat datozen fitxategiak utzi.\n"
+#~ "      --exclude-from=FITXATEGIA   EREDUA betetzen duten fitxategiak "
+#~ "FITXATEGIAN utzi.\n"
+#~ "  -L, --files-without-match inprimatu bateraketarik ez duten FITXATEGIAK "
+#~ "bakarrik\n"
+#~ "  -l, --files-with-matches  inprimatu bateraketaren bat duten FITXATEGIAK "
+#~ "bakarrik\n"
+#~ "  -c, --count               inprimatu bateraketa kopurua FITXATEGI "
+#~ "bakoitzeko bakarrik\n"
+#~ "  -Z, --null                inprimatu 0 byte-a FITXATEGIAREN izenaren "
+#~ "ondoren\n"
+
+#~ msgid "%s: illegal option -- %c\n"
+#~ msgstr "%s: ezinezko aukera -- %c\n"
+
+#~ msgid "out of memory"
+#~ msgstr "memoriatik kanpo"
+
+#~ msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
+#~ msgstr "Erabilera: %s [AUKERA]... EREDUA [FITXATEGIA] ...\n"
+
+#~ msgid "%s (GNU grep) %s\n"
+#~ msgstr "%s (GNU grep) %s\n"
+
+#~ msgid ""
+#~ "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
+#~ msgstr ""
+#~ "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
+
+#~ msgid ""
+#~ "This is free software; see the source for copying conditions. There is "
+#~ "NO\n"
+#~ "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR "
+#~ "PURPOSE.\n"
+#~ msgstr ""
+#~ "Software librea da, ikusi programa-kodea kopiatzeko baldintzentzat. EZ "
+#~ "dago inolako bermerik;\n"
+#~ "ez KOMERTZIO ez ASMO ZEHATZ BATEN EGOKITASUNERAKO.\n"

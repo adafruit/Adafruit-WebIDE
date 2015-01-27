@@ -1,0 +1,1 @@
+xargs_start p {-i echo from \{\} to x{}y} items.xi

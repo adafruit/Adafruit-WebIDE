@@ -1,0 +1,1 @@
+find_start p {. -maxdepth 2 -false , -name .}

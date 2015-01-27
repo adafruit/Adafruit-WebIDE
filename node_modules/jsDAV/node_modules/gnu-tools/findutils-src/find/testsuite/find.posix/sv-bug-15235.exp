@@ -1,0 +1,6 @@
+# tests for directory parsing
+exec rm -rf \(1 \!2 \, \)
+exec mkdir \(1 \!2 \, \)
+touch \(1/a \!2/b \,/c \)/d
+find_start p {\(1 \!2 \, \)}
+exec rm -rf \(1 \!2 \, \)

@@ -1,0 +1,1 @@
+xargs_start p {-iARG echo ARG is xARGx} files.xi

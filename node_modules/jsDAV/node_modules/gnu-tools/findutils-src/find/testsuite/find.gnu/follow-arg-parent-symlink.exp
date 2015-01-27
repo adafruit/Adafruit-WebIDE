@@ -1,0 +1,6 @@
+exec rm -rf tmp
+exec mkdir tmp tmp/dir1 tmp/dir1/dir2 
+exec touch              tmp/dir1/dir2/foo
+exec ln -s dir1 tmp/link1
+find_start p {tmp/link1/dir2 -type f -print }
+exec rm -rf tmp

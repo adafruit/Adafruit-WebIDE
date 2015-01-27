@@ -1,0 +1,12 @@
+# tests for -perm with X
+exec rm -rf tmp
+exec mkdir tmp
+exec chmod 755 tmp
+exec true > tmp/empty
+exec true > tmp/empty-xxx
+exec chmod 711 tmp/empty-xxx
+exec mkdir tmp/sub
+exec chmod 300 tmp/sub
+find_start p { tmp \( ! -name sub -o -prune \) -perm -u+w,a+X -print }
+exec chmod 700 tmp/sub
+exec rm -rf tmp

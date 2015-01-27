@@ -1,0 +1,5 @@
+# Verifies that default -print is used with -prune
+exec rm -rf tmp
+exec mkdir tmp
+find_start p {tmp -prune}
+exec rm -rf tmp

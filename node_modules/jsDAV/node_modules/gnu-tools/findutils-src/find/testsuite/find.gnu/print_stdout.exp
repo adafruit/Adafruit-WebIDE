@@ -1,0 +1,5 @@
+# test for -fprint
+exec rm -rf tmp
+exec touch tmp
+find_start p { tmp -fprint /dev/stdout }
+exec rm -rf tmp

@@ -1,0 +1,47 @@
+#!/bin/sh
+# Use of any --include or --exclude* option would segfault in 2.6 and 2.6.1
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
+
+echo f > x || framework_failure_
+echo b >> x || framework_failure_
+echo h >> x || framework_failure_
+printf 'grep: character class syntax is [[:space:]], not [:space:]\n' \
+  > exp-err || framework_failure_
+
+# basic cases
+
+grep '[:space:]' x 2> err
+test $? = 2 || fail=1
+sed 's/^\([A-Za-z]:\)\{0,1\}[^: ]*: /grep: /' err > err1 && mv err1 err
+compare exp-err err || fail=1
+
+grep '[[:space:]]' x 2> err
+test $? = 1 || fail=1
+test -s err && fail=1
+
+# disabled by POSIXLY_CORRECT
+POSIXLY_CORRECT=yes grep '[:space:]' x 2> err
+test $? = 1 || fail=1
+test -s err && fail=1
+
+# patterns that are considered valid
+grep '[::]' x 2> err
+test $? = 1 || fail=1
+test -s err && fail=1
+
+grep '[:space]' x 2> err
+test $? = 1 || fail=1
+test -s err && fail=1
+
+grep '[:space:wxyz]' x 2> err
+test $? = 1 || fail=1
+test -s err && fail=1
+
+grep '[:space[:space:]:]' x 2> err
+test $? = 1 || fail=1
+test -s err && fail=1
+
+grep '[:spac-e:]' x 2> err
+test $? = 1 || fail=1
+test -s err && fail=1
+Exit $fail

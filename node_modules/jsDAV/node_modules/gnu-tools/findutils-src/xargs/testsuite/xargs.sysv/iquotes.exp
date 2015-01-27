@@ -1,0 +1,1 @@
+xargs_start p {-i__ echo FIRST __ IS OK} quotes.xi

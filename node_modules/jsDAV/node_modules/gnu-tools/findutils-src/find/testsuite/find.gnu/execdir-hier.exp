@@ -1,0 +1,8 @@
+# tests for -execdir ... \+ 
+# Specifically, ensure that output for separate directoires is not mixed.
+if { [ safe_path ] } {
+    exec rm -rf tmp
+    exec mkdir tmp tmp/two
+    find_start p { tmp -execdir echo \{\} \+ }
+    exec rm -rf tmp
+}

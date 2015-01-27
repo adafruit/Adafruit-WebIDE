@@ -1,0 +1,1 @@
+find_start p {/ /// -maxdepth 0 -printf "%p %f\\n"}

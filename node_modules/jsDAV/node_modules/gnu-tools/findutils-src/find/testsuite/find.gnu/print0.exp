@@ -1,0 +1,5 @@
+# test for -print0.
+exec rm -rf tmp
+exec touch tmp
+find_start p { tmp -print0 }
+exec rm -rf tmp

@@ -1,0 +1,7 @@
+# tests for -name and trailing slashes.
+# See http://www.opengroup.org/austin/interps/uploads/40/14959/AI-186.txt
+# This is a test for Savannah bug #20970. 
+exec rm -rf tmp
+exec mkdir tmp tmp/foo tmp/bar
+find_start p {tmp/foo/// tmp/bar/// -name foo -o -name 'bar?*'}
+exec rm -rf tmp

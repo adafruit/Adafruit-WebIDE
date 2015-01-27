@@ -1,0 +1,5 @@
+# test for -iwholename
+exec rm -rf tmp
+exec mkdir tmp tmp/top tmp/top/one tmp/top/one/two
+find_start p {tmp/top -iwholename tmP/TOP/One -print }
+exec rm -rf tmp

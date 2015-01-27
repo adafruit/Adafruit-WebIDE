@@ -1,0 +1,7 @@
+# tests for -perm /000 (Savannah bug #14748).
+exec rm -rf tmp
+exec mkdir tmp
+exec touch tmp/fred tmp/wilma
+exec chmod 000 tmp/fred
+find_start p {tmp -perm /000 -print 2>/dev/null }
+exec rm -rf tmp

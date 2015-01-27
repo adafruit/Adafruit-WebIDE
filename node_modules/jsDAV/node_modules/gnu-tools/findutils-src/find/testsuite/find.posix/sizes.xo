@@ -1,0 +1,10 @@
+A size -1: 0 tmp/0-bytes
+B size  1: 511 tmp/511-bytes
+B size  1: 512 tmp/512-bytes
+C size +1: 513 tmp/513-bytes
+C size +1: 1024 tmp/1024-bytes
+H size  2: 513 tmp/513-bytes
+H size  2: 1024 tmp/1024-bytes
+G size -2: 0 tmp/0-bytes
+G size -2: 511 tmp/511-bytes
+G size -2: 512 tmp/512-bytes

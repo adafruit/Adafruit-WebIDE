@@ -1,0 +1,7 @@
+# tests for -empty
+exec rm -rf tmp
+exec mkdir tmp
+exec true > tmp/empty
+exec echo > tmp/notempty
+find_start p { tmp -type f -empty }
+exec rm -rf tmp

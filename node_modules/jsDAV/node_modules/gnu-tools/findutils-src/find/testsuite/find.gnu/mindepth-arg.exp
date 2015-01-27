@@ -1,0 +1,9 @@
+# Argument validation for -mindepth and -maxdepth
+proc prepare {} {
+    exec rm -rf tmp
+    exec mkdir tmp tmp/top tmp/top/one
+}
+foreach predicate { -mindepth -maxdepth } {
+    find_start p "tmp/top $predicate 0 -print -quit" {} {} prepare
+}
+exec rm -rf tmp

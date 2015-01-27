@@ -1,0 +1,5 @@
+# test for diagnosis of the fact that the argument to -name is missing
+exec rm -rf tmp
+exec touch tmp
+find_start f { tmp -name }
+exec rm -rf tmp

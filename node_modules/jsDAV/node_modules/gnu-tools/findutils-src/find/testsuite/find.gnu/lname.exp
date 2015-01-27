@@ -1,0 +1,7 @@
+# tests for -lname
+exec rm -rf tmp
+exec mkdir tmp 
+exec touch tmp/one
+exec ln -s one tmp/two
+find_start p {tmp -lname one -print}
+exec rm -rf tmp

@@ -1,0 +1,20 @@
+# tests for -execdir pwd \+
+if { [ safe_path ] } {
+    global SKIP_OLD
+
+    exec rm -rf tmp
+    exec mkdir tmp
+
+    # Create an empty shell script.
+    exec touch    tmp/foo
+    exec chmod +x tmp/foo
+
+    # The -execdir should find the "foo" in the current directory.
+    # If not, the find command is probably executing the command
+    # built up by -execdir in the wrong directory.
+
+    set SKIP_OLD 1
+    find_start p {tmp -name foo -execdir sh ./foo  \{\} + } "" 
+    set SKIP_OLD 0
+    exec rm -rf tmp
+}

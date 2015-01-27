@@ -1,0 +1,7 @@
+# tests for -perm -0100 (-perm with -)
+exec rm -rf tmp
+exec mkdir tmp
+exec touch tmp/fred
+exec chmod 444 tmp/fred
+find_start p {tmp -perm -0100}
+exec rm -rf tmp

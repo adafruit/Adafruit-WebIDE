@@ -1,0 +1,5 @@
+# If -exec \; fails, it should return false.   The return 
+# value of find shoudl stil; be 0, unless another error has
+# happened.
+find_start p { /tmp -exec false \; -o \( -printf "yep\n" -quit \) }
+

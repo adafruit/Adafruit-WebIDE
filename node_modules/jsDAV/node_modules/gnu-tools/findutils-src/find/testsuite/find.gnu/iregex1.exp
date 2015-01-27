@@ -1,0 +1,5 @@
+# test for -iregex
+exec rm -rf tmp
+exec mkdir tmp tmp/d tmp/d/D tmp/d/D/d tmp/d/D/d/e
+find_start p {tmp  -iregex {tmp\(/d\)*} -print }
+exec rm -rf tmp

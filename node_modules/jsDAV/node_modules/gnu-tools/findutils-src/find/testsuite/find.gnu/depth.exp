@@ -1,0 +1,8 @@
+exec rm -rf tmp
+exec mkdir tmp
+exec mkdir tmp/top
+exec mkdir tmp/top/one
+exec touch tmp/top/one/foo
+exec mkdir tmp/top/two
+find_start p {tmp/top -depth -mindepth 1 -type d -empty -print}
+exec rm -rf tmp

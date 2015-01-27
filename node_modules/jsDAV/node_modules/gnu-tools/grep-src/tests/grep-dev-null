@@ -1,0 +1,20 @@
+#!/bin/sh
+# Case-insensitive grep with a 0-size input file would fail in grep up to 2.6.3
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
+
+require_en_utf8_locale_
+
+LC_ALL=en_US.UTF-8
+export LC_ALL
+
+echo x | grep -f /dev/null; test $? = 1 || fail=1
+echo x | grep -if /dev/null; test $? = 1 || fail=1
+echo x | grep -Ff /dev/null; test $? = 1 || fail=1
+echo x | grep -Fif /dev/null; test $? = 1 || fail=1
+
+grep -f /dev/null < /dev/null; test $? = 1 || fail=1
+grep -if /dev/null < /dev/null; test $? = 1 || fail=1
+grep -Ff /dev/null < /dev/null; test $? = 1 || fail=1
+grep -Fif /dev/null < /dev/null; test $? = 1 || fail=1
+
+Exit $fail

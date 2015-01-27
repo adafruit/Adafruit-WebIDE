@@ -1,0 +1,4 @@
+# tests for arguments to -type
+foreach type { Z ZZ } {
+    find_start f ". -type $type"
+}

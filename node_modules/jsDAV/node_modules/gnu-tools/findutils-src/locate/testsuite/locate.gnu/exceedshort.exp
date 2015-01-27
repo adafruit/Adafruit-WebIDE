@@ -1,0 +1,4 @@
+# check frcode correctly encodes paths that have more than 2^16 characters in common
+set fmt "%0*d\n%0*d\n"
+set match [format $fmt 32768 0 32769 0]
+locate_textonly p 0 "$match" "-i 00" "$match"

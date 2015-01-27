@@ -1,0 +1,5 @@
+# test for diagnosis of the fact that the argument to -group is missing
+exec rm -rf tmp
+exec touch tmp
+find_start f { tmp -group }
+exec rm -rf tmp

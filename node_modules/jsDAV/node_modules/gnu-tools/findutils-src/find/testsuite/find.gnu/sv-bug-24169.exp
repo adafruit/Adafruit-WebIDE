@@ -1,0 +1,45 @@
+# Bug report by Joey Hess.
+#
+# The command:
+#   find -neweraa
+# is not valid because there is a missing argument. 
+# The result should be a clean exit with nonzero status.
+# However, it segfaults in 4.4.0.
+#
+
+global FTSFIND
+if {[which $FTSFIND] == 0} then {
+    error "$FTSFIND, program does not exist"
+    exit 1
+}
+
+set scriptname [info script]
+set testbase [file rootname $scriptname]
+set test [file tail $testbase] 
+set testname "$test.generic"
+
+set cmd "$FTSFIND -neweraa"
+set expected 1 
+
+send_log "$cmd\n"
+eval spawn -noecho $cmd
+set result [wait]
+send_log "result is '$result'\n"
+if { [ lindex $result 2 ] == 0  } then {
+    set status [ lindex $result 3]
+    if { [llength $result] > 4 } then {
+	if { [lindex $result 4] == "CHILDKILLED" } then {
+	    fail "$testname, $cmd was killed: [lrange $result 5 end]" 
+	} else {
+	    unresolved "$testname, $cmd had unexpected extended status $result" 
+	}
+    } else {
+	if { $status != 1 } then {
+	    unresolved "$testname, $cmd had unexpected status $status" 
+	} else {
+	    pass "$testname"
+	}
+    }
+} else {
+    unresolved "$testname, failed to run $cmd" 
+}

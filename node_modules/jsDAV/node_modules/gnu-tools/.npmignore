@@ -1,0 +1,9 @@
+/bin/
+.gitignore
+/gnu-tools*.tgz
+/package/
+
+*.o
+.dirstamp
+stamp-h1
+.deps/

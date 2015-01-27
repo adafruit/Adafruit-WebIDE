@@ -1,0 +1,2 @@
+# tests for invalid argument to -used 
+find_start f {. -used ZZ}

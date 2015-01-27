@@ -1,0 +1,10 @@
+# Form feed is not a separator.
+#
+# POSIX specifies that <blank> is the serarator 
+# in the POSIX locale, and <blank> is defined
+# as <SPC> or <TAB>.    
+#
+# On the other hand, <space> includes Form Feed and 
+# Vertical Tab.  By default, those should not be
+# separators.
+xargs_start p {printf "\[%s\]\n"} formfeeds.xi

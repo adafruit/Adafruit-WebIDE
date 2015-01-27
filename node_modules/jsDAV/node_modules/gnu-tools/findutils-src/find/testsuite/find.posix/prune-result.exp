@@ -1,0 +1,7 @@
+# test for return value of -prune.   It should always return true,
+# even if -depth is in effect
+exec rm -rf tmp
+exec mkdir tmp tmp/a
+touch tmp/a/f
+find_start p {tmp -depth -name a -prune -o -print }
+exec rm -rf tmp

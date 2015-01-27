@@ -1,0 +1,93 @@
+Here are most of the steps we (maintainers) follow when making a release.
+
+* Start from a clean, up-to-date git directory on "master":
+
+    make -k maintainer-clean || { ./configure && make maintainer-clean; }
+    git checkout master
+    git pull origin master
+
+* Ensure that the latest stable versions of autoconf, automake, etc.
+  are in your PATH.  See the buildreq list in bootstrap.conf for
+  the complete list of tools.
+
+* Ensure that you have no uncommitted diffs.  This should produce no
+  output:
+
+    git diff
+
+* Ensure that you've pushed all changes that belong in the release:
+
+    git push origin master
+
+* Check that the NixOS/Hydra autobuilder is reporting all is well:
+
+    http://hydra.nixos.org/jobset/gnu/grep-master
+
+* Run the following command to download any new translations:
+
+    ./bootstrap && ./configure
+
+* Pre-release testing: ensure that the following command succeeds:
+
+    make check syntax-check distcheck
+
+* Set the date, version number, and release type [stable/alpha/beta] on
+  line 3 of NEWS, commit that, and tag the release by running e.g.,
+
+    build-aux/do-release-commit-and-tag X.Y stable
+
+* Run the following to create release tarballs.  Your choice selects the
+  corresponding upload-to destination in the emitted gnupload command.
+  The different destinations are specified in cfg.mk.  See the definitions
+  of gnu_ftp_host-{alpha,beta,stable}.
+
+    # "TYPE" must be stable, beta or alpha
+    make TYPE
+
+* Test the tarball.  Copy it to a few odd-ball systems and ensure that
+  it builds and passes all tests.
+
+* While that's happening, write the release announcement that you will
+  soon post.  Start with the template, $HOME/announce-grep-X.Y
+  that was just created by that "make" command.
+
+Once all the builds and tests have passed,
+
+* Run the gnupload command that was suggested by your "make TYPE" run above.
+
+* Wait a few minutes (maybe up to 30?) and then use the release URLs to
+  download all tarball/signature pairs and use gpg --verify to ensure
+  that they're all valid.
+
+* Push the NEWS-updating changes and the new tag:
+
+    v=$(cat .prev-version)
+    git push origin master tag v$v
+
+* Announce it on Savannah first, so you can include the savannah.org
+  announcement link in the email message.
+
+  From here:
+    https://savannah.gnu.org/projects/grep/
+  click on "submit news", then write something like the following:
+  (If there is no such button, then enable "News" for the project via
+   the Main -> "Select Features" menu item, or via this link:
+   https://savannah.gnu.org/project/admin/editgroupfeatures.php?group=grep)
+
+    Subject: grep-X.Y released [stable]
+    +verbatim+
+    ...paste the announcement here...
+    -verbatim-
+
+  Then go here to approve it:
+    https://savannah.gnu.org/news/approve.php?group=grep
+
+* Send the announcement email message.
+
+* After each non-alpha release, update the on-line manual accessible via
+
+    http://www.gnu.org/software/grep/manual/
+
+  by running this:
+
+    build-aux/gnu-web-doc-update

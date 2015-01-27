@@ -1,0 +1,7 @@
+# tests for Savannah bug 19605 (Inability of ftsfind to detect symlink loop)
+exec rm -rf  tmp
+exec mkdir tmp
+exec ln -s a tmp/b
+exec ln -s b tmp/a
+find_start f {-L tmp -false -print}
+exec rm -rf tmp

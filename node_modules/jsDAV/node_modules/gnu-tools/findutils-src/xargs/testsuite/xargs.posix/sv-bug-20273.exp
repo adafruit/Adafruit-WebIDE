@@ -1,0 +1,1 @@
+xargs_start p "" sv-bug-20273.xi "" "sh -c \{$XARGS $XARGSFLAGS -E2; cat\}"

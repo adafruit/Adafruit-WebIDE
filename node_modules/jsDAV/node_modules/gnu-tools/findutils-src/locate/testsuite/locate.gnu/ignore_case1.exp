@@ -1,0 +1,8 @@
+# tests to determine if "-i" causes the match to ignore the case
+set tmp "tmp"
+exec rm -rf $tmp
+exec mkdir $tmp
+exec mkdir $tmp/subdir
+exec touch $tmp/subdir/fred
+locate_start p "--changecwd=. --output=$tmp/locatedb --localpaths=tmp/subdir/" "--database=$tmp/locatedb -i FRed" {}
+

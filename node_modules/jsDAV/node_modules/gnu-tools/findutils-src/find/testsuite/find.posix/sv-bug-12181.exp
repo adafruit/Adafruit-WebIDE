@@ -1,0 +1,6 @@
+# tests for Savannah bug 12181 (find -H symlink should work)
+exec rm -rf tmp
+exec mkdir tmp
+exec ln -s tmp link
+find_start p { -H link}
+exec rm -rf tmp link

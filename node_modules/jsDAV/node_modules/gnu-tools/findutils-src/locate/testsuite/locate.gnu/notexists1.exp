@@ -1,0 +1,10 @@
+# tests for -E: make sure we don't print a file if it exists.
+# Since there are no matches in this case, we expect a nonzero
+# return value as well.
+set tmp "tmp"
+exec rm -rf $tmp
+exec mkdir $tmp
+exec mkdir $tmp/subdir
+exec touch $tmp/subdir/fred
+locate_start f "--changecwd=. --output=$tmp/locatedb --localpaths=tmp/subdir/" "--database=$tmp/locatedb -E fred" {}
+

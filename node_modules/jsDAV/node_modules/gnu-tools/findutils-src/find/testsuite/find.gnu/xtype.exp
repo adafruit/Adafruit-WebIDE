@@ -1,0 +1,8 @@
+# checks for the -xtype test.
+exec rm -rf tmp
+
+exec mkdir tmp
+exec ln -s /etc/passwd  tmp/LINK
+exec ln -s /NOSUCHFILE  tmp/BROKEN
+
+find_start p { -H tmp/LINK tmp/BROKEN tmp -xtype l -printf "xtype is l: %p\n" , \! -xtype l -printf "xtype is not l: %p\n" }

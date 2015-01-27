@@ -1,0 +1,952 @@
+# Serbian translation of grep
+# Copyright (C) 2012 Free Software Foundation, Inc.
+# This file is distributed under the same license as the grep package.
+# Danilo Segan <dsegan@gmx.net>, 2003.
+# Мирослав Николић <miroslavnikolic@rocketmail.com>, 2011, 2012.
+msgid ""
+msgstr ""
+"Project-Id-Version: grep-2.11\n"
+"Report-Msgid-Bugs-To: bug-grep@gnu.org\n"
+"POT-Creation-Date: 2012-04-23 16:08+0200\n"
+"PO-Revision-Date: 2012-03-25 03:26+0200\n"
+"Last-Translator: Мирослав Николић <miroslavnikolic@rocketmail.com>\n"
+"Language-Team: Serbian <gnu@prevod.org>\n"
+"Language: sr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Virtaal 0.7.1\n"
+
+#: lib/argmatch.c:133
+#, c-format
+msgid "invalid argument %s for %s"
+msgstr "неисправан аргумент %s за %s"
+
+#: lib/argmatch.c:134
+#, c-format
+msgid "ambiguous argument %s for %s"
+msgstr "двосмислени аргумент %s за %s"
+
+#: lib/argmatch.c:153
+msgid "Valid arguments are:"
+msgstr "Исправни аргументи су:"
+
+#: lib/closeout.c:112 src/main.c:894
+#, c-format
+msgid "write error"
+msgstr "грешка у писању"
+
+#: lib/error.c:188
+msgid "Unknown system error"
+msgstr "Непозната системска грешка"
+
+#: lib/getopt.c:547 lib/getopt.c:576
+#, c-format
+msgid "%s: option '%s' is ambiguous; possibilities:"
+msgstr "%s: опција „%s“ је двосмислена; могућности:"
+
+#: lib/getopt.c:624 lib/getopt.c:628
+#, c-format
+msgid "%s: option '--%s' doesn't allow an argument\n"
+msgstr "%s: опција „--%s“ не дозвољава аргумент\n"
+
+#: lib/getopt.c:637 lib/getopt.c:642
+#, c-format
+msgid "%s: option '%c%s' doesn't allow an argument\n"
+msgstr "%s: опција „%c%s“ не дозвољава аргумент\n"
+
+#: lib/getopt.c:685 lib/getopt.c:704
+#, c-format
+msgid "%s: option '--%s' requires an argument\n"
+msgstr "%s: опција „--%s“ захтева аргумент\n"
+
+#: lib/getopt.c:742 lib/getopt.c:745
+#, c-format
+msgid "%s: unrecognized option '--%s'\n"
+msgstr "%s: непрепознатљива опција „--%s“\n"
+
+#: lib/getopt.c:753 lib/getopt.c:756
+#, c-format
+msgid "%s: unrecognized option '%c%s'\n"
+msgstr "%s: непрепознатљива опција „%c%s“\n"
+
+#: lib/getopt.c:805 lib/getopt.c:808
+#, c-format
+msgid "%s: invalid option -- '%c'\n"
+msgstr "%s: неисправна опција —— „%c“\n"
+
+#: lib/getopt.c:861 lib/getopt.c:878 lib/getopt.c:1088 lib/getopt.c:1106
+#, c-format
+msgid "%s: option requires an argument -- '%c'\n"
+msgstr "%s: опција захтева аргумент —— „%c“\n"
+
+#: lib/getopt.c:934 lib/getopt.c:950
+#, c-format
+msgid "%s: option '-W %s' is ambiguous\n"
+msgstr "%s: опција „-W %s“ је двосмислена\n"
+
+#: lib/getopt.c:974 lib/getopt.c:992
+#, c-format
+msgid "%s: option '-W %s' doesn't allow an argument\n"
+msgstr "%s: опција „-W %s“ не дозвољава аргумент\n"
+
+#: lib/getopt.c:1013 lib/getopt.c:1031
+#, c-format
+msgid "%s: option '-W %s' requires an argument\n"
+msgstr "%s: опција „-W %s“ захтева аргумент\n"
+
+#: lib/obstack.c:413 lib/obstack.c:415 lib/xalloc-die.c:34 src/kwset.c:178
+#: src/kwset.c:186 src/kwset.c:409 src/pcresearch.c:153
+#, c-format
+msgid "memory exhausted"
+msgstr "меморија је потрошена"
+
+#: lib/openat-die.c:38
+#, c-format
+msgid "unable to record current working directory"
+msgstr ""
+
+#: lib/openat-die.c:57
+#, c-format
+msgid "failed to return to initial working directory"
+msgstr ""
+
+#. TRANSLATORS:
+#. Get translations for open and closing quotation marks.
+#. The message catalog should translate "`" to a left
+#. quotation mark suitable for the locale, and similarly for
+#. "'".  For example, a French Unicode local should translate
+#. these to U+00AB (LEFT-POINTING DOUBLE ANGLE
+#. QUOTATION MARK), and U+00BB (RIGHT-POINTING DOUBLE ANGLE
+#. QUOTATION MARK), respectively.
+#.
+#. If the catalog has no translation, we will try to
+#. use Unicode U+2018 (LEFT SINGLE QUOTATION MARK) and
+#. Unicode U+2019 (RIGHT SINGLE QUOTATION MARK).  If the
+#. current locale is not Unicode, locale_quoting_style
+#. will quote 'like this', and clocale_quoting_style will
+#. quote "like this".  You should always include translations
+#. for "`" and "'" even if U+2018 and U+2019 are appropriate
+#. for your locale.
+#.
+#. If you don't know what to put here, please see
+#. <http://en.wikipedia.org/wiki/Quotation_marks_in_other_languages>
+#. and use glyphs suitable for your language.
+#: lib/quotearg.c:312
+msgid "`"
+msgstr "„"
+
+#: lib/quotearg.c:313
+msgid "'"
+msgstr "“"
+
+#: lib/regcomp.c:130
+msgid "Success"
+msgstr "Успешно"
+
+#: lib/regcomp.c:133
+msgid "No match"
+msgstr "Нема подударања"
+
+#: lib/regcomp.c:136
+msgid "Invalid regular expression"
+msgstr "Неисправан регуларан израз"
+
+#: lib/regcomp.c:139
+msgid "Invalid collation character"
+msgstr "Неисправан знак поретка"
+
+#: lib/regcomp.c:142
+msgid "Invalid character class name"
+msgstr "Неисправан назив класе знака"
+
+#: lib/regcomp.c:145
+msgid "Trailing backslash"
+msgstr "Водећа контра коса црта"
+
+#: lib/regcomp.c:148
+msgid "Invalid back reference"
+msgstr "Неисправна повратна референца"
+
+#: lib/regcomp.c:151
+msgid "Unmatched [ or [^"
+msgstr "Не одговара [ или [^"
+
+#: lib/regcomp.c:154
+msgid "Unmatched ( or \\("
+msgstr "Не одговара ( или \\("
+
+#: lib/regcomp.c:157
+msgid "Unmatched \\{"
+msgstr "Не одговара \\{"
+
+#: lib/regcomp.c:160 src/dfa.c:1373
+msgid "Invalid content of \\{\\}"
+msgstr "Неисправан садржај \\{\\}"
+
+#: lib/regcomp.c:163
+msgid "Invalid range end"
+msgstr "Неисправан крај опсега"
+
+# исцрпљена? ;-)
+#: lib/regcomp.c:166
+msgid "Memory exhausted"
+msgstr "Меморија је потрошена"
+
+#: lib/regcomp.c:169
+msgid "Invalid preceding regular expression"
+msgstr "Неисправан регуларан израз који претходи"
+
+#: lib/regcomp.c:172
+msgid "Premature end of regular expression"
+msgstr "Прерани крај регуларног израза"
+
+#: lib/regcomp.c:175 src/dfa.c:1376
+msgid "Regular expression too big"
+msgstr "Регуларни израз је превелик"
+
+#: lib/regcomp.c:178
+msgid "Unmatched ) or \\)"
+msgstr "Не одговара ) или \\)"
+
+#: lib/regcomp.c:703
+msgid "No previous regular expression"
+msgstr "Нема претходног регуларног израза"
+
+#: lib/version-etc.c:74
+#, c-format
+msgid "Packaged by %s (%s)\n"
+msgstr "Запаковао је %s (%s)\n"
+
+#: lib/version-etc.c:77
+#, c-format
+msgid "Packaged by %s\n"
+msgstr "Запаковао је %s\n"
+
+#. TRANSLATORS: Translate "(C)" to the copyright symbol
+#. (C-in-a-circle), if this symbol is available in the user's
+#. locale.  Otherwise, do not translate "(C)"; leave it as-is.
+#: lib/version-etc.c:84
+msgid "(C)"
+msgstr "(C)"
+
+#: lib/version-etc.c:86
+msgid ""
+"\n"
+"License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl."
+"html>.\n"
+"This is free software: you are free to change and redistribute it.\n"
+"There is NO WARRANTY, to the extent permitted by law.\n"
+"\n"
+msgstr ""
+"\n"
+"Лиценца ОЈЛв3+: ГНУ ОЈЛ издање 3 или касније <http://gnu.org/licenses/gpl."
+"html>.\n"
+"Ово је слободан софтвер: слободни сте да га мењате и расподељујете.\n"
+"Не постоји НИКАКВА ГАРАНЦИЈА, у оквирима дозвољеним законом.\n"
+"\n"
+
+#. TRANSLATORS: %s denotes an author name.
+#: lib/version-etc.c:102
+#, c-format
+msgid "Written by %s.\n"
+msgstr "Написао је %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#: lib/version-etc.c:106
+#, c-format
+msgid "Written by %s and %s.\n"
+msgstr "Написали су %s и %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#: lib/version-etc.c:110
+#, c-format
+msgid "Written by %s, %s, and %s.\n"
+msgstr "Написали су %s, %s, и %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:117
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"and %s.\n"
+msgstr ""
+"Написали су %s, %s, %s,\n"
+"и %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:124
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, and %s.\n"
+msgstr ""
+"Написали су %s, %s, %s,\n"
+"%s, и %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:131
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, %s, and %s.\n"
+msgstr ""
+"Написали су %s, %s, %s,\n"
+"%s, %s, и %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:139
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, %s, %s, and %s.\n"
+msgstr ""
+"Написали су %s, %s, %s,\n"
+"%s, %s, %s, и %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:147
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, %s, %s, %s,\n"
+"and %s.\n"
+msgstr ""
+"Написали су %s, %s, %s,\n"
+"%s, %s, %s, %s,\n"
+"и %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:156
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, %s, %s, %s,\n"
+"%s, and %s.\n"
+msgstr ""
+"Написали су %s, %s, %s,\n"
+"%s, %s, %s, %s,\n"
+"%s, и %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:167
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, %s, %s, %s,\n"
+"%s, %s, and others.\n"
+msgstr ""
+"Написали су %s, %s, %s,\n"
+"%s, %s, %s, %s,\n"
+"%s, %s, и други.\n"
+
+#. TRANSLATORS: The placeholder indicates the bug-reporting address
+#. for this package.  Please add _another line_ saying
+#. "Report translation bugs to <...>\n" with the address for translation
+#. bugs (typically your translation team's web or email address).
+#: lib/version-etc.c:245 src/main.c:1572
+#, c-format
+msgid ""
+"\n"
+"Report bugs to: %s\n"
+msgstr ""
+"\n"
+"Грешке пријавите на: %s\n"
+
+#: lib/version-etc.c:247
+#, c-format
+msgid "Report %s bugs to: %s\n"
+msgstr "Грешке %s пријавите на: %s\n"
+
+#: lib/version-etc.c:251
+#, c-format
+msgid "%s home page: <%s>\n"
+msgstr "%s матична страница: <%s>\n"
+
+#: lib/version-etc.c:253
+#, c-format
+msgid "%s home page: <http://www.gnu.org/software/%s/>\n"
+msgstr "%s матична страница: <http://www.gnu.org/software/%s/>\n"
+
+#: lib/version-etc.c:256 src/main.c:1575
+msgid "General help using GNU software: <http://www.gnu.org/gethelp/>\n"
+msgstr "Општа помоћ користећи ГНУ софтвер: <http://www.gnu.org/gethelp/>\n"
+
+#: lib/xstrtol-error.c:63
+#, c-format
+msgid "invalid %s%s argument '%s'"
+msgstr "неисправан %s%s аргумент „%s“"
+
+#: lib/xstrtol-error.c:68
+#, c-format
+msgid "invalid suffix in %s%s argument '%s'"
+msgstr "неисправан суфикс у %s%s аргументу „%s“"
+
+#: lib/xstrtol-error.c:72
+#, c-format
+msgid "%s%s argument '%s' too large"
+msgstr "%s%s аргумент „%s“ је превелик"
+
+#: src/dfa.c:953 src/dfa.c:956 src/dfa.c:976 src/dfa.c:986 src/dfa.c:998
+#: src/dfa.c:1049 src/dfa.c:1058 src/dfa.c:1061 src/dfa.c:1066 src/dfa.c:1079
+#: src/dfa.c:1137
+msgid "unbalanced ["
+msgstr "неуравнотежена ["
+
+#: src/dfa.c:1007
+msgid "invalid character class"
+msgstr "неисправна класа знака"
+
+#: src/dfa.c:1174
+msgid "character class syntax is [[:space:]], not [:space:]"
+msgstr "синтакса класе знака је [[:размак:]], а не [:размак:]"
+
+#: src/dfa.c:1226
+msgid "unfinished \\ escape"
+msgstr "недовршена \\ излазим"
+
+#: src/dfa.c:1761
+msgid "unbalanced ("
+msgstr "неуравнотежена ("
+
+#: src/dfa.c:1891
+msgid "no syntax specified"
+msgstr "синтакса није наведена"
+
+#: src/dfa.c:1899
+msgid "unbalanced )"
+msgstr "неуравнотежена )"
+
+#: src/egrep.c:16
+msgid "PATTERN is an extended regular expression (ERE).\n"
+msgstr "ШАБЛОН је проширени регуларан израз (ERE).\n"
+
+#: src/egrep.c:18
+msgid "Invocation as 'egrep' is deprecated; use 'grep -E' instead.\n"
+msgstr "Позив као „egrep“ није одобрен; користите „grep -E“ уместо тога.\n"
+
+#: src/fgrep.c:10
+msgid "PATTERN is a set of newline-separated fixed strings.\n"
+msgstr "ШАБЛОН је скуп сталних низова у новим редовима.\n"
+
+#: src/fgrep.c:12
+msgid "Invocation as 'fgrep' is deprecated; use 'grep -F' instead.\n"
+msgstr "Позив као „fgrep“ није одобрен; користите „grep -F“ уместо тога.\n"
+
+#: src/grep.c:32
+msgid "PATTERN is, by default, a basic regular expression (BRE).\n"
+msgstr "ШАБЛОН је, по основи, основни регуларан израз (BRE).\n"
+
+#: src/grep.c:34
+msgid ""
+"'egrep' means 'grep -E'.  'fgrep' means 'grep -F'.\n"
+"Direct invocation as either 'egrep' or 'fgrep' is deprecated.\n"
+msgstr ""
+"„egrep“ значи „grep -E“.  „fgrep“ значи „grep -F“.\n"
+"Директно призивање као „egrep“ или „fgrep“ није одобрено.\n"
+
+#. This is a proper name. See the gettext manual, section Names.
+#: src/main.c:58
+msgid "Mike Haertel"
+msgstr "Мајк Хартел"
+
+#: src/main.c:59
+msgid "others, see <http://git.sv.gnu.org/cgit/grep.git/tree/AUTHORS>"
+msgstr "остали, погледајте <http://git.sv.gnu.org/cgit/grep.git/tree/AUTHORS>"
+
+#: src/main.c:448
+msgid "invalid context length argument"
+msgstr "неисправан аргумент дужине контекста"
+
+#: src/main.c:503
+msgid "lseek failed"
+msgstr "„lseek“ није успело"
+
+#: src/main.c:650
+#, c-format
+msgid "input is too large to count"
+msgstr "улаз је превелик за пребројавање"
+
+#: src/main.c:1205
+#, c-format
+msgid "Binary file %s matches\n"
+msgstr "Бинарна датотека %s одговара\n"
+
+#: src/main.c:1256
+#, c-format
+msgid "warning: %s: %s"
+msgstr "упозорење: %s: %s"
+
+#: src/main.c:1257
+msgid "recursive directory loop"
+msgstr "рекурзивно вртење кроз директоријуме"
+
+#: src/main.c:1400
+#, c-format
+msgid "input file %s is also the output"
+msgstr "улазна датотека %s је такође излаз"
+
+#: src/main.c:1458
+msgid "(standard input)"
+msgstr "(стандардни улаз)"
+
+#: src/main.c:1474 src/main.c:1481
+#, c-format
+msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
+msgstr "Употреба: %s [ОПЦИЈА]... ШАБЛОН [ДАТОТЕКА]...\n"
+
+#: src/main.c:1476
+#, c-format
+msgid "Try '%s --help' for more information.\n"
+msgstr "Пробајте „%s --help“ за више података.\n"
+
+#: src/main.c:1482
+#, c-format
+msgid "Search for PATTERN in each FILE or standard input.\n"
+msgstr "Тражи наведени ШАБЛОН у свакој датотеци или стандардном улазу.\n"
+
+#: src/main.c:1485
+#, c-format
+msgid ""
+"Example: %s -i 'hello world' menu.h main.c\n"
+"\n"
+"Regexp selection and interpretation:\n"
+msgstr ""
+"Пример: %s -i „здраво свете“ изборник.h главно.c\n"
+"\n"
+"Избор регуларних израза и обрада:\n"
+
+#: src/main.c:1490
+#, c-format
+msgid ""
+"  -E, --extended-regexp     PATTERN is an extended regular expression (ERE)\n"
+"  -F, --fixed-strings       PATTERN is a set of newline-separated fixed "
+"strings\n"
+"  -G, --basic-regexp        PATTERN is a basic regular expression (BRE)\n"
+"  -P, --perl-regexp         PATTERN is a Perl regular expression\n"
+msgstr ""
+"  -E, --extended-regexp           ШАБЛОН је проширени регуларан израз\n"
+"  -F, --fixed-strings             ШАБЛОН је скуп сталних ниски у новим "
+"редовима\n"
+"  -G, --basic-regexp              ШАБЛОН је основни регуларан израз\n"
+"  -P, --perl-regexp               ШАБЛОН је Перлов регуларан израз\n"
+
+#: src/main.c:1496
+#, c-format
+msgid ""
+"  -e, --regexp=PATTERN      use PATTERN for matching\n"
+"  -f, --file=FILE           obtain PATTERN from FILE\n"
+"  -i, --ignore-case         ignore case distinctions\n"
+"  -w, --word-regexp         force PATTERN to match only whole words\n"
+"  -x, --line-regexp         force PATTERN to match only whole lines\n"
+"  -z, --null-data           a data line ends in 0 byte, not newline\n"
+msgstr ""
+"  -e, --regexp=ШАБЛОН             користи ШАБЛОН за подударање\n"
+"  -f, --file=ДАТОТЕКА             преузима ШАБЛОН из ДАТОТЕКЕ\n"
+"  -i, --ignore-case               занемарује разлике у величини слова\n"
+"  -w, --word-regexp               присиљава ШАБЛОН да одговара једино целим "
+"речима\n"
+"  -x, --line-regexp               присиљава ШАБЛОН да одговара једино целим "
+"редовима\n"
+"  -z, --null-data                 ред података се завршава 0-бајтом, не "
+"новим редом\n"
+
+#: src/main.c:1503
+#, c-format
+msgid ""
+"\n"
+"Miscellaneous:\n"
+"  -s, --no-messages         suppress error messages\n"
+"  -v, --invert-match        select non-matching lines\n"
+"  -V, --version             print version information and exit\n"
+"      --help                display this help and exit\n"
+"      --mmap                deprecated no-op; evokes a warning\n"
+msgstr ""
+"\n"
+"Разно:\n"
+"  -s, --no-messages               искључује поруке о грешкама\n"
+"  -v, --invert-match              бира не-одговарајуће редове\n"
+"  -V, --version                   исписује податке о издању и излази\n"
+"      --help                      приказује ову помоћ и излази\n"
+"      --mmap                      занемарено; призива упозорење\n"
+
+#: src/main.c:1511
+#, c-format
+msgid ""
+"\n"
+"Output control:\n"
+"  -m, --max-count=NUM       stop after NUM matches\n"
+"  -b, --byte-offset         print the byte offset with output lines\n"
+"  -n, --line-number         print line number with output lines\n"
+"      --line-buffered       flush output on every line\n"
+"  -H, --with-filename       print the file name for each match\n"
+"  -h, --no-filename         suppress the file name prefix on output\n"
+"      --label=LABEL         use LABEL as the standard input file name "
+"prefix\n"
+msgstr ""
+"\n"
+"Излазне контроле:\n"
+"  -m, --max-count=БРОЈ            зауставља након БРОЈА поклапања\n"
+"  -b, --byte-offset               исписује померај бајта уз редове излаза\n"
+"  -n, --line-number               исписује број реда уз редове излаза\n"
+"      --line-buffered             претаче излаз на сваком реду\n"
+"  -H, --with-filename             исписује назив датотеке за свако "
+"поклапање\n"
+"  -h, --no-filename               потискује додавање префикса називу "
+"датотеке на излазу\n"
+"      --label=НАТПИС              користи НАТПИС као префикс назива датотеке "
+"стандардног улаза\n"
+
+#: src/main.c:1522
+#, c-format
+msgid ""
+"  -o, --only-matching       show only the part of a line matching PATTERN\n"
+"  -q, --quiet, --silent     suppress all normal output\n"
+"      --binary-files=TYPE   assume that binary files are TYPE;\n"
+"                            TYPE is `binary', `text', or `without-match'\n"
+"  -a, --text                equivalent to --binary-files=text\n"
+msgstr ""
+"  -o, --only-matching             приказује само део реда који одговара "
+"ШАБЛОНУ\n"
+"  -q, --quiet, --silent           потискује све нормалне излазе\n"
+"      --binary-files=ВРСТА        сматра да су извршне датотеке ВРСТЕ;\n"
+"                                  ВРСТА може бити „binary“, „text“, или "
+"„without-match“\n"
+"  -a, --text                      исто као и „--binary-files=text“\n"
+
+#: src/main.c:1529
+#, fuzzy, c-format
+msgid ""
+"  -I                        equivalent to --binary-files=without-match\n"
+"  -d, --directories=ACTION  how to handle directories;\n"
+"                            ACTION is `read', `recurse', or `skip'\n"
+"  -D, --devices=ACTION      how to handle devices, FIFOs and sockets;\n"
+"                            ACTION is `read' or `skip'\n"
+"  -r, --recursive           like --directories=recurse\n"
+"  -R, --dereference-recursive  likewise, but follow all symlinks\n"
+msgstr ""
+"  -I                              исто као и „--binary-files=without-match“\n"
+"  -d, --directories=РАДЊА         како да рукује директоријумима;\n"
+"                                  РАДЊА може бити „read“, „recurse“, или "
+"„skip“\n"
+"  -D, --devices=РАДЊА             како да рукује уређајима, ФИФО-има и "
+"прикључницама;\n"
+"                                  РАДЊА може бити „read“ или „skip“\n"
+"  -R, -r, --recursive             исто као и „--directories=recurse“\n"
+
+#: src/main.c:1538
+#, c-format
+msgid ""
+"      --include=FILE_PATTERN  search only files that match FILE_PATTERN\n"
+"      --exclude=FILE_PATTERN  skip files and directories matching "
+"FILE_PATTERN\n"
+"      --exclude-from=FILE   skip files matching any file pattern from FILE\n"
+"      --exclude-dir=PATTERN  directories that match PATTERN will be "
+"skipped.\n"
+msgstr ""
+"      --include=ДАТОТЕКА_ШАБЛОН   тражи само датотеке које се поклапају са "
+"ДАТОТЕКА_ШАБЛОН\n"
+"      --exclude=ДАТОТЕКА_ШАБЛОН   прескаче датотеке и директоријуме који се "
+"поклапају са ДАТОТЕКА_ШАБЛОН\n"
+"      --exclude-from=ДАТОТЕКА     прескаче датотеке које се поклапају са "
+"било којим шаблоном датотеке из ДАТОТЕКЕ\n"
+"      --exclude-dir=ШАБЛОН        директоријуми који се поклапају са "
+"ШАБЛОНОМ биће прескочени.\n"
+
+#: src/main.c:1544
+#, c-format
+msgid ""
+"  -L, --files-without-match  print only names of FILEs containing no match\n"
+"  -l, --files-with-matches  print only names of FILEs containing matches\n"
+"  -c, --count               print only a count of matching lines per FILE\n"
+"  -T, --initial-tab         make tabs line up (if needed)\n"
+"  -Z, --null                print 0 byte after FILE name\n"
+msgstr ""
+"  -L, --files-without-match       исписује само називе ДАТОТЕКА које не "
+"садрже поклапања\n"
+"  -l, --files-with-matches        исписује само називе ДАТОТЕКА које садрже "
+"поклапања\n"
+"  -c, --count                     исписује само број поклопљених редова по "
+"ДАТОТЕЦИ\n"
+"  -T, --initial-tab               помера табове ред горе (ако је потребно)\n"
+"  -Z, --null                      исписује 0-ти бајт након назива ДАТОТЕКЕ\n"
+
+#: src/main.c:1550
+#, c-format
+msgid ""
+"\n"
+"Context control:\n"
+"  -B, --before-context=NUM  print NUM lines of leading context\n"
+"  -A, --after-context=NUM   print NUM lines of trailing context\n"
+"  -C, --context=NUM         print NUM lines of output context\n"
+msgstr ""
+"\n"
+"Контроле контекста:\n"
+"  -B, --before-context=БРОЈ       исписује БРОЈ редова водећег контекста\n"
+"  -A, --after-context=БРОЈ        исписује БРОЈ редова пратећег контекста\n"
+"  -C, --context=БРОЈ              исписује БРОЈ редова излазног контекста\n"
+
+#: src/main.c:1557
+#, c-format
+msgid ""
+"  -NUM                      same as --context=NUM\n"
+"      --color[=WHEN],\n"
+"      --colour[=WHEN]       use markers to highlight the matching strings;\n"
+"                            WHEN is `always', `never', or `auto'\n"
+"  -U, --binary              do not strip CR characters at EOL (MSDOS/"
+"Windows)\n"
+"  -u, --unix-byte-offsets   report offsets as if CRs were not there\n"
+"                            (MSDOS/Windows)\n"
+"\n"
+msgstr ""
+"  -БРОЈ                           исто као „--context=БРОЈ“\n"
+"      --color[=КАДА],\n"
+"      --colour[=КАДА]             користи обележиваче за истицање "
+"поклапајућих ниски\n"
+"                                  КАДА може бити „always“, „never“ или "
+"„auto“.\n"
+"  -U, --binary                    не исеца ЦР знакове на крају реда (МСДОС/"
+"Виндоуз)\n"
+"  -u, --unix-byte-offsets         пријављује помераје као да ЦР-ови нису "
+"били ту (МСДОС/Виндоуз)\n"
+"\n"
+
+#: src/main.c:1567
+#, c-format
+msgid ""
+"When FILE is -, read standard input.  With no FILE, read . if a command-"
+"line\n"
+"-r is given, - otherwise.  If fewer than two FILEs are given, assume -h.\n"
+"Exit status is 0 if any line is selected, 1 otherwise;\n"
+"if any error occurs and -q is not given, the exit status is 2.\n"
+msgstr ""
+"Када је ДАТОТЕКА „-“, чита стандардни улаз. Без ДАТОТЕКЕ, чита . ако је "
+"задато „-r“,\n"
+"у супротном „-“. Ако је наведено мање од две ДАТОТЕКЕ, подразумева се „-h“.\n"
+"Излазно стање је 0 ако је изабран неки ред, у супротном 1;\n"
+"ако је дошло до неке грешке а „-q“ није дато, онда је излазно стање 2.\n"
+
+#: src/main.c:1573
+#, c-format
+msgid "GNU Grep home page: <%s>\n"
+msgstr "Матична страница ГНУ Грепа: <%s>\n"
+
+#: src/main.c:1605
+#, c-format
+msgid "%s can only use the %s pattern syntax"
+msgstr "%s може да користи само %s синтаксу шаблона"
+
+#: src/main.c:1608
+#, c-format
+msgid "conflicting matchers specified"
+msgstr "наведени су трагачи у сукобу"
+
+#: src/main.c:1622
+#, c-format
+msgid "invalid matcher %s"
+msgstr "неисправан трагач %s"
+
+#: src/main.c:1870
+#, c-format
+msgid "unknown devices method"
+msgstr "непознат метод уређаја"
+
+#: src/main.c:1999
+#, c-format
+msgid "invalid max count"
+msgstr "неисправан највећи број"
+
+#: src/main.c:2056
+#, c-format
+msgid "unknown binary-files type"
+msgstr "непозната врста бинарних датотека"
+
+#: src/main.c:2119
+#, c-format
+msgid "the --mmap option has been a no-op since 2010"
+msgstr "„--mmap“ опција је била без опције од 2010"
+
+#: src/pcresearch.c:42
+msgid ""
+"support for the -P option is not compiled into this --disable-perl-regexp "
+"binary"
+msgstr ""
+"подршка за „-P“ опцију није преведена у овој „--disable-perl-regexp“ извршној"
+
+#: src/pcresearch.c:56
+#, c-format
+msgid "the -P option only supports a single pattern"
+msgstr "опција „-P“ подржава само самосталне шаблоне"
+
+#: src/pcresearch.c:110
+#, c-format
+msgid "internal error"
+msgstr "унутрашња грешка"
+
+#: src/pcresearch.c:138
+#, c-format
+msgid "exceeded PCRE's line length limit"
+msgstr "прекорачено је ограничење дужине реда ПЦРЕ-а"
+
+#: src/pcresearch.c:157
+#, c-format
+msgid "exceeded PCRE's backtracking limit"
+msgstr "прекорачено је ПЦРЕ-ово ограничење тражења уназад"
+
+#~ msgid "unfinished repeat count"
+#~ msgstr "недовршен број понављања"
+
+#~ msgid "malformed repeat count"
+#~ msgstr "лош облик броја понављања"
+
+#~ msgid "writing output"
+#~ msgstr "записујем излаз"
+
+#~ msgid ""
+#~ "in GREP_COLORS=\"%s\", the \"%s\" capacity needs a value (\"=...\"); "
+#~ "skipped"
+#~ msgstr ""
+#~ "у GREP_COLORS=\"%s\", „%s“ могућност треба вредност (\"=...\"); прескачем"
+
+#~ msgid ""
+#~ "in GREP_COLORS=\"%s\", the \"%s\" capacity is boolean and cannot take a "
+#~ "value (\"=%s\"); skipped"
+#~ msgstr ""
+#~ "у GREP_COLORS=\"%s\", „%s“ могућност је логичка и не може да има вредност "
+#~ "(\"=%s\"); прескачем"
+
+#~ msgid "in GREP_COLORS=\"%s\", the \"%s\" capacity %s"
+#~ msgstr "у GREP_COLORS=\"%s\", „%s“ могућност %s"
+
+#~ msgid ""
+#~ "stopped processing of ill-formed GREP_COLORS=\"%s\" at remaining "
+#~ "substring \"%s\""
+#~ msgstr ""
+#~ "застој при обради лоше формираног GREP_COLORS=\"%s\" на преосталој "
+#~ "поднисци „%s“"
+
+#~ msgid "out of memory"
+#~ msgstr "понестало меморије"
+
+# bug: is this "..."<>" ..." difference neccessary?
+#~ msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
+#~ msgstr "Употреба: %s [ОПЦИЈА]... ШАБЛОН [ДАТОТЕКА] ...\n"
+
+#~ msgid ""
+#~ "\n"
+#~ "Output control:\n"
+#~ "  -m, --max-count=NUM       stop after NUM matches\n"
+#~ "  -b, --byte-offset         print the byte offset with output lines\n"
+#~ "  -n, --line-number         print line number with output lines\n"
+#~ "      --line-buffered       flush output on every line\n"
+#~ "  -H, --with-filename       print the filename for each match\n"
+#~ "  -h, --no-filename         suppress the prefixing filename on output\n"
+#~ "      --label=LABEL         print LABEL as filename for standard input\n"
+#~ "  -o, --only-matching       show only the part of a line matching "
+#~ "PATTERN\n"
+#~ "  -q, --quiet, --silent     suppress all normal output\n"
+#~ "      --binary-files=TYPE   assume that binary files are TYPE\n"
+#~ "                            TYPE is 'binary', 'text', or 'without-match'\n"
+#~ "  -a, --text                equivalent to --binary-files=text\n"
+#~ "  -I                        equivalent to --binary-files=without-match\n"
+#~ "  -d, --directories=ACTION  how to handle directories\n"
+#~ "                            ACTION is 'read', 'recurse', or 'skip'\n"
+#~ "  -D, --devices=ACTION      how to handle devices, FIFOs and sockets\n"
+#~ "                            ACTION is 'read' or 'skip'\n"
+#~ "  -R, -r, --recursive       equivalent to --directories=recurse\n"
+#~ "      --include=PATTERN     files that match PATTERN will be examined\n"
+#~ "      --exclude=PATTERN     files that match PATTERN will be skipped.\n"
+#~ "      --exclude-from=FILE   files that match PATTERN in FILE will be "
+#~ "skipped.\n"
+#~ "  -L, --files-without-match only print FILE names containing no match\n"
+#~ "  -l, --files-with-matches  only print FILE names containing matches\n"
+#~ "  -c, --count               only print a count of matching lines per "
+#~ "FILE\n"
+#~ "  -Z, --null                print 0 byte after FILE name\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Управљање исписом:\n"
+#~ "  -m, --max-count=БРОЈ      стани након БРОЈ поклапања\n"
+#~ "  -b, --byte-offset         испиши бајтно растојање уз излазне редове\n"
+#~ "  -n, --line-number         испиши број реда уз излазне редове\n"
+#~ "      --line-buffered       прочисти излаз после сваког реда\n"
+#~ "  -H, --with-filename       испиши име датотеке за свако поклапање\n"
+#~ "  -h, --no-filename         искључи испис имена датотеке испред излаза\n"
+#~ "      --label=ОЗНАКА        испиши ОЗНАКА као име датотеке за стандардни "
+#~ "улаз\n"
+#~ "  -o, --only-matching       покажи само део реда којо одговара ШАБЛОН-у\n"
+#~ "  -q, --quiet, --silent     искључи сав обичан испис\n"
+#~ "      --binary-files=ВРСТА  претпостави да су бинарне датотеке типа "
+#~ "ВРСТА\n"
+#~ "                            ВРСТА је „binary“, „text“ или „without-"
+#~ "match“\n"
+#~ "  -a, --text                исто као --binary-files=text\n"
+#~ "  -I                        исто као --binary-files=without-match\n"
+#~ "  -d, --directories=АКЦИЈА  како да баратам директоријумима\n"
+#~ "                            АКЦИЈА је „read“, „recurse“ или „skip“\n"
+#~ "  -D, --devices=АКЦИЈА      како да барата уређајима, FIFO-има и "
+#~ "сокетима\n"
+#~ "                            АКЦИЈА је „read“ или „skip“\n"
+#~ "  -R, -r, --recursive       исто као --directories=recurse\n"
+#~ "      --include=ШАБЛОН      испитују се датотеке које одговарају ШАБЛОН-"
+#~ "у\n"
+#~ "      --exclude=ШАБЛОН      прескачу се датотеке које одговарају ШАБЛОН-"
+#~ "у.\n"
+#~ "      --exclude-from=ДАТОТЕКА  прескачу се датотеке из ДАТОТЕКА које \n"
+#~ "                               одговарају ШАБЛОН-у\n"
+#~ "  -L, --files-without-match испиши једино имена датотека које не "
+#~ "одговарају\n"
+#~ "  -l, --files-with-matches  испиши само имена датотека које одговарају\n"
+#~ "  -c, --count               испиши само број поклапања редова по "
+#~ "датотеци\n"
+#~ "  -Z, --null                испиши 0-бајт након имена датотеке\n"
+
+#~ msgid ""
+#~ "\n"
+#~ "Report bugs to <bug-gnu-utils@gnu.org>.\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Пријавите грешке на <bug-gnu-utils@gnu.org>.\n"
+
+#~ msgid "unknown directories method"
+#~ msgstr "непознат метод директоријума"
+
+#~ msgid "%s (GNU grep) %s\n"
+#~ msgstr "%s (ГНУ греп) %s\n"
+
+#~ msgid ""
+#~ "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
+#~ msgstr ""
+#~ "Сва права задржана 1988, 1992-1999, 2000, 2001 Задужбина за слободни "
+#~ "софтвер.\n"
+
+#~ msgid ""
+#~ "This is free software; see the source for copying conditions. There is "
+#~ "NO\n"
+#~ "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR "
+#~ "PURPOSE.\n"
+#~ msgstr ""
+#~ "Ово је слободан софтвер; погледајте извор за услове умножавања. НЕМА\n"
+#~ "гаранције; чак ни за употребљивост или прилагођеност одређеној намени.\n"
+
+#~ msgid "The -P and -z options cannot be combined"
+#~ msgstr "Не могу се комбиновати опције -P и -z"
+
+#~ msgid "%s: illegal option -- %c\n"
+#~ msgstr "%s: неисправна опција — %c\n"

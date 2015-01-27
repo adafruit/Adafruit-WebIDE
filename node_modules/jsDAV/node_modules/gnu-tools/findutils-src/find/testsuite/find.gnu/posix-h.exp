@@ -1,0 +1,13 @@
+# Verifies that the POSIX -H option is correctly implemented,
+# but does this by using the GNU extension -printf.
+exec rm -rf tmp
+
+exec mkdir tmp
+exec ln -s /etc/passwd  tmp/LINK
+exec ln -s /NOSUCHFILE  tmp/BROKEN
+
+# If the file is not on the command line, the link is not 
+# dereferenced, and so tmp/LINK should appear at depth 1
+# but as type "l".  tmp itself appears first at depth 0 as 
+# a directory.
+find_start p { -H tmp/LINK tmp/BROKEN tmp -printf "H1: %y %d %p\n" }

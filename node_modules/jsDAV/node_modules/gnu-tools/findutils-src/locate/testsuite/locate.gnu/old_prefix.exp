@@ -1,0 +1,13 @@
+set tmp "tmp"
+exec rm -rf $tmp
+exec mkdir $tmp
+exec mkdir $tmp/subdir
+exec touch $tmp/subdir/________________________________________________________________________________fred1
+exec touch $tmp/subdir/________________________________________________________________________________fred2
+exec touch $tmp/subdir/________________________________________________________________________________fred3
+exec touch $tmp/subdir/________________________________________________________________________________fred4
+
+locate_start p "--changecwd=. --output=$tmp/locatedb --old-format  --localpaths=tmp/subdir 2>/dev/null" "--database=$tmp/locatedb tmp" {}
+
+
+exec rm -rf $tmp

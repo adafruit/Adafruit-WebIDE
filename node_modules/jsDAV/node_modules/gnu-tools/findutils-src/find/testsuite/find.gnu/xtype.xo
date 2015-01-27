@@ -1,0 +1,5 @@
+xtype is l: tmp/LINK
+xtype is l: tmp/BROKEN
+xtype is not l: tmp
+xtype is not l: tmp/LINK
+xtype is l: tmp/BROKEN

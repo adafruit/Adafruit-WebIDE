@@ -1,0 +1,34 @@
+  Copyright (C) 1992, 1997-2002, 2004-2012 Free Software Foundation, Inc.
+
+  Copying and distribution of this file, with or without modification,
+  are permitted in any medium without royalty provided the copyright
+  notice and this notice are preserved.
+
+The development source code is available via Git from Savannah: see
+<http://git.savannah.gnu.org/cgit/grep.git>.  The main project page is at
+<http://savannah.gnu.org/projects/grep/>.
+
+The source code in the Git uses autotools to generate some files. Before
+following the instructions in the INSTALL file for compiling grep, you
+need to run the bootstrap script. If you don't have the autotools
+installed on your system, see README-boot.
+
+Test releases are available at <http://alpha.gnu.org/gnu/grep/>.
+
+Please submit bug reports to <bug-grep@gnu.org>.
+
+If you are interested in the development of GNU grep, you may want to
+subscribe to the development mailing list.  To subscribe, send an email
+message to <bug-grep-request@gnu.org> with "subscribe" (without the
+quotation marks) in the subject header field (or in the body) of the
+email, or visit <http://lists.gnu.org/mailman/listinfo/bug-grep>.
+
+To follow development more closely, there is also the grep-commit mailing
+list to which log entries (one per commit) and diff output (one per
+modified file) from CVS are automatically sent.  To subscribe, send an
+email message to <grep-commit-request@gnu.org> with "subscribe" (without
+the quotation marks) in the subject header field (or in the body) of
+the email, or visit <http://lists.gnu.org/mailman/listinfo/grep-commit>.
+
+A web page containing information for GNU grep developers is at
+<http://www.gnu.org/software/grep/devel.html>.

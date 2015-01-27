@@ -1,0 +1,9 @@
+global FTSFIND
+global FINDFLAGS
+exec rm -rf tmp
+exec mkdir tmp tmp/top 
+proc createdir {} {
+    exec mkdir tmp/top/dir
+}
+find_start p {tmp -path tmp/top/dir -delete -print} "" "" createdir
+exec rm -rf tmp

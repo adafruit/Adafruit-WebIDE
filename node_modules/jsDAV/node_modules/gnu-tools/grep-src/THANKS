@@ -1,0 +1,100 @@
+  Copyright (C) 1992, 1997-2002, 2004-2012 Free Software Foundation, Inc.
+
+  Copying and distribution of this file, with or without modification,
+  are permitted in any medium without royalty provided the copyright
+  notice and this notice are preserved.
+
+Arnold Robbins             <arnold@skeeve.com>
+Akim Demaille              <akim@epita.fr>
+Alain Magloire             <alainm@gnu.org>
+Andreas Schwab             <schwab@suse.de>
+Andreas Ley                <andy@rz.uni-karlsruhe.de>
+Bastiaan "Darquan" Stougie <darquan@zonnet.nl>
+Ben Elliston               <bje@cygnus.com>
+Bernd Strieder             <strieder@student.uni-kl.de>
+Bernhard Rosenkraenzer     <bero@arklinux.org>
+Bob Proulx                 <rwp@hprwp.fc.hp.com>
+Brian Youmans              <3diff@gnu.org>
+Bruno Haible               <haible@ilog.fr>
+Christian Groessler        <cpg@aladdin.de>
+Corinna Vinschen           <vinschen@redhat.com>
+Dagobert Michelsen         <dam@opencsw.org>
+David Clissold             <cliss@austin.ibm.com>
+David J MacKenzie          <djm@catapult.va.pubnix.com>
+David O'Brien              <obrien@freebsd.org>
+Dmitry V. Levin            <ldv@altlinux.org>
+Egmont Koblinger           <egmont@gmail.com>
+Eli Zaretskii              <eliz@is.elta.co.il>
+Eric Blake                 <eblake@redhat.com>
+Fernando Basso             <fernandobasso.br@gmail.com>
+Florian La Roche           <laroche@redhat.com>
+Franc,ois Pinard           <pinard@IRO.UMontreal.CA>
+Gerald Stoller             <gerald_stoller@hotmail.com>
+Grant McDorman             <grant@isgtec.com>
+Greg Louis                 <glouis@dynamicro.on.ca>
+Guglielmo 'bond' Bondioni  <g.bondioni@libero.it>
+H. Merijn Brand            <h.m.brand@hccnet.nl>
+Harald Hanche-Olsen        <hanche@math.ntnu.no>
+Hans-Bernhard Broeker      <broeker@physik.rwth-aachen.de>
+Heikki Korpela             <heko@iki.fi>
+Igor O. Ladygin            <assa@zabtrans.ru>
+Ilya Basin                 <basinilya@gmail.com>
+Isamu Hasegawa             <isamu@yamato.ibm.com>
+Jaroslav Škarvada          <jskarvad@redhat.com>
+Jeff Bailey                <jbailey@nisa.net>
+Jim Hand                   <jhand@austx.tandem.com>
+Jim Meyering               <meyering@redhat.com>
+Jochen Hein                <jochen.hein@delphi.central.de>
+Joel N. Weber II           <devnull@gnu.org>
+Johan Walles               <johan.walles@gmail.com>
+John Hughes                <john@nitelite.calvacom.fr>
+Jorge Stolfi               <stolfi@dcc.unicamp.br>
+Juan Manuel Guerrero       <ST001906@HRZ1.HRZ.TU-Darmstadt.De>
+Julian Foad                <julianfoad@btopenworld.com>
+Karl Berry                 <karl@gnu.org>
+Karl Heuer                 <kwzh@gnu.org>
+Kaveh R. Ghazi             <ghazi@caip.rutgers.edu>
+Kazuro Furukawa            <furukawa@apricot.kek.jp>
+Keith Bostic               <bostic@bsdi.com>
+Krishna Sethuraman         <krishna@sgihub.corp.sgi.com>
+Kurt D Schwehr             <kdschweh@insci14.ucsd.edu>
+Ludovic Courtès            <ludo@gnu.org>
+Mark Waite                 <markw@mddmew.fc.hp.com>
+Martin P.J. Zinser         <zinser@decus.de>
+Martin Rex                 <martin.rex@sap-ag.de>
+Michael Aichlmayr          <mikla@nx.com>
+Mike Frysinger             <vapier@gentoo.org>
+Miles Bader                <miles@ccs.mt.nec.co.jp>
+Nelson H. F. Beebe         <beebe@math.utah.edu>
+Olaf Kirch                 <okir@ns.lst.de>
+Paolo Bonzini              <bonzini@gnu.org>
+Paul Eggert                <eggert@twinsun.com>
+Paul Kimoto                <kimoto@spacenet.tn.cornell.edu>
+Phillip C. Brisco          <phillip.craig.brisco@ccmail.census.gov>
+Philipp Kohlbecher         <xt28@gmx.de>
+Philippe Defert            <Philippe.Defert@cern.ch>
+Philippe De Muyter         <phdm@info.ucl.ac.be>
+Philip Hazel               <ph10@cus.cam.ac.uk>
+Rainer Orth                <ro@cebitec.uni-bielefeld.de>
+Roland Roberts             <rroberts@muller.com>
+Ruslan Ermilov             <ru@freebsd.org>
+Santiago Ruano Rincón      <santiago@debian.org>
+Santiago Vila              <sanvila@unex.es>
+Shannon Hill               <hill@synnet.com>
+Sotiris Vassilopoulos      <Sotiris.Vassilopoulos@betatech.gr>
+Standish Parsley           <adsspamtrap01@yahoo.com>
+Stewart Levin              <stew@sep.stanford.edu>
+Sven Joachim               <svenjoac@gmx.de>
+Sydoruk Stepan             <step@unitex.kiev.ua>
+Tapani Tarvainen           <tt@mit.jyu.fi>
+Tim Waugh                  <twaugh@redhat.com>
+Tom 'moof' Spindler        <dogcow@ccs.neu.edu>
+Tom Tromey                 <tromey@creche.cygnus.com>
+Tony Abou-Assaleh          <taa@acm.org>
+Ulrich Drepper             <drepper@cygnus.com>
+UEBAYASHI Masao            <masao@nf.enveng.titech.ac.jp>
+Uwe H. Steinfeld           <usteinfeld@gmx.net>
+Volker Borchert            <bt@teknon.de>
+Wichert Akkerman           <wichert@cistron.nl>
+William Bader              <william@nscs.fast.net>
+Wolfgang Schludi           <schludi@syscomp.de>

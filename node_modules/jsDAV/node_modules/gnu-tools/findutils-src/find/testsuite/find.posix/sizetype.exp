@@ -1,0 +1,6 @@
+# tests for -size -type
+exec rm -rf tmp
+exec mkdir tmp
+exec true > tmp/empty
+find_start p {tmp -size 0c -type f  }
+exec rm -rf tmp

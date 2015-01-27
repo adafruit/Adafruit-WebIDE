@@ -1,0 +1,5 @@
+# tests for -name
+exec rm -rf tmp
+exec mkdir tmp tmp/fred tmp/jim tmp/jim/1 tmp/shiela
+find_start p {tmp -name jim -prune -o -print }
+#exec rm -rf tmp

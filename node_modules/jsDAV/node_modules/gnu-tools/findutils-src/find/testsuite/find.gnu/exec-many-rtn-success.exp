@@ -1,0 +1,4 @@
+# POSIX: If the invoked command succeeds, -exec should return true if
+# it was punctuated with +, because that always returns true.  However,
+# the program as a whole should also return a zero exit status.
+find_start p { /tmp -exec true \{\} + -printf "yep\n" -quit }

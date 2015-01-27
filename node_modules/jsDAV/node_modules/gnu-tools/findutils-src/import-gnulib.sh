@@ -1,0 +1,305 @@
+#! /bin/sh
+#
+# import-gnulib.sh -- imports a copy of gnulib into findutils
+# Copyright (C) 2003,2004,2005,2006,2007 Free Software Foundation, Inc.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+##########################################################################
+#
+# This script is intended to populate the "gnulib" directory
+# with a subset of the gnulib code, as provided by "gnulib-tool".
+#
+# To use it, just run this script with the top-level sourec directory
+# as your working directory.
+
+# If CDPATH is set, it will sometimes print the name of the directory
+# to which you have moved.  Unsetting CDPATH prevents this, as does
+# prefixing it with ".".
+unset CDPATH
+
+## Defaults
+# cvsdir=/doesnotexist
+git_repo="git://git.savannah.gnu.org/gnulib.git"
+configfile="./import-gnulib.config"
+need_checkout=yes
+
+
+# Remember arguments for comments we inject into output files
+original_cmd_line_args="$@"
+
+usage() {
+    cat >&2 <<EOF
+usage: $0 [-d gnulib-directory]
+
+The default behaviour is to check out the Gnulib code via anonymous
+CVS (or update it if there is a version already checked out).  The
+checkout or update is performed to the gnulib version indicated in
+the configuration file $configfile.
+
+If you wish to work with a different version of gnulib, use the -d option
+to specify the directory containing the gnulib code.
+EOF
+}
+
+
+do_checkout () {
+    local gitdir="$1"
+    echo checking out gnulib from GIT in $gitdir
+
+    if [ -z "$gnulib_version" ] ; then
+	echo "Error: There should be a gnulib_version setting in $configfile, but there is not." >&2
+	exit 1
+    fi
+
+
+    if ! [ -d "$gitdir" ] ; then
+	if mkdir "$gitdir" ; then
+	echo "Created $gitdir"
+	else
+	echo "Failed to create $gitdir" >&2
+	exit 1
+	fi
+    fi
+
+    (
+	# Change directory unconditionally.  We used to do this to avoid
+	# the cvs client picking up defaults from findutils' ./CVS/*, but 
+	# now we just do it for the sake of a minimum change.
+	cd $gitdir
+
+	if test -d gnulib/.git ; then
+	  echo "Git repository was already initialised."
+	else
+	  echo "Cloning the git repository..."
+	  # In the future we may use a shallow clone to 
+	  # save bandwidth.
+	  git clone "$git_repo"
+	fi
+	cd gnulib
+	set -x
+	git fetch origin
+	git checkout "$gnulib_version"
+	set +x
+    )
+}
+
+run_gnulib_tool() {
+    local tool="$1"
+    if test -f "$tool"
+    then
+	true
+    else
+	echo "$tool does not exist, did you specify the right directory?" >&2
+	exit 1
+    fi
+
+    if test -x "$tool"
+    then
+	true
+    else
+	echo "$tool is not executable" >&2
+	exit 1
+    fi
+
+
+    if [ -d gnulib ]
+    then
+	echo "Warning: directory gnulib already exists." >&2
+    else
+	mkdir gnulib
+    fi
+
+    set -x
+    if "$tool" --import --symlink --with-tests --dir=. --lib=libgnulib --source-base=gnulib/lib --m4-base=gnulib/m4 $modules
+    then
+	set +x
+    else
+	set +x
+	echo "$tool failed, exiting." >&2
+	exit 1
+    fi
+
+    # gnulib-tool does not remove broken symlinks leftover from previous runs;
+    # this assumes GNU find, but should be a safe no-op if it is not
+    find -L gnulib -lname '*' -delete 2>/dev/null || :
+}
+
+rehack() {
+    echo "Updating the license of $1"
+    # Use cp to get the permissions right first
+    cp -fp "$1" "$1".new
+    sed -e  \
+'s/Free Software Foundation\([;,]\) either version [2]/Free Software Foundation\1 either version 3/' < "$1" > "$1".new
+    if cmp "$1" "$1".new >/dev/null
+    then
+	rm -f "$1".new
+    else
+	rm -f "$1" && mv "$1".new "$1"
+    fi
+}
+
+
+
+copyhack() {
+    src="$1"
+    dst="$2"
+    shift 2
+    if test -d "$dst" 
+    then
+	dst="$dst"/"$(basename $src)"
+    fi
+    cp -fp "$src" "$dst" && rehack "$dst"
+
+}
+
+
+update_licenses() {
+    for f in $gpl3_update_files 
+    do
+      rehack "$f" || exit
+    done
+}
+
+
+
+hack_gnulib_tool_output() {
+    local gnulibdir="${1}"
+    for file in $extra_files; do
+      case $file in
+	*/mdate-sh | */texinfo.tex) dest=doc;;
+	*) dest=build-aux;;
+      esac
+      copyhack "${gnulibdir}"/"$file" "$dest" || exit
+    done
+    
+
+
+
+    cat > gnulib/Makefile.am <<EOF
+# Copyright (C) 2004 Free Software Foundation, Inc.
+#
+# This file is free software, distributed under the terms of the GNU
+# General Public License.  As a special exception to the GNU General
+# Public License, this file may be distributed as part of a program
+# that contains a configuration script generated by Automake, under
+# the same distribution terms as the rest of that program.
+#
+# This file was generated by $0 $original_cmd_line_args.
+#
+SUBDIRS = lib
+EOF
+}
+
+
+refresh_output_files() {
+    aclocal -I m4 -I gnulib/m4     &&
+    autoheader                     &&
+    autoconf                       &&
+    automake --add-missing --copy 
+}
+
+
+update_version_file() {
+    local ver
+    outfile="lib/gnulib-version.c"
+    if [ -z "$gnulib_version" ] ; then
+	ver="unknown (locally modified code; no version number available)"
+    else
+	ver="$gnulib_version"
+    fi
+
+
+    cat > "${outfile}".new <<EOF
+/* This file is automatically generated by $0 and simply records which version of gnulib we used. */
+const char * const gnulib_version = "$ver";
+EOF
+    if test -f "$outfile" ; then
+	if diff "${outfile}".new "${outfile}" > /dev/null ; then
+	    rm "${outfile}".new
+	    return 0
+	fi
+    fi
+    mv "${outfile}".new "${outfile}"
+}
+
+
+move_cvsdir() {
+    local cvs_git_root=":pserver:anonymous@pserver.git.sv.gnu.org:/gnulib.git"
+
+    if test -d gnulib-cvs/gnulib/CVS
+    then
+      if test x"$(cat gnulib-cvs/gnulib/CVS/Root)" == x"$cvs_git_root"; then
+          # We cannot use the git-cvspserver interface because 
+          # "update -D" doesn't work.
+          echo "WARNING: Migrating from git-cvs-pserver to native git..." >&2
+          savedir=gnulib-cvs.before-nativegit-migration
+      else
+          # The old CVS repository is not updated any more.
+          echo "WARNING: Migrating from old CVS repository to native git" >&2
+          savedir=gnulib-cvs.before-git-migration
+      fi
+      mv gnulib-cvs $savedir || exit 1
+      echo "Please delete $savedir eventually"
+    fi
+}
+
+main() {
+    ## Option parsing
+    local gnulibdir=/doesnotexist
+    while getopts "d:a" opt
+    do
+      case "$opt" in
+	  d)  gnulibdir="$OPTARG" ; need_checkout=no ;;
+	  a)  refresh_output_files && update_licenses ; exit $? ;;
+	  **) usage; exit 1;;
+      esac
+    done
+
+    # We need the config file to tell us which modules
+    # to use, even if we don't want to know the CVS version.
+    . $configfile || exit 1
+
+    ## If -d was not given, do update
+    if [ $need_checkout = yes ] ; then
+	if ! git version > /dev/null; then
+	    cat >&2 <<EOF
+You now need the tool 'git' in order to check out the correct version
+of the gnulib code.  See http://git.or.cz/ for more information about git.
+EOF
+	    exit 1
+	fi
+	move_cvsdir
+	do_checkout gnulib-git
+	gnulibdir=gnulib-git/gnulib
+    else
+	echo "Warning: using gnulib code which already exists in $gnulibdir" >&2
+    fi
+
+    ## Invoke gnulib-tool to import the code.
+    local tool="${gnulibdir}"/gnulib-tool
+
+    if run_gnulib_tool "${tool}" &&
+	hack_gnulib_tool_output "${gnulibdir}" &&
+	refresh_output_files &&
+	update_licenses &&
+	update_version_file   ; then
+	echo Done.
+    else
+	echo FAILED >&2
+	exit 1
+    fi
+}
+
+main "$@"

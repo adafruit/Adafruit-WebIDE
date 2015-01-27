@@ -1,0 +1,7 @@
+# tests that -prune gets stat information
+exec rm -rf tmp
+exec mkdir tmp tmp/a
+exec touch tmp/b
+exec mkdir tmp/c
+find_start p {tmp -name b -prune -o -print }
+exec rm -rf tmp

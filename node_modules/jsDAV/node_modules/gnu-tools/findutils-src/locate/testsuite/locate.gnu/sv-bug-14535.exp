@@ -1,0 +1,61 @@
+# NOTE: this file contains UTF8 characters.
+
+
+proc selectlocale { pattern } {
+    if [ catch { set locale_list [ split [ eval exec locale -a ] "\n" ] } ] {
+	# Failed to figure out which tests are supported.
+	return ""
+    }
+    foreach locale $locale_list {
+	if { [string match $pattern $locale] } {
+	    global env
+	    set env(LC_ALL) $locale
+	    return $locale
+	}
+    }
+    return ""
+}
+
+proc select_any_locale { patternlist } {
+    foreach pattern $patternlist {
+	set locale [ selectlocale $pattern ]
+	if { [ string length $locale ] } {
+	    return $locale
+	}
+    }
+    return ""
+}
+
+# localeoptions contains a list (in order of preference) of the
+# locales in which we want to perform part of this test.  If we can
+# use any locale matching any of the patterns, we run an extra four
+# tests.  Otherwise, we skip them and issue a warning message.
+set localeoptions { 
+    "hu_HU.UTF-8"
+    "hu_*.UTF-8" 
+    "en_IE.utf8"
+    "en_GB.utf8"
+    "en_US.utf8"
+    "en_*.utf8"
+    "*.utf8"
+} 
+
+
+
+# Do the regular case-fold tests which only need ASCII support.
+locate_textonly p  a "teste\n" "-i teste" "teste\n"
+locate_textonly p  b "testE\n" "-i testE" "testE\n"
+locate_textonly p  c "testE\n" "-i teste" "testE\n"
+locate_textonly p  d "teste\n" "-i testE" "teste\n"
+
+set locale [ select_any_locale $localeoptions ]
+if { [ string length $locale ] } {
+    # We have a UTF-8 locale.  Do the extra tests.
+    locate_textonly p  0 "testé\n" "-i testé" "testé\n"
+    locate_textonly p  1 "testÉ\n" "-i testé" "testÉ\n"
+    locate_textonly p  2 "testé\n" "-i testÉ" "testé\n"
+    locate_textonly p  3 "testÉ\n" "-i testÉ" "testÉ\n"
+} else {
+    warning "Four tests have been skipped because I cannot find a UTF-8 locale configured on your system"
+}
+

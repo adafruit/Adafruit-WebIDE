@@ -1,0 +1,10 @@
+# tests for Savannah bug 11175 (should not check perms of pruned dir)
+exec rm -rf tmp
+exec mkdir tmp
+exec mkdir tmp/noxdir
+exec chmod 700 tmp
+exec chmod 600 tmp/noxdir
+#find_start p {tmp/noxdir -prune -type d -print}
+find_start p {tmp -name noxdir -prune -type d -print}
+exec chmod 700 tmp/noxdir
+exec rm -rf tmp

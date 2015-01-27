@@ -1,0 +1,15 @@
+# Savannah bug #17782.
+# While -execdir echo blah {} works, -execdir echo "blah {}" doesn't.
+# The bug is that the ./ prefix is prepended to the argument containing the 
+# braces, not to the expansion of the braces, so you get output like 
+# ./blah foo
+# instead of 
+# blah ./foo
+#
+if { [ safe_path ] } {
+    exec rm -rf tmp
+    exec mkdir tmp
+    exec touch tmp/foo
+    find_start p { tmp -name foo -execdir echo "saw {}" \; }
+    exec rm -rf tmp
+}

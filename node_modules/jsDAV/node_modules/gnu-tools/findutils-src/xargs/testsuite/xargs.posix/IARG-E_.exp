@@ -1,0 +1,1 @@
+xargs_start p {-IARG echo from ARG to xARGy -E_} eof_.xi

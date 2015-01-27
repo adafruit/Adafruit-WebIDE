@@ -1,0 +1,341 @@
+# -*- TCL -*-
+# Test-specific TCL procedures required by DejaGNU.
+# Copyright (C) 1994,2003,2004,2005,2006,2007 Free Software Foundation, Inc.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+# Modified by David MacKenzie <djm@gnu.org> from the gcc files
+# written by Rob Savoye <rob@cygnus.com>.
+
+
+# use the local version of find for updatedb
+#
+# We normalise (normalize for those over the water) pathnames 
+# because the updatedb shell script uses "cd", which means that 
+# any relative paths no longer point where we thought they did.
+# Because "file normalize" requires tcl 8.4, we have a plan B
+# for normalising the name of a directory, but it is slower.
+
+proc normalize_dir { dir } {
+    if [ catch { file normalize $dir } result ] then {
+	return [ exec /bin/sh -c "cd $dir && /bin/pwd" ]
+    } else {
+	return $result;
+    }
+}
+
+set fulldir [ normalize_dir "../../find" ]
+set env{find} "$fulldir/find"
+
+# use the local help commands for updatedb
+set env(LIBEXECDIR) [ normalize_dir .. ] 
+# use our local version of find, too.
+
+# do not ignore any file systems for this test
+set env(PRUNEFS) ""
+global UPDATEDB
+global FRCODE
+global LOCATE
+global FIND
+
+# look for binaries
+set UPDATEDB [findfile $base_dir/../updatedb     $base_dir/../updatedb     [transform updatedb]]
+set FRCODE   [findfile $base_dir/../frcode       $base_dir/../frcode       [transform frcode  ]]
+set LOCATE   [findfile $base_dir/../locate       $base_dir/../locate       [transform locate  ]]
+set FIND     [findfile $base_dir/../../find/find $base_dir/../../find/find [transform find    ]]
+verbose "UPDATEDB is $UPDATEDB" 1
+verbose "FRCODE   is $FRCODE" 1
+verbose "LOCATE   is $LOCATE" 1
+verbose "FIND     is $FIND" 1
+
+
+foreach exe "$UPDATEDB $FRCODE $LOCATE $FIND" {
+    if ![ string match "/*" $exe ] {
+	error "Failed to find a binary to test for $exe"
+    }
+}
+
+global UPDATEDBFLAGS
+if ![info exists UPDATEDBFLAGS] then {
+    set UPDATEDBFLAGS ""
+}
+
+set env(find) "$FIND"
+
+global LOCATEFLAGS
+if ![info exists LOCATEFLAGS] then {
+    set LOCATEFLAGS ""
+}
+
+# Called by runtest.
+# Extract and print the version number of locate.
+proc locate_version {} {
+    global UPDATEDB
+    global UPDATEDBFLAGS
+    global LOCATE
+    global LOCATEFLAGS
+
+    if {[which $LOCATE] != 0} then {
+	set tmp [ eval exec $LOCATE $LOCATEFLAGS --version </dev/null | sed 1q]
+	clone_output $tmp
+    } else {
+	warning "$LOCATE, program does not exist"
+    }
+}
+
+
+# Run locate and leave the output in $comp_output.
+# Called by individual test scripts.
+proc locate_textonly { passfail id intext locateoptions outtext } {
+    global LOCATE
+    global FRCODE
+
+    set fail_good [string match "f*" $passfail]
+
+    set scriptname [uplevel {info script}]
+    set testbase [file rootname $scriptname]
+    set testname [file tail $testbase]
+    set listfile "updatedb-paths.txt"
+    set dbfile   "locate.db"
+    set outfile  "locate.out"
+
+    # Generate the "frcode" input.
+    catch { file delete -force $listfle }
+    set f [open $listfile w]
+    puts $f "$intext"
+    close $f
+
+    # Run frcode
+    exec $FRCODE < $listfile > $dbfile
+
+    # Now run locate.
+    set locatecmd "$LOCATE -d $dbfile $locateoptions"
+    send_log "Running $locatecmd \n"
+    catch "exec $locatecmd > $outfile"
+
+    set result ""
+    set f [open "$outfile" r]
+    while { [ gets $f line ]  >= 0 } {
+	# send_log "Output fragment is $line\n"
+	append result "$line\n"
+    }
+    close $f
+
+    # send_log "Output is $result\n"
+
+    if {[string equal $result $outtext]} {
+	if $fail_good then {
+	    fail "$testname-$id"
+	} else {
+	    pass "$testname-$id"
+	}
+    } else {
+	send_log "Output mismatch.\n"
+	send_log "Expected: $outtext\n"
+	send_log "Got     : $result\n"
+	fail "$testname-$id"
+    }
+}
+
+
+# Do a test in which we expect an input text file to be preserved unchanged.
+proc locate_roundtrip { id intext } {
+    if ![regexp "\n$" $intext] {
+	# We like the items to be terminated by newlines.
+	error "The input text is not terminated by newline"
+    }
+
+    locate_textonly p $id $intext "-r ." $intext
+}
+
+
+
+# Run locate and leave the output in $comp_output.
+# Called by individual test scripts.
+proc locate_start { passfail updatedb_options locate_options
+		    {updatedb_infile ""} {locate_infile ""}
+		    { between_hook "" }
+		} {
+    global verbose
+    global LOCATE
+    global LOCATEFLAGS
+    global UPDATEDB
+    global UPDATEDBFLAGS
+    global comp_output
+
+    set fail_good [string match "f*" $passfail]
+
+    set scriptname [uplevel {info script}]
+    set testbase [file rootname $scriptname]
+    set testname [file tail $testbase]
+
+    set outfile "$testbase.xo"
+    if {"$updatedb_infile" != ""} then {
+	set updatedb_infile "[file dirname [file dirname $testbase]]/inputs/$updatedb_infile"
+    } else {
+	set updatedb_infile /dev/null
+    }
+    if {"$locate_infile" != ""} then {
+	set locate_infile "[file dirname [file dirname $testbase]]/inputs/$locate_infile"
+    } else {
+	set locate_infile /dev/null
+    }
+
+    catch "exec rm -f locate.out"
+
+    set updatedb_cmd "$UPDATEDB $UPDATEDBFLAGS $updatedb_options < $updatedb_infile"
+    send_log "$updatedb_cmd\n"
+    if $verbose>1 then {
+	send_user "Spawning \"$updatedb_cmd\"\n"
+    }
+    catch "exec $updatedb_cmd" comp_output
+
+    if {$comp_output != ""} then {
+	send_log "$comp_output\n"
+	if $verbose>1 then {
+	    send_user "$comp_output\n"
+	}
+	# If fail_good is set, that refers to the exit 
+	# status of locate, not updatedb...
+	fail "$testname: updatedb is supposed to be silent, $comp_output"
+	return
+    } else {
+	send_log "updatedb: OK.\n"
+    }
+
+
+    eval $between_hook
+    
+    set locate_cmd "$LOCATE $LOCATEFLAGS $locate_options < $locate_infile > locate.out"
+    send_log "$locate_cmd\n"
+    if $verbose>1 then {
+	send_user "Spawning \"$locate_cmd\"\n"
+    }
+
+    catch "exec $locate_cmd" comp_output
+    if {$comp_output != ""} then {
+	send_log "$comp_output\n"
+	if $verbose>1 then {
+	    send_user "$comp_output\n"
+	}
+	if $fail_good then {
+	    pass "$testname"
+	} else {
+	    fail "$testname: locate failed, $comp_output"
+	}
+	return
+    }
+
+    if [file exists $outfile] then {
+	set cmp_cmd "cmp locate.out $outfile"
+	send_log "$cmp_cmd\n"
+	catch "exec $cmp_cmd" cmpout
+	if {$cmpout != ""} then {
+	    #catch "exec diff locate.out $outfile" diffout
+	    #puts $diffout
+	    fail "$testname, $cmpout"
+	    return
+	}
+    } else {
+	if {[file size locate.out] != 0} then {
+	    fail "$testname, output should be empty"
+	    return
+	}
+    }
+    pass "$testname"
+    catch "exec rm -rf tmp"
+}
+
+
+
+proc locate_from_db { passfail locate_options locate_database } {
+    global LOCATE
+    global LOCATEFLAGS
+    global verbose
+
+    set fail_good [string match "f*" $passfail]
+    set scriptname [uplevel {info script}]
+    set testbase [file rootname $scriptname]
+    set testname [file tail $testbase]
+    set testdir  [file dirname $scriptname]
+
+    set dbpath "$testdir/$locate_database"
+    set outfile "$testbase.xo"
+
+    set locate_cmd "$LOCATE $LOCATEFLAGS -d $dbpath $locate_options > locate.out"
+    send_log "$locate_cmd\n"
+    if $verbose>1 then {
+	send_user "Spawning \"$locate_cmd\"\n"
+    }
+
+    catch "exec $locate_cmd 2>/dev/null" comp_output
+    if {$comp_output != ""} then {
+	send_log "$comp_output\n"
+	if $verbose>1 then {
+	    send_user "$comp_output\n"
+	}
+	if $fail_good then {
+	    # XXX: in general may want to compare output, too.
+	    pass "$testname"
+	} else {
+	    fail "$testname: locate unfortunately failed, $comp_output"
+	}
+	return
+    }
+
+
+    if [file exists $outfile] then {
+	set cmp_cmd "cmp locate.out $outfile"
+	send_log "$cmp_cmd\n"
+	catch "exec $cmp_cmd" cmpout
+	if {$cmpout != ""} then {
+	    #catch "exec diff locate.out $outfile" diffout
+	    #puts $diffout
+	    fail "$testname, $cmpout"
+	    return
+	}
+    } else {
+	if {[file size locate.out] != 0} then {
+	    fail "$testname, output should be empty"
+	    return
+	}
+    }
+    pass "$testname"
+}
+
+
+
+
+
+# Called by runtest.
+# Clean up (remove temporary files) before runtest exits.
+proc locate_exit {} {
+    catch "exec rm -f locate.out updatedb-paths.txt locate.db"
+}
+
+# Called by runtest.
+# Extract and print the version number of updatedb.
+proc updatedb_version {} {
+    global UPDATEDB
+    global UPDATEDBFLAGS
+
+    if {[which $UPDATEDB] != 0} then {
+	set tmp [eval exec $UPDATEDB $UPDATEDBFLAGS --version </dev/null|sed 1q]
+	clone_output $tmp
+    } else {
+	warning "$UPDATEDB, program does not exist"
+    }
+}
+

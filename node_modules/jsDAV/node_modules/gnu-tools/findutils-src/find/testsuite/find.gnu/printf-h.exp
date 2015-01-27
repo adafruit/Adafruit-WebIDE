@@ -1,0 +1,5 @@
+# Test case for Savannah bug ID #12085.
+exec rm -rf tmp
+exec touch tmp
+find_start p {tmp  -printf "RESULT: %h %f\n" }
+exec rm -rf tmp

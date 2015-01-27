@@ -1,0 +1,7 @@
+global FTSFIND
+global FINDFLAGS
+exec rm -rf tmp
+exec mkdir tmp tmp/top tmp/top/one tmp/top/one/foo tmp/top/two
+eval exec $FTSFIND tmp $FINDFLAGS -path tmp/top/two -delete
+find_start p {tmp -print }
+exec rm -rf tmp

@@ -1,0 +1,8 @@
+# tests to determine if "-i" causes the match to ignore the case
+# make sure that match fails when "-i" is skipped
+exec rm -rf tmp
+exec mkdir tmp
+exec mkdir tmp/subdir
+exec touch tmp/subdir/fred
+locate_start f {--changecwd=. --output=tmp/locatedb --localpaths=tmp/subdir/} {--database=tmp/locatedb FRed} {}
+

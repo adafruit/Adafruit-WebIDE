@@ -1,0 +1,7 @@
+# test for -inum
+exec rm -rf tmp tmp2
+exec touch tmp tmp2
+set list  [ split [ exec ls -1i tmp ] ]
+set inode [ lindex $list 0 ]
+find_start p " tmp tmp2 -inum $inode -print "
+exec rm -rf tmp tmp2

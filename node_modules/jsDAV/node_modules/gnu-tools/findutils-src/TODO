@@ -1,0 +1,53 @@
+-*-outline-*-
+* -fstype core dumps on sparc-sun-sunos4.1.3_U1 with gcc-2.95.2
+This is on foxtrot.rahul.net.  dbx does not work on compiled find.
+Perhaps gcc is installed incorrectly.  "find / -fstype ufs" core dumps
+quickly.  cc works correctly.
+
+* Speed of locate without "-i" option needs to be increased.
+
+* Internationalization
+** updatedb.sh should be internationalized
+
+* Eliminate unnecessary strcpy calls in xargs.
+
+* man pages for frcode, bigram, and code
+Perhaps a better description in texi pages as well.
+
+* Add option for find to sort output in lexical order for use for updatedb
+olarsac@airfrance.fr (Olivier) made the following suggestion:
+
+As I was running thru the code looking for the bug I wondered why the updatedb
+has to use sort...
+why not add an option to find that sorts the output in lexical order?
+my point is:
+- sort on a big list is costly (here we do locate on big big file system)
+- find may (in theory) sort incrementally very easily by sorting only the current
+directory entries before recursion
+
+
+* large file problems
+depcomp gets added by automake
+
+* investigate _LIBC when used with TOLOWER and TOUPPER
+_LIBC is used to determine whether TOLOWER should check isupper first.
+Is there something better to check?  Alternatively, can tolower be
+checked at run time to determine whether isupper should be called first.
+
+* BeOS problems with multibyte
+Bruno Haible reported problems with BeOS.
+
+* Include example of use of updatedb in documentation.
+Use something close to the Debian daily cron job.
+
+* Supply example for time range commands for find.
+
+                        --//--
+This is used by Emacs' spell checker ispell.el:
+
+LocalWords: strftime xargs updatedb sh strcpy
+LocalWords: lib frcode bigram texi depcomp automake
+LocalWords: LIBOBJS FUNC findutils
+LocalWords: LIBC TOLOWER TOUPPER tolower isupper
+LocalWords: Debian cron
+LocalWords: Haible BeOS

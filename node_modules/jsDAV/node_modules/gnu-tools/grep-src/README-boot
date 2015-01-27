@@ -1,0 +1,16 @@
+  Copyright (C) 1992, 1997-2002, 2004-2012 Free Software Foundation, Inc.
+
+  Copying and distribution of this file, with or without modification,
+  are permitted in any medium without royalty provided the copyright
+  notice and this notice are preserved.
+
+If your system is lacking the necessary tools to build the configuration,
+Makefile.boot is provided for bootstrapping.  Invoke it with the following
+command:
+
+  (cd src && make -f ../Makefile.boot)
+
+Indications on how to tweak Makefile.boot for different systems are
+provided in the file itself.
+
+Good luck!

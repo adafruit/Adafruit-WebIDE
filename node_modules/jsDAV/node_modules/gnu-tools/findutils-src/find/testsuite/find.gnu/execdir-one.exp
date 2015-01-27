@@ -1,0 +1,7 @@
+# tests for -name
+if { [ safe_path ] } {
+    exec rm -rf tmp
+    exec mkdir tmp tmp/fred tmp/jim
+    find_start p {tmp -name fred -execdir echo \{\} \; }
+    exec rm -rf tmp
+}

@@ -1,0 +1,10 @@
+## Test for find . -mtime 0
+## This detects Savannah bug #22056, -Xtime tests are off by one second
+
+exec rm -rf tmp
+exec mkdir tmp
+# Touch the file in the setup phase, to make sure its mtime is as
+# recent as possible.
+proc prep {} { exec touch tmp/x }
+find_start p { tmp -type f -mtime 0 } "" "" prep
+exec rm -rf tmp

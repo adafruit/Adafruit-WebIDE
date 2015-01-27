@@ -1,0 +1,14 @@
+# tests for Savannah bug 19613 ("find -L -type f" fails on symlink loops)
+exec rm -rf tmp
+exec mkdir tmp tmp/subdir
+exec ln -s a tmp/subdir/b
+exec ln -s b tmp/subdir/a
+
+# We want to distinguish between the correct behaviour (error message
+# and return 1 because of the loop) and the failure case (assertion
+# failure in 4.3.3).  To do that we just check that the "tmp/vanilla"
+# file is also found.
+
+touch tmp/vanilla
+find_start f { -L tmp  -depth -type f}
+exec rm -rf tmp

@@ -1,0 +1,5 @@
+# test for -path
+exec rm -rf tmp
+exec mkdir tmp tmp/top tmp/top/ONE tmp/top/ONE/two
+find_start p {tmp/top -ipath Tmp/TOP/one -print 2>/dev/null }
+exec rm -rf tmp

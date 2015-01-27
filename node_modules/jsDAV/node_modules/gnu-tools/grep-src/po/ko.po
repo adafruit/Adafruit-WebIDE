@@ -1,0 +1,887 @@
+# Korean messages for GNU grep.
+# Copyright (C) 1996, 1997 Free Software Foundation, Inc.
+# Bang Jun-Young <bangjy@geocities.com>, 1996-1997.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: GNU grep 2.0f\n"
+"Report-Msgid-Bugs-To: bug-grep@gnu.org\n"
+"POT-Creation-Date: 2012-04-23 16:08+0200\n"
+"PO-Revision-Date: 1997-09-03 11:19+0900\n"
+"Last-Translator: Bang Jun-Young <bangjy@geocities.com>\n"
+"Language-Team: Korean <ko@li.org>\n"
+"Language: ko\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=EUC-KR\n"
+"Content-Transfer-Encoding: 8-bit\n"
+
+#: lib/argmatch.c:133
+#, fuzzy, c-format
+msgid "invalid argument %s for %s"
+msgstr "완결되지 않은 반복 회수"
+
+#: lib/argmatch.c:134
+#, c-format
+msgid "ambiguous argument %s for %s"
+msgstr ""
+
+#: lib/argmatch.c:153
+msgid "Valid arguments are:"
+msgstr ""
+
+#: lib/closeout.c:112 src/main.c:894
+#, c-format
+msgid "write error"
+msgstr ""
+
+#: lib/error.c:188
+msgid "Unknown system error"
+msgstr ""
+
+#: lib/getopt.c:547 lib/getopt.c:576
+#, fuzzy, c-format
+msgid "%s: option '%s' is ambiguous; possibilities:"
+msgstr "%s: `%s'는 모호한 옵션입니다\n"
+
+#: lib/getopt.c:624 lib/getopt.c:628
+#, fuzzy, c-format
+msgid "%s: option '--%s' doesn't allow an argument\n"
+msgstr "%s: `--%s' 옵션은 인수를 허용하지 않습니다\n"
+
+#: lib/getopt.c:637 lib/getopt.c:642
+#, fuzzy, c-format
+msgid "%s: option '%c%s' doesn't allow an argument\n"
+msgstr "%s: `%c%s' 옵션은 인수를 허용하지 않습니다\n"
+
+#: lib/getopt.c:685 lib/getopt.c:704
+#, fuzzy, c-format
+msgid "%s: option '--%s' requires an argument\n"
+msgstr "%s: `%s' 옵션은 인수가 필요합니다\n"
+
+#: lib/getopt.c:742 lib/getopt.c:745
+#, fuzzy, c-format
+msgid "%s: unrecognized option '--%s'\n"
+msgstr "%s: 인식할 수 없는 옵션 `--%s'\n"
+
+#: lib/getopt.c:753 lib/getopt.c:756
+#, fuzzy, c-format
+msgid "%s: unrecognized option '%c%s'\n"
+msgstr "%s: 인식할 수 없는 옵션 `%c%s'\n"
+
+#: lib/getopt.c:805 lib/getopt.c:808
+#, fuzzy, c-format
+msgid "%s: invalid option -- '%c'\n"
+msgstr "%s: 부적절한 옵션 -- %c\n"
+
+#: lib/getopt.c:861 lib/getopt.c:878 lib/getopt.c:1088 lib/getopt.c:1106
+#, fuzzy, c-format
+msgid "%s: option requires an argument -- '%c'\n"
+msgstr "%s: 이 옵션은 인수가 필요합니다 -- %c\n"
+
+#: lib/getopt.c:934 lib/getopt.c:950
+#, fuzzy, c-format
+msgid "%s: option '-W %s' is ambiguous\n"
+msgstr "%s: `-W %s'는 모호한 옵션입니다\n"
+
+#: lib/getopt.c:974 lib/getopt.c:992
+#, fuzzy, c-format
+msgid "%s: option '-W %s' doesn't allow an argument\n"
+msgstr "%s: `-W %s' 옵션은 인수를 허용하지 않습니다\n"
+
+#: lib/getopt.c:1013 lib/getopt.c:1031
+#, fuzzy, c-format
+msgid "%s: option '-W %s' requires an argument\n"
+msgstr "%s: `%s' 옵션은 인수가 필요합니다\n"
+
+#: lib/obstack.c:413 lib/obstack.c:415 lib/xalloc-die.c:34 src/kwset.c:178
+#: src/kwset.c:186 src/kwset.c:409 src/pcresearch.c:153
+#, c-format
+msgid "memory exhausted"
+msgstr "메모리가 바닥남"
+
+#: lib/openat-die.c:38
+#, c-format
+msgid "unable to record current working directory"
+msgstr ""
+
+#: lib/openat-die.c:57
+#, c-format
+msgid "failed to return to initial working directory"
+msgstr ""
+
+#. TRANSLATORS:
+#. Get translations for open and closing quotation marks.
+#. The message catalog should translate "`" to a left
+#. quotation mark suitable for the locale, and similarly for
+#. "'".  For example, a French Unicode local should translate
+#. these to U+00AB (LEFT-POINTING DOUBLE ANGLE
+#. QUOTATION MARK), and U+00BB (RIGHT-POINTING DOUBLE ANGLE
+#. QUOTATION MARK), respectively.
+#.
+#. If the catalog has no translation, we will try to
+#. use Unicode U+2018 (LEFT SINGLE QUOTATION MARK) and
+#. Unicode U+2019 (RIGHT SINGLE QUOTATION MARK).  If the
+#. current locale is not Unicode, locale_quoting_style
+#. will quote 'like this', and clocale_quoting_style will
+#. quote "like this".  You should always include translations
+#. for "`" and "'" even if U+2018 and U+2019 are appropriate
+#. for your locale.
+#.
+#. If you don't know what to put here, please see
+#. <http://en.wikipedia.org/wiki/Quotation_marks_in_other_languages>
+#. and use glyphs suitable for your language.
+#: lib/quotearg.c:312
+msgid "`"
+msgstr ""
+
+#: lib/quotearg.c:313
+msgid "'"
+msgstr ""
+
+#: lib/regcomp.c:130
+msgid "Success"
+msgstr ""
+
+#: lib/regcomp.c:133
+msgid "No match"
+msgstr ""
+
+#: lib/regcomp.c:136
+msgid "Invalid regular expression"
+msgstr ""
+
+#: lib/regcomp.c:139
+msgid "Invalid collation character"
+msgstr ""
+
+#: lib/regcomp.c:142
+msgid "Invalid character class name"
+msgstr ""
+
+#: lib/regcomp.c:145
+msgid "Trailing backslash"
+msgstr ""
+
+#: lib/regcomp.c:148
+msgid "Invalid back reference"
+msgstr ""
+
+#: lib/regcomp.c:151
+msgid "Unmatched [ or [^"
+msgstr ""
+
+#: lib/regcomp.c:154
+msgid "Unmatched ( or \\("
+msgstr ""
+
+#: lib/regcomp.c:157
+msgid "Unmatched \\{"
+msgstr ""
+
+#: lib/regcomp.c:160 src/dfa.c:1373
+msgid "Invalid content of \\{\\}"
+msgstr ""
+
+#: lib/regcomp.c:163
+msgid "Invalid range end"
+msgstr ""
+
+#: lib/regcomp.c:166
+msgid "Memory exhausted"
+msgstr "메모리가 바닥남"
+
+#: lib/regcomp.c:169
+msgid "Invalid preceding regular expression"
+msgstr ""
+
+#: lib/regcomp.c:172
+msgid "Premature end of regular expression"
+msgstr ""
+
+#: lib/regcomp.c:175 src/dfa.c:1376
+msgid "Regular expression too big"
+msgstr ""
+
+#: lib/regcomp.c:178
+msgid "Unmatched ) or \\)"
+msgstr ""
+
+#: lib/regcomp.c:703
+msgid "No previous regular expression"
+msgstr ""
+
+#: lib/version-etc.c:74
+#, c-format
+msgid "Packaged by %s (%s)\n"
+msgstr ""
+
+#: lib/version-etc.c:77
+#, c-format
+msgid "Packaged by %s\n"
+msgstr ""
+
+#. TRANSLATORS: Translate "(C)" to the copyright symbol
+#. (C-in-a-circle), if this symbol is available in the user's
+#. locale.  Otherwise, do not translate "(C)"; leave it as-is.
+#: lib/version-etc.c:84
+msgid "(C)"
+msgstr ""
+
+#: lib/version-etc.c:86
+msgid ""
+"\n"
+"License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl."
+"html>.\n"
+"This is free software: you are free to change and redistribute it.\n"
+"There is NO WARRANTY, to the extent permitted by law.\n"
+"\n"
+msgstr ""
+
+#. TRANSLATORS: %s denotes an author name.
+#: lib/version-etc.c:102
+#, c-format
+msgid "Written by %s.\n"
+msgstr ""
+
+#. TRANSLATORS: Each %s denotes an author name.
+#: lib/version-etc.c:106
+#, c-format
+msgid "Written by %s and %s.\n"
+msgstr ""
+
+#. TRANSLATORS: Each %s denotes an author name.
+#: lib/version-etc.c:110
+#, c-format
+msgid "Written by %s, %s, and %s.\n"
+msgstr ""
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:117
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"and %s.\n"
+msgstr ""
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:124
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, and %s.\n"
+msgstr ""
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:131
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, %s, and %s.\n"
+msgstr ""
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:139
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, %s, %s, and %s.\n"
+msgstr ""
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:147
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, %s, %s, %s,\n"
+"and %s.\n"
+msgstr ""
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:156
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, %s, %s, %s,\n"
+"%s, and %s.\n"
+msgstr ""
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:167
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, %s, %s, %s,\n"
+"%s, %s, and others.\n"
+msgstr ""
+
+#. TRANSLATORS: The placeholder indicates the bug-reporting address
+#. for this package.  Please add _another line_ saying
+#. "Report translation bugs to <...>\n" with the address for translation
+#. bugs (typically your translation team's web or email address).
+#: lib/version-etc.c:245 src/main.c:1572
+#, c-format
+msgid ""
+"\n"
+"Report bugs to: %s\n"
+msgstr ""
+
+#: lib/version-etc.c:247
+#, c-format
+msgid "Report %s bugs to: %s\n"
+msgstr ""
+
+#: lib/version-etc.c:251
+#, c-format
+msgid "%s home page: <%s>\n"
+msgstr ""
+
+#: lib/version-etc.c:253
+#, c-format
+msgid "%s home page: <http://www.gnu.org/software/%s/>\n"
+msgstr ""
+
+#: lib/version-etc.c:256 src/main.c:1575
+msgid "General help using GNU software: <http://www.gnu.org/gethelp/>\n"
+msgstr ""
+
+#: lib/xstrtol-error.c:63
+#, fuzzy, c-format
+msgid "invalid %s%s argument '%s'"
+msgstr "완결되지 않은 반복 회수"
+
+#: lib/xstrtol-error.c:68
+#, fuzzy, c-format
+msgid "invalid suffix in %s%s argument '%s'"
+msgstr "완결되지 않은 반복 회수"
+
+#: lib/xstrtol-error.c:72
+#, c-format
+msgid "%s%s argument '%s' too large"
+msgstr ""
+
+#: src/dfa.c:953 src/dfa.c:956 src/dfa.c:976 src/dfa.c:986 src/dfa.c:998
+#: src/dfa.c:1049 src/dfa.c:1058 src/dfa.c:1061 src/dfa.c:1066 src/dfa.c:1079
+#: src/dfa.c:1137
+#, fuzzy
+msgid "unbalanced ["
+msgstr "짝이 맞지 않는 ["
+
+#: src/dfa.c:1007
+msgid "invalid character class"
+msgstr ""
+
+#: src/dfa.c:1174
+msgid "character class syntax is [[:space:]], not [:space:]"
+msgstr ""
+
+#: src/dfa.c:1226
+#, fuzzy
+msgid "unfinished \\ escape"
+msgstr "완결되지 않은 \\ 이스케이프"
+
+#: src/dfa.c:1761
+#, fuzzy
+msgid "unbalanced ("
+msgstr "짝이 맞지 않는 ("
+
+#: src/dfa.c:1891
+#, fuzzy
+msgid "no syntax specified"
+msgstr "문법이 지정되지 않았음"
+
+#: src/dfa.c:1899
+#, fuzzy
+msgid "unbalanced )"
+msgstr "짝이 맞지 않는 )"
+
+#: src/egrep.c:16
+#, fuzzy
+msgid "PATTERN is an extended regular expression (ERE).\n"
+msgstr "  -E, --extended-regexp     패턴은 확장 정규식이 됩니다\n"
+
+#: src/egrep.c:18
+msgid "Invocation as 'egrep' is deprecated; use 'grep -E' instead.\n"
+msgstr ""
+
+#: src/fgrep.c:10
+msgid "PATTERN is a set of newline-separated fixed strings.\n"
+msgstr ""
+
+#: src/fgrep.c:12
+msgid "Invocation as 'fgrep' is deprecated; use 'grep -F' instead.\n"
+msgstr ""
+
+#: src/grep.c:32
+#, fuzzy
+msgid "PATTERN is, by default, a basic regular expression (BRE).\n"
+msgstr "  -G, --basic-regexp        패턴은 기본 정규식이 됩니다\n"
+
+#: src/grep.c:34
+msgid ""
+"'egrep' means 'grep -E'.  'fgrep' means 'grep -F'.\n"
+"Direct invocation as either 'egrep' or 'fgrep' is deprecated.\n"
+msgstr ""
+
+#. This is a proper name. See the gettext manual, section Names.
+#: src/main.c:58
+msgid "Mike Haertel"
+msgstr ""
+
+#: src/main.c:59
+msgid "others, see <http://git.sv.gnu.org/cgit/grep.git/tree/AUTHORS>"
+msgstr ""
+
+#: src/main.c:448
+msgid "invalid context length argument"
+msgstr ""
+
+#: src/main.c:503
+msgid "lseek failed"
+msgstr ""
+
+#: src/main.c:650
+#, c-format
+msgid "input is too large to count"
+msgstr ""
+
+#: src/main.c:1205
+#, c-format
+msgid "Binary file %s matches\n"
+msgstr ""
+
+#: src/main.c:1256
+#, fuzzy, c-format
+msgid "warning: %s: %s"
+msgstr "%s: 경고: %s: %s\n"
+
+#: src/main.c:1257
+msgid "recursive directory loop"
+msgstr ""
+
+#: src/main.c:1400
+#, c-format
+msgid "input file %s is also the output"
+msgstr ""
+
+#: src/main.c:1458
+msgid "(standard input)"
+msgstr "(표준 입력)"
+
+#: src/main.c:1474 src/main.c:1481
+#, c-format
+msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
+msgstr "사용법: %s [옵션]... 패턴 [파일]...\n"
+
+#: src/main.c:1476
+#, fuzzy, c-format
+msgid "Try '%s --help' for more information.\n"
+msgstr "더 많은 정보를 보려면 `%s --help' 하십시오.\n"
+
+#: src/main.c:1482
+#, c-format
+msgid "Search for PATTERN in each FILE or standard input.\n"
+msgstr ""
+
+#: src/main.c:1485
+#, fuzzy, c-format
+msgid ""
+"Example: %s -i 'hello world' menu.h main.c\n"
+"\n"
+"Regexp selection and interpretation:\n"
+msgstr "정규식 선택과 해석:\n"
+
+#: src/main.c:1490
+#, c-format
+msgid ""
+"  -E, --extended-regexp     PATTERN is an extended regular expression (ERE)\n"
+"  -F, --fixed-strings       PATTERN is a set of newline-separated fixed "
+"strings\n"
+"  -G, --basic-regexp        PATTERN is a basic regular expression (BRE)\n"
+"  -P, --perl-regexp         PATTERN is a Perl regular expression\n"
+msgstr ""
+
+#: src/main.c:1496
+#, c-format
+msgid ""
+"  -e, --regexp=PATTERN      use PATTERN for matching\n"
+"  -f, --file=FILE           obtain PATTERN from FILE\n"
+"  -i, --ignore-case         ignore case distinctions\n"
+"  -w, --word-regexp         force PATTERN to match only whole words\n"
+"  -x, --line-regexp         force PATTERN to match only whole lines\n"
+"  -z, --null-data           a data line ends in 0 byte, not newline\n"
+msgstr ""
+
+#: src/main.c:1503
+#, c-format
+msgid ""
+"\n"
+"Miscellaneous:\n"
+"  -s, --no-messages         suppress error messages\n"
+"  -v, --invert-match        select non-matching lines\n"
+"  -V, --version             print version information and exit\n"
+"      --help                display this help and exit\n"
+"      --mmap                deprecated no-op; evokes a warning\n"
+msgstr ""
+
+#: src/main.c:1511
+#, c-format
+msgid ""
+"\n"
+"Output control:\n"
+"  -m, --max-count=NUM       stop after NUM matches\n"
+"  -b, --byte-offset         print the byte offset with output lines\n"
+"  -n, --line-number         print line number with output lines\n"
+"      --line-buffered       flush output on every line\n"
+"  -H, --with-filename       print the file name for each match\n"
+"  -h, --no-filename         suppress the file name prefix on output\n"
+"      --label=LABEL         use LABEL as the standard input file name "
+"prefix\n"
+msgstr ""
+
+#: src/main.c:1522
+#, c-format
+msgid ""
+"  -o, --only-matching       show only the part of a line matching PATTERN\n"
+"  -q, --quiet, --silent     suppress all normal output\n"
+"      --binary-files=TYPE   assume that binary files are TYPE;\n"
+"                            TYPE is `binary', `text', or `without-match'\n"
+"  -a, --text                equivalent to --binary-files=text\n"
+msgstr ""
+
+#: src/main.c:1529
+#, c-format
+msgid ""
+"  -I                        equivalent to --binary-files=without-match\n"
+"  -d, --directories=ACTION  how to handle directories;\n"
+"                            ACTION is `read', `recurse', or `skip'\n"
+"  -D, --devices=ACTION      how to handle devices, FIFOs and sockets;\n"
+"                            ACTION is `read' or `skip'\n"
+"  -r, --recursive           like --directories=recurse\n"
+"  -R, --dereference-recursive  likewise, but follow all symlinks\n"
+msgstr ""
+
+#: src/main.c:1538
+#, c-format
+msgid ""
+"      --include=FILE_PATTERN  search only files that match FILE_PATTERN\n"
+"      --exclude=FILE_PATTERN  skip files and directories matching "
+"FILE_PATTERN\n"
+"      --exclude-from=FILE   skip files matching any file pattern from FILE\n"
+"      --exclude-dir=PATTERN  directories that match PATTERN will be "
+"skipped.\n"
+msgstr ""
+
+#: src/main.c:1544
+#, c-format
+msgid ""
+"  -L, --files-without-match  print only names of FILEs containing no match\n"
+"  -l, --files-with-matches  print only names of FILEs containing matches\n"
+"  -c, --count               print only a count of matching lines per FILE\n"
+"  -T, --initial-tab         make tabs line up (if needed)\n"
+"  -Z, --null                print 0 byte after FILE name\n"
+msgstr ""
+
+#: src/main.c:1550
+#, c-format
+msgid ""
+"\n"
+"Context control:\n"
+"  -B, --before-context=NUM  print NUM lines of leading context\n"
+"  -A, --after-context=NUM   print NUM lines of trailing context\n"
+"  -C, --context=NUM         print NUM lines of output context\n"
+msgstr ""
+
+#: src/main.c:1557
+#, c-format
+msgid ""
+"  -NUM                      same as --context=NUM\n"
+"      --color[=WHEN],\n"
+"      --colour[=WHEN]       use markers to highlight the matching strings;\n"
+"                            WHEN is `always', `never', or `auto'\n"
+"  -U, --binary              do not strip CR characters at EOL (MSDOS/"
+"Windows)\n"
+"  -u, --unix-byte-offsets   report offsets as if CRs were not there\n"
+"                            (MSDOS/Windows)\n"
+"\n"
+msgstr ""
+
+#: src/main.c:1567
+#, c-format
+msgid ""
+"When FILE is -, read standard input.  With no FILE, read . if a command-"
+"line\n"
+"-r is given, - otherwise.  If fewer than two FILEs are given, assume -h.\n"
+"Exit status is 0 if any line is selected, 1 otherwise;\n"
+"if any error occurs and -q is not given, the exit status is 2.\n"
+msgstr ""
+
+#: src/main.c:1573
+#, c-format
+msgid "GNU Grep home page: <%s>\n"
+msgstr ""
+
+#: src/main.c:1605
+#, c-format
+msgid "%s can only use the %s pattern syntax"
+msgstr ""
+
+#: src/main.c:1608
+#, fuzzy, c-format
+msgid "conflicting matchers specified"
+msgstr "짝이 이미 지정되었음"
+
+#: src/main.c:1622
+#, fuzzy, c-format
+msgid "invalid matcher %s"
+msgstr "완결되지 않은 반복 회수"
+
+#: src/main.c:1870
+#, c-format
+msgid "unknown devices method"
+msgstr ""
+
+#: src/main.c:1999
+#, fuzzy, c-format
+msgid "invalid max count"
+msgstr "완결되지 않은 반복 회수"
+
+#: src/main.c:2056
+#, c-format
+msgid "unknown binary-files type"
+msgstr ""
+
+#: src/main.c:2119
+#, c-format
+msgid "the --mmap option has been a no-op since 2010"
+msgstr ""
+
+#: src/pcresearch.c:42
+msgid ""
+"support for the -P option is not compiled into this --disable-perl-regexp "
+"binary"
+msgstr ""
+
+#: src/pcresearch.c:56
+#, c-format
+msgid "the -P option only supports a single pattern"
+msgstr ""
+
+#: src/pcresearch.c:110
+#, c-format
+msgid "internal error"
+msgstr ""
+
+#: src/pcresearch.c:138
+#, c-format
+msgid "exceeded PCRE's line length limit"
+msgstr ""
+
+#: src/pcresearch.c:157
+#, c-format
+msgid "exceeded PCRE's backtracking limit"
+msgstr ""
+
+#~ msgid "unfinished repeat count"
+#~ msgstr "완결되지 않은 반복 회수"
+
+#~ msgid "malformed repeat count"
+#~ msgstr "잘못 주어진 반복 회수"
+
+#~ msgid "writing output"
+#~ msgstr "출력을 기록하고 있습니다"
+
+#, fuzzy
+#~ msgid "%s: option '%s' is ambiguous\n"
+#~ msgstr "%s: `-W %s'는 모호한 옵션입니다\n"
+
+#, fuzzy
+#~ msgid "warning: %s"
+#~ msgstr "%s: 경고: %s: %s\n"
+
+#~ msgid "%s: illegal option -- %c\n"
+#~ msgstr "%s: 잘못된 옵션 -- %c\n"
+
+#~ msgid "out of memory"
+#~ msgstr "메모리 부족"
+
+#~ msgid "option %s"
+#~ msgstr "%s 옵션"
+
+#~ msgid " with arg %s"
+#~ msgstr " %s 인수를 가짐"
+
+#~ msgid "digits occur in two different argv-elements.\n"
+#~ msgstr "숫자가 서로 다른 두 군데의 argv 원소에서 발견되었습니다.\n"
+
+#~ msgid "option %c\n"
+#~ msgstr "%c 옵션\n"
+
+#~ msgid "option a\n"
+#~ msgstr "a 옵션\n"
+
+#~ msgid "option b\n"
+#~ msgstr "b 옵션\n"
+
+#~ msgid "option c with value `%s'\n"
+#~ msgstr "`%s'를 값으로 갖는 c 옵션\n"
+
+#~ msgid "option d with value `%s'\n"
+#~ msgstr "`%s'를 값으로 갖는 d 옵션\n"
+
+#~ msgid "?? getopt returned character code 0%o ??\n"
+#~ msgstr "?? getopt가 문자 코드 0%o를 돌려주었습니다 ??\n"
+
+#~ msgid "non-option ARGV-elements: "
+#~ msgstr "비옵션 ARGV 원소: "
+
+#~ msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
+#~ msgstr "사용법: %s [옵션]... 패턴 [파일] ...\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "Report bugs to <bug-gnu-utils@gnu.org>.\n"
+#~ msgstr "문제점은 <bug0gnu-utils@prep.ai.mit.edu>로 보고해 주십시오.\n"
+
+#~ msgid "you may specify only one of -E, -F, or -G"
+#~ msgstr "-E, -F, -G 중에서 하나만 지정할 수 있습니다"
+
+#~ msgid "grep (GNU grep) %s\n"
+#~ msgstr "grep (GNU grep) %s\n"
+
+#, fuzzy
+#~ msgid "Copyright (C) 1988, 1992-1997, 1998 Free Software Foundation, Inc.\n"
+#~ msgstr ""
+#~ "저작권 (C) 1988, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.\n"
+
+#~ msgid ""
+#~ "This is free software; see the source for copying conditions. There is "
+#~ "NO\n"
+#~ "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR "
+#~ "PURPOSE.\n"
+#~ msgstr ""
+#~ "이 프로그램은 공개 소프트웨어입니다. 복사에 관한 조건은 소스를 참조하십시"
+#~ "오.\n"
+#~ "상품성이나 특정 목적에 대한 적합성을 비롯하여, 어떠한 보증도 하지 않습니"
+#~ "다.\n"
+
+#~ msgid "memory exhausted\n"
+#~ msgstr "메모리가 바닥남\n"
+
+#~ msgid ""
+#~ "  -F, --fixed-strings       PATTERN is a fixed string separated by "
+#~ "newlines\n"
+#~ msgstr ""
+#~ "  -F, --fixed-strings       패턴은 줄바꿈 문자로 분리된 고정 문자열이 됩니"
+#~ "다\n"
+
+#~ msgid "  -e, --regexp=PATTERN      use PATTERN as a regular expression\n"
+#~ msgstr "  -e, --regexp=패턴         패턴을 정규식으로 사용합니다\n"
+
+#~ msgid "  -f, --file=FILE         obtain PATTERN from FILE\n"
+#~ msgstr "  -f, --file=파일           패턴을 파일에서 가져옵니다\n"
+
+#~ msgid "  -i, --ignore-case         ignore case distinctions\n"
+#~ msgstr "  -i, --ignore-case         대소문자 구별을 무시합니다\n"
+
+#~ msgid ""
+#~ "  -w, --word-regexp         force PATTERN to match only whole words\n"
+#~ msgstr ""
+#~ "  -w, --word-regexp         패턴을 전체 단어와 일치하는 것으로만 제한합니"
+#~ "다\n"
+
+#~ msgid ""
+#~ "  -x, --line-regexp         force PATTERN to match only whole lines\n"
+#~ msgstr ""
+#~ "  -x, --line-regexp         패턴을 전체 행과 일치하는 것으로만 제한합니"
+#~ "다\n"
+
+#~ msgid "Miscellaneous:\n"
+#~ msgstr "기타:\n"
+
+#~ msgid "  -s, --no-messages         suppress error messages\n"
+#~ msgstr "  -s, --no-messages         오류 메시지를 표시하지 않습니다\n"
+
+#~ msgid "  -v, --revert-match        select non-matching lines\n"
+#~ msgstr "  -v, --revert-match        일치하지 않는 행들을 선택합니다\n"
+
+#~ msgid "  -V, --version             print version information and exit\n"
+#~ msgstr "  -V, --version             버전 정보를 표시하고 종료합니다\n"
+
+#~ msgid "      --help                display this help and exit\n"
+#~ msgstr "      --help                이 도움말을 표시하고 종료합니다\n"
+
+#~ msgid "Output control:\n"
+#~ msgstr "출력 제어:\n"
+
+#~ msgid ""
+#~ "  -b, --byte-offset         print the byte offset with output lines\n"
+#~ msgstr ""
+#~ "  -b, --byte-offset         출력되는 행에 바이트 오프셋을 표시합니다\n"
+
+#~ msgid "  -n, --line-number         print line number with output lines\n"
+#~ msgstr "  -n, --line-number         출력되는 행에 행번호를 표시합니다\n"
+
+#~ msgid "  -H, --with-filename       print the filename for each match\n"
+#~ msgstr ""
+#~ "  -H, --with-filename       각각의 일치 결과에 대해 파일명을 표시합니다\n"
+
+#~ msgid "  -q, --quiet, --silent     suppress all normal output\n"
+#~ msgstr ""
+#~ "  -q, --quiet, --silent     일반적인 모든 출력을 표시하지 않습니다\n"
+
+#~ msgid ""
+#~ "  -L, --files-without-match only print FILE names containing no match\n"
+#~ msgstr ""
+#~ "  -L, --files-without-match 일치 결과가 없는 파일 이름만 표시합니다\n"
+
+#~ msgid ""
+#~ "  -l, --files-with-matches  only print FILE names containing matches\n"
+#~ msgstr ""
+#~ "  -l, --files-with-matches  일치 결과가 포함된 파일 이름만 표시합니다\n"
+
+#~ msgid ""
+#~ "  -c, --count               only print a count of matching lines per "
+#~ "FILE\n"
+#~ msgstr ""
+#~ "  -c, --count               파일당 일치하는 행의 개수만을 표시합니다\n"
+
+#~ msgid "Context control:\n"
+#~ msgstr "문맥 제어:\n"
+
+#~ msgid "  -NUM                      same as both -B NUM and -A NUM\n"
+#~ msgstr "  -숫자                     -B 숫자나 -A 숫자와 같음\n"
+
+#~ msgid "  -C, --context             same as -2\n"
+#~ msgstr "  -C, --context             -2와 같음\n"
+
+#~ msgid "  -U, --binary              do not strip CR characters at EOL\n"
+#~ msgstr "  -U, --binary              행끝의 CR 문자를 잘라내지 않습니다\n"
+
+#~ msgid ""
+#~ "  -u, --unix-byte-offsets   report offsets as if CRs were not there\n"
+#~ msgstr "  -u, --unix-byte-offsets   CR을 제외하고 오프셋을 산출합니다\n"
+
+#~ msgid "If call as `egrep', this implies -E and `fgrep' for -F.\n"
+#~ msgstr ""
+#~ "`egrep'으로 호출되면 -E로 가정되고 `fgrep'일 때에는 -F가 가정됩니다.\n"
+
+#~ msgid "If no -[GEF], then -G is assumed.\n"
+#~ msgstr "-[GEF]가 주어지지 않으면 -G로 가정합니다.\n"
+
+#~ msgid "(standard input)\n"
+#~ msgstr "(표준 입력)\n"

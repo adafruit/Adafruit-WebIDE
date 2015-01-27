@@ -1,0 +1,8 @@
+/tmp/findtest
+/tmp/findtest/tmp
+/tmp/findtest/tmp/subdir
+/tmp/findtest/tmp/subdir/foo
+/tmp/findtest/tmp/subdir/________________________________________________________________________________fred1
+/tmp/findtest/tmp/subdir/________________________________________________________________________________fred2
+/tmp/findtest/tmp/subdir/________________________________________________________________________________fred3
+/tmp/findtest/tmp/subdir/________________________________________________________________________________fred4

@@ -1,0 +1,11 @@
+#
+# The technique of using "kill $$" is unreliable.  For example,
+# on MacOS X, the child just exits with a nonzero status.
+# This works better but is harder to use in a DejaGnu test:
+#   yes | xargs -I{} echo | true
+# Part of the problem here of course is that the exit status of the 
+# pipeline is the exit status of its last compinent.
+#
+# This problem is recorded as Savannah bug# 19969.
+# 
+xargs_start 125 {-n1 -IARG sh -c ARG} stt.xi skip

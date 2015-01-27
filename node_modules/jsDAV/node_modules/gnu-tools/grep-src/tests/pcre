@@ -1,0 +1,18 @@
+#! /bin/sh
+# Ensure that with -P, \s*$ matches a newline.
+#
+# Copyright (C) 2001, 2006, 2009-2012 Free Software Foundation, Inc.
+#
+# Copying and distribution of this file, with or without modification,
+# are permitted in any medium without royalty provided the copyright
+# notice and this notice are preserved.
+
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
+require_pcre_
+
+fail=0
+
+# See CVS revision 1.32 of "src/search.c".
+echo | grep -P '\s*$' || fail=1
+
+Exit $fail

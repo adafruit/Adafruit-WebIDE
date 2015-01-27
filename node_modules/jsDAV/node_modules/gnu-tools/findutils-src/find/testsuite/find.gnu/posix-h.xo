@@ -1,0 +1,5 @@
+H1: d 0 tmp
+H1: f 0 tmp/LINK
+H1: l 0 tmp/BROKEN
+H1: l 1 tmp/BROKEN
+H1: l 1 tmp/LINK

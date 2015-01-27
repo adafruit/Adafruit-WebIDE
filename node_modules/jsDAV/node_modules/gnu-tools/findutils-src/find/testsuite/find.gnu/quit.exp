@@ -1,0 +1,5 @@
+# test for -quit.
+exec rm -rf tmp
+exec mkdir tmp tmp/top tmp/top/one tmp/top/one/foo tmp/top/two
+find_start p {tmp/top/one tmp/top/two -depth -print -name one -quit }
+exec rm -rf tmp

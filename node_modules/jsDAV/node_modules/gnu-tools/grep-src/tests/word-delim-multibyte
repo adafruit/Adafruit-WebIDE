@@ -1,0 +1,19 @@
+#!/bin/sh
+# exercise \< and \> with multibyte data.
+# Derived from http://savannah.gnu.org/bugs/?29537
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
+
+require_en_utf8_locale_
+
+e_acute=$(printf '\303\251')
+echo "$e_acute" > in || framework_failure_
+LC_ALL=en_US.UTF-8
+export LC_ALL
+
+fail=0
+grep "\<$e_acute" in > out 2>err || fail=1
+
+compare out in || fail=1
+compare /dev/null err || fail=1
+
+Exit $fail

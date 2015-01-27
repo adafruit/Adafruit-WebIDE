@@ -1,0 +1,849 @@
+# Vietnamese Translation for Grep.
+# Copyright © 2012 Free Software Foundation, Inc.
+# This file is distributed under the same license as the grep package.
+# Clytie Siddall <clytie@riverland.net.au>, 2005-2010.
+# Trần Ngọc Quân <vnwildman@gmail.com>, 2012.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: grep-2.11.11-pre1\n"
+"Report-Msgid-Bugs-To: bug-grep@gnu.org\n"
+"POT-Creation-Date: 2012-04-23 16:08+0200\n"
+"PO-Revision-Date: 2012-04-15 07:14+0700\n"
+"Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
+"Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=1;\n"
+"X-Generator: LocFactoryEditor 1.8\n"
+"X-Poedit-Language: Vietnamese\n"
+"X-Poedit-Country: VIET NAM\n"
+"X-Poedit-SourceCharset: utf-8\n"
+
+#: lib/argmatch.c:133
+#, c-format
+msgid "invalid argument %s for %s"
+msgstr "đối số %s không hợp lệ đối với %s"
+
+#: lib/argmatch.c:134
+#, c-format
+msgid "ambiguous argument %s for %s"
+msgstr "đối số %s không rõ ràng đối với %s"
+
+#: lib/argmatch.c:153
+msgid "Valid arguments are:"
+msgstr "Các đối số hợp lệ là:"
+
+#: lib/closeout.c:112 src/main.c:894
+#, c-format
+msgid "write error"
+msgstr "lỗi ghi"
+
+#: lib/error.c:188
+msgid "Unknown system error"
+msgstr "Lỗi hệ thống không rõ"
+
+#: lib/getopt.c:547 lib/getopt.c:576
+#, c-format
+msgid "%s: option '%s' is ambiguous; possibilities:"
+msgstr "%s: tùy chọn `%s' chưa rõ ràng; khả năng là:"
+
+#: lib/getopt.c:624 lib/getopt.c:628
+#, c-format
+msgid "%s: option '--%s' doesn't allow an argument\n"
+msgstr "%s: tùy chọn `--%s' không cho phép có đối số\n"
+
+#: lib/getopt.c:637 lib/getopt.c:642
+#, c-format
+msgid "%s: option '%c%s' doesn't allow an argument\n"
+msgstr "%s: tùy chọn '%c%s' không cho phép đối số\n"
+
+#: lib/getopt.c:685 lib/getopt.c:704
+#, c-format
+msgid "%s: option '--%s' requires an argument\n"
+msgstr "%s: tùy chọn '--%s' yêu cầu một đối số\n"
+
+#: lib/getopt.c:742 lib/getopt.c:745
+#, c-format
+msgid "%s: unrecognized option '--%s'\n"
+msgstr "%s: không nhận ra tùy chọn « --%s »\n"
+
+#: lib/getopt.c:753 lib/getopt.c:756
+#, c-format
+msgid "%s: unrecognized option '%c%s'\n"
+msgstr "%s: không nhận ra tùy chọn « %c%s »\n"
+
+#: lib/getopt.c:805 lib/getopt.c:808
+#, c-format
+msgid "%s: invalid option -- '%c'\n"
+msgstr "%s: tùy chọn không hợp lệ -- « %c »\n"
+
+#: lib/getopt.c:861 lib/getopt.c:878 lib/getopt.c:1088 lib/getopt.c:1106
+#, c-format
+msgid "%s: option requires an argument -- '%c'\n"
+msgstr "%s: tùy chọn yêu cầu một đối số -- « %c »\n"
+
+#: lib/getopt.c:934 lib/getopt.c:950
+#, c-format
+msgid "%s: option '-W %s' is ambiguous\n"
+msgstr "%s: tùy chọn « -W %s » vẫn mơ hồ\n"
+
+#: lib/getopt.c:974 lib/getopt.c:992
+#, c-format
+msgid "%s: option '-W %s' doesn't allow an argument\n"
+msgstr "%s: tùy chọn « -W %s » không cho phép đối số\n"
+
+#: lib/getopt.c:1013 lib/getopt.c:1031
+#, c-format
+msgid "%s: option '-W %s' requires an argument\n"
+msgstr "%s: tùy chọn « -W %s » yêu cầu một đối số\n"
+
+#: lib/obstack.c:413 lib/obstack.c:415 lib/xalloc-die.c:34 src/kwset.c:178
+#: src/kwset.c:186 src/kwset.c:409 src/pcresearch.c:153
+#, c-format
+msgid "memory exhausted"
+msgstr "cạn bộ nhớ"
+
+#: lib/openat-die.c:38
+#, c-format
+msgid "unable to record current working directory"
+msgstr "không ghi nhớ được thư mục làm việc hiện thời"
+
+#: lib/openat-die.c:57
+#, c-format
+msgid "failed to return to initial working directory"
+msgstr "gặp lỗi khi quay trở về thư mục làm việc khởi đầu"
+
+#. TRANSLATORS:
+#. Get translations for open and closing quotation marks.
+#. The message catalog should translate "`" to a left
+#. quotation mark suitable for the locale, and similarly for
+#. "'".  For example, a French Unicode local should translate
+#. these to U+00AB (LEFT-POINTING DOUBLE ANGLE
+#. QUOTATION MARK), and U+00BB (RIGHT-POINTING DOUBLE ANGLE
+#. QUOTATION MARK), respectively.
+#.
+#. If the catalog has no translation, we will try to
+#. use Unicode U+2018 (LEFT SINGLE QUOTATION MARK) and
+#. Unicode U+2019 (RIGHT SINGLE QUOTATION MARK).  If the
+#. current locale is not Unicode, locale_quoting_style
+#. will quote 'like this', and clocale_quoting_style will
+#. quote "like this".  You should always include translations
+#. for "`" and "'" even if U+2018 and U+2019 are appropriate
+#. for your locale.
+#.
+#. If you don't know what to put here, please see
+#. <http://en.wikipedia.org/wiki/Quotation_marks_in_other_languages>
+#. and use glyphs suitable for your language.
+#: lib/quotearg.c:312
+msgid "`"
+msgstr "« "
+
+#: lib/quotearg.c:313
+msgid "'"
+msgstr " »"
+
+#: lib/regcomp.c:130
+msgid "Success"
+msgstr "Thành công"
+
+#: lib/regcomp.c:133
+msgid "No match"
+msgstr "Không tìm thấy"
+
+#: lib/regcomp.c:136
+msgid "Invalid regular expression"
+msgstr "Biểu thức chính quy không hợp lệ"
+
+#: lib/regcomp.c:139
+msgid "Invalid collation character"
+msgstr "Ký tự đối chiếu không hợp lệ"
+
+#: lib/regcomp.c:142
+msgid "Invalid character class name"
+msgstr "Tên hạng ký tự không hợp lệ"
+
+#: lib/regcomp.c:145
+msgid "Trailing backslash"
+msgstr "Dấu chéo ngược theo sau"
+
+#: lib/regcomp.c:148
+msgid "Invalid back reference"
+msgstr "Tham khảo ngược không hợp lệ"
+
+#: lib/regcomp.c:151
+msgid "Unmatched [ or [^"
+msgstr "Có ký tự riêng lẻ « [ » hoặc « [^ »"
+
+#: lib/regcomp.c:154
+msgid "Unmatched ( or \\("
+msgstr "Có ký tự riêng lẻ « ( » hoặc « \\( »"
+
+#: lib/regcomp.c:157
+msgid "Unmatched \\{"
+msgstr "Có ký tự riêng lẻ « \\{ »"
+
+#: lib/regcomp.c:160 src/dfa.c:1373
+msgid "Invalid content of \\{\\}"
+msgstr "\\{\\} có nội dung sai"
+
+#: lib/regcomp.c:163
+msgid "Invalid range end"
+msgstr "Sai kết thức phạm vi"
+
+#: lib/regcomp.c:166
+msgid "Memory exhausted"
+msgstr "Cạn bộ nhớ"
+
+#: lib/regcomp.c:169
+msgid "Invalid preceding regular expression"
+msgstr "Biểu thức chính quy đi trước mà không hợp lệ"
+
+#: lib/regcomp.c:172
+msgid "Premature end of regular expression"
+msgstr "Biểu thức chính quy kết thức quá sớm"
+
+#: lib/regcomp.c:175 src/dfa.c:1376
+msgid "Regular expression too big"
+msgstr "Biểu thức chính quy quá lớn"
+
+#: lib/regcomp.c:178
+msgid "Unmatched ) or \\)"
+msgstr "Có ký tự riêng lẻ « ) » hoặc « \\) »"
+
+#: lib/regcomp.c:703
+msgid "No previous regular expression"
+msgstr "Không có biểu thức chính quy nằm trước"
+
+#: lib/version-etc.c:74
+#, c-format
+msgid "Packaged by %s (%s)\n"
+msgstr "Đóng gói bởi %s (%s)\n"
+
+#: lib/version-etc.c:77
+#, c-format
+msgid "Packaged by %s\n"
+msgstr "Đóng gói bởi %s\n"
+
+#. TRANSLATORS: Translate "(C)" to the copyright symbol
+#. (C-in-a-circle), if this symbol is available in the user's
+#. locale.  Otherwise, do not translate "(C)"; leave it as-is.
+#: lib/version-etc.c:84
+msgid "(C)"
+msgstr "©"
+
+#: lib/version-etc.c:86
+msgid ""
+"\n"
+"License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl."
+"html>.\n"
+"This is free software: you are free to change and redistribute it.\n"
+"There is NO WARRANTY, to the extent permitted by law.\n"
+"\n"
+msgstr ""
+"\n"
+"Giấy phép GPL pb3+: Giấy phép Công cộng GNU phiên bản 3 hoặc sau:\n"
+"<http://gnu.org/licenses/gpl.html>\n"
+"Đây là phần mềm tự do : bạn có quyền sửa đổi và phát hành lại nó.\n"
+"KHÔNG CÓ BẢO HÀNH GÌ CẢ, với điều kiện được pháp luật cho phép.\n"
+"\n"
+
+#. TRANSLATORS: %s denotes an author name.
+#: lib/version-etc.c:102
+#, c-format
+msgid "Written by %s.\n"
+msgstr "Viết bởi %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#: lib/version-etc.c:106
+#, c-format
+msgid "Written by %s and %s.\n"
+msgstr "Viết bởi %s và %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#: lib/version-etc.c:110
+#, c-format
+msgid "Written by %s, %s, and %s.\n"
+msgstr "Viết bởi %s, %s và %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:117
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"and %s.\n"
+msgstr ""
+"Viết bởi %s, %s, %s\n"
+"và %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:124
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, and %s.\n"
+msgstr ""
+"Viết bởi %s, %s, %s,\n"
+"%s và %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:131
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, %s, and %s.\n"
+msgstr ""
+"Viết bởi %s, %s, %s,\n"
+"%s, %s và %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:139
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, %s, %s, and %s.\n"
+msgstr ""
+"Viết bởi %s, %s, %s,\n"
+"%s, %s, %s và %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:147
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, %s, %s, %s,\n"
+"and %s.\n"
+msgstr ""
+"Viết bởi %s, %s, %s,\n"
+"%s, %s, %s, %s\n"
+"và %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:156
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, %s, %s, %s,\n"
+"%s, and %s.\n"
+msgstr ""
+"Viết bởi %s, %s, %s,\n"
+"%s, %s, %s, %s,\n"
+"%s và %s.\n"
+
+#. TRANSLATORS: Each %s denotes an author name.
+#. You can use line breaks, estimating that each author name occupies
+#. ca. 16 screen columns and that a screen line has ca. 80 columns.
+#: lib/version-etc.c:167
+#, c-format
+msgid ""
+"Written by %s, %s, %s,\n"
+"%s, %s, %s, %s,\n"
+"%s, %s, and others.\n"
+msgstr ""
+"Viết bởi %s, %s, %s,\n"
+"%s, %s, %s, %s,\n"
+"%s, %s và một số người khác.\n"
+
+#. TRANSLATORS: The placeholder indicates the bug-reporting address
+#. for this package.  Please add _another line_ saying
+#. "Report translation bugs to <...>\n" with the address for translation
+#. bugs (typically your translation team's web or email address).
+#: lib/version-etc.c:245 src/main.c:1572
+#, c-format
+msgid ""
+"\n"
+"Report bugs to: %s\n"
+msgstr ""
+"\n"
+"Hãy thông báo lỗi nào cho : %s\n"
+
+#: lib/version-etc.c:247
+#, c-format
+msgid "Report %s bugs to: %s\n"
+msgstr "Hãy thông các báo lỗi %s cho : %s\n"
+
+#: lib/version-etc.c:251
+#, c-format
+msgid "%s home page: <%s>\n"
+msgstr "Trang chủ của %s: <%s>\n"
+
+#: lib/version-etc.c:253
+#, c-format
+msgid "%s home page: <http://www.gnu.org/software/%s/>\n"
+msgstr "Trang chủ của %s: <http://www.gnu.org/software/%s/>\n"
+
+#: lib/version-etc.c:256 src/main.c:1575
+msgid "General help using GNU software: <http://www.gnu.org/gethelp/>\n"
+msgstr ""
+"Trợ giúp chung về sử dụng phần mềm GNU: <http://www.gnu.org/gethelp/>\n"
+
+#: lib/xstrtol-error.c:63
+#, c-format
+msgid "invalid %s%s argument '%s'"
+msgstr "đối số %s%s không hợp lệ '%s'"
+
+#: lib/xstrtol-error.c:68
+#, c-format
+msgid "invalid suffix in %s%s argument '%s'"
+msgstr "hậu tố không hợp lệ trong %s%s đối số '%s'"
+
+#: lib/xstrtol-error.c:72
+#, c-format
+msgid "%s%s argument '%s' too large"
+msgstr "%s%s đối số  '%s' quá lớn"
+
+#: src/dfa.c:953 src/dfa.c:956 src/dfa.c:976 src/dfa.c:986 src/dfa.c:998
+#: src/dfa.c:1049 src/dfa.c:1058 src/dfa.c:1061 src/dfa.c:1066 src/dfa.c:1079
+#: src/dfa.c:1137
+msgid "unbalanced ["
+msgstr "thiếu dấu ngoặc vuông mở"
+
+#: src/dfa.c:1007
+msgid "invalid character class"
+msgstr "sai hạng ký tự"
+
+#: src/dfa.c:1174
+msgid "character class syntax is [[:space:]], not [:space:]"
+msgstr "cú pháp hạng ký tự là [[:dấu_cách:]], không phải [:dấu_cách:]"
+
+#: src/dfa.c:1226
+msgid "unfinished \\ escape"
+msgstr "chưa kết thúc dãy thoát \\"
+
+#: src/dfa.c:1761
+msgid "unbalanced ("
+msgstr "thiếu dấu ngoặc đơn mở ("
+
+#: src/dfa.c:1891
+msgid "no syntax specified"
+msgstr "chưa ghi rõ cú pháp"
+
+#: src/dfa.c:1899
+msgid "unbalanced )"
+msgstr "thiếu dấu ngoặc đơn đóng )"
+
+#: src/egrep.c:16
+msgid "PATTERN is an extended regular expression (ERE).\n"
+msgstr "MẪU là một biểu thức chính quy đã mở rộng (ERE).\n"
+
+#: src/egrep.c:18
+msgid "Invocation as 'egrep' is deprecated; use 'grep -E' instead.\n"
+msgstr "Gọi như « egrep » bị phản đối nên thay thế bằng « grep -E ».\n"
+
+#: src/fgrep.c:10
+msgid "PATTERN is a set of newline-separated fixed strings.\n"
+msgstr "MẪU là một tập hợp các chuỗi cố định phân cách bằng ký tự dòng mới.\n"
+
+#: src/fgrep.c:12
+msgid "Invocation as 'fgrep' is deprecated; use 'grep -F' instead.\n"
+msgstr "Gọi như « fgrep » bị phản đối nên thay thế bằng « grep -F ».\n"
+
+#: src/grep.c:32
+msgid "PATTERN is, by default, a basic regular expression (BRE).\n"
+msgstr "MẪU, theo mặc định, là một biểu thức chính quy cơ bản (BRE).\n"
+
+#: src/grep.c:34
+msgid ""
+"'egrep' means 'grep -E'.  'fgrep' means 'grep -F'.\n"
+"Direct invocation as either 'egrep' or 'fgrep' is deprecated.\n"
+msgstr ""
+"« egrep » nên là « grep -E », « fgrep » nên là « grep -F ».\n"
+"Gọi trực tiếp hoặc « egrep » hoặc « fgrep » bị phản đối.\n"
+
+# Name: don't translate; Tên: đừng dịch
+#. This is a proper name. See the gettext manual, section Names.
+#: src/main.c:58
+msgid "Mike Haertel"
+msgstr "Mike Haertel"
+
+#: src/main.c:59
+msgid "others, see <http://git.sv.gnu.org/cgit/grep.git/tree/AUTHORS>"
+msgstr ""
+"để biết thêm thông tin, xem tại <http://git.sv.gnu.org/cgit/grep.git/tree/"
+"AUTHORS>"
+
+#: src/main.c:448
+msgid "invalid context length argument"
+msgstr "đối số chiều dài ngữ cảnh không hợp lệ"
+
+#: src/main.c:503
+msgid "lseek failed"
+msgstr "lseek bị lỗi"
+
+#: src/main.c:650
+#, c-format
+msgid "input is too large to count"
+msgstr "dữ liệu nhập quá lớn để đếm được"
+
+#: src/main.c:1205
+#, c-format
+msgid "Binary file %s matches\n"
+msgstr "Tập tin nhị phân %s tương ứng với\n"
+
+#: src/main.c:1256
+#, c-format
+msgid "warning: %s: %s"
+msgstr "cảnh báo : %s: %s"
+
+#: src/main.c:1257
+msgid "recursive directory loop"
+msgstr "vòng lặp thư mục đệ quy"
+
+#: src/main.c:1400
+#, c-format
+msgid "input file %s is also the output"
+msgstr "tập tin đầu vào %s cũng là kết xuất"
+
+#: src/main.c:1458
+msgid "(standard input)"
+msgstr "(đầu vào tiêu chuẩn)"
+
+#: src/main.c:1474 src/main.c:1481
+#, c-format
+msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
+msgstr "Sử dụng: %s [TÙY_CHỌN]... MẪU [TẬP_TIN]...\n"
+
+#: src/main.c:1476
+#, c-format
+msgid "Try '%s --help' for more information.\n"
+msgstr "Hãy thử lệnh «%s --help» (trợ giúp) để xem thông tin thêm.\n"
+
+#: src/main.c:1482
+#, c-format
+msgid "Search for PATTERN in each FILE or standard input.\n"
+msgstr "Tìm kiếm MẪU trong mỗi TẬP_TIN hay đầu vào tiêu chuẩn.\n"
+
+#: src/main.c:1485
+#, c-format
+msgid ""
+"Example: %s -i 'hello world' menu.h main.c\n"
+"\n"
+"Regexp selection and interpretation:\n"
+msgstr ""
+"Thí dụ : %s -i 'chào thế giới' menu.h main.c\n"
+"\n"
+"Chọn và giải thích biểu thức chính quy:\n"
+
+#: src/main.c:1490
+#, c-format
+msgid ""
+"  -E, --extended-regexp     PATTERN is an extended regular expression (ERE)\n"
+"  -F, --fixed-strings       PATTERN is a set of newline-separated fixed "
+"strings\n"
+"  -G, --basic-regexp        PATTERN is a basic regular expression (BRE)\n"
+"  -P, --perl-regexp         PATTERN is a Perl regular expression\n"
+msgstr ""
+"  -E, --extended-regexp     MẪU là một biểu thức chính quy đã mở rộng (ERE)\n"
+"  -F, --fixed-strings       MẪU  là một tập hợp các chuỗi cố định phân cách\n"
+"\t\t\t\t\t\tbằng ký tự dòng mới.\n"
+"  -G, --basic-regexp        MẪU là một biểu thức chính quy cơ bản (BRE).\n"
+"  -P, --perl-regexp         MẪU là một biểu thức chính quy Perl.\n"
+
+#: src/main.c:1496
+#, c-format
+msgid ""
+"  -e, --regexp=PATTERN      use PATTERN for matching\n"
+"  -f, --file=FILE           obtain PATTERN from FILE\n"
+"  -i, --ignore-case         ignore case distinctions\n"
+"  -w, --word-regexp         force PATTERN to match only whole words\n"
+"  -x, --line-regexp         force PATTERN to match only whole lines\n"
+"  -z, --null-data           a data line ends in 0 byte, not newline\n"
+msgstr ""
+"  -e, --regexp=MẪU      dùng MẪU để khớp\n"
+"  -f, --file=TẬP_TIN           lấy MẪU từ TẬP_TIN\n"
+"  -i, --ignore-case        không phân biệt chữ hoa/thường\n"
+"  -w, --word-regexp         buộc MẪU chỉ khớp nguyên từ\n"
+"  -x, --line-regexp         buộc MẪU chỉ khớp nguyên dòng\n"
+"  -z, --null-data           một dòng dữ liệu kết thúc bằng 0 byte,\n"
+"\t\t\t\t\t\tkhông phải ký tự dòng mới\n"
+
+#: src/main.c:1503
+#, c-format
+msgid ""
+"\n"
+"Miscellaneous:\n"
+"  -s, --no-messages         suppress error messages\n"
+"  -v, --invert-match        select non-matching lines\n"
+"  -V, --version             print version information and exit\n"
+"      --help                display this help and exit\n"
+"      --mmap                deprecated no-op; evokes a warning\n"
+msgstr ""
+"\n"
+"Linh tinh:\n"
+"  -s, --no-messages         thu hồi các thông điệp lỗi\n"
+"  -v, --invert-match        chọn các dòng không khớp\n"
+"  -V, --version             in ra thông tin phiên bản, sau đó thoát\n"
+"      --help                hiển thị trợ giúp này, sau đó thoát\n"
+"      --mmap                không thực thi; xuất lỗi\n"
+
+#: src/main.c:1511
+#, c-format
+msgid ""
+"\n"
+"Output control:\n"
+"  -m, --max-count=NUM       stop after NUM matches\n"
+"  -b, --byte-offset         print the byte offset with output lines\n"
+"  -n, --line-number         print line number with output lines\n"
+"      --line-buffered       flush output on every line\n"
+"  -H, --with-filename       print the file name for each match\n"
+"  -h, --no-filename         suppress the file name prefix on output\n"
+"      --label=LABEL         use LABEL as the standard input file name "
+"prefix\n"
+msgstr ""
+"\n"
+"Điều khiển kết xuất:\n"
+"  -m, --max-count=SỐ       dừng sau khi khớp SỐ lần\n"
+"  -b, --byte-offset         in ra vị trí tương đối tính theo byte cùng với "
+"dòng kết xuất\n"
+"  -n, --line-number         in ra số thứ tự dòng cùng với dòng kết xuất\n"
+"      --line-buffered       xoá sạch kết xuất trên từng dòng\n"
+"  -H, --with-filename       in ra tên tập tin cho từng lần khớp\n"
+"  -h, --no-filename         thu hồi tên tập tin tiền tố khi xuất\n"
+"      --label=NHÃN         sử dụng NHÃN này làm tiền tố cho tập tin cho đầu "
+"ra tiêu chuẩn\n"
+
+#: src/main.c:1522
+#, c-format
+msgid ""
+"  -o, --only-matching       show only the part of a line matching PATTERN\n"
+"  -q, --quiet, --silent     suppress all normal output\n"
+"      --binary-files=TYPE   assume that binary files are TYPE;\n"
+"                            TYPE is `binary', `text', or `without-match'\n"
+"  -a, --text                equivalent to --binary-files=text\n"
+msgstr ""
+"  -o, --only-matching       chỉ hiển thị phần dòng khớp với MẪU\n"
+"  -q, --quiet, --silent     thu hồi hoàn toàn kết xuất bình thường\n"
+"      --binary-files=KIỂU   giả sử là tên tập tin nhị phân có kiểu :\n"
+"\t\t\t\t • binary — nhị phân\n"
+"\t\t\t\t • text — nhập thô\n"
+"\t\t\t\t • without-match — không có khớp\n"
+"  -a, --text                bằng với tuỳ chọn « --binary-files=text »\n"
+
+#: src/main.c:1529
+#, c-format
+msgid ""
+"  -I                        equivalent to --binary-files=without-match\n"
+"  -d, --directories=ACTION  how to handle directories;\n"
+"                            ACTION is `read', `recurse', or `skip'\n"
+"  -D, --devices=ACTION      how to handle devices, FIFOs and sockets;\n"
+"                            ACTION is `read' or `skip'\n"
+"  -r, --recursive           like --directories=recurse\n"
+"  -R, --dereference-recursive  likewise, but follow all symlinks\n"
+msgstr ""
+"  -I                        tương đương với tuỳ chọn « --binary-"
+"files=without-match »\n"
+"  -d, --directories=HÀNH_VI  cách quản lý các thư mục: HÀNH_VI là:\n"
+"\t\t\t\t • read — đọc\n"
+"\t\t\t\t • recurse — đệ quy\n"
+"\t\t\t\t • skip — bỏ qua\n"
+"  -D, --devices=HÀNH_VI      cách quản lý các thiết bị, FIFO và ổ cắm:\n"
+"\t\t\t\t • read — đọc\n"
+"\t\t\t\t • skip — bỏ qua\n"
+"  -r, --recursive       bằng với tuỳ chọn « --directories=recurse »\n"
+"  -R, --dereference-recursive  cũng vậy nhưng cho phép tất cả các liên kết "
+"biểu trưng\n"
+
+#: src/main.c:1538
+#, c-format
+msgid ""
+"      --include=FILE_PATTERN  search only files that match FILE_PATTERN\n"
+"      --exclude=FILE_PATTERN  skip files and directories matching "
+"FILE_PATTERN\n"
+"      --exclude-from=FILE   skip files matching any file pattern from FILE\n"
+"      --exclude-dir=PATTERN  directories that match PATTERN will be "
+"skipped.\n"
+msgstr ""
+"      --include=MẪU_TỆP    tìm kiếm chỉ những tập tin khớp với mẫu tập tin "
+"này\n"
+"      --exclude=MẪU_TỆP  bỏ qua những tập tin và thư mục khớp với mẫu tập "
+"tin này\n"
+"      --exclude-from=TỆP   bỏ qua những tập tin khớp với bất cứ mẫu tập tin "
+"trong tập tin này\n"
+"      --exclude-dir=MẪU  thư mục nào khớp với mẫu này thì bị bỏ qua\n"
+
+#: src/main.c:1544
+#, c-format
+msgid ""
+"  -L, --files-without-match  print only names of FILEs containing no match\n"
+"  -l, --files-with-matches  print only names of FILEs containing matches\n"
+"  -c, --count               print only a count of matching lines per FILE\n"
+"  -T, --initial-tab         make tabs line up (if needed)\n"
+"  -Z, --null                print 0 byte after FILE name\n"
+msgstr ""
+"  -L, --files-without-match  in ra chỉ tên của mỗi tập tin không chứa sự "
+"khớp\n"
+"  -l, --files-with-matches  in ra chỉ tên của mỗi tập tin chứa sự khớp\n"
+"  -c, --count               in ra chỉ số đếm các dòng khớp trong mỗi tập "
+"tin\n"
+"  -T, --initial-tab         sắp hàng cột tab\n"
+"  -Z, --null                in ra 0 byte đẳng sau tên tập tin\n"
+
+#: src/main.c:1550
+#, c-format
+msgid ""
+"\n"
+"Context control:\n"
+"  -B, --before-context=NUM  print NUM lines of leading context\n"
+"  -A, --after-context=NUM   print NUM lines of trailing context\n"
+"  -C, --context=NUM         print NUM lines of output context\n"
+msgstr ""
+"\n"
+"Điều khiển ngữ cảnh:\n"
+"  -B, --before-context=SỐ  in ra SỐ dòng ngữ cảnh đi trước\n"
+"  -A, --after-context=SỐ   in ra SỐ dòng ngữ cảnh đi sau\n"
+"  -C, --context=SỐ         in ra SỐ dòng ngữ cảnh kết xuất\n"
+
+#: src/main.c:1557
+#, c-format
+msgid ""
+"  -NUM                      same as --context=NUM\n"
+"      --color[=WHEN],\n"
+"      --colour[=WHEN]       use markers to highlight the matching strings;\n"
+"                            WHEN is `always', `never', or `auto'\n"
+"  -U, --binary              do not strip CR characters at EOL (MSDOS/"
+"Windows)\n"
+"  -u, --unix-byte-offsets   report offsets as if CRs were not there\n"
+"                            (MSDOS/Windows)\n"
+"\n"
+msgstr ""
+"  -NUM                      \t\tbằng « --context=SỐ »\n"
+"      --color[=KHI],\n"
+"      --colour[=KHI]\tđánh dấu để tô sáng các chuỗi khớp; \n"
+"                            KHI là `always' (luôn luôn),\n"
+"                                        `never' (không bao giờ),\n"
+"                                        `auto' (tự động)\n"
+"  -U, --binary              đừng gỡ bỏ các ký tự CR ở kết thúc dòng ở EOL "
+"(MSDOS/Windows)\n"
+"  -u, --unix-byte-offsets    thông báo các hiệu số đúng như không có CR ở "
+"đây\n"
+"                            (MSDOS/Windows)\n"
+"\n"
+
+#: src/main.c:1567
+#, c-format
+msgid ""
+"When FILE is -, read standard input.  With no FILE, read . if a command-"
+"line\n"
+"-r is given, - otherwise.  If fewer than two FILEs are given, assume -h.\n"
+"Exit status is 0 if any line is selected, 1 otherwise;\n"
+"if any error occurs and -q is not given, the exit status is 2.\n"
+msgstr ""
+"Khi TẬP_TIN là « - » thì đọc đầu vào tiêu chuẩn. Không có TẬP_TIN, đọc . nếu "
+"dòng lệnh\n"
+"-r được đưa ra, - nếu không. Nếu ít hơn hai tập tin thì giả sử « -h ».\n"
+"Trạng thái thoạt là 0 nếu dòng nào được chọn, không thì 1.\n"
+"Gặp lỗi và khi « -q » không được đặt thì trạng thái thoát là 2.\n"
+
+#: src/main.c:1573
+#, c-format
+msgid "GNU Grep home page: <%s>\n"
+msgstr "Trang chủ của GNU Grep: <%s>\n"
+
+#: src/main.c:1605
+#, c-format
+msgid "%s can only use the %s pattern syntax"
+msgstr "%s chỉ có khả năng sử dụng cú pháp mẫu %s"
+
+#: src/main.c:1608
+#, c-format
+msgid "conflicting matchers specified"
+msgstr "đã ghi rõ dữ liệu khớp mà xung đột"
+
+#: src/main.c:1622
+#, c-format
+msgid "invalid matcher %s"
+msgstr "sai khớp %s"
+
+#: src/main.c:1870
+#, c-format
+msgid "unknown devices method"
+msgstr "không rõ phương pháp thiết bị"
+
+#: src/main.c:1999
+#, c-format
+msgid "invalid max count"
+msgstr "số đếm tối đa không hợp lệ"
+
+#: src/main.c:2056
+#, c-format
+msgid "unknown binary-files type"
+msgstr "không rõ kiểu tập tin nhị phân (binary-files)"
+
+#: src/main.c:2119
+#, c-format
+msgid "the --mmap option has been a no-op since 2010"
+msgstr "tuỳ chọn --mmap không còn được thực thi kể từ 2010"
+
+#: src/pcresearch.c:42
+msgid ""
+"support for the -P option is not compiled into this --disable-perl-regexp "
+"binary"
+msgstr ""
+"khả năng hỗ trợ tùy chọn -P không được biên dịch vào tập tin nhị phân --"
+"disable-perl-regexp này"
+
+#: src/pcresearch.c:56
+#, c-format
+msgid "the -P option only supports a single pattern"
+msgstr "tùy chọn -P chỉ hỗ trợ một mẫu riêng lẻ"
+
+#: src/pcresearch.c:110
+#, c-format
+msgid "internal error"
+msgstr "lỗi nội bộ"
+
+#: src/pcresearch.c:138
+#, c-format
+msgid "exceeded PCRE's line length limit"
+msgstr "bị vượt quá theo chiều dài dòng của PCRE"
+
+#: src/pcresearch.c:157
+#, c-format
+msgid "exceeded PCRE's backtracking limit"
+msgstr "đã chạm đến giới hạn tìm ngược của PCRE"
+
+#~ msgid "unfinished repeat count"
+#~ msgstr "chưa kết thúc sự đếm lặp lại"
+
+#~ msgid "malformed repeat count"
+#~ msgstr "sự đếm lặp lại dạng sai"
+
+#~ msgid "writing output"
+#~ msgstr "đang ghi kết xuất"
+
+#~ msgid ""
+#~ "in GREP_COLORS=\"%s\", the \"%s\" capacity needs a value (\"=...\"); "
+#~ "skipped"
+#~ msgstr ""
+#~ "trong chuỗi « GREP_COLORS=\"%s\" », khả năng \"%s\" cần thiết giá trị "
+#~ "(\"=...\"); nên bỏ qua"
+
+#~ msgid ""
+#~ "in GREP_COLORS=\"%s\", the \"%s\" capacity is boolean and cannot take a "
+#~ "value (\"=%s\"); skipped"
+#~ msgstr ""
+#~ "trong chuỗi « GREP_COLORS=\"%s\" », khả năng \"%s\" là luận lý thì không "
+#~ "chấp nhận được giá trị (\"=%s\"); nên bỏ qua"
+
+#~ msgid "in GREP_COLORS=\"%s\", the \"%s\" capacity %s"
+#~ msgstr "trong GREP_COLORS=\"%s\", khả năng \"%s\" %s"
+
+#~ msgid ""
+#~ "stopped processing of ill-formed GREP_COLORS=\"%s\" at remaining "
+#~ "substring \"%s\""
+#~ msgstr ""
+#~ "đã dừng xử lý chuỗi GREP_COLORS=\"%s\" dạng sai ở chuỗi con còn lại \"%s\""

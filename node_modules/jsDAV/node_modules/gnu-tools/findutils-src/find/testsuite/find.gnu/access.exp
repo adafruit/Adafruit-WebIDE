@@ -1,0 +1,15 @@
+# tests for -readable, -writable, -executable
+exec rm -rf tmp
+exec mkdir tmp
+if { ! [ fs_superuser ] } {
+    touch tmp/x tmp/w tmp/r tmp/rw tmp/rwx tmp/0 
+    exec chmod 400 tmp/r
+    exec chmod 200 tmp/w
+    exec chmod 100 tmp/x
+    exec chmod 000 tmp/0
+    exec chmod 600 tmp/rw
+    exec chmod 700 tmp/rwx
+    find_start p {tmp -readable -printf "r %p\n" , -writable -printf "w %p\n" , -executable  -printf "x %p\n"}
+    exec rm -rf tmp
+}
+

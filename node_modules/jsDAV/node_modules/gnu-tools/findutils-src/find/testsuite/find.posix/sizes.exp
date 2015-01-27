@@ -1,0 +1,15 @@
+# tests for -size
+exec rm -rf tmp
+exec mkdir tmp
+exec true > tmp/0-bytes
+exec dd if=/dev/zero bs=1 count=511  of=tmp/511-bytes  > /dev/null 2>/dev/null 
+exec dd if=/dev/zero bs=1 count=512  of=tmp/512-bytes  > /dev/null 2>/dev/null 
+exec dd if=/dev/zero bs=1 count=513  of=tmp/513-bytes  > /dev/null 2>/dev/null 
+exec dd if=/dev/zero bs=1 count=1024 of=tmp/1024-bytes > /dev/null 2>/dev/null 
+find_start p {tmp -mindepth 1 ( -size -1 -printf "A size -1: %s %p\n" ) , ( -size  1 -printf "B size  1: %s %p\n" ) , ( -size +1 -printf "C size +1: %s %p\n" ) , ( -size -2 -printf "G size -2: %s %p\n" ) , ( -size  2 -printf "H size  2: %s %p\n" ) , ( -size +2 -printf "I size +2: %s %p\n" ) }
+#     ( -size =1 -printf "E size =1: %s %p\n" ) 
+#     ( -size >1 -printf "F size >1: %s %p\n" ) ,
+#     ( -size <2 -printf "J size <2: %s %p\n" ) ,
+#     ( -size =2 -printf "K size =2: %s %p\n" ) ,
+#     ( -size >2 -printf "L size >2: %s %p\n" )   
+exec rm -rf tmp

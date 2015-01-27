@@ -1,0 +1,19 @@
+# tests for -perm /nnn
+# The slash is a GNU extension
+
+exec rm -rf tmp 
+exec mkdir tmp 
+
+## set up a selection of test files
+foreach perm  { 400 200 555 700 000 050 } {
+    exec touch "tmp/$perm"
+    exec chmod $perm "tmp/$perm"
+}
+
+# 
+# The -o operator normally has a short-circuit effect,
+# so we have to use "-exec false \;" to make sure that
+# all the parenthesised expression actually fail.
+# 
+find_start p {tmp -mindepth 1 -perm /555 -printf "p/555 %p\n" }
+# exec rm -rf tmp tmp2

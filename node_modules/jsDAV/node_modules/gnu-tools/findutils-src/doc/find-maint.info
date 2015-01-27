@@ -1,0 +1,1612 @@
+This is
+/home/james/source/GNU/findutils/git/gnu/findutils/doc/find-maint.info,
+produced by makeinfo version 4.11 from
+/home/james/source/GNU/findutils/git/gnu/findutils/doc/find-maint.texi.
+
+INFO-DIR-SECTION GNU organization
+START-INFO-DIR-ENTRY
+* Maintaining Findutils: (find-maint).        Maintaining GNU findutils
+END-INFO-DIR-ENTRY
+
+   This manual explains how GNU findutils is maintained, how changes
+should be made and tested, and what resources exist to help developers.
+
+   This is edition 4.4.2, for findutils version 4.4.2.
+
+   Copyright (C) 2007, 2008 Free Software Foundation, Inc.
+
+   Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.2 or
+any later version published by the Free Software Foundation; with no
+Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+Texts.  A copy of the license is included in the section entitled "GNU
+Free Documentation License".
+
+
+File: find-maint.info,  Node: Top,  Next: Introduction,  Prev: (dir),  Up: (dir)
+
+Maintaining GNU Findutils
+*************************
+
+This manual explains how GNU findutils is maintained, how changes should
+be made and tested, and what resources exist to help developers.
+
+   This is edition 4.4.2, for findutils version 4.4.2.
+
+   Copyright (C) 2007, 2008 Free Software Foundation, Inc.
+
+   Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.2 or
+any later version published by the Free Software Foundation; with no
+Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+Texts.  A copy of the license is included in the section entitled "GNU
+Free Documentation License".
+
+* Menu:
+
+* Introduction::
+* Maintaining GNU Programs::
+* Design Issues::
+* Coding Conventions::
+* Tools::
+* Using the GNU Portability Library::
+* Documentation::
+* Testing::
+* Bugs::
+* Distributions::
+* Internationalisation::
+* Security::
+* Making Releases::
+* GNU Free Documentation License::
+
+
+File: find-maint.info,  Node: Introduction,  Next: Maintaining GNU Programs,  Prev: Top,  Up: Top
+
+1 Introduction
+**************
+
+This document explains how to contribute to and maintain GNU Findutils.
+It concentrates on developer-specific issues.  For information about
+how to use the software please refer to *Note Introduction:
+(find)Introduction.
+
+   This manual aims to be useful without necessarily being verbose.
+It's also a recent document, so there will be a many areas in which
+improvements can be made.  If you find that the document misses out
+important information or any part of the document is be so terse as to
+be unuseful, please ask for help on the <bug-findutils@gnu.org> mailing
+list.  We'll try to improve this document too.
+
+
+File: find-maint.info,  Node: Maintaining GNU Programs,  Next: Design Issues,  Prev: Introduction,  Up: Top
+
+2 Maintaining GNU Programs
+**************************
+
+GNU Findutils is part of the GNU Project and so there are a number of
+documents which set out standards for the maintenance of GNU software.
+
+`standards.texi'
+     GNU Project Coding Standards.  All changes to findutils should
+     comply with these standards.  In some areas we go somewhat beyond
+     the requirements of the standards, but these cases are explained
+     in this manual.
+
+`maintain.texi'
+     Information for Maintainers of GNU Software.  This document
+     provides guidance for GNU maintainers.  Everybody with commit
+     access should read this document.   Everybody else is welcome to
+     do so too, of course.
+
+
+File: find-maint.info,  Node: Design Issues,  Next: Coding Conventions,  Prev: Maintaining GNU Programs,  Up: Top
+
+3 Design Issues
+***************
+
+The findutils package is installed on many many systems, usually as a
+fundamental component.  The programs in the package are often used in
+order to successfully boot or fix the system.
+
+   This fact means that for findutils we bear in mind considerations
+that may not apply so much as for other packages.  For example, the fact
+that findutils is often a base component motivates us to
+   * Limit dependencies on libraries
+
+   * Avoid dependencies on other large packages (for example,
+     interpreters)
+
+   * Be conservative when making changes to the 'stable' release branch
+
+   All those considerations come before functionality.  Functional
+enhancements are still made to findutils, but these are almost
+exclusively introduced in the 'development' release branch, to allow
+extensive testing and proving.
+
+   Sometimes it is useful to have a priority list to provide guidance
+when making design trade-offs.   For findutils, that priority list is:
+
+  1. Correctness
+
+  2. Standards compliance
+
+  3. Security
+
+  4. Backward compatibility
+
+  5. Performance
+
+  6. Functionality
+
+   For example, we support the `-exec' action because POSIX compliance
+requires this, even though there are security problems with it and we
+would otherwise prefer people to use `-execdir'.  There are also cases
+where some performance is sacrificed in the name of security.  For
+example, the sanity checks that `find' performs while traversing a
+directory tree may slow it down.   We adopt functional changes, and
+functional changes are allowed to make `find' slower, but only if there
+is no detectable impact on users who don't use the feature.
+
+   Backward-incompatible changes do get made in order to comply with
+standards (for example the behaviour of `-perm -...' changed in order
+to comply with POSIX).  However, they don't get made in order to
+provide better ease of use; for example the semantics of `-size -2G'
+are almost always unexpected by users, but we retain the current
+behaviour because of backward compatibility and for its similarity to
+the block-rounding behaviour of `-size -30'.  We might introduce a
+change which does not have the unfortunate rounding behaviour, but we
+would choose another syntax (for example `-size '<2G'') for this.
+
+   In a general sense, we try to do test-driven development of the
+findutils code; that is, we try to implement test cases for new
+features and bug fixes before modifying the code to make the test pass.
+Some features of the code are tested well, but the test coverage for
+other features is less good.  If you are about to modify the code for a
+predicate and aren't sure about the test coverage, use `grep' on the
+test directories and measure the coverage with `gcov' or another test
+coverage tool.
+
+   Lastly, we try not to depend on having a "working system".  The
+findutils suite is used for diagnosis of problems, and this applies
+especially to `find'.  We should ensure that `find' still works on
+relatively broken systems, for example systems with damaged
+`/etc/passwd' files.  Another interesting example is the case where a
+system is a client of one or more unresponsive NFS servers.  On such a
+system, if you try to stat all mount points, your program will hang
+indefinitely, waiting for the remote NFS server to respond.
+
+
+File: find-maint.info,  Node: Coding Conventions,  Next: Tools,  Prev: Design Issues,  Up: Top
+
+4 Coding Conventions
+********************
+
+Coding style documents which set out to establish a uniform look and
+feel to source code have worthy goals, for example greater ease of
+maintenance and readability.  However, I do not believe that in general
+coding style guide authors can envisage every situation, and it is
+always possible that it might on occasion be necessary to break the
+letter of the style guide in order to honour its spirit, or to better
+achieve the style guide's goals.
+
+   I've certainly seen many style guides outside the free software world
+which make bald statements such as "functions shall have exactly one
+return statement".  The desire to ensure consistency and obviousness of
+control flow is laudable, but it is all too common for such bald
+requirements to be followed unthinkingly.  Certainly I've seen such
+coding standards result in unmaintainable code with terrible
+infelicities such as functions containing `if' statements nested nine
+levels deep.  I suppose such coding standards don't survive in free
+software projects because they tend to drive away potential
+contributors or tend to generate heated discussions on mailing lists.
+Equally, a nine-level-deep function in a free software program would
+quickly get refactored, assuming it is obvious what the function is
+supposed to do...
+
+   Be that as it may, the approach I will take for this document is to
+explain some idioms and practices in use in the findutils source code,
+and leave it up to the reader's engineering judgement to decide which
+considerations apply to the code they are working on, and whether or
+not there is sufficient reason to ignore the guidance in current
+circumstances.
+
+* Menu:
+
+* Make the Compiler Find the Bugs::
+* The File System Is Being Modified::
+* Don't Trust the File System Contents::
+* Debugging is For Users Too::
+* Factor Out Repeated Code::
+
+
+File: find-maint.info,  Node: Make the Compiler Find the Bugs,  Next: The File System Is Being Modified,  Up: Coding Conventions
+
+4.1 Make the Compiler Find the Bugs
+===================================
+
+Finding bugs is tedious.  If I have a filesystem containing two million
+files, and a find command line should print one million of them, but in
+fact it misses out 1%, you can tell the program is printing the wrong
+result only if you know the right answer for that filesystem at that
+time.  If you don't know this, you may just not find out about that
+bug.  For this reason it is important to have a comprehensive test
+suite.
+
+   The test suite is of course not the only way to find the bugs.  The
+findutils source code makes liberal use of the assert macro.  While on
+the one hand these might be a performance drain, the performance impact
+of most of these is negligible compared to the time taken to fetch even
+one sector from a disk drive.
+
+   Assertions should not be used to check the results of operations
+which may be affected by the program's external environment.  For
+example, never assert that a file could be opened successfully.  Errors
+relating to problems with the program's execution environment should be
+diagnosed with a user-oriented error message.  An assertion failure
+should always denote a bug in the program.
+
+   Several programs in the findutils suite perform self-checks.  See for
+example the function `pred_sanity_check' in `find/pred.c'.  This is
+generally desirable.
+
+   There are also a number of small ways in which we can help the
+compiler to find the bugs for us.
+
+4.1.1 Constants in Equality Testing
+-----------------------------------
+
+It's a common error to write `=' when `==' is meant.  Sometimes this
+happens in new code and is simply due to finger trouble.  Sometimes it
+is the result of the inadvertent deletion of a character.  In any case,
+there is a subset of cases where we can persuade the compiler to
+generate an error message when we make this mistake; this is where the
+equality test is with a constant.
+
+   This is an example of a vulnerable piece of code.
+
+     if (x == 2)
+      ...
+
+   A simple typo converts the above into
+
+     if (x = 2)
+      ...
+
+   We've introduced a bug; the condition is always true, and the value
+of `x' has been changed.  However, a simple change to our practice
+would have made us immune to this problem:
+
+     if (2 == x)
+      ...
+
+   Usually, the Emacs keystroke `M-t' can be used to swap the operands.
+
+4.1.2 Spelling of ASCII NUL
+---------------------------
+
+Strings in C are just sequences of characters terminated by a NUL.  The
+ASCII NUL character has the numerical value zero.  It is normally
+represented in C code as `\0'.  Here is a typical piece of C code:
+
+     *p = '\0';
+
+   Consider what happens if there is an unfortunate typo:
+
+     *p = '0';
+
+   We have changed the meaning of our program and the compiler cannot
+diagnose this as an error.  Our string is no longer terminated.  Bad
+things will probably happen.  It would be better if the compiler could
+help us diagnose this problem.
+
+   In C, the type of `'\0'' is in fact int, not char.  This provides us
+with a simple way to avoid this error.  The constant `0' has the same
+value and type as the constant `'\0''.  However, it is not as
+vulnerable to typos.    For this reason I normally prefer to use this
+code:
+
+     *p = 0;
+
+
+File: find-maint.info,  Node: Factor Out Repeated Code,  Prev: Debugging is For Users Too,  Up: Coding Conventions
+
+4.2 Factor Out Repeated Code
+============================
+
+Repeated code imposes a greater maintenance burden and increases the
+exposure to bugs.  For example, if you discover that something you want
+to implement has some similarity with an existing piece of code, don't
+cut and paste it.  Instead, factor the code out.  The risk of cutting
+and pasting the code, particularly if you do this several times, is
+that you end up with several copies of the same code.
+
+   If the original code had a bug, you now have N places where this
+needs to be fixed.  It's all to easy to miss some out when trying to
+fix the bug.  Equally, it's quite possible that when pasting the code
+into some function, the pasted code was not quite adapted correctly to
+its new environment.  To pick a contrived example, perhaps it modifies a
+global variable which it that code shouldn't be touching in its new
+home.  Worse, perhaps it makes some unstated assumption about the
+nature of the input arguments which is in fact not true for the context
+of the now duplicated code.
+
+   A good example of the use of refactoring in findutils is the
+`collect_arg' function in `find/parser.c'.  A less clear-cut but larger
+example is the factoring out of code which would otherwise have been
+duplicated between `find/find.c' and `find/ftsfind.c'.
+
+   The findutils test suite is comprehensive enough that refactoring
+code should not generally be a daunting prospect from a testing point of
+view.  Nevertheless there are some areas which are only lightly-tested:
+
+  1. Tests on the ages of files
+
+  2. Code which deals with the values returned by operating system
+     calls (for example handling of ENOENT)
+
+  3. Code dealing with OS limits (for example, limits on path length or
+     exec arguments)
+
+  4. Code relating to features not all systems have (for example
+     Solaris Doors)
+
+   Please exercise caution when working in those areas.
+
+
+File: find-maint.info,  Node: Debugging is For Users Too,  Next: Factor Out Repeated Code,  Prev: Don't Trust the File System Contents,  Up: Coding Conventions
+
+4.3 Debugging is For Users Too
+==============================
+
+Debug and diagnostic code is often used to verify that a program is
+working in the way its author thinks it should be.  But users are often
+uncertain about what a program is doing, too.  Exposing them a little
+more diagnostic information can help.  Much of the diagnostic code in
+`find', for example, is controlled by the `-D' flag, as opposed to C
+preprocessor directives.
+
+   Making diagnostic messages available to users also means that the
+phrasing of the diagnostic messages becomes important, too.
+
+
+File: find-maint.info,  Node: Don't Trust the File System Contents,  Next: Debugging is For Users Too,  Prev: The File System Is Being Modified,  Up: Coding Conventions
+
+4.4 Don't Trust the File System Contents
+========================================
+
+People use `find' to search in directories created by other people.
+Sometimes they do this to check to suspicious activity (for example to
+look for new setuid binaries).  This means that it would be bad if
+`find' were vulnerable to, say, a security problem exploitable by
+constructing a specially-crafted filename.  The same consideration
+would apply to `locate' and `updatedb'.
+
+   Henry Spencer said this well in his fifth commandment:
+
+     Thou shalt check the array bounds of all strings (indeed, all
+     arrays), for surely where thou typest `foo' someone someday shall
+     type `supercalifragilisticexpialidocious'.
+
+   Symbolic links can often be a problem.  If `find' calls `lstat' on
+something and discovers that it is a directory, it's normal for `find'
+to recurse into it.  Even if the `chdir' system call is used
+immediately, there is still a window of opportunity between the `lstat'
+and the `chdir' in which a malicious person could rename the directory
+and substitute a symbolic link to some other directory.
+
+
+File: find-maint.info,  Node: The File System Is Being Modified,  Next: Don't Trust the File System Contents,  Prev: Make the Compiler Find the Bugs,  Up: Coding Conventions
+
+4.5 The File System Is Being Modified
+=====================================
+
+The filesystem gets modified while you are traversing it.  For,
+example, it's normal for files to get deleted while `find' is
+traversing a directory.  Issuing an error message seems helpful when a
+file is deleted from the one directory you are interested in, but if
+`find' is searching 15000 directories, such a message becomes less
+helpful.
+
+   Bear in mind also that it is possible for the directory `find' is
+currently searching could be moved to another point in the filesystem,
+and that the directory in which `find' was started could be deleted.
+
+   Henry Spencer's sixth commandment is also apposite here:
+
+     If a function be advertised to return an error code in the event of
+     difficulties, thou shalt check for that code, yea, even though the
+     checks triple the size of thy code and produce aches in thy typing
+     fingers, for if thou thinkest "it cannot happen to me", the gods
+     shall surely punish thee for thy arrogance.
+
+   There are a lot of files out there.  They come in all dates and
+sizes.  There is a condition out there in the real world to exercise
+every bit of the code base.  So we try to test that code base before
+someone falls over a bug.
+
+
+File: find-maint.info,  Node: Tools,  Next: Using the GNU Portability Library,  Prev: Coding Conventions,  Up: Top
+
+5 Tools
+*******
+
+Most of the tools required to build findutils are mentioned in the file
+`README-CVS'.  We also use some other tools:
+
+System call traces
+     Much of the execution time of find is spent waiting for filesystem
+     operations.  A system call trace (for example, that provided by
+     `strace') shows what system calls are being made.   Using this
+     information we can work to remove unnecessary file system
+     operations.
+
+Valgrind
+     Valgrind is a tool which dynamically verifies the memory accesses a
+     program makes to ensure that they are valid (for example, that the
+     behaviour of the program does not in any way depend on the
+     contents of uninitialised memory).
+
+DejaGnu
+     DejaGnu is the test framework used to run the findutils test suite
+     (the `runtest' program is part of DejaGnu).  It would be ideal if
+     everybody building `findutils' also ran the test suite, but many
+     people don't have DejaGnu installed.  When changes are made to
+     findutils, DejaGnu is invoked a lot. *Note Testing::, for more
+     information.
+
+
+File: find-maint.info,  Node: Using the GNU Portability Library,  Next: Documentation,  Prev: Tools,  Up: Top
+
+6 Using the GNU Portability Library
+***********************************
+
+The Gnulib library (`http://www.gnu.org/software/gnulib/') makes a
+variety of systems look more like a GNU/Linux system and also applies a
+bunch of automatic bug fixes and workarounds.  Some of these also apply
+to GNU/Linux systems too.  For example, the Gnulib regex implementation
+is used when we determine that we are building on a GNU libc system
+with a bug in the regex implementation.
+
+6.1 How and Why we Import the Gnulib Code
+=========================================
+
+Gnulib does not have a release process which results in a source
+tarball you can download.  Instead, the code is simply made available
+by GIT.   The code is also available via `git-cvspserver', but we
+decided not to use this, since `import-gnulib.sh' depended on `cvs
+update -D', which at the time `git-cvspserver' did not support.
+
+   GNU projects vary in how they interact with Gnulib.  Many import a
+selection of code from Gnulib into the working directory and then check
+the updated files into the CVS repository for their project.  The
+coreutils project does this, for example.
+
+   At the last maintainer changeover for findutils (2003) it turned out
+that there was a lot of material in findutils in common with Gnulib,
+but it had not been updated in a long time.  It was difficult to figure
+out which source files were intended to track external sources and
+which were intended to contain incompatible changes, or diverge for
+other reasons.
+
+   To reduce this uncertainty, I decided to treat Gnulib much like
+Automake.  Files supplied by Automake are simply absent from the
+findutils source tree.  When Automake is run with `automake
+--add-missing --copy', it adds in all the files it thinks should be
+there which aren't there already.
+
+   An analogous approach is taken with Gnulib.  The Gnulib code is
+imported from the CVS repository for Gnulib with a findutils helper
+script, `import-gnulib.sh'.  That script fetches a copy of the Gnulib
+code into the subdirectory `gnulib-git' and then runs `gnulib-tool'.
+The `gnulib-tool' program copies the required parts of Gnulib into the
+findutils source tree in the subdirectory `gnulib'.  This process gives
+us the property that the code in `gnulib' and `gnulib-git' is not
+included in the findutils CVS tree.   Both directories are listed in
+`.cvsignore' and so CVS ignores them.
+
+   Findutils does not use all the Gnulib code.  The modules we need are
+listed in the file `import-gnulib.config'.  The same file also
+indicates the version of Gnulib that we want to use.  Since Gnulib has
+no actual release process, we just use a date.  Both `import-gnulib.sh'
+and `import-gnulib.config' are in the findutils CVS repository.
+
+   The upshot of all this is that we can use the findutils CVS
+repository to track which version of Gnulib every findutils release
+uses.  That information is also provided when the user invokes a
+findutils program with the `--version' option.  It also means that if a
+file exists in the Findutils CVS repository, you can be certain that
+the file exists in the CVS repository and is different from a similar
+file elsewhere, it's for a reason.
+
+   There are a small number of exceptions to this; the standard
+boiler-plate GNU files such as `ABOUT-NLS', `INSTALL' and `COPYING'.
+
+6.2 How We Fix Gnulib Bugs
+==========================
+
+If we always directly import the Gnulib code directly from the CVS
+repository in this way, it is impossible to maintain a locally
+different copy of Gnulib.  This is often a benefit in that accidental
+version skew is prevented.
+
+   However, sometimes we want deliberate version skew in order to use a
+findutils-specific patched version of a Gnulib file, for example
+because we fixed a bug.
+
+   Gnulib is used by quite a number of GNU projects, and this means that
+it gets plenty of testing.  Therefore there are relatively few bugs in
+the Gnulib code, but it does happen from time to time.
+
+   However, since there is no waiting around for a Gnulib source release
+tarball, Gnulib bugs are generally fixed quickly.  Here is an outline
+of the way we would contribute a fix to Gnulib (assuming you know it is
+not already fixed in current Gnulib CVS):
+
+Check you already completed a copyright assignment for Gnulib
+
+Begin with a vanilla CVS tree
+     Download the Findutils source code from CVS (or use the tree you
+     have already)
+
+Check out a copy of the Gnulib source
+     Check out a copy of the Gnulib source tree.  The
+     `import-gnulib.sh' script may have generated a shallow git clone
+     as opposed to a normal, full clone in the directory `gnulib-git'.
+     This means that you may not be able to clone the repository that
+     `import-gnulib.sh' generates.  However, you can make a normal
+     (full) clone with `git clone
+     git_repo="git://git.savannah.gnu.org/gnulib.git"'.  Do this
+     somewhere outside the findutils source tree.
+
+Import Gnulib from your local copy
+     The `import-gnulib.sh' tool has a `-d' option which you can use to
+     import the code from a local copy of Gnulib.
+
+Build findutils
+     Build findutils and run the test suite, which should pass.  In our
+     example we assume you have just noticed a bug in Gnulib, not that
+     recent Gnulib changes broke the findutils regression tests.
+
+Write a test case
+     If in fact Gnulib did break the findutils regression tests, you
+     can probably skip this step, since you already have a test case
+     demonstrating the problem.  Otherwise, write a findutils test case
+     for the bug and/or a Gnulib test case.
+
+Fix the Gnulib bug
+     Make sure your editor follows symbolic links so that your changes
+     to `gnulib/...' actually affect the files in the CVS working
+     directory you checked out earlier.   Observe that your test now
+     passes.
+
+Prepare a Gnulib patch
+     Use `cvs -z3 diff -upN' to prepare the patch.  Write a ChangeLog
+     entry and prepend this to the patch.  Check that the patch conforms
+     with the GNU coding standards, and email it to the Gnulib mailing
+     list.
+
+Wait for the patch to be applied
+     Once your bug fix has been applied, you can update your local
+     directory from git, re-import the code into Findutils (still using
+     the `-d' option), and re-run the tests.  This verifies that the
+     fix the Gnulib team made actually fixes your problem.
+
+Reimport the Gnulib code
+     Update the findutils file `import-gnulib.config' to specify git
+     commit which is after the point at which the bug fix was committed
+     to Gnulib.  You can do this with `git rev-parse HEAD'.  Finally,
+     re-import the Gnulib code directly from git by using
+     `import-gnulib.sh' without the `-d' option, and run the tests
+     again.  This verifies that there was no remaining local change
+     that we were relying on to fix the bug.   Make sure you checked
+     everything in by running `git status'.
+
+
+File: find-maint.info,  Node: Documentation,  Next: Testing,  Prev: Using the GNU Portability Library,  Up: Top
+
+7 Documentation
+***************
+
+The findutils CVS tree includes several different types of
+documentation.
+
+7.1 User Documentation
+======================
+
+User-oriented documentation is provided as manual pages and in Texinfo.
+See *note Introduction: (find)Introduction.
+
+   Please make sure both sets of documentation are updated if you make a
+change to the code.  The GNU coding standards do not normally call for
+maintaining manual pages on the grounds of effort duplication.
+However, the manual page format is more convenient for quick reference,
+and so it's worth maintaining both types of documentation.  However,
+the manual pages are normally rather more terse than the Texinfo
+documentation.  The manual pages are suitable for reference use, but
+the Texinfo manual should also include introductory and tutorial
+material.
+
+7.2 Build Guidance
+==================
+
+`ABOUT-NLS'
+     Describes the Free Translation Project, the translation status of
+     various GNU projects, and how to participate by translating an
+     application.
+
+`AUTHORS'
+     Lists the authors of findutils.
+
+`COPYING'
+     The copyright license covering findutils; currently, the GNU GPL,
+     version 3.
+
+`INSTALL'
+     Generic installation instructions for installing GNU programs.
+
+`README'
+     Information about how to compile findutils in particular
+
+`README-alpha'
+     A README file which is included with testing releases of findutils.
+
+`README-CVS'
+     Describes how to build findutils from the code in CVS.
+
+`THANKS'
+     Thanks for people who contributed to findutils.  Generally, if
+     someone's contribution was significant enough to need a copyright
+     assignment, their name should go in here.
+
+`TODO'
+     Mainly obsolete.
+
+7.3 Release Information
+=======================
+
+`NEWS'
+     Enumerates the user-visible change in each release.  Typical
+     changes are fixed bugs, functionality changes and documentation
+     changes.  Include the date when a release is made.
+
+`ChangeLog'
+     This file enumerates all changes to the findutils source code (with
+     the possible exception of `.cvsignore' and `.gitignore' changes).
+     The level of detail used for this file should be sufficient to
+     answer the questions "what changed?" and "why was it changed?".
+     If a change fixes a bug, always give the bug reference number in
+     both the `ChangeLog' and `NEWS' files and of course also in the
+     checkin message.  In general, it should be possible to enumerate
+     all material changes to a function by searching for its name in
+     `ChangeLog'.  Mention when each release is made.
+
+
+File: find-maint.info,  Node: Testing,  Next: Bugs,  Prev: Documentation,  Up: Top
+
+8 Testing
+*********
+
+This chapter will explain the general procedures for adding tests to
+the test suite, and the functions defined in the findutils-specific
+DejaGnu configuration.  Where appropriate references will be made to
+the DejaGnu documentation.
+
+
+File: find-maint.info,  Node: Bugs,  Next: Distributions,  Prev: Testing,  Up: Top
+
+9 Bugs
+******
+
+Bugs are logged in the Savannah bug tracker
+`http://savannah.gnu.org/bugs/?group=findutils'.  The tracker offers
+several fields but their use is largely obvious.  The life-cycle of a
+bug is like this:
+
+Open
+     Someone, usually a maintainer, a distribution maintainer or a user,
+     creates a bug by filling in the form.   They fill in field values
+     as they see fit.  This will generate an email to
+     <bug-findutils@gnu.org>.
+
+Triage
+     The bug hangs around with `Status=None' until someone begins to
+     work on it.  At that point they set the "Assigned To" field and
+     will sometimes set the status to `In Progress', especially if the
+     bug will take a while to fix.
+
+Non-bugs
+     Quite a lot of reports are not actually bugs; for these the usual
+     procedure is to explain why the problem is not a bug, set the
+     status to `Invalid' and close the bug.   Make sure you set the
+     `Assigned to' field to yourself before closing the bug.
+
+Fixing
+     When you commit a bug fix into CVS (or in the case of a contributed
+     patch, commit the change), mark the bug as `Fixed'.  Make sure you
+     include a new test case where this is relevant.  If you can figure
+     out which releases are affected, please also set the `Release'
+     field to the earliest release which is affected by the bug.
+     Indicate which source branch the fix is included in (for example,
+     4.2.x or 4.3.x).  Don't close the bug yet.
+
+Release
+     When a release is made which includes the bug fix, make sure the
+     bug is listed in the NEWS file.  Once the release is made, fill in
+     the `Fixed Release' field and close the bug.
+
+
+File: find-maint.info,  Node: Distributions,  Next: Internationalisation,  Prev: Bugs,  Up: Top
+
+10 Distributions
+****************
+
+Almost all GNU/Linux distributions include findutils, but only some of
+them have a package maintainer who is a member of the mailing list.
+Distributions don't often feed back patches to the
+<bug-findutils@gnu.org> list, but on the other hand many of their
+patches relate only to standards for file locations and so forth, and
+are therefore distribution specific.  On an irregular basis I check the
+current patches being used by one or two distributions, but the total
+number of GNU/Linux distributions is large enough that we could not
+hope to cover them all.
+
+   Often, bugs are raised against a distribution's bug tracker instead
+of GNU's.    Periodically (about every six months) I take a look at some
+of the more accessible bug trackers to indicate which bugs have been
+fixed upstream.
+
+   Many distributions include both findutils and the slocate package,
+which provides a replacement `locate'.
+
+
+File: find-maint.info,  Node: Internationalisation,  Next: Security,  Prev: Distributions,  Up: Top
+
+11 Internationalisation
+***********************
+
+Translation is essentially automated from the maintainer's point of
+view.  The TP mails the maintainer when a new PO file is available, and
+we just download it and check it in.  We copy the `.po' files into the
+CVS repository.  For more information, please see
+`http://www.iro.umontreal.ca/translation/HTML/domain-findutils.html'.
+
+
+File: find-maint.info,  Node: Security,  Next: Making Releases,  Prev: Internationalisation,  Up: Top
+
+12 Security
+***********
+
+See *note Security Considerations: (find)Security Considerations, for a
+full description of the findutils approach to security considerations
+and discussion of particular tools.
+
+   If someone reports a security bug publicly, we should fix this as
+rapidly as possible.  If necessary, this can mean issuing a fixed
+release containing just the one bug fix.  We try to avoid issuing
+releases which include both significant security fixes and functional
+changes.
+
+   Where someone reports a security problem privately, we generally try
+to construct and test a patch without checking the intermediate code
+in.  Once everything has been tested, this allows us to commit a patch
+and immediately make a release.   The advantage of doing things this
+way is that we avoid situations where people watching for CVS commits
+can figure out and exploit a security problem before a fixed release is
+available.
+
+   It's important that security problems be fixed promptly, but don't
+rush so much that things go wrong.  Make sure the new release really
+fixes the problem.  It's usually best not to include functional changes
+in your security-fix release.
+
+   If the security problem is serious, send an alert to
+<vendor-sec@lst.de>.  The members of the list include most GNU/Linux
+distributions.  The point of doing this is to allow them to prepare to
+release your security fix to their customers, once the fix becomes
+available.    Here is an example alert:-
+
+     GNU findutils heap buffer overrun (potential privilege escalation)
+
+     $Revision$; $Date$
+
+
+     I. BACKGROUND
+     =============
+
+     GNU findutils is a set of programs which search for files on Unix-like
+     systems.  It is maintained by the GNU Project of the Free Software
+     Foundation.  For more information, see
+     `http://www.gnu.org/software/findutils'.
+
+
+     II. DESCRIPTION
+     ===============
+
+     When GNU locate reads filenames from an old-format locate database,
+     they are read into a fixed-length buffer allocated on the heap.
+     Filenames longer than the 1026-byte buffer can cause a buffer overrun.
+     The overrunning data can be chosen by any person able to control the
+     names of filenames created on the local system.  This will normally
+     include all local users, but in many cases also remote users (for
+     example in the case of FTP servers allowing uploads).
+
+     III. ANALYSIS
+     =============
+
+     Findutils supports three different formats of locate database, its
+     native format "LOCATE02", the slocate variant of LOCATE02, and a
+     traditional ("old") format that locate uses on other Unix systems.
+
+     When locate reads filenames from a LOCATE02 database (the default
+     format), the buffer into which data is read is automatically extended
+     to accomodate the length of the filenames.
+
+     This automatic buffer extension does not happen for old-format
+     databases.  Instead a 1026-byte buffer is used.  When a longer
+     pathname appears in the locate database, the end of this buffer is
+     overrun.  The buffer is allocated on the heap (not the stack).
+
+     If the locate database is in the default LOCATE02 format, the locate
+     program does perform automatic buffer extension, and the program is
+     not vulnerable to this problem.  The software used to build the
+     old-format locate database is not itself vulnerable to the same
+     attack.
+
+     Most installations of GNU findutils do not use the old database
+     format, and so will not be vulnerable.
+
+
+     IV. DETECTION
+     =============
+
+     Software
+     --------
+     All existing releases of findutils are affected.
+
+
+     Installations
+     -------------
+
+     To discover the longest path name on a given system, you can use the
+     following command (requires GNU findutils and GNU coreutils):
+
+
+     find / -print0 | tr -c '\0' 'x' | tr '\0' '\n' | wc -L
+
+
+     V. EXAMPLE
+     ==========
+
+     This section includes a shell script which determines which of a list
+     of locate binaries is vulnerable to the problem.  The shell script has
+     been tested only on glibc based systems having a mktemp binary.
+
+     NOTE: This script deliberately overruns the buffer in order to
+     determine if a binary is affected.  Therefore running it on your
+     system may have undesirable effects.  We recommend that you read the
+     script before running it.
+
+
+     #! /bin/sh
+     set +m
+     if vanilla_db="$(mktemp nicedb.XXXXXX)" ; then
+         if updatedb --prunepaths="" --old-format --localpaths="/tmp" \
+     	--output="$@{vanilla_db@}" ; then
+     	true
+         else
+     	rm -f "$@{vanilla_db@}"
+     	vanilla_db=""
+     	echo "Failed to create old-format locate database; skipping the sanity checks" >&2
+         fi
+     fi
+
+     make_overrun_db() @{
+         # Start with a valid database
+         cat "$@{vanilla_db@}"
+         # Make the final entry really long
+         dd if=/dev/zero  bs=1 count=1500 2>/dev/null | tr '\000' 'x'
+     @}
+
+
+
+     ulimit -c 0
+
+     usage() @{ echo "usage: $0 binary [binary...]" >&2; exit $1; @}
+     [ $# -eq 0 ] && usage 1
+
+     bad=""
+     good=""
+     ugly=""
+     if dbfile="$(mktemp nasty.XXXXXX)"
+     then
+         make_overrun_db > "$dbfile"
+         for locate ; do
+           ver="$locate = $("$locate"  --version | head -1)"
+           if [ -z "$vanilla_db" ] || "$locate" -d "$vanilla_db" "" >/dev/null ; then
+     	  "$locate" -d "$dbfile" "" >/dev/null
+     	  if [ $? -gt 128 ] ; then
+     	      bad="$bad
+     vulnerable: $ver"
+     	  else
+     	      good="$good
+     good: $ver"
+     	  fi
+            else
+     	  # the regular locate failed
+     	  ugly="$ugly
+     buggy, may or may not be vulnerable: $ver"
+            fi
+         done
+         rm -f "$@{dbfile@}" "$@{vanilla_db@}"
+         # good: unaffected.  bad: affected (vulnerable).
+         # ugly: doesn't even work for a normal old-format database.
+         echo "$good"
+         echo "$bad"
+         echo "$ugly"
+     else
+       exit 1
+     fi
+
+
+
+
+
+     VI. VENDOR RESPONSE
+     ===================
+
+     The GNU project discovered the problem while 'locate' was being worked
+     on; this is the first public announcement of the problem.
+
+     The GNU findutils mantainer has issued a patch as p[art of this
+     announcement.  The patch appears below.
+
+     A source release of findutils-4.2.31 will be issued on 2007-05-30.
+     That release will of course include the patch.  The patch will be
+     committed to the public CVS repository at the same time.  Public
+     announcements of the release, including a description of the bug, will
+     be made at the same time as the release.
+
+     A release of findutils-4.3.x will follow and will also include the
+     patch.
+
+
+     VII. PATCH
+     ==========
+
+     This patch should apply to findutils-4.2.23 and later.
+     Findutils-4.2.23 was released almost two years ago.
+
+     Index: locate/locate.c
+     ===================================================================
+     RCS file: /cvsroot/findutils/findutils/locate/locate.c,v
+     retrieving revision 1.58.2.2
+     diff -u -p -r1.58.2.2 locate.c
+     --- locate/locate.c	22 Apr 2007 16:57:42 -0000	1.58.2.2
+     +++ locate/locate.c	28 May 2007 10:18:16 -0000
+     @@@@ -124,9 +124,9 @@@@ extern int errno;
+
+      #include "locatedb.h"
+      #include <getline.h>
+     -#include "../gnulib/lib/xalloc.h"
+     -#include "../gnulib/lib/error.h"
+     -#include "../gnulib/lib/human.h"
+     +#include "xalloc.h"
+     +#include "error.h"
+     +#include "human.h"
+      #include "dirname.h"
+      #include "closeout.h"
+      #include "nextelem.h"
+     @@@@ -468,10 +468,36 @@@@ visit_justprint_unquoted(struct process_
+        return VISIT_CONTINUE;
+      @}
+
+     +static void
+     +toolong (struct process_data *procdata)
+     +@{
+     +  error (1, 0,
+     +	 _("locate database %s contains a "
+     +	   "filename longer than locate can handle"),
+     +	 procdata->dbfile);
+     +@}
+     +
+     +static void
+     +extend (struct process_data *procdata, size_t siz1, size_t siz2)
+     +@{
+     +  /* Figure out if the addition operation is safe before performing it. */
+     +  if (SIZE_MAX - siz1 < siz2)
+     +    @{
+     +      toolong (procdata);
+     +    @}
+     +  else if (procdata->pathsize < (siz1+siz2))
+     +    @{
+     +      procdata->pathsize = siz1+siz2;
+     +      procdata->original_filename = x2nrealloc (procdata->original_filename,
+     +						&procdata->pathsize,
+     +						1);
+     +    @}
+     +@}
+     +
+      static int
+      visit_old_format(struct process_data *procdata, void *context)
+      @{
+     -  register char *s;
+     +  register size_t i;
+        (void) context;
+
+        /* Get the offset in the path where this path info starts.  */
+     @@@@ -479,20 +505,35 @@@@ visit_old_format(struct process_data *pr
+          procdata->count += getw (procdata->fp) - LOCATEDB_OLD_OFFSET;
+        else
+          procdata->count += procdata->c - LOCATEDB_OLD_OFFSET;
+     +  assert(procdata->count > 0);
+
+     -  /* Overlay the old path with the remainder of the new.  */
+     -  for (s = procdata->original_filename + procdata->count;
+     +  /* Overlay the old path with the remainder of the new.  Read
+     +   * more data until we get to the next filename.
+     +   */
+     +  for (i=procdata->count;
+             (procdata->c = getc (procdata->fp)) > LOCATEDB_OLD_ESCAPE;)
+     -    if (procdata->c < 0200)
+     -      *s++ = procdata->c;		/* An ordinary character.  */
+     -    else
+     -      @{
+     -	/* Bigram markers have the high bit set. */
+     -	procdata->c &= 0177;
+     -	*s++ = procdata->bigram1[procdata->c];
+     -	*s++ = procdata->bigram2[procdata->c];
+     -      @}
+     -  *s-- = '\0';
+     +    @{
+     +      if (procdata->c < 0200)
+     +	@{
+     +	  /* An ordinary character. */
+     +	  extend (procdata, i, 1u);
+     +	  procdata->original_filename[i++] = procdata->c;
+     +	@}
+     +      else
+     +	@{
+     +	  /* Bigram markers have the high bit set. */
+     +	  extend (procdata, i, 2u);
+     +	  procdata->c &= 0177;
+     +	  procdata->original_filename[i++] = procdata->bigram1[procdata->c];
+     +	  procdata->original_filename[i++] = procdata->bigram2[procdata->c];
+     +	@}
+     +    @}
+     +
+     +  /* Consider the case where we executed the loop body zero times; we
+     +   * still need space for the terminating null byte.
+     +   */
+     +  extend (procdata, i, 1u);
+     +  procdata->original_filename[i] = 0;
+
+        procdata->munged_filename = procdata->original_filename;
+
+
+
+     VIII. THANKS
+     ============
+
+     Thanks to Rob Holland <rob@inversepath.com> and Tavis Ormandy.
+
+
+     VIII. CVE INFORMATION
+     =====================
+
+     No CVE candidate number has yet been assigned for this vulnerability.
+     If someone provides one, I will include it in the public announcement
+     and change logs.
+
+   The original announcement above was sent out with a cleartext PGP
+signature, of course, but that has been omitted from the example.
+
+   Once a fixed release is available, announce the new release using the
+normal channels.  Any CVE number assigned for the problem should be
+included in the `ChangeLog' and `NEWS' entries. See
+`http://cve.mitre.org/' for an explanation of CVE numbers.
+
+
+File: find-maint.info,  Node: Making Releases,  Next: GNU Free Documentation License,  Prev: Security,  Up: Top
+
+13 Making Releases
+******************
+
+This section will explain how to make a findutils release.   For the
+time being here is a terse description of the main steps:
+
+  1. Commit changes; make sure your working directory has no
+     uncommitted changes.
+
+  2. Test; make sure that all changes you have made have tests, and
+     that the tests pass.  Verify this with `make distcheck'.
+
+  3. Bugs; make sure all Savannah bug entries fixed in this release are
+     fixed.
+
+  4. NEWS; make sure that the NEWS and configure.in file are updated
+     with the new release number (and checked in).
+
+  5. Build the release tarball; do this with `make distcheck'.  Copy
+     the tarball somewhere safe.
+
+  6. Tag the release; findutils releases are tagged in CVS as
+     FINDUTILS_x_y_z-1.  For example, the tag for findutils release
+     4.3.8 is FINDUTILS_4_3_8-1.
+
+  7. Prepare the upload and upload it.  *Note Automated FTP Uploads:
+     (maintain)Automated FTP Uploads, for detailed upload instructions.
+
+  8. Make a release announcement; include an extract from the NEWS file
+     which explains what's changed.  Announcements for test releases
+     should just go to <bug-findutils@gnu.org>.  Announcements for
+     stable releases should go to <info-gnu@gnu.org> as well.
+
+  9. Bump the release numbers in CVS; edit the `configure.in' and
+     `NEWS' files to advance the release numbers.   For example, if you
+     have just released `4.6.2', bump the release number to
+     `4.6.3-CVS'.  The point of the `-CVS' suffix here is that a
+     findutils binary built from CVS will bear a release number
+     indicating it's not built from the "official" source release.
+
+ 10. Close bugs; any bugs recorded on Savannah which were fixed in this
+     release should now be marked as closed.   Update the `Fixed
+     Release' field of these bugs appropriately and make sure the
+     `Assigned to' field is populated.
+
+
+File: find-maint.info,  Node: GNU Free Documentation License,  Prev: Making Releases,  Up: Top
+
+Appendix A GNU Free Documentation License
+*****************************************
+
+                      Version 1.2, November 2002
+
+     Copyright (C) 2000,2001,2002 Free Software Foundation, Inc.
+     51 Franklin St, Fifth Floor, Boston, MA  02110-1301, USA
+
+     Everyone is permitted to copy and distribute verbatim copies
+     of this license document, but changing it is not allowed.
+
+  0. PREAMBLE
+
+     The purpose of this License is to make a manual, textbook, or other
+     functional and useful document "free" in the sense of freedom: to
+     assure everyone the effective freedom to copy and redistribute it,
+     with or without modifying it, either commercially or
+     noncommercially.  Secondarily, this License preserves for the
+     author and publisher a way to get credit for their work, while not
+     being considered responsible for modifications made by others.
+
+     This License is a kind of "copyleft", which means that derivative
+     works of the document must themselves be free in the same sense.
+     It complements the GNU General Public License, which is a copyleft
+     license designed for free software.
+
+     We have designed this License in order to use it for manuals for
+     free software, because free software needs free documentation: a
+     free program should come with manuals providing the same freedoms
+     that the software does.  But this License is not limited to
+     software manuals; it can be used for any textual work, regardless
+     of subject matter or whether it is published as a printed book.
+     We recommend this License principally for works whose purpose is
+     instruction or reference.
+
+  1. APPLICABILITY AND DEFINITIONS
+
+     This License applies to any manual or other work, in any medium,
+     that contains a notice placed by the copyright holder saying it
+     can be distributed under the terms of this License.  Such a notice
+     grants a world-wide, royalty-free license, unlimited in duration,
+     to use that work under the conditions stated herein.  The
+     "Document", below, refers to any such manual or work.  Any member
+     of the public is a licensee, and is addressed as "you".  You
+     accept the license if you copy, modify or distribute the work in a
+     way requiring permission under copyright law.
+
+     A "Modified Version" of the Document means any work containing the
+     Document or a portion of it, either copied verbatim, or with
+     modifications and/or translated into another language.
+
+     A "Secondary Section" is a named appendix or a front-matter section
+     of the Document that deals exclusively with the relationship of the
+     publishers or authors of the Document to the Document's overall
+     subject (or to related matters) and contains nothing that could
+     fall directly within that overall subject.  (Thus, if the Document
+     is in part a textbook of mathematics, a Secondary Section may not
+     explain any mathematics.)  The relationship could be a matter of
+     historical connection with the subject or with related matters, or
+     of legal, commercial, philosophical, ethical or political position
+     regarding them.
+
+     The "Invariant Sections" are certain Secondary Sections whose
+     titles are designated, as being those of Invariant Sections, in
+     the notice that says that the Document is released under this
+     License.  If a section does not fit the above definition of
+     Secondary then it is not allowed to be designated as Invariant.
+     The Document may contain zero Invariant Sections.  If the Document
+     does not identify any Invariant Sections then there are none.
+
+     The "Cover Texts" are certain short passages of text that are
+     listed, as Front-Cover Texts or Back-Cover Texts, in the notice
+     that says that the Document is released under this License.  A
+     Front-Cover Text may be at most 5 words, and a Back-Cover Text may
+     be at most 25 words.
+
+     A "Transparent" copy of the Document means a machine-readable copy,
+     represented in a format whose specification is available to the
+     general public, that is suitable for revising the document
+     straightforwardly with generic text editors or (for images
+     composed of pixels) generic paint programs or (for drawings) some
+     widely available drawing editor, and that is suitable for input to
+     text formatters or for automatic translation to a variety of
+     formats suitable for input to text formatters.  A copy made in an
+     otherwise Transparent file format whose markup, or absence of
+     markup, has been arranged to thwart or discourage subsequent
+     modification by readers is not Transparent.  An image format is
+     not Transparent if used for any substantial amount of text.  A
+     copy that is not "Transparent" is called "Opaque".
+
+     Examples of suitable formats for Transparent copies include plain
+     ASCII without markup, Texinfo input format, LaTeX input format,
+     SGML or XML using a publicly available DTD, and
+     standard-conforming simple HTML, PostScript or PDF designed for
+     human modification.  Examples of transparent image formats include
+     PNG, XCF and JPG.  Opaque formats include proprietary formats that
+     can be read and edited only by proprietary word processors, SGML or
+     XML for which the DTD and/or processing tools are not generally
+     available, and the machine-generated HTML, PostScript or PDF
+     produced by some word processors for output purposes only.
+
+     The "Title Page" means, for a printed book, the title page itself,
+     plus such following pages as are needed to hold, legibly, the
+     material this License requires to appear in the title page.  For
+     works in formats which do not have any title page as such, "Title
+     Page" means the text near the most prominent appearance of the
+     work's title, preceding the beginning of the body of the text.
+
+     A section "Entitled XYZ" means a named subunit of the Document
+     whose title either is precisely XYZ or contains XYZ in parentheses
+     following text that translates XYZ in another language.  (Here XYZ
+     stands for a specific section name mentioned below, such as
+     "Acknowledgements", "Dedications", "Endorsements", or "History".)
+     To "Preserve the Title" of such a section when you modify the
+     Document means that it remains a section "Entitled XYZ" according
+     to this definition.
+
+     The Document may include Warranty Disclaimers next to the notice
+     which states that this License applies to the Document.  These
+     Warranty Disclaimers are considered to be included by reference in
+     this License, but only as regards disclaiming warranties: any other
+     implication that these Warranty Disclaimers may have is void and
+     has no effect on the meaning of this License.
+
+  2. VERBATIM COPYING
+
+     You may copy and distribute the Document in any medium, either
+     commercially or noncommercially, provided that this License, the
+     copyright notices, and the license notice saying this License
+     applies to the Document are reproduced in all copies, and that you
+     add no other conditions whatsoever to those of this License.  You
+     may not use technical measures to obstruct or control the reading
+     or further copying of the copies you make or distribute.  However,
+     you may accept compensation in exchange for copies.  If you
+     distribute a large enough number of copies you must also follow
+     the conditions in section 3.
+
+     You may also lend copies, under the same conditions stated above,
+     and you may publicly display copies.
+
+  3. COPYING IN QUANTITY
+
+     If you publish printed copies (or copies in media that commonly
+     have printed covers) of the Document, numbering more than 100, and
+     the Document's license notice requires Cover Texts, you must
+     enclose the copies in covers that carry, clearly and legibly, all
+     these Cover Texts: Front-Cover Texts on the front cover, and
+     Back-Cover Texts on the back cover.  Both covers must also clearly
+     and legibly identify you as the publisher of these copies.  The
+     front cover must present the full title with all words of the
+     title equally prominent and visible.  You may add other material
+     on the covers in addition.  Copying with changes limited to the
+     covers, as long as they preserve the title of the Document and
+     satisfy these conditions, can be treated as verbatim copying in
+     other respects.
+
+     If the required texts for either cover are too voluminous to fit
+     legibly, you should put the first ones listed (as many as fit
+     reasonably) on the actual cover, and continue the rest onto
+     adjacent pages.
+
+     If you publish or distribute Opaque copies of the Document
+     numbering more than 100, you must either include a
+     machine-readable Transparent copy along with each Opaque copy, or
+     state in or with each Opaque copy a computer-network location from
+     which the general network-using public has access to download
+     using public-standard network protocols a complete Transparent
+     copy of the Document, free of added material.  If you use the
+     latter option, you must take reasonably prudent steps, when you
+     begin distribution of Opaque copies in quantity, to ensure that
+     this Transparent copy will remain thus accessible at the stated
+     location until at least one year after the last time you
+     distribute an Opaque copy (directly or through your agents or
+     retailers) of that edition to the public.
+
+     It is requested, but not required, that you contact the authors of
+     the Document well before redistributing any large number of
+     copies, to give them a chance to provide you with an updated
+     version of the Document.
+
+  4. MODIFICATIONS
+
+     You may copy and distribute a Modified Version of the Document
+     under the conditions of sections 2 and 3 above, provided that you
+     release the Modified Version under precisely this License, with
+     the Modified Version filling the role of the Document, thus
+     licensing distribution and modification of the Modified Version to
+     whoever possesses a copy of it.  In addition, you must do these
+     things in the Modified Version:
+
+       A. Use in the Title Page (and on the covers, if any) a title
+          distinct from that of the Document, and from those of
+          previous versions (which should, if there were any, be listed
+          in the History section of the Document).  You may use the
+          same title as a previous version if the original publisher of
+          that version gives permission.
+
+       B. List on the Title Page, as authors, one or more persons or
+          entities responsible for authorship of the modifications in
+          the Modified Version, together with at least five of the
+          principal authors of the Document (all of its principal
+          authors, if it has fewer than five), unless they release you
+          from this requirement.
+
+       C. State on the Title page the name of the publisher of the
+          Modified Version, as the publisher.
+
+       D. Preserve all the copyright notices of the Document.
+
+       E. Add an appropriate copyright notice for your modifications
+          adjacent to the other copyright notices.
+
+       F. Include, immediately after the copyright notices, a license
+          notice giving the public permission to use the Modified
+          Version under the terms of this License, in the form shown in
+          the Addendum below.
+
+       G. Preserve in that license notice the full lists of Invariant
+          Sections and required Cover Texts given in the Document's
+          license notice.
+
+       H. Include an unaltered copy of this License.
+
+       I. Preserve the section Entitled "History", Preserve its Title,
+          and add to it an item stating at least the title, year, new
+          authors, and publisher of the Modified Version as given on
+          the Title Page.  If there is no section Entitled "History" in
+          the Document, create one stating the title, year, authors,
+          and publisher of the Document as given on its Title Page,
+          then add an item describing the Modified Version as stated in
+          the previous sentence.
+
+       J. Preserve the network location, if any, given in the Document
+          for public access to a Transparent copy of the Document, and
+          likewise the network locations given in the Document for
+          previous versions it was based on.  These may be placed in
+          the "History" section.  You may omit a network location for a
+          work that was published at least four years before the
+          Document itself, or if the original publisher of the version
+          it refers to gives permission.
+
+       K. For any section Entitled "Acknowledgements" or "Dedications",
+          Preserve the Title of the section, and preserve in the
+          section all the substance and tone of each of the contributor
+          acknowledgements and/or dedications given therein.
+
+       L. Preserve all the Invariant Sections of the Document,
+          unaltered in their text and in their titles.  Section numbers
+          or the equivalent are not considered part of the section
+          titles.
+
+       M. Delete any section Entitled "Endorsements".  Such a section
+          may not be included in the Modified Version.
+
+       N. Do not retitle any existing section to be Entitled
+          "Endorsements" or to conflict in title with any Invariant
+          Section.
+
+       O. Preserve any Warranty Disclaimers.
+
+     If the Modified Version includes new front-matter sections or
+     appendices that qualify as Secondary Sections and contain no
+     material copied from the Document, you may at your option
+     designate some or all of these sections as invariant.  To do this,
+     add their titles to the list of Invariant Sections in the Modified
+     Version's license notice.  These titles must be distinct from any
+     other section titles.
+
+     You may add a section Entitled "Endorsements", provided it contains
+     nothing but endorsements of your Modified Version by various
+     parties--for example, statements of peer review or that the text
+     has been approved by an organization as the authoritative
+     definition of a standard.
+
+     You may add a passage of up to five words as a Front-Cover Text,
+     and a passage of up to 25 words as a Back-Cover Text, to the end
+     of the list of Cover Texts in the Modified Version.  Only one
+     passage of Front-Cover Text and one of Back-Cover Text may be
+     added by (or through arrangements made by) any one entity.  If the
+     Document already includes a cover text for the same cover,
+     previously added by you or by arrangement made by the same entity
+     you are acting on behalf of, you may not add another; but you may
+     replace the old one, on explicit permission from the previous
+     publisher that added the old one.
+
+     The author(s) and publisher(s) of the Document do not by this
+     License give permission to use their names for publicity for or to
+     assert or imply endorsement of any Modified Version.
+
+  5. COMBINING DOCUMENTS
+
+     You may combine the Document with other documents released under
+     this License, under the terms defined in section 4 above for
+     modified versions, provided that you include in the combination
+     all of the Invariant Sections of all of the original documents,
+     unmodified, and list them all as Invariant Sections of your
+     combined work in its license notice, and that you preserve all
+     their Warranty Disclaimers.
+
+     The combined work need only contain one copy of this License, and
+     multiple identical Invariant Sections may be replaced with a single
+     copy.  If there are multiple Invariant Sections with the same name
+     but different contents, make the title of each such section unique
+     by adding at the end of it, in parentheses, the name of the
+     original author or publisher of that section if known, or else a
+     unique number.  Make the same adjustment to the section titles in
+     the list of Invariant Sections in the license notice of the
+     combined work.
+
+     In the combination, you must combine any sections Entitled
+     "History" in the various original documents, forming one section
+     Entitled "History"; likewise combine any sections Entitled
+     "Acknowledgements", and any sections Entitled "Dedications".  You
+     must delete all sections Entitled "Endorsements."
+
+  6. COLLECTIONS OF DOCUMENTS
+
+     You may make a collection consisting of the Document and other
+     documents released under this License, and replace the individual
+     copies of this License in the various documents with a single copy
+     that is included in the collection, provided that you follow the
+     rules of this License for verbatim copying of each of the
+     documents in all other respects.
+
+     You may extract a single document from such a collection, and
+     distribute it individually under this License, provided you insert
+     a copy of this License into the extracted document, and follow
+     this License in all other respects regarding verbatim copying of
+     that document.
+
+  7. AGGREGATION WITH INDEPENDENT WORKS
+
+     A compilation of the Document or its derivatives with other
+     separate and independent documents or works, in or on a volume of
+     a storage or distribution medium, is called an "aggregate" if the
+     copyright resulting from the compilation is not used to limit the
+     legal rights of the compilation's users beyond what the individual
+     works permit.  When the Document is included in an aggregate, this
+     License does not apply to the other works in the aggregate which
+     are not themselves derivative works of the Document.
+
+     If the Cover Text requirement of section 3 is applicable to these
+     copies of the Document, then if the Document is less than one half
+     of the entire aggregate, the Document's Cover Texts may be placed
+     on covers that bracket the Document within the aggregate, or the
+     electronic equivalent of covers if the Document is in electronic
+     form.  Otherwise they must appear on printed covers that bracket
+     the whole aggregate.
+
+  8. TRANSLATION
+
+     Translation is considered a kind of modification, so you may
+     distribute translations of the Document under the terms of section
+     4.  Replacing Invariant Sections with translations requires special
+     permission from their copyright holders, but you may include
+     translations of some or all Invariant Sections in addition to the
+     original versions of these Invariant Sections.  You may include a
+     translation of this License, and all the license notices in the
+     Document, and any Warranty Disclaimers, provided that you also
+     include the original English version of this License and the
+     original versions of those notices and disclaimers.  In case of a
+     disagreement between the translation and the original version of
+     this License or a notice or disclaimer, the original version will
+     prevail.
+
+     If a section in the Document is Entitled "Acknowledgements",
+     "Dedications", or "History", the requirement (section 4) to
+     Preserve its Title (section 1) will typically require changing the
+     actual title.
+
+  9. TERMINATION
+
+     You may not copy, modify, sublicense, or distribute the Document
+     except as expressly provided for under this License.  Any other
+     attempt to copy, modify, sublicense or distribute the Document is
+     void, and will automatically terminate your rights under this
+     License.  However, parties who have received copies, or rights,
+     from you under this License will not have their licenses
+     terminated so long as such parties remain in full compliance.
+
+ 10. FUTURE REVISIONS OF THIS LICENSE
+
+     The Free Software Foundation may publish new, revised versions of
+     the GNU Free Documentation License from time to time.  Such new
+     versions will be similar in spirit to the present version, but may
+     differ in detail to address new problems or concerns.  See
+     `http://www.gnu.org/copyleft/'.
+
+     Each version of the License is given a distinguishing version
+     number.  If the Document specifies that a particular numbered
+     version of this License "or any later version" applies to it, you
+     have the option of following the terms and conditions either of
+     that specified version or of any later version that has been
+     published (not as a draft) by the Free Software Foundation.  If
+     the Document does not specify a version number of this License,
+     you may choose any version ever published (not as a draft) by the
+     Free Software Foundation.
+
+ADDENDUM: How to use this License for your documents
+====================================================
+
+To use this License in a document you have written, include a copy of
+the License in the document and put the following copyright and license
+notices just after the title page:
+
+       Copyright (C)  YEAR  YOUR NAME.
+       Permission is granted to copy, distribute and/or modify this document
+       under the terms of the GNU Free Documentation License, Version 1.2
+       or any later version published by the Free Software Foundation;
+       with no Invariant Sections, no Front-Cover Texts, and no Back-Cover
+       Texts.  A copy of the license is included in the section entitled ``GNU
+       Free Documentation License''.
+
+   If you have Invariant Sections, Front-Cover Texts and Back-Cover
+Texts, replace the "with...Texts." line with this:
+
+         with the Invariant Sections being LIST THEIR TITLES, with
+         the Front-Cover Texts being LIST, and with the Back-Cover Texts
+         being LIST.
+
+   If you have Invariant Sections without Cover Texts, or some other
+combination of the three, merge those two alternatives to suit the
+situation.
+
+   If your document contains nontrivial examples of program code, we
+recommend releasing these examples in parallel under your choice of
+free software license, such as the GNU General Public License, to
+permit their use in free software.
+
+
+
+Tag Table:
+Node: Top980
+Node: Introduction2050
+Node: Maintaining GNU Programs2799
+Node: Design Issues3601
+Node: Coding Conventions7020
+Node: Make the Compiler Find the Bugs8987
+Node: Factor Out Repeated Code12371
+Node: Debugging is For Users Too14397
+Node: Don't Trust the File System Contents15128
+Node: The File System Is Being Modified16411
+Node: Tools17848
+Node: Using the GNU Portability Library19045
+Node: Documentation26056
+Node: Testing28770
+Node: Bugs29111
+Node: Distributions30855
+Node: Internationalisation31890
+Node: Security32374
+Node: Making Releases43742
+Node: GNU Free Documentation License45767
+
+End Tag Table

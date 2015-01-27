@@ -1,0 +1,3 @@
+# test for diagnosis of the fact that the argument to -user is missing
+find_start f { tmp -user }
+

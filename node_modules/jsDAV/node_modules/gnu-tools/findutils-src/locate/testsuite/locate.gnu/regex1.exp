@@ -1,0 +1,9 @@
+# regular expression tests
+locate_textonly p  0 "/\n" "?" "/\n"
+locate_textonly p  1 "/\n" "-r ." "/\n"
+locate_textonly p  2 "/" "-r X" ""
+locate_textonly p  3 "/\n/bin" "-r n" "/bin\n"
+locate_textonly p  4 "/\n/bin" "-i -r BIN" "/bin\n"
+locate_textonly p  5 "/\n/bin\n/binary" "-r bin\$" "/bin\n"
+locate_textonly p  6 "/\n/bin\n/binary" {-r ^\[^/\]} ""
+locate_textonly p  7 "/\n/bin\n/binary" {-r ^\[^X\]} "/\n/bin\n/binary\n"

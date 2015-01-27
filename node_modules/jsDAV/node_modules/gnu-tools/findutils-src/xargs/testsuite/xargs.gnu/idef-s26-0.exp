@@ -1,0 +1,1 @@
+xargs_start f {-i -s26 -0 echo from \{\} to x{}y} items-0.xi skip

@@ -1,0 +1,7 @@
+# test for handling of unreadable parent directory
+exec rm -rf tmp
+exec mkdir tmp tmp/dir
+exec chmod a-rw tmp
+find_start p {tmp/dir}
+exec chmod u+rw tmp
+exec rm -rf tmp

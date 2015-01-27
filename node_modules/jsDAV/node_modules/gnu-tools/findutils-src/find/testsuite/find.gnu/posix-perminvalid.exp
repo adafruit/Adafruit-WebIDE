@@ -1,0 +1,17 @@
+# tests for non-POSIX-compliant argument to -perm
+# Remember any previous value of POSIXLY_CORRECT (if there was one)
+if [info exists env(POSIXLY_CORRECT)] {
+    set oldval env(POSIXLY_CORRECT)
+}
+
+# Set POSIXLY_CORRECT and perform the test
+set env(POSIXLY_CORRECT) 1
+find_start f {. -perm +a+x}
+
+# Set POSIXLY_CORRECT to its previous value
+if [info exists oldval] {
+    set env(POSIXLY_CORRECT) $oldval
+} else {
+    unset env(POSIXLY_CORRECT)
+}
+

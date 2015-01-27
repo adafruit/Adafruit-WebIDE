@@ -1,0 +1,2 @@
+# tests for missing argument to -used 
+find_start f {. -used }

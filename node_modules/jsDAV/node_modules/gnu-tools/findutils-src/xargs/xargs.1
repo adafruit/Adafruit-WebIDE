@@ -1,0 +1,477 @@
+.TH XARGS 1 \" -*- nroff -*-
+.SH NAME
+xargs \- build and execute command lines from standard input
+.SH SYNOPSIS
+.B xargs
+.nh
+[\fB\-0prtx\fR] 
+[\fB\-E \fIeof-str\fR] 
+[\fB\-e\fR[\fIeof-str\fR]]
+[\fB\-\-eof\fR[=\fIeof-str\fR]] 
+[\fB\-\-null\fR] 
+[\fB\-d \fIdelimiter\fR] 
+[\fB\-\-delimiter \fIdelimiter\fR] 
+[\fB\-I \fIreplace-str\fR] 
+[\fB\-i\fR[\fIreplace-str\fR]] 
+[\fB\-\-replace\fR[=\fIreplace-str\fR]] 
+[\fB\-l\fR[\fImax-lines\fR]] 
+[\fB\-L \fImax-lines\fR] 
+[\fB\-\-max\-lines\fR[=\fImax-lines\fR]] 
+[\fB\-n \fImax-args\fR] 
+[\fB\-\-max\-args\fR=\fImax-args\fR] 
+[\fB\-s \fImax-chars\fR] 
+[\fB\-\-max\-chars\fR=\fImax-chars\fR] 
+[\fB\-P \fImax-procs\fR] 
+[\fB\-\-max\-procs\fR=\fImax-procs\fR]
+[\fB\-\-interactive\fR] 
+[\fB\-\-verbose\fR] 
+[\fB\-\-exit\fR] 
+[\fB\-\-no\-run\-if\-empty\fR] 
+[\fB\-\-arg\-file\fR=\fIfile\fR] 
+[\fB\-\-show\-limits\fR] 
+[\fB\-\-version\fR] 
+[\fB\-\-help\fR] 
+[\fIcommand\fR [\fIinitial-arguments\fR]]
+.hy
+.SH DESCRIPTION
+This manual page
+documents the GNU version of
+.BR xargs .
+.B xargs
+reads items from the standard input, delimited by blanks (which can be
+protected with double or single quotes or a backslash) or newlines,
+and executes the
+.I command
+(default is 
+.IR /bin/echo ) 
+one or more times with any
+.I initial-arguments
+followed by items read from standard input.  Blank lines on the
+standard input are ignored.
+.P
+Because Unix filenames can contain blanks and newlines, this default
+behaviour is often problematic; filenames containing blanks
+and/or newlines are incorrectly processed by 
+.BR xargs .
+In these situations it is better to use the 
+.B \-0
+option, which
+prevents such problems.   When using this option you will need to 
+ensure that the program which produces the input for 
+.B xargs 
+also uses a null character as a separator.  If that program is 
+GNU 
+.B find
+for example, the 
+.B \-print0
+option does this for you.
+.P
+If any invocation of the command exits with a status of 255, 
+.B xargs 
+will stop immediately without reading any further input.  An error
+message is issued on stderr when this happens.
+.SH OPTIONS
+.TP
+.PD 0
+.BI "\-\-arg\-file=" file
+.TP
+.PD 0
+.BI "\-a " file
+Read items from 
+.I file
+instead of standard input.  If you use this option, stdin remains
+unchanged when commands are run.  Otherwise, stdin is redirected 
+from 
+.IR /dev/null .
+
+.TP
+.PD 0
+.B \-\-null
+.TP
+.PD
+.B \-0
+Input items are terminated by a null character instead of by
+whitespace, and the quotes and backslash are not special (every
+character is taken literally).  Disables the end of file string, which
+is treated like any other argument.  Useful when input items might
+contain white space, quote marks, or backslashes.  The GNU find
+\-print0 option produces input suitable for this mode.
+
+.TP
+.PD 0
+.BI "\-\-delimiter=" delim
+.TP
+.PD 
+.BI \-d " delim"
+Input items are terminated by the specified character.  Quotes and
+backslash are not special; every character in the input is taken
+literally.  Disables the end-of-file string, which is treated like any
+other argument.  This can be used when the input consists of simply
+newline-separated items, although it is almost always better to design
+your program to use 
+.B \-\-null
+where this is possible.  The specified
+delimiter may be a single character, a C-style character escape such
+as 
+.BR \en , 
+or an octal or hexadecimal escape code.  Octal and hexadecimal
+escape codes are understood as for the
+.B printf
+command.   Multibyte characters are not supported.
+
+.TP
+.BI \-E " eof-str"
+Set the end of file string to \fIeof-str\fR.  If the end of file
+string occurs as a line of input, the rest of the input is ignored.
+If neither 
+.B \-E 
+nor 
+.B \-e 
+is used, no end of file string is used.
+.TP 
+.PD 0
+.BR "\-\-eof" [\fI=eof-str\fR]
+.TP 
+.PD
+.BR \-e [ \fIeof-str\fR]
+This option is a synonym for the 
+.B \-E
+option.  Use 
+.B \-E
+instead,
+because it is POSIX compliant while this option is not.  If
+\fIeof-str\fR is omitted, there is no end of file string.  If neither
+.B \-E 
+nor 
+.B \-e 
+is used, no end of file string is used.
+.TP
+.B "\-\-help"
+Print a summary of the options to
+.B xargs
+and exit.
+.TP
+.BI \-I " replace-str"
+Replace occurrences of \fIreplace-str\fR in the initial-arguments with
+names read from standard input.  Also, unquoted blanks do not
+terminate input items; instead the separator is the newline character.
+Implies 
+.B \-x
+and 
+.B \-L 
+1.
+.TP
+.PD 0
+.BR "\-\-replace" [\fI=replace-str\fR]
+.TP
+.PD
+.BR  \-i "[\fIreplace-str\fR]"
+This option is a synonym for 
+.BI \-I replace-str
+if 
+.I replace-str
+is specified, and for 
+.BR \-I {} 
+otherwise.  This option is deprecated; use
+.B \-I 
+instead.
+.TP
+.BI \-L " max-lines"
+Use at most \fImax-lines\fR nonblank input lines per command line.
+Trailing blanks cause an input line to be logically continued on the
+next input line.  Implies 
+.BR \-x .
+.TP
+.PD 0
+.BR \-\-max-lines "[=\fImax-lines\fR]"
+.TP
+.PD
+.BR \-l "[\fImax-lines\fR]"
+Synonym for the 
+.B \-L 
+option.  Unlike 
+.BR \-L , 
+the 
+.I max-lines
+argument is optional.  If 
+.I max-lines
+is not specified, it defaults to one.  The 
+.B \-l 
+option is deprecated since the POSIX standard specifies 
+.B \-L
+instead.
+.TP
+.PD 0
+.BR "\-\-max\-args" =\fImax-args\fR
+.TP
+.PD
+.BI \-n " max-args"
+Use at most \fImax-args\fR arguments per command line.  Fewer than
+.I max-args
+arguments will be used if the size (see the 
+.B \-s 
+option) is exceeded, unless the 
+.B \-x 
+option is given, in which case 
+.B xargs will exit.
+.TP
+.PD 0
+.B \-\-interactive
+.TP
+.PD
+.B \-p
+Prompt the user about whether to run each command line and read a line
+from the terminal.  Only run the command line if the response starts
+with `y' or `Y'.  Implies 
+.BR -t .
+.TP
+.PD 0
+.B \-\-no\-run\-if\-empty
+.TP
+.PD
+.B \-r
+If the standard input does not contain any nonblanks, do not run the
+command.  Normally, the command is run once even if there is no input.
+This option is a GNU extension.
+.TP
+.PD 0
+.BR \-\-max\-chars "=\fImax-chars\fR"
+.TP
+.PD
+.BI \-s " max-chars"
+Use at most \fImax-chars\fR characters per command line, including the
+command and initial-arguments and the terminating nulls at the ends of
+the argument strings.  The largest allowed value is system-dependent,
+and is calculated as the argument length limit for exec, less the size
+of your environment, less 2048 bytes of headroom.  If this value is
+more than 128KiB, 128Kib is used as the default value; otherwise, the
+default value is the maximum.  1KiB is 1024 bytes.
+.TP
+.PD 0
+.B \-\-verbose
+.TP
+.PD
+.B \-t
+Print the command line on the standard error output before executing
+it.
+.TP
+.B "\-\-version"
+Print the version number of
+.B xargs
+and exit.
+.TP
+.B "\-\-show\\-limits"
+Display the limits on the command-line length which are imposed by the
+operating system, 
+.BR xargs '  
+choice of buffer size and the 
+.B \-s 
+option.  Pipe the input from 
+.I /dev/null
+(and perhaps specify 
+.BR --no-run-if-empty ) 
+if you don't want 
+.B xargs
+to do anything.
+.TP
+.PD 0
+.B \-\-exit
+.TP
+.PD
+.B \-x
+Exit if the size (see the 
+.B \-s
+option) is exceeded.
+.TP
+.PD 0
+.BR \-\-max\-procs "=\fImax-procs\fR" 
+.TP
+.PD
+.BI \-P " max-procs"
+Run up to 
+.I max-procs
+processes at a time; the default is 1.  If
+.I max-procs
+is 0, 
+.B xargs 
+will run as many processes as
+possible at a time.  Use the 
+.B \-n
+option with 
+.BR \-P ;
+otherwise chances are that only one exec will be done.
+.SH "EXAMPLES"
+.nf
+.B find /tmp \-name core \-type f \-print | xargs /bin/rm \-f
+
+.fi
+Find files named 
+.B core
+in or below the directory 
+.B /tmp 
+and delete them.  Note that this will work incorrectly if there are 
+any filenames containing newlines or spaces.
+.P
+.B find /tmp \-name core \-type f \-print0 | xargs \-0 /bin/rm \-f
+
+.fi
+Find files named 
+.B core
+in or below the directory 
+.B /tmp 
+and delete them, processing filenames in such a way that file or 
+directory names containing spaces or newlines are correctly handled.
+
+.P
+.B find /tmp \-depth \-name core \-type f \-delete
+
+.fi
+Find files named 
+.B core
+in or below the directory 
+.B /tmp 
+and delete them, but more efficiently than in the previous example
+(because we avoid the need to use 
+.BR fork (2) 
+and 
+.BR exec (2) 
+to launch 
+.B rm
+and we don't need the extra 
+.B xargs 
+process).
+
+.P
+.nf
+.B cut \-d: \-f1 < /etc/passwd | sort | xargs echo
+
+.fi
+Generates a compact listing of all the users on the system.
+
+.P
+.nf
+.B xargs sh -c 'emacs \(dq$@\(dq < /dev/tty' emacs
+
+.fi
+Launches the minimum number of copies of Emacs needed, one after the
+other, to edit the files listed on 
+.BR xargs '
+standard input.  This example achieves the same effect as BSD's 
+.B -o 
+option, but in a more flexible and portable way.
+
+
+
+.SH "EXIT STATUS"
+.B xargs
+exits with the following status:
+.nf
+0 if it succeeds
+123 if any invocation of the command exited with status 1-125
+124 if the command exited with status 255
+125 if the command is killed by a signal
+126 if the command cannot be run
+127 if the command is not found
+1 if some other error occurred.
+.fi
+.P
+Exit codes greater than 128 are used by the shell to indicate that 
+a program died due to a fatal signal.
+.SH "STANDARDS CONFORMANCE"
+As of GNU xargs version 4.2.9, the default behaviour of
+.B xargs
+is not to have a logical end-of-file marker.  POSIX (IEEE Std 1003.1,
+2004 Edition) allows this.
+.P
+The \-l and \-i options appear in the 1997 version of the POSIX
+standard, but do not appear in the 2004 version of the standard.
+Therefore you should use \-L and \-I instead, respectively.
+.P
+The POSIX standard allows implementations to have a limit on the size
+of arguments to the 
+.B exec 
+functions.  This limit could be as low as 4096 bytes including the size of the
+environment.  For scripts to be portable, they must not rely on a
+larger value.  However, I know of no implementation whose actual limit
+is that small.  The 
+.B \-\-show\-limits 
+option can be used to discover the actual limits in force on the
+current system.
+
+
+.SH "SEE ALSO"
+\fBfind\fP(1), \fBlocate\fP(1), \fBlocatedb\fP(5), \fBupdatedb\fP(1),
+\fBfork\fP(2), \fBexecvp\fP(3), 
+\fBFinding Files\fP (on-line in Info, or printed)
+.SH "BUGS"
+The
+.B \-L 
+option is incompatible with the 
+.B \-I 
+option, but perhaps should not be.
+.P 
+It is not possible for 
+.B xargs 
+to be used securely, since there will always be a time gap between the 
+production of the list of input files and their use in the commands
+that 
+.B xargs 
+issues.  If other users have access to the system, they can manipulate
+the filesystem during this time window to force the action of the
+commands 
+.B xargs 
+runs to apply to files that you didn't intend.  For a more detailed
+discussion of this and related problems, please refer to the
+``Security Considerations'' chapter in the findutils Texinfo
+documentation.  The 
+.B \-execdir 
+option of 
+.B find
+can often be used as a more secure alternative.
+
+When you use the 
+.B \-I 
+option, each line read from the input is buffered 
+internally.   This means that there is an upper limit on the length 
+of input line that 
+.B xargs 
+will accept when used with the 
+.B \-I 
+option.  To work around this 
+limitation, you can use the 
+.B \-s 
+option to increase the amount of
+buffer space that 
+.B xargs 
+uses, and you can also use an extra invocation of 
+.B xargs 
+to ensure that very long lines do not occur.  
+For example: 
+.P
+.B somecommand | xargs \-s 50000 echo | xargs \-I '{}' \-s 100000 rm '{}'
+.P
+Here, the first invocation of 
+.B xargs 
+has no input line length limit
+because it doesn't use the 
+.B \-i 
+option.  The second invocation of
+.B xargs 
+does have such a limit, but we have ensured that the it never encounters 
+a line which is longer than it can handle.   This is not an ideal 
+solution.  Instead, the 
+.B \-i 
+option should not impose a line length
+limit, which is why this discussion appears in the BUGS section.
+The problem doesn't occur with the output of 
+.BR find (1) 
+because it emits just one filename per line.
+.P
+The best way to report a bug is to use the form at
+http://savannah.gnu.org/bugs/?group=findutils.  
+The reason for this is that you will then be able to track progress in
+fixing the problem.   Other comments about \fBxargs\fP(1) and about
+the findutils package in general can be sent to the 
+.I bug\-findutils
+mailing list.  To join the list, send email to 
+.IR bug\-findutils\-request@gnu.org .

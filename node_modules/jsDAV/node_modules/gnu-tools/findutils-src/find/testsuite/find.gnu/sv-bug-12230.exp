@@ -1,0 +1,14 @@
+# Bug report by Dmitry V. Levin.
+#
+# The command:
+#   find tmp -false -execdir echo == {} +
+# Actually produces one line of output.  It
+# should produce none, because the echo command
+# should never be invoked.
+#
+if { [ safe_path ] } {
+    exec rm -rf tmp
+    exec mkdir tmp
+    find_start p { tmp -false -execdir echo == "{}" + }
+    exec rm -rf tmp
+}

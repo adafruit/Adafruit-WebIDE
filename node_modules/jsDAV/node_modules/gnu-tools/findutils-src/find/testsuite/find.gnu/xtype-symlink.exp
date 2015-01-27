@@ -1,0 +1,6 @@
+exec rm -rf tmp
+exec mkdir tmp
+exec touch tmp/file
+exec ln -s file tmp/LINK
+find_start p {tmp/LINK  -xtype f }
+exec rm -rf tmp
