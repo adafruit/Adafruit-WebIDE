@@ -1,6 +1,6 @@
 Adafruit webIDE
 ================
-This is a simple editor designed to help learn the Raspberry Pi and Beaglebone components, and more. This editor is designed solely for use on your secure private network as of now.
+This is a simple editor designed to help learn the Raspberry Pi (including the Raspberry Pi 2) and Beaglebone components, and more. This editor is designed solely for use on your secure private network as of now.
 
 Debian Installation (Raspberry Pi and BeagleBone Black)
 ============
