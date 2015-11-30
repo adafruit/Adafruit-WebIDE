@@ -1,3 +1,7 @@
+-0.3.11
+Fixes for installation errors
+Fix some deprecated messages
+
 -0.3.10
 Fix for settings being undefined in offline mode
 
@@ -15,7 +19,7 @@ Handle file rename errors, including detecting renames with same name.
 -0.3.7
 Github support.
  - Ability to enable with --github as the default
- - Advanced setting.  
+ - Advanced setting.
  - Requires manual ssh key setup as of yet.
  - Most commands are treated as manual mode for now (manual commits, etc).
 New Offline mode

@@ -11,11 +11,11 @@ On the Raspberry PI or BeagleBone Black (after expanding the file system):
 
 Alternatively, you can install using the .deb file:
 
-    curl -O http://adafruit-download.s3.amazonaws.com/adafruitwebide-0.3.8-Linux.deb
-    sudo dpkg -i adafruitwebide-0.3.8-Linux.deb
+    curl -O http://adafruit-download.s3.amazonaws.com/adafruitwebide-0.3.11-Linux.deb
+    sudo dpkg -i adafruitwebide-0.3.11-Linux.deb
     sudo apt-get -f install
 
-Note: As part of the installation process, the 'webide' user is given access to sudo and sudoers, 
+Note: As part of the installation process, the 'webide' user is given access to sudo and sudoers,
 similar to the 'pi' user.  This is needed in order to easily access GPIO pins from the Editor.  
 If you don't need these features, feel free to manually install the editor below.
 
@@ -90,7 +90,7 @@ Restart the Editor
 ============
 
 If for any reason you need to restart the editor, you can execute the following commands in order
-    
+
     sudo service adafruit-webide.sh stop
     sudo service adafruit-webide.sh start
 

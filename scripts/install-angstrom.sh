@@ -68,7 +68,7 @@ echo "Attempting to force reload date and time from ntp server"
 /usr/bin/ntpdate -b -s -u pool.ntp.org
 
 echo "**** Downloading the latest version of the WebIDE ****"
-curl -L http://adafruit-download.s3.amazonaws.com/webide-0.3.8.tar.gz | tar xzf -
+curl -L http://adafruit-download.s3.amazonaws.com/webide-0.3.11.tar.gz | tar xzf -
 
 echo "**** Installing required libraries ****"
 echo "**** (redis-server git avahi-daemon i2c-tools python-smbus openssh-keygen) ****"
@@ -87,7 +87,7 @@ then
     curl -k https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/alpha/scripts/redis/redis_6379 > /etc/init.d/redis_6379
     curl -k https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/alpha/scripts/redis/redis.conf > /etc/redis/6379.conf
     mkdir -p /var/redis/6379
-    chmod +x /etc/init.d/redis_6379 
+    chmod +x /etc/init.d/redis_6379
     update-rc.d redis_6379 defaults
     /etc/init.d/redis_6379 start
     cd "$WEBIDE_ROOT"
