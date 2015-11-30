@@ -4,11 +4,13 @@ var path = require('path'),
     config = require('../config/config');
     exec = require('child_process').exec;
 
+    fs.exists || (fs.exists = path.exists);
+
 /*
  * Checks to see if a bitbucket ssh key exists already.
  */
 exports.has_ssh_key = function has_ssh_key(cb) {
-  path.exists(process.env['HOME'] + '/.ssh/id_rsa_bitbucket.pub', function(exists) {
+  fs.exists(process.env['HOME'] + '/.ssh/id_rsa_bitbucket.pub', function(exists) {
     if (exists) {
       cb(true);
     } else {
@@ -43,8 +45,8 @@ exports.generate_ssh_key = function(cb) {
 exports.append_to_ssh_config = function append_to_ssh_config(cb) {
   var ssh_config_file = process.env['HOME'] + '/.ssh/config';
   var identity_info = "Host bitbucket.org \r\n\tHostName bitbucket.org\r\n\tStrictHostKeyChecking no\r\n\tPreferredAuthentications publickey\r\n\tIdentityFile ~/.ssh/id_rsa_bitbucket";
-  
-  path.exists(ssh_config_file, function(exists) {
+
+  fs.exists(ssh_config_file, function(exists) {
     if (exists) {
       //file exists, let's check if it has the bitbucket host in it, otherwise add it
       fs.readFile(ssh_config_file, 'ascii', function(err, data) {
