@@ -1,4 +1,5 @@
 var express = require('express'),
+    session = require('express-session'),
     tty = require('tty.js'),
     app = express(),
     util = require('util'),
@@ -22,7 +23,7 @@ var express = require('express'),
     exec_helper = require('./helpers/exec_helper'),
     request_helper = require('./helpers/request_helper'),
     debug_helper = require('./helpers/python/debug_helper'),
-    RedisStore = require('connect-redis')(express),
+    RedisStore = require('connect-redis')(session),
     redis = require("redis"),
     client = redis.createClient(),
     config = require('./config/config'),
@@ -39,7 +40,7 @@ winston.info("REPOSITORY_PATH", REPOSITORY_PATH);
 
 //check for the existence of the logs directory, if it doesn't
 //exist, create it prior to starting the child process.
-var exists = path.existsSync(__dirname + '/logs');
+var exists = fs.existsSync(__dirname + '/logs');
 if (!exists) {
   fs.mkdirSync(__dirname + '/logs', 0755);
   winston.info('created logs folder');
@@ -138,10 +139,12 @@ app.use(express.logger());
 app.use(express.static(__dirname + '/public'));
 app.use(express.static(__dirname + '/node_modules/tty.js/static'));
 app.use(express.cookieParser());
-app.use(express.session({
+app.use(session({
   store: sessionStore,
   key: 'sid',
-  secret: 'cat nap'
+  secret: 'cat nap',
+  resave: true,
+  saveUninitialized: true
 }));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
@@ -321,18 +324,18 @@ function setHostName(req) {
 function serverInitialization(app) {
 
   //setup repositories path
-  var exists = path.existsSync(REPOSITORY_PATH);
+  var exists = fs.existsSync(REPOSITORY_PATH);
   if (!exists) {
     fs.mkdirSync(REPOSITORY_PATH, 0777);
     winston.info('created repositories folder');
   }
 
   //setup symlink to webide home, if it exists:
-  var has_webide_path = path.existsSync("/home/webide");
+  var has_webide_path = fs.existsSync("/home/webide");
   if (has_webide_path) {
     //Creating symbolic link to repositories path
     winston.info('Linked repository paths: /home/webide/repositories');
-    if (!path.existsSync("/home/webide/repositories")) {
+    if (!fs.existsSync("/home/webide/repositories")) {
       fs.symlinkSync(REPOSITORY_PATH, "/home/webide/repositories", 'dir');
     }
   }
@@ -381,7 +384,7 @@ function start_server(cb) {
 function socket_listeners() {
   io.sockets.authorization(function(handshakeData, callback) {
     if (!handshakeData.headers.cookie) return callback('socket.io: cookie not found.', false);
-    var signedCookies = require('express/node_modules/cookie').parse(handshakeData.headers.cookie);
+    var signedCookies = require('cookie').parse(handshakeData.headers.cookie);
     handshakeData.cookies = require('connect/lib/utils').parseSignedCookies(signedCookies, 'cat nap');
 
     sessionStore.get(handshakeData.cookies['sid'], function(err, session) {
