@@ -1,3 +1,6 @@
+-0.3.12
+Add missing cookie package
+
 -0.3.11
 Fixes for installation errors
 Fix some deprecated messages

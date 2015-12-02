@@ -11,8 +11,8 @@ On the Raspberry PI or BeagleBone Black (after expanding the file system):
 
 Alternatively, you can install using the .deb file:
 
-    curl -O http://adafruit-download.s3.amazonaws.com/adafruitwebide-0.3.11-Linux.deb
-    sudo dpkg -i adafruitwebide-0.3.11-Linux.deb
+    curl -O http://adafruit-download.s3.amazonaws.com/adafruitwebide-0.3.12-Linux.deb
+    sudo dpkg -i adafruitwebide-0.3.12-Linux.deb
     sudo apt-get -f install
 
 Note: As part of the installation process, the 'webide' user is given access to sudo and sudoers,

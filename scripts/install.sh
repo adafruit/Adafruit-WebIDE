@@ -65,7 +65,7 @@ mkdir -p "$WEBIDE_HOME"
 cd "$WEBIDE_ROOT"
 
 echo "**** Downloading the latest version of the WebIDE ****"
-curl -L http://adafruit-download.s3.amazonaws.com/webide-0.3.11.tar.gz | tar xzf -
+curl -L http://adafruit-download.s3.amazonaws.com/webide-0.3.12.tar.gz | tar xzf -
 
 echo "**** Installing required libraries ****"
 echo "**** (redis-server git restartd libcap2-bin avahi-daemon i2c-tools python-smbus) ****"
