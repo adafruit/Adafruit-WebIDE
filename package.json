@@ -6,6 +6,7 @@
   "dependencies": {
     "express": "3.1.0",
     "express-session": "1.12.1",
+    "cookie": "0.2.3",
     "passport": "0.1.15",
     "passport-bitbucket": "0.1.2",
     "passport-github": "0.1.3",
