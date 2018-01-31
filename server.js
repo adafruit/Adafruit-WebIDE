@@ -1,13 +1,14 @@
 var express = require('express'),
     session = require('express-session'),
-    tty = require('tty.js'),
+    bodyParser = require('body-parser'),
+    methodOverride = require('method-override'),
+    cookieParser = require('cookie-parser'),
+    serveStatic = require('serve-static'),
+    morgan = require('morgan'),
     app = express(),
     util = require('util'),
     io = require('socket.io'),
-    passport = require('passport'),
     util = require('util'),
-    BitbucketStrategy = require('passport-bitbucket').Strategy,
-    GitHubStrategy = require('passport-github').Strategy,
     site = require('./controllers/site'),
     editor = require('./controllers/editor'),
     user = require('./controllers/user'),
@@ -23,15 +24,11 @@ var express = require('express'),
     exec_helper = require('./helpers/exec_helper'),
     request_helper = require('./helpers/request_helper'),
     debug_helper = require('./helpers/python/debug_helper'),
-    RedisStore = require('connect-redis')(session),
-    redis = require("redis"),
-    client = redis.createClient(),
     config = require('./config/config'),
     winston = require('winston');
 
 var davServer,
     HOSTNAME,
-    IS_PASSPORT_SETUP = false,
     REPOSITORY_PATH = path.resolve(__dirname + "/repositories");
 
 winston.info("REPOSITORY_PATH", REPOSITORY_PATH);
@@ -46,80 +43,14 @@ if (!exists) {
   winston.info('created logs folder');
 }
 
-winston.add(winston.transports.File, { filename: __dirname + '/logs/output.log', json: false });
-winston.handleExceptions(new winston.transports.File({ filename: __dirname + '/logs/errors.log', json: false }));
-winston.remove(winston.transports.Console);
-
-// Passport session setup.
-//   To support persistent login sessions, Passport needs to be able to
-//   serialize users into and deserialize users out of the session.  Typically,
-//   this will be as simple as storing the user ID when serializing, and finding
-//   the user by ID when deserializing.  However, since this example does not
-//   have a database of user records, the complete Bitbucket profile is
-//   serialized and deserialized.
+//winston.add(winston.transports.File, { filename: __dirname + '/logs/output.log', json: false });
+//winston.handleExceptions(new winston.transports.File({ filename: __dirname + '/logs/errors.log', json: false }));
+//winston.remove(winston.transports.Console);
 
 
-// Use the BitbucketStrategy within Passport.
-//   Strategies in passport require a `verify` function, which accept
-//   credentials (in this case, a token, tokenSecret, and Bitbucket profile),
-//   and invoke a callback with a user object.
-function setup_bitbucket_passport(consumer_key, consumer_secret) {
-  winston.info("http://" + HOSTNAME + "/auth/bitbucket/callback");
-  passport.use(new BitbucketStrategy({
-      consumerKey: consumer_key,
-      consumerSecret: consumer_secret,
-      callbackURL: "http://" + HOSTNAME + "/auth/bitbucket/callback"
-    },
-    function(token, tokenSecret, profile, done) {
-      // asynchronous verification, for effect...
-      process.nextTick(function () {
-        profile.token = token;
-        profile.token_secret = tokenSecret;
-        profile.consumer_key = consumer_key;
-        profile.consumer_secret = consumer_secret;
-
-        return done(null, profile);
-      });
-    }
-  ));
-}
-
-// Use the GitHubStrategy within Passport.
-//   Strategies in passport require a `verify` function, which accept
-//   credentials (in this case, a token, tokenSecret, and Github profile),
-//   and invoke a callback with a user object.
-function setup_github_passport(consumer_key, consumer_secret) {
-  winston.info("http://" + HOSTNAME + "/auth/github/callback");
-  passport.use(new GitHubStrategy({
-      clientID: consumer_key,
-      clientSecret: consumer_secret,
-      callbackURL: "http://" + HOSTNAME + "/auth/github/callback",
-      userAgent: HOSTNAME
-    },
-    function(accessToken, refreshToken, profile, done) {
-      // asynchronous verification, for effect...
-      process.nextTick(function () {
-        profile.token = accessToken;
-        profile.refresh_token = refreshToken;
-        profile.consumer_key = consumer_key;
-        profile.consumer_secret = consumer_secret;
-
-        return done(null, profile);
-      });
-    }
-  ));
-}
-
-passport.serializeUser(function(user, done) {
-  client.set(user.username, JSON.stringify(user));
-  done(null, user.username);
-});
-
-passport.deserializeUser(function(obj, done) {
-  client.get(obj, function(err, reply) {
-    done(null, JSON.parse(reply));
-  });
-});
+var Datastore = require('nedb')
+  , db = new Datastore({ filename: 'webide_data_store' });
+db.loadDatabase();
 
 //redirect anything with /filesystem in the url to the WebDav server.
 app.use(function(req, res, next) {
@@ -131,89 +62,45 @@ app.use(function(req, res, next) {
   }
 });
 
-var sessionStore = new RedisStore();
 app.set('view engine', 'jade');
 app.set('views', __dirname + '/views');
-app.use(express.logger());
-//app.use(express.logger("dev"));
-app.use(express.static(__dirname + '/public'));
-app.use(express.static(__dirname + '/node_modules/tty.js/static'));
-app.use(express.cookieParser());
+//logging
+app.use(morgan());
+app.use(serveStatic(__dirname + '/public'));
+app.use(serveStatic(__dirname + '/node_modules/xterm/dist'));
+app.use(cookieParser());
 app.use(session({
-  store: sessionStore,
   key: 'sid',
   secret: 'cat nap',
   resave: true,
   saveUninitialized: true
 }));
-app.use(express.bodyParser());
-app.use(express.methodOverride());
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(methodOverride());
 
 app.use(function(req, res, next) {
   res.locals.session = req.session;
   next();
 });
 
-app.use(app.router);
+app.get('/', site.index);
 
-app.use(errorHandler);
+app.get('/editor', editor.index);
+app.get('/editor/image', editor.image);
+app.post('/editor/upload', editor.upload_file);
 
-
-app.get('/', ensureAuthenticated, site.index);
-
-app.get('/editor', ensureAuthenticated, editor.index);
-app.get('/editor/image', ensureAuthenticated, editor.image);
-app.post('/editor/upload', ensureAuthenticated, editor.upload_file);
-
-app.post('/create/repository', ensureAuthenticated, editor.create_repository);
+app.post('/create/repository', editor.create_repository);
 
 app.get('/setup', user.setup);
 app.post('/setup', user.submit_setup);
 app.get('/config', user.config);
 app.post('/config', user.submit_config);
 app.get('/set-datetime', user.set_datetime);
-app.get('/login', ensureOauth, user.login);
+app.get('/login', user.login);
 app.get('/logout', user.logout);
 
-// GET /auth/bitbucket
-//   Use passport.authenticate() as route middleware to authenticate the
-//   request.  The first step in Bitbucket authentication will involve redirecting
-//   the user to bitbucket.org.  After authorization, Bitbucket will redirect the user
-//   back to this application at /auth/bitbucket/callback
-app.get('/auth/bitbucket',
-  passport.authenticate('bitbucket'),
-  function(req, res){
-    // The request will be redirected to Bitbucket for authentication, so this
-    // function will not be called.
-  });
-
-// GET /auth/bitbucket/callback
-//   Use passport.authenticate() as route middleware to authenticate the
-//   request.  If authentication fails, the user will be redirected back to the
-//   login page.  Otherwise, the primary route function function will be calsled,
-//   which, in this example, will redirect the user to the home page.
-app.get('/auth/bitbucket/callback',
-  passport.authenticate('bitbucket', { failureRedirect: '/login' }),
-  function(req, res) {
-    res.redirect('/editor');
-  });
-
-// GET /auth/github
-app.get('/auth/github',
-  passport.authenticate('github'),
-  function(req, res){
-    // The request will be redirected to Github for authentication, so this
-    // function will not be called.
-  });
-
-// GET /auth/github/callback
-app.get('/auth/github/callback',
-  passport.authenticate('github', { failureRedirect: '/login' }),
-  function(req, res) {
-    res.redirect('/editor');
-  });
+app.use(errorHandler);
 
 serverInitialization(app);
 
@@ -227,93 +114,6 @@ function errorHandler(err, req, res, next) {
     res.status(500);
     res.render('error', { error: err });
   }
-}
-
-// Simple route middleware to ensure user is authenticated.
-//   Use this route middleware on any resource that needs to be protected.  If
-//   the request is authenticated (typically via a persistent login session),
-//   the request will proceed.  Otherwise, the user will be redirected to the
-//   login page.
-function ensureAuthenticated(req, res, next) {
-  setHostName(req);
-
-  if (config.editor.offline) {
-    req.user = { provider: 'offline',
-                 username: 'offline user' };
-    return next();
-  }
-
-  function authRoute(req, res, next) {
-    if (req.isAuthenticated()) {
-      return next();
-    }
-
-    if (!IS_PASSPORT_SETUP) {
-      res.redirect('/setup');
-    } else {
-      res.redirect('/login');
-    }
-  }
-
-  //use the correct key for redis, either github or bitbucket
-  var oauth_key = 'bitbucket_oauth';
-  if (config.editor.github) {
-    oauth_key = 'github_oauth';
-  }
-
-  if (!IS_PASSPORT_SETUP) {
-    //need to setup passport on server startup, if the oauth is already setup
-    client.hgetall(oauth_key, function (err, oauth) {
-      if (oauth) {
-        if (config.editor.github) {
-          setup_github_passport(oauth.consumer_key, oauth.consumer_secret);
-        } else {
-          setup_bitbucket_passport(oauth.consumer_key, oauth.consumer_secret);
-        }
-        IS_PASSPORT_SETUP = true;
-
-      }
-      authRoute(req, res, next);
-    });
-  } else {
-    authRoute(req, res, next);
-  }
-
-}
-
-function ensureOauth(req, res, next) {
-  setHostName(req);
-
-  if (config.editor.offline) {
-    req.user = { provider: 'offline',
-                 username: 'offline user' };
-    return next();
-  }
-
-  //use the correct key for redis, either github or bitbucket
-  var oauth_key = 'bitbucket_oauth';
-  if (config.editor.github) {
-    oauth_key = 'github_oauth';
-  }
-
-  client.hgetall(oauth_key, function (err, oauth) {
-    if (!oauth) {
-      res.redirect('/setup');
-    } else {
-      if (config.editor.github) {
-        setup_github_passport(oauth.consumer_key, oauth.consumer_secret);
-      } else {
-        setup_bitbucket_passport(oauth.consumer_key, oauth.consumer_secret);
-      }
-
-      if (!IS_PASSPORT_SETUP) {
-        IS_PASSPORT_SETUP = true;
-        res.redirect('/login');
-      } else {
-        next();
-      }
-    }
-  });
 }
 
 function setHostName(req) {
@@ -357,23 +157,13 @@ function start_server(cb) {
     io.set('transports', ['websocket', 'htmlfile', 'xhr-polling', 'jsonp-polling']);
   });
 
-  new tty.Server(config.term, app, server, io);
-
-  client.hgetall('server', function (err, server_data) {
+  db.find('server', function (err, server_data) {
     var port;
 
     if (server_data && server_data.port) {
       port = server_data.port;
     } else {
       port = config.editor.port;
-    }
-
-    if (server_data && server_data.offline) {
-      config.editor.offline = (server_data.offline == 1) ? true : false;
-    }
-
-    if (server_data && server_data.github) {
-      config.editor.github = (server_data.github == 1) ? true : false;
     }
 
     winston.info('listening on port ' + port);
@@ -388,20 +178,8 @@ function socket_listeners() {
     handshakeData.cookies = require('connect/lib/utils').parseSignedCookies(signedCookies, 'cat nap');
 
     sessionStore.get(handshakeData.cookies['sid'], function(err, session) {
-      if (config.editor.offline) {
-        handshakeData.session = { provider: 'offline', username: 'offline user' };
-        return callback(null, true);
-      } else {
-        client.get(session.passport.user, function(err, user) {
-          if (err || !session) return callback('socket.io: session not found.', false);
-          handshakeData.session = JSON.parse(user);
-          if (handshakeData.session) {
-            return callback(null, true);
-          } else {
-            return callback('socket.io: session user not found', false);
-          }
-        });
-      }
+      handshakeData.session = { provider: 'offline', username: 'offline user' };
+      return callback(null, true);
     });
   });
 
@@ -513,9 +291,11 @@ function socket_listeners() {
     });
 
     socket.on('set-settings', function(value) {
-      client.hmset("editor:settings", value, function(err) {
-        if (err) winston.error(err);
-      });
+      db.remove(value, function(err) {
+        db.insert(value, function(err) {
+          if (err) winston.error(err);
+        });
+      })
     });
   });
 }
