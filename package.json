@@ -5,7 +5,6 @@
   "private": true,
   "dependencies": {
     "body-parser": "^1.18.2",
-    "connect": "2.7.3",
     "cookie": "0.2.3",
     "cookie-parser": "^1.4.3",
     "express": "4.16.2",
