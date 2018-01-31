@@ -19,7 +19,7 @@
     "nedb": "1.8.0",
     "request": "2.14.0",
     "serve-static": "^1.13.1",
-    "socket.io": "0.9.13",
+    "socket.io": "2.0.4",
     "validator": "0.4.25",
     "winston": "0.6.2",
     "xterm": "3.0.2"

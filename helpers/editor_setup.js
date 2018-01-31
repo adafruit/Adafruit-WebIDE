@@ -1,12 +1,12 @@
-var exec = require('child_process').exec,
-  fs = require ('fs'),
-  path = require('path'),
-  git_helper = require('./git_helper'),
-  fs_helper = require('./fs_helper'),
-  redis = require('redis'),
-  client = redis.createClient(),
-  request_helper = require('./request_helper'),
-  config = require('../config/config');
+var path = require('path'),
+    Datastore = require('nedb'),
+    db = new Datastore({ filename: path.resolve(process.env.PWD, 'db/webide_data_store'), autoload: true }),
+    exec = require('child_process').exec,
+    fs = require ('fs'),
+    git_helper = require('./git_helper'),
+    fs_helper = require('./fs_helper'),
+    request_helper = require('./request_helper'),
+    config = require('../config/config');
 
   fs.exists || (fs.exists = path.exists);
 
@@ -29,16 +29,17 @@ var exec = require('child_process').exec,
   };
 
   exports.offline_health_check = function(socket) {
-    client.hgetall('editor:settings', function(err, settings) {
-
-      if (settings) {
-        settings.offline = true;
-      } else {
-        settings = {offline: true};
-      }
-      console.log("getting settings", settings);
-      socket.emit("self-check-settings", settings);
-    });
+    //TODO redis to nedb
+    // client.hgetall('editor:settings', function(err, settings) {
+    //
+    //   if (settings) {
+    //     settings.offline = true;
+    //   } else {
+    //     settings = {offline: true};
+    //   }
+    //   console.log("getting settings", settings);
+    //   socket.emit("self-check-settings", settings);
+    // });
 
     console.log('self-check-complete');
     socket.emit('self-check-complete');
@@ -61,14 +62,15 @@ var exec = require('child_process').exec,
     var project_repository = 'git@bitbucket.org:' + profile.username + '/my-pi-projects.git';
     console.log(project_repository);
 
-    client.hgetall('editor:settings', function(err, settings) {
-      if (typeof settings === 'undefined' || !settings) {
-        settings = {};
-      }
-
-      console.log("getting settings", settings);
-      socket.emit("self-check-settings", settings);
-    });
+    //TODO redis to nedb
+    // client.hgetall('editor:settings', function(err, settings) {
+    //   if (typeof settings === 'undefined' || !settings) {
+    //     settings = {};
+    //   }
+    //
+    //   console.log("getting settings", settings);
+    //   socket.emit("self-check-settings", settings);
+    // });
 
     //check if the adafruit libraries exist, if not, clone them.
     request_helper.post_ssh_key(profile, function(err, response) {
@@ -136,5 +138,5 @@ var exec = require('child_process').exec,
       }); // end of list repositories
     }); //end of git set config
   }); //end of post ssh key
-    
+
   };

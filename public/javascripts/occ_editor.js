@@ -2,7 +2,7 @@
 
 (function( occEditor, $, undefined ) {
   var editor, modes = [], max_reconnects = 50,
-      socket = io.connect(null, {'reconnection limit': 2000, 'max reconnection attempts': max_reconnects}),
+      socket = io(null, {'reconnection limit': 2000, 'max reconnection attempts': max_reconnects}),
       dirname, updating = false,
       editor_output_visible = false,
       is_terminal_open = false,
@@ -145,7 +145,9 @@
 
   occEditor.self_check = function(cb) {
     editor_startup("Checking Editor Health");
-    socket.emit("self-check-request");
+
+    socket.emit("self-check-request", 1);
+    console.log(socket);
     socket.on("self-check-message", function(message) {
       editor_startup(message);
     });
@@ -715,69 +717,69 @@
   };
 
   occEditor.send_terminal_command = function(command) {
-    if (is_terminal_open) {
-      terminal_win.tabs[0].sendString(command);
-      editor.focus();
-    }
+    // if (is_terminal_open) {
+    //   terminal_win.tabs[0].sendString(command);
+    //   editor.focus();
+    // }
   };
 
   occEditor.close_terminal = function() {
-    if (is_terminal_open) {
-      terminal_win.destroy();
-    }
+    // if (is_terminal_open) {
+    //   terminal_win.destroy();
+    // }
   };
 
   occEditor.open_terminal = function(path, command) {
-    if (is_terminal_open) {
-      if (command) {
-        terminal_win.tabs[0].sendString(command);
-        terminal_win.focus();
-      }
-      return;
-    }
-    is_terminal_open = true;
-
-    occEditor.show_editor_output();
-    terminal_win = new tty.Window(null, path);
-
-    tty.on('open tab', function(){
-      tty.on('tab-ready', function() {
-        tty.off('open tab');
-        tty.off('tab-ready');
-
-        terminal_win.maximize();
-        terminal_win.tabs[0].sizeToFit();
-
-        $(window).smartresize(function() {
-          if (is_terminal_open) {
-            terminal_win.maximize();
-            terminal_win.tabs[0].sizeToFit();
-          }
-        });
-
-        if (typeof settings !== 'undefined' && settings.font_size) {
-          $('.terminal').css('font-size', settings.font_size + "px");
-        }
-
-        if (command) {
-          terminal_win.tabs[0].sendString(command);
-        }
-        terminal_win.focus();
-
-      });
-    });
-
-    terminal_win.on('focus', function() {
-      occEditor.focus_terminal(true);
-    });
-
-    tty.on('close window', function() {
-      tty.off('close window');
-      is_terminal_open = false;
-      terminal_win = undefined;
-      occEditor.hide_editor_output();
-      editor.focus();
-    });
+    // if (is_terminal_open) {
+    //   if (command) {
+    //     terminal_win.tabs[0].sendString(command);
+    //     terminal_win.focus();
+    //   }
+    //   return;
+    // }
+    // is_terminal_open = true;
+    //
+    // occEditor.show_editor_output();
+    // terminal_win = new tty.Window(null, path);
+    //
+    // tty.on('open tab', function(){
+    //   tty.on('tab-ready', function() {
+    //     tty.off('open tab');
+    //     tty.off('tab-ready');
+    //
+    //     terminal_win.maximize();
+    //     terminal_win.tabs[0].sizeToFit();
+    //
+    //     $(window).smartresize(function() {
+    //       if (is_terminal_open) {
+    //         terminal_win.maximize();
+    //         terminal_win.tabs[0].sizeToFit();
+    //       }
+    //     });
+    //
+    //     if (typeof settings !== 'undefined' && settings.font_size) {
+    //       $('.terminal').css('font-size', settings.font_size + "px");
+    //     }
+    //
+    //     if (command) {
+    //       terminal_win.tabs[0].sendString(command);
+    //     }
+    //     terminal_win.focus();
+    //
+    //   });
+    // });
+    //
+    // terminal_win.on('focus', function() {
+    //   occEditor.focus_terminal(true);
+    // });
+    //
+    // tty.on('close window', function() {
+    //   tty.off('close window');
+    //   is_terminal_open = false;
+    //   terminal_win = undefined;
+    //   occEditor.hide_editor_output();
+    //   editor.focus();
+    // });
 
     //var maskHeight = $(window).height();
     //var maskWidth = $(window).width();
@@ -969,7 +971,7 @@
     $('#trace-container').hide();
 
     socket.emit('trace-file', {file: file});
-    
+
     $(document).on('click touchstart', '.close-trace', close_trace);
   };
 
@@ -1049,7 +1051,7 @@
             $('#editor-output #pre-wrapper pre').append(document.createTextNode(data.content[d]));
           }
         }
-        
+
 
       } else if (data.cmd === "COMPLETE" || data.cmd === "ERROR_COMPLETE") {
         occEditor.debug_toggle_buttons(false, true);
@@ -1059,14 +1061,14 @@
             editor.session.removeMarker(id);
           }
         }
-        
+
         var message = "";
         if (data.cmd === "COMPLETE") {
           message = "--- Program Completed Successfully ---\n";
         } else {
           message = "--- Program Exited with an Exception ---\n";
         }
-        
+
         $('#editor-output #pre-wrapper pre').append(document.createTextNode(message));
       }
 
@@ -1252,7 +1254,7 @@
       var path_array = source.split('/');
       var directory = path_array[path_array.length - 1];
       var destination = '/filesystem/my-pi-projects/' + directory;
-      
+
       davFS.copy(source, destination, false, function(err, status) {
         socket.emit('commit-file', { file: {path: destination, name: directory}, message: "Copied to my-pi-projects " + directory});
         $('.copy-project').replaceWith($("<span>Project copy completed...</span>"));
@@ -1334,7 +1336,7 @@
 
       $('#schedule-manager').hide();
       $('#editor').show();
-      
+
       var file = $('.filesystem li.file-open').data('file');
       if (file) {
         $(document).trigger('file_open', file);
@@ -1465,7 +1467,7 @@
         location.reload(true);
       }, 1500);
     });
-    
+
     $(document).on('click touchstart', '.editor-update-link', update_editor);
   }
 
@@ -1546,7 +1548,7 @@
                       }).appendTo('body');
       $(document).mousemove(function(event){
         ghostbar.css("top",event.pageY+2);
-        
+
       });
     }
 
@@ -2121,5 +2123,5 @@
 
 $(function () {
   occEditor.init();
-  tty.open();
+  //tty.open();
 });

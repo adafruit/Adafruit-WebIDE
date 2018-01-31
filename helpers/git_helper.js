@@ -1,10 +1,10 @@
-var git = require('gitty'),
+var path = require('path'),
+    Datastore = require('nedb'),
+    db = new Datastore({ filename: path.resolve(process.env.PWD, 'db/webide_data_store'), autoload: true }),
+    git = require('gitty'),
     url = require('url'),
-    path = require('path'),
     winston = require('winston'),
     fs_helper = require('./fs_helper'),
-    redis = require("redis"),
-    client = redis.createClient(),
     request_helper = require('./request_helper'),
     config = require('../config/config');
 
@@ -146,7 +146,7 @@ exports.set_config = function(cb) {
       cb();
     } else {
       winston.error('git config is invalid');
-      client.hgetall('user', function (err, user) {
+      db.findOne({type: "user"}, function (err, user) {
         console.log("set_config user", user);
         git.config("user.email", user.email, function(err, email) {
           git.config("user.name", user.name, function(err, name) {
@@ -363,7 +363,7 @@ exports.pull = function pull(repository, remote, branch, cb) {
     } else {
       cb(null, obj.message);
     }
-    
+
   });
 };
 

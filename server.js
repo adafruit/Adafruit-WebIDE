@@ -68,12 +68,13 @@ app.use(morgan());
 app.use(serveStatic(__dirname + '/public'));
 app.use(serveStatic(__dirname + '/node_modules/xterm/dist'));
 app.use(cookieParser());
-app.use(session({
+var sessionMiddleware = session({
   key: 'sid',
   secret: 'cat nap',
   resave: true,
   saveUninitialized: true
-}));
+});
+app.use(sessionMiddleware);
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(methodOverride());
@@ -96,8 +97,6 @@ app.post('/setup', user.submit_setup);
 app.get('/config', user.config);
 app.post('/config', user.submit_config);
 app.get('/set-datetime', user.set_datetime);
-app.get('/login', user.login);
-app.get('/logout', user.logout);
 
 app.use(errorHandler);
 
@@ -149,11 +148,9 @@ function serverInitialization(app) {
 
 function start_server(cb) {
   server = require('http').createServer(app);
-  io = io.listen(server);
-  io.configure(function() {
-    io.enable('browser client minification');
-    io.enable('browser client etag');
-    io.set('transports', ['websocket', 'htmlfile', 'xhr-polling', 'jsonp-polling']);
+  io = io(server);
+  io.use(function(socket, next) {
+    sessionMiddleware(socket.request, socket.request.res, next);
   });
 
   db.find('server', function (err, server_data) {
@@ -171,23 +168,15 @@ function start_server(cb) {
 }
 
 function socket_listeners() {
-  io.sockets.authorization(function(handshakeData, callback) {
-    if (!handshakeData.headers.cookie) return callback('socket.io: cookie not found.', false);
-    var signedCookies = require('cookie').parse(handshakeData.headers.cookie);
-    handshakeData.cookies = require('connect/lib/utils').parseSignedCookies(signedCookies, 'cat nap');
 
-    sessionStore.get(handshakeData.cookies['sid'], function(err, session) {
-      handshakeData.session = { provider: 'offline', username: 'offline user' };
-      return callback(null, true);
-    });
-  });
-
-  io.sockets.on('connection', function (socket) {
-    socket.set('username', socket.handshake.session.username);
+  io.on('connection', function (socket) {
+    winston.debug('socket io connection completed');
+    //socket.set('username', socket.request.session.username);
+    winston.debug("after username set");
 
     //emit on first connection
     socket.emit('cwd-init', {dirname: REPOSITORY_PATH});
-    scheduler.emit_scheduled_jobs(socket.handshake.session.username, socket);
+    scheduler.emit_scheduled_jobs(socket.request.session.username, socket);
 
     socket.on('disconnect', function() {
       debug_helper.client_disconnect();
@@ -196,7 +185,7 @@ function socket_listeners() {
 
     //listen for events
     socket.on('git-delete', function(data) {
-      git_helper.remove_commit_push(data.file, socket.handshake.session, function(err, status) {
+      git_helper.remove_commit_push(data.file, socket.request.session, function(err, status) {
         socket.emit('git-delete-complete', {err: err, status: status});
       });
     });
@@ -226,20 +215,21 @@ function socket_listeners() {
         commit_message = "Modified " + data.file.name;
       }
 
-      git_helper.commit_push_and_save(data.file, commit_message, socket.handshake.session, function(err, status) {
+      git_helper.commit_push_and_save(data.file, commit_message, socket.request.session, function(err, status) {
         socket.emit('commit-file-complete', {err: err, status: status});
       });
     });
 
     socket.on('move-file', function (data) {
-      git_helper.move_commit_push(data.file, socket.handshake.session, function(err) {
+      git_helper.move_commit_push(data.file, socket.request.session, function(err) {
         console.log('move-file', err);
         socket.emit('move-file-complete', {err: err});
       });
     });
 
     socket.on('self-check-request', function() {
-      editor_setup.health_check(socket, socket.handshake.session);
+      winston.debug('self-check-request');
+      editor_setup.health_check(socket, socket.request.session);
     });
 
     socket.on('editor-check-updates', function() {
@@ -264,11 +254,11 @@ function socket_listeners() {
 
     socket.on('commit-run-file', function(data) {
       if (data && data.file) {
-        data.file.username = socket.handshake.session.username;
+        data.file.username = socket.request.session.username;
       }
 
       exec_helper.execute_program(data.file, false);
-      git_helper.commit_push_and_save(data.file, "Modified " + data.file.name, socket.handshake.session, function(err, status) {
+      git_helper.commit_push_and_save(data.file, "Modified " + data.file.name, socket.request.session, function(err, status) {
         socket.emit('commit-file-complete', {message: "Save was successful"});
       });
     });
@@ -278,15 +268,15 @@ function socket_listeners() {
     });
 
     socket.on('submit-schedule', function(schedule) {
-      scheduler.add_schedule(schedule, socket, socket.handshake.session);
+      scheduler.add_schedule(schedule, socket, socket.request.session);
     });
 
     socket.on('schedule-delete-job', function(key) {
-      scheduler.delete_job(key, socket, socket.handshake.session);
+      scheduler.delete_job(key, socket, socket.request.session);
     });
 
     socket.on('schedule-toggle-job', function(key) {
-      scheduler.toggle_job(key, socket, socket.handshake.session);
+      scheduler.toggle_job(key, socket, socket.request.session);
     });
 
     socket.on('set-settings', function(value) {

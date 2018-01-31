@@ -6,15 +6,6 @@ var path = require('path'),
     check = require('validator').check,
     sanitize = require('validator').sanitize;
 
-exports.login = function(req, res){
-  res.render('users/login', { title: 'test', user: req.user });
-};
-
-exports.logout = function(req, res){
-  req.logout();
-  res.redirect('/');
-};
-
 // Instructional page that displays the bitbucket setup steps,
 // and inputs for OAuth and Git config
 exports.setup = function(req, res) {
@@ -36,7 +27,7 @@ exports.submit_setup = function(req, res) {
   function common_setup(name, email) {
     db.update({"type": "user"}, {"type": "user", "name": name, "email": email}, { upsert: true }, function() {
       req.session.message = "Settings Successfully Configured.";
-      res.redirect('/login');
+      res.redirect('/editor');
     });
   }
 
