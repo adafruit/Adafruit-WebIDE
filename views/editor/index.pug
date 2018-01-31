@@ -28,21 +28,21 @@ block content
         form(method="post", action="/editor/settings")
           .settings-element
             span Select Font Size (px):
-            span.font-size-value.10px 10
-            span.font-size-value.12px 12
-            span.font-size-value.14px 14
-            span.font-size-value.16px 16
-            span.font-size-value.20px 20
+            span.font-size-value._10px 10
+            span.font-size-value._12px 12
+            span.font-size-value._14px 14
+            span.font-size-value._16px 16
+            span.font-size-value._20px 20
           .settings-element
             span Use Soft Tabs:
             span.soft-tab-value.on On
             span.soft-tab-value.off Off
           .settings-element
             span Tab Size:
-            span.tab-size-value.2-value 2
-            span.tab-size-value.4-value 4
-            span.tab-size-value.6-value 6
-            span.tab-size-value.8-value 8
+            span.tab-size-value._2-value 2
+            span.tab-size-value._4-value 4
+            span.tab-size-value._6-value 6
+            span.tab-size-value._8-value 8
           .settings-element
             span Show Invisibles:
             span.invisibles-value.on On
@@ -140,13 +140,6 @@ block content
         p This particular notification will only display one time.  Thank you!
       .modal-footer
         button.btn(data-dismiss="modal", aria-hidden="true") Dismiss
-    script(type="text/javascript")
-      if(!#{shown_notification}) {
-        setTimeout(function() {
-          $('#notification-modal').modal({show: true, backdrop: 'static'});
-        }, 20000);
-
-      }
   script(src="/javascripts/ace/ace.js")
   script(src="/socket.io/socket.io.js")
   script(src="/javascripts/trace/d3.v2.min.js")

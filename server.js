@@ -61,7 +61,7 @@ app.use(function(req, res, next) {
   }
 });
 
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 app.set('views', __dirname + '/views');
 //logging
 app.use(morgan());
