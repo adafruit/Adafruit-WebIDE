@@ -74,44 +74,10 @@ exports.clone_update_remote_push = function(profile, repository_url, retain_remo
 
   var repository_name = path.basename(repository_url, '.git');
 
-  if (config.editor.offline || config.editor.github || (retain_remote === 'on')) {
-    self.clone_repository(repository_url, function(err, results) {
-      console.log("clone repository locally: " + repository_name);
-      cb(err, true);
-    });
-  } else {
-    request_helper.list_repositories(profile, function(err, list) {
-      var exists = list.some(function(repository) {
-        return (repository.name === repository_name);
-      });
-      if (!exists) {
-        //TODO need better error handling eventually
-        request_helper.create_repository(profile, repository_name, function(err, response) {
-          console.log("created repository in bitbucket: " + repository_name);
-          self.clone_repository(repository_url, function(err, results) {
-            console.log("clone repository locally: " + repository_name);
-            self.update_remote(profile, repository_name, function(err, response) {
-              console.log("updated remote for repository: " + repository_name);
-              self.push(repository_name, "origin", "master", profile, function(err, response) {
-                console.log("git push for repository: " + repository_name);
-                cb(err, true);
-              });
-            });
-          });
-        });
-      } else {
-        if (repository_url.toLowerCase().indexOf("bitbucket.org") === -1) {
-          cb("Repository Already Exists in Bitbucket, clone with Bitbucket URL.", false);
-        } else {
-          self.clone_repository(repository_url, function(err, results) {
-            console.log("clone repository locally: " + repository_name);
-            cb(err, true);
-          });
-        }
-      }
-    });
-  }
-
+  self.clone_repository(repository_url, function(err, results) {
+    console.log("clone repository locally: " + repository_name);
+    cb(err, true);
+  });
 };
 
 exports.clone_repository = function(repository_path, cb) {
