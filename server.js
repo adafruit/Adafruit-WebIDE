@@ -49,7 +49,7 @@ if (!exists) {
 //winston.remove(winston.transports.Console);
 
 
-var db = new Datastore({ filename: 'webide_data_store', autoload: true });
+var db = new Datastore({ filename: './database/webide_data_store', autoload: true });
 
 //redirect anything with /filesystem in the url to the WebDav server.
 app.use(function(req, res, next) {
@@ -290,11 +290,10 @@ function socket_listeners() {
     });
 
     socket.on('set-settings', function(value) {
-      db.remove(value, function(err) {
-        db.insert(value, function(err) {
-          if (err) winston.error(err);
-        });
-      })
+      value["type"] = "editor:settings";
+      db.update({type: "editor:settings"}, value, { upsert: true }, function(err) {
+        if (err) winston.error(err);
+      });
     });
   });
 }

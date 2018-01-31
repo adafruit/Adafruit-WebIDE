@@ -1,12 +1,13 @@
-var Datastore = require('nedb'),
-    db = new Datastore({ filename: 'webide_data_store', autoload: true }),
+var path = require('path'),
+    Datastore = require('nedb'),
+    db = new Datastore({ filename: path.resolve(process.env.PWD, 'db/webide_data_store'), autoload: true }),
     scripts_helper = require('../helpers/scripts_helper'),
     config = require('../config/config'),
     check = require('validator').check,
     sanitize = require('validator').sanitize;
 
 exports.login = function(req, res){
-  res.render('users/login', { title: 'test', user: req.user, github: config.editor.github });
+  res.render('users/login', { title: 'test', user: req.user });
 };
 
 exports.logout = function(req, res){
@@ -33,7 +34,7 @@ exports.submit_setup = function(req, res) {
   req.session.message = undefined;
 
   function common_setup(name, email) {
-    client.hmset("user", "name", name, "email", email, function() {
+    db.update({"type": "user"}, {"type": "user", "name": name, "email": email}, { upsert: true }, function() {
       req.session.message = "Settings Successfully Configured.";
       res.redirect('/login');
     });
@@ -60,7 +61,7 @@ exports.submit_setup = function(req, res) {
 
 
 exports.config = function(req, res) {
-  client.hgetall('server', function (err, server) {
+  db.findOne({type: "server"}, function (err, server) {
       var locals = {
         hostname: "",
         wifi_ssid: "",
@@ -106,7 +107,8 @@ exports.submit_config = function(req, res) {
       });
     }
     if (port) {
-      client.hmset("server", "port", port, function() {
+      db.update({type: "server"}, { $set: {"port": port}}, {}, function() {
+
       });
     }
 
