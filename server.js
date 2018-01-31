@@ -64,7 +64,7 @@ app.use(function(req, res, next) {
 app.set('view engine', 'pug');
 app.set('views', __dirname + '/views');
 //logging
-app.use(morgan());
+app.use(morgan('tiny'));
 app.use(serveStatic(__dirname + '/public'));
 app.use(serveStatic(__dirname + '/node_modules/xterm/dist'));
 app.use(cookieParser());
