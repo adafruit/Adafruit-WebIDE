@@ -1,5 +1,5 @@
-var redis = require("redis"),
-    client = redis.createClient(),
+var Datastore = require('nedb'),
+    db = new Datastore({ filename: 'webide_data_store', autoload: true }),
     scripts_helper = require('../helpers/scripts_helper'),
     config = require('../config/config'),
     check = require('validator').check,
@@ -18,12 +18,9 @@ exports.logout = function(req, res){
 // and inputs for OAuth and Git config
 exports.setup = function(req, res) {
   var locals = {
-    consumer_key: "",
-    consumer_secret: "",
     name: "",
     email: "",
-    hostname: "",
-    github: config.editor.github
+    hostname: ""
   };
 
   res.render('users/setup', locals);
@@ -43,8 +40,6 @@ exports.submit_setup = function(req, res) {
   }
 
   try {
-    key = sanitize(req.body.key).xss().trim();
-    secret = sanitize(req.body.secret).xss().trim();
     name = sanitize(req.body.name).xss().trim();
     email = sanitize(req.body.email).xss().trim();
     check(email).isEmail();
@@ -53,16 +48,8 @@ exports.submit_setup = function(req, res) {
     console.log(e.message);
   }
 
-  if (key && secret && name && email) {
-    if (config.editor.github) {
-      client.hmset("github_oauth", "consumer_key", key, "consumer_secret", secret, function() {
-        common_setup(name, email);
-      });
-    } else {
-      client.hmset("bitbucket_oauth", "consumer_key", key, "consumer_secret", secret, function() {
-        common_setup(name, email);
-      });
-    }
+  if (name && email) {
+    common_setup(name, email);
   } else {
     if (!req.session.message) {
       req.session.message = "Please set all fields, at the bottom of this page, in order to continue.";
@@ -80,7 +67,7 @@ exports.config = function(req, res) {
         wifi_password: "",
         port: (server ? (server.port || "") : "")
       };
-      
+
       res.render('users/config', locals);
   });
 };

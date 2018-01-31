@@ -25,7 +25,8 @@ var express = require('express'),
     request_helper = require('./helpers/request_helper'),
     debug_helper = require('./helpers/python/debug_helper'),
     config = require('./config/config'),
-    winston = require('winston');
+    winston = require('winston'),
+    Datastore = require('nedb');
 
 var davServer,
     HOSTNAME,
@@ -48,9 +49,7 @@ if (!exists) {
 //winston.remove(winston.transports.Console);
 
 
-var Datastore = require('nedb')
-  , db = new Datastore({ filename: 'webide_data_store' });
-db.loadDatabase();
+var db = new Datastore({ filename: 'webide_data_store', autoload: true });
 
 //redirect anything with /filesystem in the url to the WebDav server.
 app.use(function(req, res, next) {
