@@ -130,7 +130,7 @@
     occEditor.populate_editor_bar();
     socket.onopen = function(event) {
       console.log('websocket opened');
-      occEditor.self_check(function() {
+      occEditor.websockets(function() {
         occEditor.populate_navigator();
         occEditor.open_readme();
       });
@@ -149,7 +149,7 @@
     return socket;
   };
 
-  occEditor.self_check = function(cb) {
+  occEditor.websockets = function(cb) {
     editor_startup("Checking Editor Health");
 
     socket.send(JSON.stringify({type: "self-check-request", data: 1}));

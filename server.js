@@ -34,6 +34,8 @@ var davServer,
 
 winston.info("REPOSITORY_PATH", REPOSITORY_PATH);
 
+var terminals = {}, logs = {};
+
 //exec_helper.spawn_ipython();
 
 //check for the existence of the logs directory, if it doesn't
