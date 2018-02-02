@@ -57,7 +57,7 @@
                                       '<a href="" class="save-file"><i class="icon-cloud"></i> Save</a>' +
                                     '</p>',
     "update_link":                  '<a href="" class="editor-update-link" target="_blank"><i class="icon-download"></i> Editor Update Available</a>',
-    "create_clone_repository":      'Clone a repository by pasting in the full git ssh url found at Bitbucket or Github.<br/><br/>' +
+    "create_clone_repository":      'Clone a repository by pasting in the full git ssh url.<br/><br/>' +
                                     '<span class="small">Example Read-Only: git://github.com/adafruit/Adafruit-Raspberry-Pi-Python-Code.git</span><br/>' +
                                     '<span class="small">Example Read-Write: git@bitbucket.org:adafruit/adafruit-raspberry-pi-python-code.git</span><br/><br/>' +
                                     'This will also push the latest version of this repository to your Bitbucket account, if it doesn\'t already exist.<br/><br/>' +
@@ -65,9 +65,6 @@
                                       '<fieldset>' +
                                       '<label for="repository_url">Remote Repository URL:</label>' +
                                       '<input name="repository_url" type="text">' +
-                                      '<label class="checkbox">' +
-                                        '<input name="retain_remote" type="checkbox"> Clone without changing remote repository to bitbucket [not recommended]' +
-                                      '</label>' +
                                       '</fieldset>' +
                                     '</form>',
     "create_project_folder":        '<form class="create-form" id="create-project-form">' +
@@ -149,10 +146,15 @@
     return socket;
   };
 
+  occEditor.send_message = function(type, data) {
+    socket.send(JSON.stringify({type: type, data: data}));
+  };
+
   occEditor.websockets = function(cb) {
     editor_startup("Checking Editor Health");
 
-    socket.send(JSON.stringify({type: "self-check-request", data: 1}));
+    occEditor.send_message('self-check-request', 1);
+    //socket.send(JSON.stringify({type: "self-check-request", data: 1}));
 
     socket.addEventListener('message', function(event) {
       var message = JSON.parse(event.data);
@@ -160,19 +162,24 @@
       var data = message.data;
       console.log(type);
 
-      if (type === "cwd-init") {
-        dirname = data.dirname;
-      } else if (type === "self-check-message") {
-        editor_startup(data);
-      } else if (type === "self-check-settings") {
-        if (data) {
-          settings = data;
-        }
+      switch (type) {
+        case 'cwd-init':
+          dirname = data.dirname;
+          break;
+        case 'self-check-message':
+          editor_startup(data);
+          break;
+        case 'self-check-settings':
+          if (data) {
+            settings = data;
+          }
 
-        editor_startup("Editor settings received");
-      } else if (type === "self-check-complete") {
-        editor_startup("Editor Health Check Complete");
-        cb();
+          editor_startup("Editor settings received");
+          break;
+        case 'self-check-complete':
+          editor_startup("Editor Health Check Complete");
+          cb();
+          break;
       }
     });
   };
@@ -961,8 +968,7 @@
     var $nav_top, ul = $(".filesystem").html('');
     //console.log("item", item);
     if (item.name === 'filesystem') {
-      var username = $('input[name="username"]').val();
-      $nav_top = $('#navigator-top p').addClass('navigator-item-back').data("file", null).html("<a class='editor-settings' href=''><i class='icon-user'></i> " + username + " (settings)</a>");
+      $nav_top = $('#navigator-top p').addClass('navigator-item-back').data("file", null).html("<a class='editor-settings' href=''><i class='icon-user'></i> Editor Settings</a>");
 
       $('#navigator-folder p').html('').text('All Repositories').append('<a href="#" class="refresh-directory" title="Refresh Directory and Repositories"><i class="icon-refresh"></i></a>');
     } else {
@@ -1826,7 +1832,7 @@
       function set_font_size(event) {
         $('.font-size-value').removeClass('selected');
         $(this).addClass('selected');
-        set_settings({"font_size": $(this).text()});
+        set_settings({"font_size": $(this).text().replace('_', '')});
       }
 
       function set_soft_tabs(event) {
@@ -1838,7 +1844,7 @@
       function set_tab_size(event) {
         $('.tab-size-value').removeClass('selected');
         $(this).addClass('selected');
-        set_settings({"tab_size": $(this).text()});
+        set_settings({"tab_size": $(this).text().replace('_', '')});
       }
 
       function set_show_invisibles(event) {

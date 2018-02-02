@@ -27,6 +27,13 @@ exports.editor = function(ws, req) {
   //socket.set('username', socket.request.session.username);
   winston.debug("after username set");
 
+  function send_message(type, data) {
+    ws.send(JSON.stringify({type: type, data: data}));
+  }
+
+  //emit on first connection
+  send_message('cwd-init', {dirname: REPOSITORY_PATH});
+
   ws.on('message', function(msg) {
     var message = JSON.parse(msg);
     var type = message.type;
@@ -38,114 +45,91 @@ exports.editor = function(ws, req) {
         editor_setup.health_check(ws);
         winston.debug('here');
         break;
+      case 'git-delete':
+        git_helper.remove_commit_push(data.file, ws.request.session, function(err, status) {
+          send_message('git-delete-complete', {err: err, status: status});
+        });
+        break;
+      case 'git-pull':
+        var name = data.file ? data.file.name : "";
+        git_helper.pull(name, "origin", "master", function(err, status) {
+          send_message('git-pull-complete', {err: err, status: status});
+        });
+        break;
+      case 'git-is-modified':
+        git_helper.is_modified(data.file, function(err, status) {
+          send_message('git-is-modified-complete', {is_modified: status});
+        });
+        break;
+      case 'commit-file':
+        var commit_message = "";
+
+        if (data.message) {
+          commit_message = data.message;
+        } else {
+          commit_message = "Modified " + data.file.name;
+        }
+
+        git_helper.commit_push_and_save(data.file, commit_message, ws.request.session, function(err, status) {
+          send_message('commit-file-complete', {err: err, status: status});
+        });
+        break;
+      case 'move-file':
+        git_helper.move_commit_push(data.file, ws.request.session, function(err) {
+          console.log('move-file', err);
+          send_message('move-file-complete', {err: err});
+        });
+        break;
+      case 'editor-check-updates':
+        updater.check_for_updates(ws);
+        break;
+      case 'editor-update':
+        updater.update(ws);
+        break;
+      case 'trace-file':
+        exec_helper.trace_program(data.file, ws);
+        break;
+      case 'debug-command':
+        debug_helper.debug_command(data, ws);
+        break;
+      case 'debug-file':
+        debug_helper.start_debug(data.file, ws);
+        break;
+      case 'commit-run-file':
+        if (data && data.file) {
+          data.file.username = ws.request.session.username;
+        }
+
+        exec_helper.execute_program(data.file, false);
+        git_helper.commit_push_and_save(data.file, "Modified " + data.file.name, ws.request.session, function(err, status) {
+          send_message('commit-file-complete', {message: "Save was successful"});
+        });
+        break;
+      case 'stop-script-execution':
+        exec_helper.stop_program(data.file, false);
+        break;
+      case 'submit-schedule':
+        scheduler.add_schedule(schedule, ws, ws.request.session);
+        break;
+      case 'schedule-delete-job':
+        scheduler.delete_job(key, ws, ws.request.session);
+        break;
+      case 'schedule-toggle-job':
+        scheduler.toggle_job(key, ws, ws.request.session);
+        break;
+      case 'set-settings':
+        value["type"] = "editor:settings";
+        db.update({type: "editor:settings"}, value, { upsert: true }, function(err) {
+          if (err) winston.error(err);
+        });
+        break;
+
     }
   });
-
-  //emit on first connection
-  ws.send(JSON.stringify({type: 'cwd-init', data: {dirname: REPOSITORY_PATH}}));
-  //scheduler.emit_scheduled_jobs(socket.request.session.username, ws);
 
   ws.on('disconnect', function() {
     debug_helper.client_disconnect();
     debug_helper.kill_debug();
-  });
-
-  //listen for events
-  ws.on('git-delete', function(data) {
-    git_helper.remove_commit_push(data.file, ws.request.session, function(err, status) {
-      ws.send('git-delete-complete', {err: err, status: status});
-    });
-  });
-
-  //listen for events
-  ws.on('git-pull', function(data) {
-    console.log(data);
-    var name = data.file ? data.file.name : "";
-    git_helper.pull(name, "origin", "master", function(err, status) {
-      ws.send('git-pull-complete', {err: err, status: status});
-    });
-  });
-
-  //listen for events
-  ws.on('git-is-modified', function(data) {
-    git_helper.is_modified(data.file, function(err, status) {
-      ws.send('git-is-modified-complete', {is_modified: status});
-    });
-  });
-
-  ws.on('commit-file', function (data) {
-    var commit_message = "";
-
-    if (data.message) {
-      commit_message = data.message;
-    } else {
-      commit_message = "Modified " + data.file.name;
-    }
-
-    git_helper.commit_push_and_save(data.file, commit_message, ws.request.session, function(err, status) {
-      ws.send('commit-file-complete', {err: err, status: status});
-    });
-  });
-
-  ws.on('move-file', function (data) {
-    git_helper.move_commit_push(data.file, ws.request.session, function(err) {
-      console.log('move-file', err);
-      ws.send('move-file-complete', {err: err});
-    });
-  });
-
-  ws.on('editor-check-updates', function() {
-    updater.check_for_updates(ws);
-  });
-
-  ws.on('editor-update', function() {
-    updater.update(ws);
-  });
-
-  ws.on('trace-file', function(data) {
-    exec_helper.trace_program(data.file, ws);
-  });
-
-  ws.on('debug-command', function(data) {
-    debug_helper.debug_command(data, ws);
-  });
-
-  ws.on('debug-file', function(data) {
-    debug_helper.start_debug(data.file, ws);
-  });
-
-  ws.on('commit-run-file', function(data) {
-    if (data && data.file) {
-      data.file.username = ws.request.session.username;
-    }
-
-    exec_helper.execute_program(data.file, false);
-    git_helper.commit_push_and_save(data.file, "Modified " + data.file.name, ws.request.session, function(err, status) {
-      ws.send('commit-file-complete', {message: "Save was successful"});
-    });
-  });
-
-  ws.on('stop-script-execution', function(data) {
-    exec_helper.stop_program(data.file, false);
-  });
-
-  ws.on('submit-schedule', function(schedule) {
-    scheduler.add_schedule(schedule, ws, ws.request.session);
-  });
-
-  ws.on('schedule-delete-job', function(key) {
-    scheduler.delete_job(key, ws, ws.request.session);
-  });
-
-  ws.on('schedule-toggle-job', function(key) {
-    scheduler.toggle_job(key, ws, ws.request.session);
-  });
-
-  ws.on('set-settings', function(value) {
-    value["type"] = "editor:settings";
-    db.update({type: "editor:settings"}, value, { upsert: true }, function(err) {
-      if (err) winston.error(err);
-    });
   });
 }
 
