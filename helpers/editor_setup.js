@@ -1,5 +1,6 @@
 var path = require('path'),
     Datastore = require('nedb'),
+    winston = require('winston'),
     db = new Datastore({ filename: path.resolve(process.env.PWD, 'db/webide_data_store'), autoload: true }),
     exec = require('child_process').exec,
     fs = require ('fs'),
@@ -28,19 +29,17 @@ var path = require('path'),
     });
   };
 
-  exports.health_check = function(socket) {
+  exports.health_check = function(ws) {
     //TODO redis to nedb
-    // client.hgetall('editor:settings', function(err, settings) {
-    //
-    //   if (settings) {
-    //     settings.offline = true;
-    //   } else {
-    //     settings = {offline: true};
-    //   }
-    //   console.log("getting settings", settings);
-    //   socket.emit("self-check-settings", settings);
-    // });
-
-    console.log('self-check-complete');
-    socket.emit('self-check-complete');
+    db.findOne({type: "editor:settings"}, function(err, settings) {
+        if (settings) {
+          settings.offline = true;
+        } else {
+          settings = {offline: true};
+        }
+        winston.debug("getting settings", settings);
+        ws.send(JSON.stringify({type: "self-check-settings", data: settings}));
+    })
+    winston.debug('self-check-complete');
+    ws.send(JSON.stringify({type: 'self-check-complete', data: true}));
   };

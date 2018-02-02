@@ -6,8 +6,8 @@ var express = require('express'),
     serveStatic = require('serve-static'),
     morgan = require('morgan'),
     app = express(),
+    expressWs = require('express-ws')(app),
     util = require('util'),
-    io = require('socket.io'),
     util = require('util'),
     site = require('./controllers/site'),
     editor = require('./controllers/editor'),
@@ -17,7 +17,6 @@ var express = require('express'),
     path = require('path'),
     updater = require('./helpers/updater'),
     scheduler = require('./helpers/scheduler'),
-    editor_setup = require('./helpers/editor_setup'),
     git_helper = require('./helpers/git_helper'),
     exec_helper = require('./helpers/exec_helper'),
     fs_helper = require('./helpers/fs_helper'),
@@ -26,7 +25,8 @@ var express = require('express'),
     debug_helper = require('./helpers/python/debug_helper'),
     config = require('./config/config'),
     winston = require('winston'),
-    Datastore = require('nedb');
+    Datastore = require('nedb'),
+    pty = require('node-pty');
 
 var davServer,
     HOSTNAME,
@@ -98,6 +98,64 @@ app.get('/config', user.config);
 app.post('/config', user.submit_config);
 app.get('/set-datetime', user.set_datetime);
 
+app.post('/terminals', function (req, res) {
+  var cols = parseInt(req.query.cols),
+      rows = parseInt(req.query.rows),
+      term = pty.spawn(process.platform === 'win32' ? 'cmd.exe' : 'bash', [], {
+        name: 'xterm-color',
+        cols: cols || 80,
+        rows: rows || 24,
+        cwd: process.env.PWD,
+        env: process.env
+      });
+
+  console.log('Created terminal with PID: ' + term.pid);
+  terminals[term.pid] = term;
+  logs[term.pid] = '';
+  term.on('data', function(data) {
+    logs[term.pid] += data;
+  });
+  res.send(term.pid.toString());
+  res.end();
+});
+
+app.post('/terminals/:pid/size', function (req, res) {
+  var pid = parseInt(req.params.pid),
+      cols = parseInt(req.query.cols),
+      rows = parseInt(req.query.rows),
+      term = terminals[pid];
+
+  term.resize(cols, rows);
+  console.log('Resized terminal ' + pid + ' to ' + cols + ' cols and ' + rows + ' rows.');
+  res.end();
+});
+
+app.ws('/terminals/:pid', function (ws, req) {
+  var term = terminals[parseInt(req.params.pid)];
+  console.log('Connected to terminal ' + term.pid);
+  ws.send(logs[term.pid]);
+
+  term.on('data', function(data) {
+    try {
+      ws.send(data);
+    } catch (ex) {
+      // The WebSocket is not open, ignore
+    }
+  });
+  ws.on('message', function(msg) {
+    term.write(msg);
+  });
+  ws.on('close', function () {
+    term.kill();
+    console.log('Closed terminal ' + term.pid);
+    // Clean things up
+    delete terminals[term.pid];
+    delete logs[term.pid];
+  });
+});
+
+app.ws('/editor', editor.editor);
+
 app.use(errorHandler);
 
 serverInitialization(app);
@@ -141,18 +199,11 @@ function serverInitialization(app) {
   scheduler.initialize_jobs();
 
   start_server(function(server) {
-    socket_listeners();
     mount_dav(server);
   });
 }
 
 function start_server(cb) {
-  server = require('http').createServer(app);
-  io = io(server);
-  io.use(function(socket, next) {
-    sessionMiddleware(socket.request, socket.request.res, next);
-  });
-
   db.find('server', function (err, server_data) {
     var port;
 
@@ -163,134 +214,9 @@ function start_server(cb) {
     }
 
     winston.info('listening on port ' + port);
-    cb(server.listen(port));
+    cb(app.listen(port));
   });
 }
-
-function socket_listeners() {
-
-  io.on('connection', function (socket) {
-    winston.debug('socket io connection completed');
-    //socket.set('username', socket.request.session.username);
-    winston.debug("after username set");
-
-    //emit on first connection
-    socket.emit('cwd-init', {dirname: REPOSITORY_PATH});
-    scheduler.emit_scheduled_jobs(socket.request.session.username, socket);
-
-    socket.on('disconnect', function() {
-      debug_helper.client_disconnect();
-      debug_helper.kill_debug();
-    });
-
-    //listen for events
-    socket.on('git-delete', function(data) {
-      git_helper.remove_commit_push(data.file, socket.request.session, function(err, status) {
-        socket.emit('git-delete-complete', {err: err, status: status});
-      });
-    });
-
-    //listen for events
-    socket.on('git-pull', function(data) {
-      console.log(data);
-      var name = data.file ? data.file.name : "";
-      git_helper.pull(name, "origin", "master", function(err, status) {
-        socket.emit('git-pull-complete', {err: err, status: status});
-      });
-    });
-
-    //listen for events
-    socket.on('git-is-modified', function(data) {
-      git_helper.is_modified(data.file, function(err, status) {
-        socket.emit('git-is-modified-complete', {is_modified: status});
-      });
-    });
-
-    socket.on('commit-file', function (data) {
-      var commit_message = "";
-
-      if (data.message) {
-        commit_message = data.message;
-      } else {
-        commit_message = "Modified " + data.file.name;
-      }
-
-      git_helper.commit_push_and_save(data.file, commit_message, socket.request.session, function(err, status) {
-        socket.emit('commit-file-complete', {err: err, status: status});
-      });
-    });
-
-    socket.on('move-file', function (data) {
-      git_helper.move_commit_push(data.file, socket.request.session, function(err) {
-        console.log('move-file', err);
-        socket.emit('move-file-complete', {err: err});
-      });
-    });
-
-    socket.on('self-check-request', function() {
-      winston.debug('self-check-request');
-      editor_setup.health_check(socket, socket.request.session);
-    });
-
-    socket.on('editor-check-updates', function() {
-      updater.check_for_updates(socket);
-    });
-
-    socket.on('editor-update', function() {
-      updater.update(socket);
-    });
-
-    socket.on('trace-file', function(data) {
-      exec_helper.trace_program(data.file, socket);
-    });
-
-    socket.on('debug-command', function(data) {
-      debug_helper.debug_command(data, socket);
-    });
-
-    socket.on('debug-file', function(data) {
-      debug_helper.start_debug(data.file, socket);
-    });
-
-    socket.on('commit-run-file', function(data) {
-      if (data && data.file) {
-        data.file.username = socket.request.session.username;
-      }
-
-      exec_helper.execute_program(data.file, false);
-      git_helper.commit_push_and_save(data.file, "Modified " + data.file.name, socket.request.session, function(err, status) {
-        socket.emit('commit-file-complete', {message: "Save was successful"});
-      });
-    });
-
-    socket.on('stop-script-execution', function(data) {
-      exec_helper.stop_program(data.file, false);
-    });
-
-    socket.on('submit-schedule', function(schedule) {
-      scheduler.add_schedule(schedule, socket, socket.request.session);
-    });
-
-    socket.on('schedule-delete-job', function(key) {
-      scheduler.delete_job(key, socket, socket.request.session);
-    });
-
-    socket.on('schedule-toggle-job', function(key) {
-      scheduler.toggle_job(key, socket, socket.request.session);
-    });
-
-    socket.on('set-settings', function(value) {
-      value["type"] = "editor:settings";
-      db.update({type: "editor:settings"}, value, { upsert: true }, function(err) {
-        if (err) winston.error(err);
-      });
-    });
-  });
-}
-
-io.sockets.on('disconnect', function(socket) {
-  exec_helper.set_sockets(io.sockets.sockets);
-});
 
 function mount_dav(server) {
   var jsDAV_Tree_Filesystem = require("jsDAV/lib/DAV/tree/filesystem").jsDAV_Tree_Filesystem;

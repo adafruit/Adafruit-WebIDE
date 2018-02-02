@@ -2,12 +2,14 @@
 
 (function( occEditor, $, undefined ) {
   var editor, modes = [], max_reconnects = 50,
-      socket = io(null, {'reconnection limit': 2000, 'max reconnection attempts': max_reconnects}),
+      socket = new WebSocket('ws://' + location.hostname + ((location.port) ? (':' + location.port) : '') + '/editor'),
       dirname, updating = false,
       editor_output_visible = false,
       is_terminal_open = false,
       terminal_win,
       job_list, settings = {};
+
+      console.log(socket.readyState == socket.OPEN);
 
   var templates = {
     "editor_bar_init":              '<p class="editor-bar-actions">' +
@@ -126,10 +128,14 @@
     context_menu.init();
 
     occEditor.populate_editor_bar();
-    occEditor.self_check(function() {
-      occEditor.populate_navigator();
-      occEditor.open_readme();
-    });
+    socket.onopen = function(event) {
+      console.log('websocket opened');
+      occEditor.self_check(function() {
+        occEditor.populate_navigator();
+        occEditor.open_readme();
+      });
+    }
+
 
     handle_navigator_actions();
     handle_editor_bar_actions();
@@ -146,21 +152,28 @@
   occEditor.self_check = function(cb) {
     editor_startup("Checking Editor Health");
 
-    socket.emit("self-check-request", 1);
-    console.log(socket);
-    socket.on("self-check-message", function(message) {
-      editor_startup(message);
-    });
-    socket.on("self-check-settings", function(data) {
-      if (data) {
-        settings = data;
-      }
+    socket.send(JSON.stringify({type: "self-check-request", data: 1}));
 
-      editor_startup("Editor settings received");
-    });
-    socket.on("self-check-complete", function() {
-      editor_startup("Editor Health Check Complete");
-      cb();
+    socket.addEventListener('message', function(event) {
+      var message = JSON.parse(event.data);
+      var type = message.type;
+      var data = message.data;
+      console.log(type);
+
+      if (type === "cwd-init") {
+        dirname = data.dirname;
+      } else if (type === "self-check-message") {
+        editor_startup(data);
+      } else if (type === "self-check-settings") {
+        if (data) {
+          settings = data;
+        }
+
+        editor_startup("Editor settings received");
+      } else if (type === "self-check-complete") {
+        editor_startup("Editor Health Check Complete");
+        cb();
+      }
     });
   };
 
@@ -243,30 +256,30 @@
       if (breakpoints.length > row && breakpoints[row]) {
         e.editor.session.clearBreakpoint(row);
         if (occEditor.is_debug_active) {
-          socket.emit('debug-command', {command: "REMOVE_BP", file: file, line_no: (row+1)});
+          socket.send('debug-command', {command: "REMOVE_BP", file: file, line_no: (row+1)});
         }
       } else {
         e.editor.session.setBreakpoint(row);
         if (occEditor.is_debug_active) {
-          socket.emit('debug-command', {command: "ADD_BP", file: file, line_no: (row+1)});
+          socket.send('debug-command', {command: "ADD_BP", file: file, line_no: (row+1)});
         }
       }
       e.stop();
     });
 
-    socket.on('connect', function () {
+    socket.addEventListener('connect', function () {
       $('.connection-state').removeClass('disconnected').addClass('connected').text('Connected');
       occEditor.check_for_updates();
       occEditor.load_scheduled_jobs();
     });
-    socket.on('disconnect', function () {
+    socket.addEventListener('disconnect', function () {
       if (updating) {
         $('.connection-state').text('Restarting');
       } else {
         $('.connection-state').removeClass('connected').addClass('disconnected').text('Disconnected');
       }
     });
-    socket.on('reconnecting', function () {
+    socket.addEventListener('reconnecting', function () {
       if (!updating) {
         ++reconnect_attempts;
 
@@ -277,29 +290,26 @@
         }
       }
     });
-    socket.on('cwd-init', function(data) {
-      dirname = data.dirname;
-    });
 
-    socket.on('commit-file-complete', function(data) {
+    socket.addEventListener('commit-file-complete', function(data) {
       if (data.err) {
         occEditor.display_error(data.err);
       }
     });
 
-    socket.on('git-delete-complete', function(data) {
+    socket.addEventListener('git-delete-complete', function(data) {
       if (data.err) {
         occEditor.display_error(data.err);
       }
     });
 
-    socket.on('git-push-error', function(data) {
+    socket.addEventListener('git-push-error', function(data) {
       if (data.err) {
         occEditor.display_error(data.err);
       }
     });
 
-    socket.on('git-pull-complete', function(data) {
+    socket.addEventListener('git-pull-complete', function(data) {
       if (data.err) {
         occEditor.display_error(data.err);
       } else {
@@ -307,7 +317,7 @@
       }
     });
 
-    socket.on('trace-program-exit', function(data) {
+    socket.addEventListener('trace-program-exit', function(data) {
       output = $.parseJSON(data.output);
 
       if (!output || !output.trace || (output.trace.length === 0) ||
@@ -353,9 +363,9 @@
   };
 
   occEditor.check_for_updates = function() {
-    socket.emit('editor-check-updates');
+    socket.send('editor-check-updates');
 
-    socket.on('editor-update-status', function(data) {
+    socket.addEventListener('editor-update-status', function(data) {
       if (data.has_update) {
         var update_link = $(templates.update_link).append(" (v" + data.version + ")");
         $('.update-wrapper').data('update', data).html(update_link);
@@ -366,7 +376,7 @@
   };
 
   occEditor.load_scheduled_jobs = function() {
-    socket.on('scheduled-job-list', function(data) {
+    socket.addEventListener('scheduled-job-list', function(data) {
       job_list = data;
       //console.log(job_list);
     });
@@ -534,9 +544,9 @@
           //manually committing and pushing of git files is enabled
           if (settings.offline || settings.manual_git === 'on') {
             $('.save-file i').removeClass().addClass('icon-save');
-            socket.emit("git-is-modified", { file: file});
+            socket.send("git-is-modified", { file: file});
 
-            socket.on("git-is-modified-complete", function(data) {
+            socket.addEventListener("git-is-modified-complete", function(data) {
               socket.removeAllListeners("git-is-modified-complete");
               if (data.is_modified && ($('.git-file').length <= 0)) {
                 $(templates.editor_bar_git_link).appendTo('.editor-bar-actions');
@@ -670,7 +680,7 @@
       if (settings.offline || settings.manual_git === 'on') {
         //don't commit and push files
       } else {
-        socket.emit('commit-file', { file: file});
+        socket.send('commit-file', { file: file});
       }
     }
 
@@ -681,7 +691,7 @@
     var destination_path = item.parent_path + '/' + new_name;
     item.destination = destination_path;
 
-    socket.emit('move-file', { file: item });
+    socket.send('move-file', { file: item });
 
     function move_file_callback(data) {
       var item_html = $('.rename-form').parent().data('old');
@@ -713,7 +723,7 @@
       socket.removeListener('move-file-complete', move_file_callback);
     }
 
-    socket.on('move-file-complete', move_file_callback);
+    socket.addEventListener('move-file-complete', move_file_callback);
   };
 
   occEditor.send_terminal_command = function(command) {
@@ -730,6 +740,120 @@
   };
 
   occEditor.open_terminal = function(path, command) {
+    Terminal.applyAddon(fit);
+    Terminal.applyAddon(attach);
+
+    var term,
+        protocol,
+        socketURL,
+        socket,
+        pid;
+
+    var terminalContainer = document.getElementById('editor-output');//,
+        // actionElements = {
+        //   findNext: document.querySelector('#find-next'),
+        //   findPrevious: document.querySelector('#find-previous')
+        // },
+        // optionElements = {
+        //   cursorBlink: document.querySelector('#option-cursor-blink'),
+        //   cursorStyle: document.querySelector('#option-cursor-style'),
+        //   macOptionIsMeta: document.querySelector('#option-mac-option-is-meta'),
+        //   scrollback: document.querySelector('#option-scrollback'),
+        //   tabstopwidth: document.querySelector('#option-tabstopwidth'),
+        //   bellStyle: document.querySelector('#option-bell-style')
+        // },
+        // colsElement = document.getElementById('cols'),
+        // rowsElement = document.getElementById('rows');
+
+    // function setTerminalSize() {
+    //   var cols = parseInt(colsElement.value, 10);
+    //   var rows = parseInt(rowsElement.value, 10);
+    //   var viewportElement = document.querySelector('.xterm-viewport');
+    //   var scrollBarWidth = viewportElement.offsetWidth - viewportElement.clientWidth;
+    //   var width = (cols * term.renderer.dimensions.actualCellWidth + 20 /*room for scrollbar*/).toString() + 'px';
+    //   var height = (rows * term.renderer.dimensions.actualCellHeight).toString() + 'px';
+    //
+    //   terminalContainer.style.width = width;
+    //   terminalContainer.style.height = height;
+    //   term.resize(cols, rows);
+    // }
+
+    // colsElement.addEventListener('change', setTerminalSize);
+    // rowsElement.addEventListener('change', setTerminalSize);
+
+    // actionElements.findNext.addEventListener('keypress', function (e) {
+    //   if (e.key === "Enter") {
+    //     e.preventDefault();
+    //     term.findNext(actionElements.findNext.value);
+    //   }
+    // });
+    // actionElements.findPrevious.addEventListener('keypress', function (e) {
+    //   if (e.key === "Enter") {
+    //     e.preventDefault();
+    //     term.findPrevious(actionElements.findPrevious.value);
+    //   }
+    // });
+
+    // optionElements.cursorBlink.addEventListener('change', function () {
+    //   term.setOption('cursorBlink', optionElements.cursorBlink.checked);
+    // });
+    // optionElements.cursorStyle.addEventListener('change', function () {
+    //   term.setOption('cursorStyle', optionElements.cursorStyle.value);
+    // });
+    // optionElements.bellStyle.addEventListener('change', function () {
+    //   term.setOption('bellStyle', optionElements.bellStyle.value);
+    // });
+    // optionElements.macOptionIsMeta.addEventListener('change', function () {
+    //   term.setOption('macOptionIsMeta', optionElements.macOptionIsMeta.checked);
+    // });
+    // optionElements.scrollback.addEventListener('change', function () {
+    //   term.setOption('scrollback', parseInt(optionElements.scrollback.value, 10));
+    // });
+    // optionElements.tabstopwidth.addEventListener('change', function () {
+    //   term.setOption('tabStopWidth', parseInt(optionElements.tabstopwidth.value, 10));
+    // });
+
+
+    // Clean terminal
+    while (terminalContainer.children.length) {
+      terminalContainer.removeChild(terminalContainer.children[0]);
+    }
+
+    term = new Terminal();
+    window.term = term;
+
+    term.on('resize', function (size) {
+      if (!pid) {
+        return;
+      }
+      var cols = size.cols,
+          rows = size.rows,
+          url = '/terminals/' + pid + '/size?cols=' + cols + '&rows=' + rows;
+
+      $.post(url);
+    });
+
+    protocol = (location.protocol === 'https:') ? 'wss://' : 'ws://';
+    socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + '/terminals/';
+    $('#editor-output').css('height', '500px');
+    term.open(terminalContainer);
+    term.fit();
+    term.focus();
+
+    setTimeout(function () {
+      // colsElement.value = term.cols;
+      // rowsElement.value = term.rows;
+
+      // Set terminal size again to set the specific dimensions on the demo
+      // setTerminalSize();
+
+      $.post('/terminals?cols=' + term.cols + '&rows=' + term.rows, function (processId) {
+        pid = processId;
+        socketURL += processId;
+        socket = new WebSocket(socketURL);
+        term.attach(socket);
+      });
+    }, 0);
     // if (is_terminal_open) {
     //   if (command) {
     //     terminal_win.tabs[0].sendString(command);
@@ -944,7 +1068,7 @@
     }
 
     var file = $('.file-open').data('file');
-    socket.emit('stop-script-execution', { file: file});
+    socket.send('stop-script-execution', { file: file});
     $('.stop-file').html('<i class="icon-play"></i> Run').removeClass('stop-file').addClass('run-file');
   };
 
@@ -970,7 +1094,7 @@
     $('#trace-loader').show();
     $('#trace-container').hide();
 
-    socket.emit('trace-file', {file: file});
+    socket.send('trace-file', {file: file});
 
     $(document).on('click touchstart', '.close-trace', close_trace);
   };
@@ -1000,7 +1124,7 @@
     $('#pre-wrapper pre').text('');
 
     var file = $('.file-open').data('file');
-    socket.emit('debug-file', {file: file});
+    socket.send('debug-file', {file: file});
   };
 
   occEditor.debug_message = function(message) {
@@ -1096,7 +1220,7 @@
         occEditor.debug_toggle_buttons(false);
         occEditor.debug_message('Running');
 
-        socket.emit('debug-command', {command: "RUN"});
+        socket.send('debug-command', {command: "RUN"});
       }
     }
 
@@ -1106,7 +1230,7 @@
         occEditor.debug_toggle_buttons(false);
         occEditor.debug_message('Stepping');
         //console.log('step over');
-        socket.emit('debug-command', {command: "NEXT"});
+        socket.send('debug-command', {command: "NEXT"});
       }
     }
 
@@ -1116,7 +1240,7 @@
         occEditor.debug_toggle_buttons(false);
         occEditor.debug_message('Stepping');
         //console.log('step in');
-        socket.emit('debug-command', {command: "STEP"});
+        socket.send('debug-command', {command: "STEP"});
       }
     }
 
@@ -1129,11 +1253,11 @@
     occEditor.show_editor_output();
     editor.resize();
     $('#editor-bar').html(templates.editor_bar_debug_file);
-    socket.emit('debug-file', {file: file});
+    socket.send('debug-file', {file: file});
 
     //clear out any listeners hanging around before creating a new one for this debug session.
     socket.removeAllListeners('debug-file-response');
-    socket.on('debug-file-response', debug_file_response);
+    socket.addEventListener('debug-file-response', debug_file_response);
 
     $(document).off('click touchstart', '.debug-run');
     $(document).off('click touchstart', '.debug-step-over');
@@ -1159,7 +1283,7 @@
     $('#editor-output-wrapper').hide();
 
     //$('#editor-wrapper').show();
-    socket.emit('debug-command', {command: "QUIT"});
+    socket.send('debug-command', {command: "QUIT"});
     var markers = editor.session.getMarkers();
     editor.session.removeMarker(markers);
     occEditor.hide_editor_output();
@@ -1186,7 +1310,7 @@
       event.preventDefault();
       var file = $('.file-open').data('file');
       var comment = $('input[name="comment"]').val();
-      socket.emit('commit-file', { file: file, message: comment});
+      socket.send('commit-file', { file: file, message: comment});
       $('.git-file').remove();
       $('#manual-git-modal').modal('hide');
       $('#manual-git-modal .modal-submit').text('Commit and Push');
@@ -1224,7 +1348,7 @@
       }
       command += file.name;
       //$('#editor-output div pre').append('------------------------------------------------------------\n');
-      //socket.emit('commit-run-file', { file: file});
+      //socket.send('commit-run-file', { file: file});
       occEditor.open_terminal(occEditor.cwd(), command);
     }
 
@@ -1256,7 +1380,7 @@
       var destination = '/filesystem/my-pi-projects/' + directory;
 
       davFS.copy(source, destination, false, function(err, status) {
-        socket.emit('commit-file', { file: {path: destination, name: directory}, message: "Copied to my-pi-projects " + directory});
+        socket.send('commit-file', { file: {path: destination, name: directory}, message: "Copied to my-pi-projects " + directory});
         $('.copy-project').replaceWith($("<span>Project copy completed...</span>"));
       });
     }
@@ -1290,7 +1414,7 @@
           $('.scheduler-error').html('Invalid Schedule: ' + schedule_good + '<strong>' + schedule_bad + '</strong>');
         } else {
           //all is good, submit schedule to backend
-          socket.emit('submit-schedule', {text: schedule_text, schedule: parsed_schedule, file: file});
+          socket.send('submit-schedule', {text: schedule_text, schedule: parsed_schedule, file: file});
           $('#schedule-modal').modal('hide');
 
           $('.schedule-file').html('<i class="icon-time"></i> Scheduled').delay(100).fadeOut().fadeIn('slow');
@@ -1350,13 +1474,13 @@
       event.preventDefault();
 
       var key = $(this).attr('id');
-      socket.emit('schedule-delete-job', key);
+      socket.send('schedule-delete-job', key);
       $(this).parents('tr').remove();
     }
 
     function toggle_scheduled_job(event) {
       var key = $(this).val();
-      socket.emit('schedule-toggle-job', key);
+      socket.send('schedule-toggle-job', key);
     }
 
     function format_schedule_last_run(date) {
@@ -1410,19 +1534,19 @@
   }
 
   function handle_scheduler_events() {
-    socket.on('scheduler-start', function(data) {
+    socket.addEventListener('scheduler-start', function(data) {
       //console.log(data);
       $('.schedule-status').text('Initializing Job: ' + data.file.name);
     });
-    socket.on('scheduler-executing', function(data) {
+    socket.addEventListener('scheduler-executing', function(data) {
       //console.log('scheduler-executing');
       $('.schedule-status').text('Ran Job: ' + data.file.name);
     });
-    socket.on('scheduler-error', function(data) {
+    socket.addEventListener('scheduler-error', function(data) {
       //console.log('scheduler-error');
       $('.schedule-status').text('Job Error: ' + data.file.name);
     });
-    socket.on('scheduler-exit', function(data) {
+    socket.addEventListener('scheduler-exit', function(data) {
       //console.log('scheduler-exit');
       $('.schedule-status').text('Last Run Job: ' + data.file.name);
     });
@@ -1437,29 +1561,29 @@
     function update_editor(event) {
       event.preventDefault();
       $(this).hide();
-      socket.emit('editor-update');
+      socket.send('editor-update');
       $('.connection-state').text('Updating');
       updating = true;
       load_update_notes();
     }
 
-    socket.on('editor-update-download-start', function() {
+    socket.addEventListener('editor-update-download-start', function() {
       $('.connection-state').text('Downloading (~30 seconds)');
     });
 
-    socket.on('editor-update-download-end', function() {
+    socket.addEventListener('editor-update-download-end', function() {
       //console.log(data);
     });
 
-    socket.on('editor-update-unpack-start', function() {
+    socket.addEventListener('editor-update-unpack-start', function() {
       $('.connection-state').text('Unpacking (~60 seconds)');
     });
 
-    socket.on('editor-update-unpack-end', function() {
+    socket.addEventListener('editor-update-unpack-end', function() {
       $('.connection-state').text('Restarting (~30 seconds)');
     });
 
-    socket.on('editor-update-complete', function(data) {
+    socket.addEventListener('editor-update-complete', function(data) {
       $('.connection-state').text('Update Complete, Refreshing Browser');
       updating = false;
 
@@ -1501,7 +1625,7 @@
     var buffer = "", buffer_start = false;
     var termOffsetWidth, termOffsetHeight;
     /*
-    socket.on('program-stdout', function(data) {
+    socket.addEventListener('program-stdout', function(data) {
       console.log(data);
       occEditor.show_editor_output();
       $('#editor-output div pre').append(webide_utils.fix_console(data.output));
@@ -1510,7 +1634,7 @@
       editor.focus();
       //console.log(data);
     });
-    socket.on('program-stderr', function(data) {
+    socket.addEventListener('program-stderr', function(data) {
       occEditor.show_editor_output();
       $('#editor-output div pre').append(webide_utils.fix_console(data.output));
       //$("#editor-output").animate({ scrollTop: $(document).height() }, "fast");
@@ -1518,7 +1642,7 @@
       editor.focus();
       //console.log(data);
     });
-    socket.on('program-exit', function(data) {
+    socket.addEventListener('program-exit', function(data) {
       occEditor.show_editor_output();
       $('#editor-output div pre').append('\n\n');
       $('.stop-file').html('<i class="icon-play"></i> Run').removeClass('stop-file').addClass('run-file');
@@ -1616,7 +1740,7 @@
           if (settings.offline || settings.manual_git === 'on') {
             //don't push folders
           } else {
-            socket.emit('git-delete', { file: file});
+            socket.send('git-delete', { file: file});
           }
        });
       } else {
@@ -1624,7 +1748,7 @@
           if (settings.offline || settings.manual_git === 'on') {
             //don't push folders
           } else {
-            socket.emit('git-delete', { file: file});
+            socket.send('git-delete', { file: file});
           }
         });
       }
@@ -1679,7 +1803,7 @@
         }
         settings = $.extend({}, settings, value);
         //console.log(settings);
-        socket.emit("set-settings", value);
+        socket.send("set-settings", value);
         $('.saved-setting').html('<i class="icon-ok"></i> Saved').delay(100).fadeIn('slow').fadeOut();
       }
 
@@ -1900,7 +2024,7 @@
         if (settings.offline || settings.manual_git === 'on') {
           //don't push folders
         } else {
-          socket.emit('commit-file', { file: item });
+          socket.send('commit-file', { file: item });
         }
         create_fs_response(err, status, $create_wrapper, item);
       });
@@ -1922,7 +2046,7 @@
         if (settings.offline || settings.manual_git === 'on') {
           //don't push files
         } else {
-          socket.emit('commit-file', { file: file});
+          socket.send('commit-file', { file: file});
         }
 
         create_fs_response(err, status, $create_wrapper, file);
