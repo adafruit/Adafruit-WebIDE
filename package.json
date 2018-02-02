@@ -20,8 +20,8 @@
     "pug": "^2.0.0-rc.4",
     "request": "2.14.0",
     "serve-static": "^1.13.1",
-    "validator": "0.4.25",
-    "winston": "0.6.2",
+    "validator": "9.4.0",
+    "winston": "^2.4.0",
     "xterm": "3.0.2"
   }
 }

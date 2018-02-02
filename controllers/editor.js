@@ -43,7 +43,6 @@ exports.editor = function(ws, req) {
       case 'self-check-request':
         winston.debug('self-check-request');
         editor_setup.health_check(ws);
-        winston.debug('here');
         break;
       case 'git-delete':
         git_helper.remove_commit_push(data.file, ws.request.session, function(err, status) {

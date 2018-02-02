@@ -1,6 +1,5 @@
 var path = require('path'),
-    Datastore = require('nedb'),
-    db = new Datastore({ filename: path.resolve(process.env.PWD, 'db/webide_data_store'), autoload: true }),
+    db = require('../models/webideModel'),
     exec = require('child_process').exec,
     fs = require ('fs'),
     winston = require('winston'),

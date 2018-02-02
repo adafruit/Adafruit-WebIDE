@@ -17,7 +17,6 @@ var express = require('express'),
     path = require('path'),
     updater = require('./helpers/updater'),
     scheduler = require('./helpers/scheduler'),
-    git_helper = require('./helpers/git_helper'),
     exec_helper = require('./helpers/exec_helper'),
     fs_helper = require('./helpers/fs_helper'),
     exec_helper = require('./helpers/exec_helper'),
@@ -25,14 +24,14 @@ var express = require('express'),
     debug_helper = require('./helpers/python/debug_helper'),
     config = require('./config/config'),
     winston = require('winston'),
-    Datastore = require('nedb'),
+    db = require('./models/webideModel'),
     pty = require('node-pty');
 
 var davServer,
     HOSTNAME,
     REPOSITORY_PATH = path.resolve(__dirname + "/repositories");
 
-winston.info("REPOSITORY_PATH", REPOSITORY_PATH);
+
 
 var terminals = {}, logs = {};
 
@@ -51,7 +50,7 @@ if (!exists) {
 //winston.remove(winston.transports.Console);
 
 
-var db = new Datastore({ filename: './database/webide_data_store', autoload: true });
+winston.info("REPOSITORY_PATH", REPOSITORY_PATH);
 
 //redirect anything with /filesystem in the url to the WebDav server.
 app.use(function(req, res, next) {
@@ -251,10 +250,4 @@ process.on('SIGINT', function() {
     //no need to wait for this
   });
   process.exit();
-});
-
-process.on('uncaughtException', function(err) {
-  debug_helper.kill_debug(false, function() {
-    //no need to wait for this
-  });
 });
