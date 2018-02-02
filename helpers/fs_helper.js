@@ -1,7 +1,7 @@
 var path = require('path'),
     fs = require('fs'),
-    util = require('util'),
-    config = require('../config/config');
+    config = require('../config/config'),
+    winston = require('winston'),
     exec = require('child_process').exec;
 
     fs.exists || (fs.exists = path.exists);
@@ -111,9 +111,11 @@ exports.move_uploaded_file = function(temp_path, new_path, cb) {
   var is = fs.createReadStream(temp_path);
   var os = fs.createWriteStream(new_path);
 
-  util.pump(is, os, function() {
-      fs.unlinkSync(temp_path);
-      cb();
+  is.pipe(os);
+
+  is.on("close", function() {
+    fs.unlinkSync(temp_path);
+    cb();
   });
 };
 
@@ -145,9 +147,11 @@ exports.create_project_readme = function(cb) {
 
     var is = fs.createReadStream(source);
     var os = fs.createWriteStream(destination);
-    util.pump(is, os, function(err) {
-      console.log(err);
-      cb(err, file);
+
+    is.pipe(os);
+
+    is.on("close", function() {
+      cb(null, file);
     });
 
   });
@@ -166,9 +170,11 @@ exports.create_project_gitignore = function(cb) {
 
     var is = fs.createReadStream(source);
     var os = fs.createWriteStream(destination);
-    util.pump(is, os, function(err) {
-      console.log(err);
-      cb(err, file);
+    is.pipe(os);
+
+    is.on("close", function() {
+      winston.debug("IN OS END");
+      cb(null, file);
     });
 
   });
