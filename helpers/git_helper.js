@@ -68,7 +68,7 @@ exports.clone_adafruit_libraries = function(adafruit_repository, remote, cb) {
  * 4. It then updates the git remote for that repository to your bitbucket repository.
  * 5. Finally, it pushes the cloned repository to your remote account.
  */
-exports.clone_update_remote_push = function(profile, repository_url, retain_remote, cb) {
+exports.clone_update_remote_push = function(profile, repository_url, cb) {
   var self = this;
 
   var repository_name = path.basename(repository_url, '.git');
