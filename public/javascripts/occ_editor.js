@@ -1,5 +1,3 @@
-occEditor.send_message//Ace mode setup code derived from: https://github.com/ajaxorg/ace/tree/master/demo (Thanks!)
-
 (function( occEditor, $, undefined ) {
   var editor, modes = [], max_reconnects = 50,
       socket = new WebSocket('ws://' + location.hostname + ((location.port) ? (':' + location.port) : '') + '/editor'),
@@ -147,7 +145,8 @@ occEditor.send_message//Ace mode setup code derived from: https://github.com/aja
   };
 
   occEditor.send_message = function(type, data) {
-    occEditor.send_message(JSON.stringify({type: type, data: data}));
+    console.log(type);
+    socket.send(JSON.stringify({type: type, data: data}));
   };
 
   occEditor.websockets = function(cb) {
