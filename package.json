@@ -11,7 +11,7 @@
     "express-session": "1.12.1",
     "express-ws": "^3.0.0",
     "gitty": "git://github.com/jwcooper/Gitty.git",
-    "jsDAV": "git://github.com/jwcooper/jsDAV.git",
+    "jsDAV": "0.3.4",
     "later": "git://github.com/jwcooper/later.git",
     "method-override": "^2.3.10",
     "morgan": "^1.9.0",

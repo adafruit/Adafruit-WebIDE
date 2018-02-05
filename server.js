@@ -15,11 +15,8 @@ var express = require('express'),
     jsDAV = require("jsDAV/lib/jsdav"),
     fs = require('fs'),
     path = require('path'),
-    updater = require('./helpers/updater'),
     scheduler = require('./helpers/scheduler'),
-    exec_helper = require('./helpers/exec_helper'),
     fs_helper = require('./helpers/fs_helper'),
-    exec_helper = require('./helpers/exec_helper'),
     request_helper = require('./helpers/request_helper'),
     debug_helper = require('./helpers/python/debug_helper'),
     config = require('./config/config'),
@@ -34,8 +31,6 @@ var davServer,
 
 
 var terminals = {}, logs = {};
-
-//exec_helper.spawn_ipython();
 
 //check for the existence of the logs directory, if it doesn't
 //exist, create it prior to starting the child process.
@@ -220,7 +215,7 @@ function start_server(cb) {
 }
 
 function mount_dav(server) {
-  var jsDAV_Tree_Filesystem = require("jsDAV/lib/DAV/tree/filesystem").jsDAV_Tree_Filesystem;
+  var jsDAV_FS_Tree = require("jsDAV/lib/DAV/backends/fs/tree");
   //jsDAV.debugMode = true;
   davServer = jsDAV.mount({
     path: REPOSITORY_PATH,
@@ -228,7 +223,7 @@ function mount_dav(server) {
     plugins: ["codesearch", "tree", "filelist", "filesearch", "locks", "mount", "temporaryfilefilter"],
     server: server,
     standalone: false,
-    tree: new jsDAV_Tree_Filesystem(REPOSITORY_PATH)
+    tree: jsDAV_FS_Tree.new(REPOSITORY_PATH)
   });
   winston.info('webdav filesystem mounted');
 }
