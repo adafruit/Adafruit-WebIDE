@@ -43,6 +43,8 @@ exports.editor = function(ws, req) {
     var type = message.type;
     var data = message.data;
 
+    winston.debug("Editor action type: " + type);
+
     switch (type) {
       case 'self-check-request':
         winston.debug('self-check-request');

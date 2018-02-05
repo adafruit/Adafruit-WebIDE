@@ -391,6 +391,8 @@
       var type = message.type;
       var data = message.data;
 
+      console.log("Action event type: " + type);
+
       switch (type) {
         case 'commit-file-complete':
           if (data.err) {
@@ -755,17 +757,13 @@
 
     var file = $('.filesystem li.file-open').data('file');
 
-    if (is_adafruit_project(file.path)) {
-      //don't allow saving of adafruit project files
-      return;
-    }
-
     $('.filesystem li.file-open').removeClass('edited');
     //reset from italic file
     $('.filesystem li.file-open a').css('font-style', 'normal').text(file.name);
     var editor_content = editor.getSession().getDocument().getValue();
 
     occEditor.save_edited_files(file, editor_content);
+
     $('.save-file').html('<i class="icon-ok"></i> Saved').delay(100).fadeOut().fadeIn('slow');
     setTimeout(function() {
       $(document).trigger('file_open', file);
