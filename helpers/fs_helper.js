@@ -18,7 +18,7 @@ exports.has_ssh_key = function has_ssh_key(key_name, cb) {
 };
 
 /*
- * Generates an ssh key for Bitbucket
+ * Generates an ssh key
  */
 exports.generate_ssh_key = function(key_name, cb) {
   var self = this;

@@ -4,7 +4,6 @@ var path = require('path'),
     url = require('url'),
     winston = require('winston'),
     fs_helper = require('./fs_helper'),
-    request_helper = require('./request_helper'),
     config = require('../config/config');
 
 var REPOSITORY_PATH = path.resolve(__dirname + "/../repositories") + "/";
@@ -59,15 +58,6 @@ exports.clone_adafruit_libraries = function(adafruit_repository, remote, cb) {
   });
 };
 
-/*
- * This does a few things in order to clone a repository, and save it to your Bitbucket profile.
- * This allows you to clone from any remote repository, including Github (it's overly complicated...).
- * 1. It first checks if the repository already exists in your bitbucket profile.
- * 2. If not 1, it creates the repository in Bitbucket using the API.
- * 3. It then clones the remote repository you're interested in.
- * 4. It then updates the git remote for that repository to your bitbucket repository.
- * 5. Finally, it pushes the cloned repository to your remote account.
- */
 exports.clone_update_remote_push = function(profile, repository_url, cb) {
   var self = this;
 
@@ -129,17 +119,6 @@ exports.set_config = function(cb) {
     }
   });
 
-};
-
-/*
- * Updates the remote repository to the users bitbucket repository.
- */
-exports.update_remote = function(profile, repository, cb) {
-  var remote_url = "ssh://git@bitbucket.org/" + profile.username + "/" + repository.toLowerCase() + ".git";
-  git.remote.update(REPOSITORY_PATH + repository, "origin", remote_url, function(output) {
-    //winston.debug(output);
-    cb(output.error, output.message);
-  });
 };
 
 /*

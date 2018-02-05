@@ -58,7 +58,6 @@
     "create_clone_repository":      'Clone a repository by pasting in the full git ssh url.<br/><br/>' +
                                     '<span class="small">Example Read-Only: git://github.com/adafruit/Adafruit-Raspberry-Pi-Python-Code.git</span><br/>' +
                                     '<span class="small">Example Read-Write: git@bitbucket.org:adafruit/adafruit-raspberry-pi-python-code.git</span><br/><br/>' +
-                                    'This will also push the latest version of this repository to your Bitbucket account, if it doesn\'t already exist.<br/><br/>' +
                                     '<form id="clone-repository-form" method="post" action="/create/repository">' +
                                       '<fieldset>' +
                                       '<label for="repository_url">Remote Repository URL:</label>' +

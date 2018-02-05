@@ -256,7 +256,7 @@ a.navigator-settings i.settings-enabled {
 .fileinput-button span {
   font-size: 16px;
   color: #E4E5E7;
-  font-weight: bold;  
+  font-weight: bold;
 }
 
 .navigator-item-upload, .navigator-item-create:nth-child(2) {
@@ -337,7 +337,7 @@ a.navigator-settings i.settings-enabled {
   padding: 3px 7px 3px 7px;
   -webkit-border-radius: 3px;
      -moz-border-radius: 3px;
-          border-radius: 3px;  
+          border-radius: 3px;
 }
 
 .rename-submit:hover {
@@ -353,7 +353,7 @@ a.navigator-settings i.settings-enabled {
   -webkit-transition: none;
   -moz-transition: none;
   -o-transition: none;
-  transition: none;  
+  transition: none;
 }
 
 .create-input-wrapper input[type='text'] {
@@ -453,7 +453,7 @@ a.navigator-settings i.settings-enabled {
 #editor, #schedule-manager, #settings-manager {
   position: absolute;
   left: 0;
-  right: 0;  
+  right: 0;
   top: 40px;
   bottom: 0;
   border-top: 1px solid #EDEDED;
@@ -525,7 +525,7 @@ a.navigator-settings i.settings-enabled {
   background-color: #EDEEEE;
   color: #2F3133;
   font-size: 12px;
-  font-weight: bold;  
+  font-weight: bold;
   padding: 10px;
   margin: 0 1px 0 0;
 }
@@ -673,10 +673,6 @@ a.navigator-settings i.settings-enabled {
   margin-bottom: 15px;
 }
 
-#setup-content .bitbucket-signup {
-  margin-bottom: 5px;
-}
-
 #setup-content form {
 }
 
@@ -755,13 +751,13 @@ a.navigator-settings i.settings-enabled {
   color: #E4E5E7;
 }
 
-.ace_gutter-cell.ace_breakpoint{ 
+.ace_gutter-cell.ace_breakpoint{
   background-color: #BB1142;
 }
 
 .debug-line {
   position: absolute;
-  z-index: 5;  
+  z-index: 5;
   background-color: #BB1142;
 }
 

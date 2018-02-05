@@ -5,7 +5,6 @@ var path = require('path'),
     fs = require ('fs'),
     git_helper = require('./git_helper.js'),
     fs_helper = require('./fs_helper'),
-    request_helper = require('./request_helper'),
     ws_helper = require('./websocket_helper'),
     config = require('../config/config');
 

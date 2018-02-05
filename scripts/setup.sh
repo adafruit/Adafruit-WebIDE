@@ -9,4 +9,4 @@ npm install
 cd ..
 cp -r Adafruit-WebIDE Adafruit-WebIDE-Update
 cd Adafruit-WebIDE-Update/node_modules
-rm -rf winston passport-bitbucket socket.io jsDAV connect-redis request connect passport express gitty jade redis validator
+rm -rf winston socket.io jsDAV connect-redis request connect express gitty jade redis validator

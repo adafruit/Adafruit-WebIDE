@@ -71,7 +71,6 @@ Manual Uninstallation
 On the Raspberry PI or BeagleBone Black:
 
     rm -r Adafruit-WebIDE
-    rm ~/.ssh/id_rsa_bitbucket*
 
 Running the Editor
 ============
