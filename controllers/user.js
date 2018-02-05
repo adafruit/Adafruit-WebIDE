@@ -5,8 +5,7 @@ var path = require('path'),
     check = require('validator').check,
     sanitize = require('validator').sanitize;
 
-// Instructional page that displays the bitbucket setup steps,
-// and inputs for OAuth and Git config
+// Instructional page that displays the setup steps
 exports.setup = function(req, res) {
   var locals = {
     name: "",
@@ -17,10 +16,10 @@ exports.setup = function(req, res) {
   res.render('users/setup', locals);
 };
 
-// Saves the bitbucket and git config setup information in Redis,
+// Saves the git config setup information in nedb,
 // submitted as a post from /setup
 exports.submit_setup = function(req, res) {
-  var key, secret, name, email, message;
+  var name, email, message;
   req.session.message = undefined;
 
   function common_setup(name, email) {
@@ -63,12 +62,12 @@ exports.config = function(req, res) {
   });
 };
 
-// Saves the bitbucket and git config setup information in Redis,
+// Saves the git config setup information in nedb,
 // submitted as a post from /setup
 
 //TODO: Refactor this...it's out of control!
 exports.submit_config = function(req, res) {
-  var key, secret, name, email, message;
+  var name, email, message;
   req.session.message = undefined;
 
   try {
