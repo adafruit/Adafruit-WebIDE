@@ -70,7 +70,7 @@ curl -L https://adafruit-download.s3.amazonaws.com/webide-0.3.12.tar.gz | tar xz
 echo "**** Installing required libraries ****"
 echo "**** (redis-server git restartd libcap2-bin avahi-daemon i2c-tools python-smbus) ****"
 apt-get update
-apt-get install nodejs nodejs-legacy redis-server git restartd libcap2-bin avahi-daemon i2c-tools python-smbus ntp -y
+apt-get install nodejs git restartd libcap2-bin i2c-tools python-smbus ntp -y
 
 echo "**** Create webide user and group ****"
 groupadd webide || true
@@ -119,28 +119,6 @@ update-rc.d adafruit-webide.sh defaults
 
 echo "Attempting to force reload date and time from ntp server"
 /etc/init.d/ntp force-reload
-
-#Check if port 80 is in use, use 8080 if so.
-PORT_USED=""
-if netstat -lnt | awk '$6 == "LISTEN" && $4 ~ ".80"' | grep -q "LISTEN"
-then
-  redis-cli HMSET server port 8090
-  PORT_USED=":8090"
-  echo "**** WARNING: PORT 80 IN USE. FALLING BACK TO 8090. ****"
-  echo "**** TO CHOOSE A DIFFERENT PORT USE THE FOLLOWING COMMAND: ****"
-  echo "**** redis-cli HMSET server port 8090 ****"
-  echo "**** AND RESTART THE SERVER ****"
-fi
-
-if $OFFLINE
-then
-  redis-cli HMSET server offline 1
-fi
-
-if $GITHUB
-then
-  redis-cli HMSET server github 1
-fi
 
 service adafruit-webide.sh start
 
