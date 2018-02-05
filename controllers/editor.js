@@ -3,9 +3,13 @@ var fs_helper = require('../helpers/fs_helper'),
     editor_setup = require('../helpers/editor_setup'),
     path = require('path'),
     git_helper = require('../helpers/git_helper'),
+    updater = require('../helpers/updater'),
+    scheduler = require('../helpers/scheduler'),
+    debug_helper = require('../helpers/python/debug_helper'),
+    exec_helper = require('../helpers/exec_helper'),
     config = require('../config/config'),
     check = require('validator').check,
-    sanitize = require('validator').sanitize;
+    sanitize = require('validator');
 
 var REPOSITORY_PATH = path.resolve(process.env.PWD, "/repositories")
 
@@ -133,10 +137,9 @@ exports.editor = function(ws, req) {
 }
 
 exports.create_repository = function(req, res) {
-  var repository_url = sanitize(req.body.repository_url).xss().trim();
-  var retain_remote = sanitize(req.body.retain_remote).xss().trim();
+  var repository_url = sanitize.trim(req.body.repository_url);
 
-  git_helper.clone_update_remote_push(req.user, repository_url, retain_remote, function(err, status) {
+  git_helper.clone_update_remote_push(req.user, repository_url, function(err, status) {
     if (err) res.send(err, 404);
     else res.send(status, 200);
   });
@@ -144,7 +147,7 @@ exports.create_repository = function(req, res) {
 
 //Opens an image clicked from the editor navigator
 exports.image = function(req, res) {
-  var temp_path = sanitize(req.query.path).xss().trim().replace('/filesystem/', '/repositories/');
+  var temp_path = sanitize(req.query.path).trim().replace('/filesystem/', '/repositories/');
   //strip basic attempted path traversals
   temp_path = temp_path.replace('..', '');
 
@@ -157,10 +160,10 @@ exports.image = function(req, res) {
 exports.upload_file = function(req, res) {
   console.log(req.files.files[0]);
 
-  var temp_path = sanitize(req.files.files[0].path).xss().trim();
-  var file_name = sanitize(req.files.files[0].name).xss().trim();
+  var temp_path = sanitize(req.files.files[0].path).trim();
+  var file_name = sanitize(req.files.files[0].name).trim();
   file_name = file_name.replace(" ", "_");
-  var folder_path = sanitize(req.body.path).xss().trim().replace('filesystem', 'repositories');
+  var folder_path = sanitize(req.body.path).trim().replace('filesystem', 'repositories');
 
   var new_path = __dirname + '/..' + folder_path + file_name;
   new_path = path.resolve(new_path);

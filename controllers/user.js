@@ -31,8 +31,8 @@ exports.submit_setup = function(req, res) {
   }
 
   try {
-    name = sanitize(req.body.name).xss().trim();
-    email = sanitize(req.body.email).xss().trim();
+    name = sanitize(req.body.name).trim();
+    email = sanitize(req.body.email).trim();
     check(email).isEmail();
   } catch (e) {
     req.session.message = e.message;
@@ -72,10 +72,10 @@ exports.submit_config = function(req, res) {
   req.session.message = undefined;
 
   try {
-    hostname = sanitize(req.body.hostname).xss().trim();
-    wifi_ssid = sanitize(req.body.wifi_ssid).xss().trim();
-    wifi_password = sanitize(req.body.wifi_password).xss().trim();
-    port = sanitize(req.body.port).xss().trim();
+    hostname = sanitize(req.body.hostname).trim();
+    wifi_ssid = sanitize(req.body.wifi_ssid).trim();
+    wifi_password = sanitize(req.body.wifi_password).trim();
+    port = sanitize(req.body.port).trim();
     if (hostname) {
       check(hostname).len(3, 25);
     }
