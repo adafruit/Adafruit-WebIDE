@@ -1,4 +1,4 @@
-//Ace mode setup code derived from: https://github.com/ajaxorg/ace/tree/master/demo (Thanks!)
+occEditor.send_message//Ace mode setup code derived from: https://github.com/ajaxorg/ace/tree/master/demo (Thanks!)
 
 (function( occEditor, $, undefined ) {
   var editor, modes = [], max_reconnects = 50,
@@ -147,20 +147,19 @@
   };
 
   occEditor.send_message = function(type, data) {
-    socket.send(JSON.stringify({type: type, data: data}));
+    occEditor.send_message(JSON.stringify({type: type, data: data}));
   };
 
   occEditor.websockets = function(cb) {
     editor_startup("Checking Editor Health");
 
     occEditor.send_message('self-check-request', 1);
-    //socket.send(JSON.stringify({type: "self-check-request", data: 1}));
+    //occEditor.send_message(JSON.stringify({type: "self-check-request", data: 1}));
 
     socket.addEventListener('message', function(event) {
       var message = JSON.parse(event.data);
       var type = message.type;
       var data = message.data;
-      console.log(type);
 
       switch (type) {
         case 'cwd-init':
@@ -263,68 +262,18 @@
       if (breakpoints.length > row && breakpoints[row]) {
         e.editor.session.clearBreakpoint(row);
         if (occEditor.is_debug_active) {
-          socket.send('debug-command', {command: "REMOVE_BP", file: file, line_no: (row+1)});
+          occEditor.send_message('debug-command', {command: "REMOVE_BP", file: file, line_no: (row+1)});
         }
       } else {
         e.editor.session.setBreakpoint(row);
         if (occEditor.is_debug_active) {
-          socket.send('debug-command', {command: "ADD_BP", file: file, line_no: (row+1)});
+          occEditor.send_message('debug-command', {command: "ADD_BP", file: file, line_no: (row+1)});
         }
       }
       e.stop();
     });
 
-    socket.addEventListener('connect', function () {
-      $('.connection-state').removeClass('disconnected').addClass('connected').text('Connected');
-      occEditor.check_for_updates();
-      occEditor.load_scheduled_jobs();
-    });
-    socket.addEventListener('disconnect', function () {
-      if (updating) {
-        $('.connection-state').text('Restarting');
-      } else {
-        $('.connection-state').removeClass('connected').addClass('disconnected').text('Disconnected');
-      }
-    });
-    socket.addEventListener('reconnecting', function () {
-      if (!updating) {
-        ++reconnect_attempts;
-
-        if(reconnect_attempts >= max_reconnects) {
-          $('.connection-state').removeClass('connected').addClass('disconnected').text('Error: check server and refresh browser');
-        } else {
-          $('.connection-state').removeClass('connected').addClass('disconnected').text('Attempting to reconnect');
-        }
-      }
-    });
-
-    socket.addEventListener('commit-file-complete', function(data) {
-      if (data.err) {
-        occEditor.display_error(data.err);
-      }
-    });
-
-    socket.addEventListener('git-delete-complete', function(data) {
-      if (data.err) {
-        occEditor.display_error(data.err);
-      }
-    });
-
-    socket.addEventListener('git-push-error', function(data) {
-      if (data.err) {
-        occEditor.display_error(data.err);
-      }
-    });
-
-    socket.addEventListener('git-pull-complete', function(data) {
-      if (data.err) {
-        occEditor.display_error(data.err);
-      } else {
-        occEditor.display_notification("Update Repository Complete");
-      }
-    });
-
-    socket.addEventListener('trace-program-exit', function(data) {
+    function trace_program_exit (data) {
       output = $.parseJSON(data.output);
 
       if (!output || !output.trace || (output.trace.length === 0) ||
@@ -346,6 +295,137 @@
         $('#trace-container').show();
         var v = new ExecutionVisualizer("trace-container", output, {});
       }
+    }
+
+    function move_file_callback(data) {
+      var item_html = $('.rename-form').parent().data('old');
+
+      if (data.err) {
+        $('.rename-form').replaceWith(item_html);
+
+        $('.connection-state').removeClass('connected').addClass('disconnected').text(data.err);
+
+        setTimeout(function() {
+          $('.connection-state').removeClass('disconnected').addClass('connected').text('Connected');
+        },15000);
+      } else {
+        item.path = item.destination;
+        item.name = new_name;
+
+        $('.rename-form').parent().data('file', item);
+
+
+        if (item.type === 'file') {
+          item_html = $(item_html).html(new_name + '<i class="icon-chevron-right"></i>').attr('title', new_name);
+        } else {
+          item_html = $(item_html).html(new_name + '<i class="icon-folder-open"></i>').attr('title', new_name);
+        }
+
+        $('.rename-form').replaceWith(item_html);
+      }
+    }
+
+    function debug_file_response(data) {
+      occEditor.debug_toggle_buttons(true);
+      occEditor.debug_message('Ready');
+      //console.log(data);
+      if (data.cmd === "NEXT" || data.cmd === "STEP" || data.cmd === "DEBUG" || data.cmd === "RUN") {
+        var Range = require("ace/range").Range;
+        var rg = new Range(data.line_no - 1, 0, data.line_no, 0);
+        editor.session.removeMarker(markerId);
+        markerId = editor.session.addMarker(rg, "debug-line", "line", false);
+        if (data.locals) {
+          populate_variables(data.locals);
+        }
+        editor.renderer.scrollToLine(data.line_no, true, true, function() {
+        });
+      } else if (data.cmd === "STDOUT") {
+        //console.log(data.content);
+        $('#editor-output #pre-wrapper pre').append(document.createTextNode(data.content));
+      } else if (data.cmd === "EXCEPTION") {
+        if (data.content) {
+          for (var d in data.content) {
+            $('#editor-output #pre-wrapper pre').append(document.createTextNode(data.content[d]));
+          }
+        }
+
+
+      } else if (data.cmd === "COMPLETE" || data.cmd === "ERROR_COMPLETE") {
+        occEditor.debug_toggle_buttons(false, true);
+        var markers = editor.session.getMarkers();
+        for (var id in markers) {
+          if (markers[id].clazz === "debug-line") {
+            editor.session.removeMarker(id);
+          }
+        }
+
+        var message = "";
+        if (data.cmd === "COMPLETE") {
+          message = "--- Program Completed Successfully ---\n";
+        } else {
+          message = "--- Program Exited with an Exception ---\n";
+        }
+
+        $('#editor-output #pre-wrapper pre').append(document.createTextNode(message));
+      }
+
+      $("#pre-wrapper").animate({ scrollTop: $(document).height() }, "fast");
+      $("#pre-wrapper").scrollTop($(document).height());
+      editor.focus();
+    }
+
+    socket.addEventListener('open', function () {
+      $('.connection-state').removeClass('disconnected').addClass('connected').text('Connected');
+      occEditor.check_for_updates();
+      occEditor.load_scheduled_jobs();
+    });
+    socket.addEventListener('close', function () {
+      if (updating) {
+        $('.connection-state').text('Restarting');
+      } else {
+        $('.connection-state').removeClass('connected').addClass('disconnected').text('Disconnected');
+      }
+    });
+
+    socket.addEventListener('message', function(event) {
+      var message = JSON.parse(event.data);
+      var type = message.type;
+      var data = message.data;
+
+      switch (type) {
+        case 'commit-file-complete':
+          if (data.err) {
+            occEditor.display_error(data.err);
+          }
+          break;
+        case 'git-delete-complete':
+          if (data.err) {
+            occEditor.display_error(data.err);
+          }
+          break;
+        case 'git-push-error':
+          if (data.err) {
+            occEditor.display_error(data.err);
+          }
+          break;
+        case 'git-pull-complete':
+          if (data.err) {
+            occEditor.display_error(data.err);
+          } else {
+            occEditor.display_notification("Update Repository Complete");
+          }
+          break;
+        case 'trace-program-exit':
+          trace_program_exit(data);
+          break;
+        case 'move-file-complete':
+          move_file_callback(data);
+          break;
+        case 'debug-file-response':
+          move_file_callback(data);
+          break;
+      }
+
     });
   };
 
@@ -370,22 +450,33 @@
   };
 
   occEditor.check_for_updates = function() {
-    socket.send('editor-check-updates');
+    occEditor.send_message('editor-check-updates');
 
-    socket.addEventListener('editor-update-status', function(data) {
-      if (data.has_update) {
-        var update_link = $(templates.update_link).append(" (v" + data.version + ")");
-        $('.update-wrapper').data('update', data).html(update_link);
-      } else {
-        $('.update-wrapper').html('');
+    socket.addEventListener('message', function(event) {
+      var message = JSON.parse(event.data);
+      var type = message.type;
+      var data = message.data;
+
+      if (type === 'editor-update-status') {
+        if (data.has_update) {
+          var update_link = $(templates.update_link).append(" (v" + data.version + ")");
+          $('.update-wrapper').data('update', data).html(update_link);
+        } else {
+          $('.update-wrapper').html('');
+        }
       }
     });
   };
 
   occEditor.load_scheduled_jobs = function() {
-    socket.addEventListener('scheduled-job-list', function(data) {
-      job_list = data;
-      //console.log(job_list);
+    socket.addEventListener('message', function(event) {
+      var message = JSON.parse(event.data);
+      var type = message.type;
+      var data = message.data;
+
+      if (type === 'scheduled-job-list') {
+        job_list = data;
+      }
     });
   };
 
@@ -551,12 +642,17 @@
           //manually committing and pushing of git files is enabled
           if (settings.offline || settings.manual_git === 'on') {
             $('.save-file i').removeClass().addClass('icon-save');
-            socket.send("git-is-modified", { file: file});
+            occEditor.send_message("git-is-modified", { file: file});
 
-            socket.addEventListener("git-is-modified-complete", function(data) {
-              socket.removeAllListeners("git-is-modified-complete");
-              if (data.is_modified && ($('.git-file').length <= 0)) {
-                $(templates.editor_bar_git_link).appendTo('.editor-bar-actions');
+            socket.addEventListener('message', function(event) {
+              var message = JSON.parse(event.data);
+              var type = message.type;
+              var data = message.data;
+
+              if (type === "git-is-modified-complete") {
+                if (data.is_modified && ($('.git-file').length <= 0)) {
+                  $(templates.editor_bar_git_link).appendTo('.editor-bar-actions');
+                }
               }
             });
           }
@@ -687,7 +783,7 @@
       if (settings.offline || settings.manual_git === 'on') {
         //don't commit and push files
       } else {
-        socket.send('commit-file', { file: file});
+        occEditor.send_message('commit-file', { file: file});
       }
     }
 
@@ -698,39 +794,7 @@
     var destination_path = item.parent_path + '/' + new_name;
     item.destination = destination_path;
 
-    socket.send('move-file', { file: item });
-
-    function move_file_callback(data) {
-      var item_html = $('.rename-form').parent().data('old');
-
-      if (data.err) {
-        $('.rename-form').replaceWith(item_html);
-
-        $('.connection-state').removeClass('connected').addClass('disconnected').text(data.err);
-
-        setTimeout(function() {
-          $('.connection-state').removeClass('disconnected').addClass('connected').text('Connected');
-        },15000);
-      } else {
-        item.path = item.destination;
-        item.name = new_name;
-
-        $('.rename-form').parent().data('file', item);
-
-
-        if (item.type === 'file') {
-          item_html = $(item_html).html(new_name + '<i class="icon-chevron-right"></i>').attr('title', new_name);
-        } else {
-          item_html = $(item_html).html(new_name + '<i class="icon-folder-open"></i>').attr('title', new_name);
-        }
-
-        $('.rename-form').replaceWith(item_html);
-      }
-
-      socket.removeListener('move-file-complete', move_file_callback);
-    }
-
-    socket.addEventListener('move-file-complete', move_file_callback);
+    occEditor.send_message('move-file', { file: item });
   };
 
   occEditor.send_terminal_command = function(command) {
@@ -1074,7 +1138,7 @@
     }
 
     var file = $('.file-open').data('file');
-    socket.send('stop-script-execution', { file: file});
+    occEditor.send_message('stop-script-execution', { file: file});
     $('.stop-file').html('<i class="icon-play"></i> Run').removeClass('stop-file').addClass('run-file');
   };
 
@@ -1100,7 +1164,7 @@
     $('#trace-loader').show();
     $('#trace-container').hide();
 
-    socket.send('trace-file', {file: file});
+    occEditor.send_message('trace-file', {file: file});
 
     $(document).on('click touchstart', '.close-trace', close_trace);
   };
@@ -1130,7 +1194,7 @@
     $('#pre-wrapper pre').text('');
 
     var file = $('.file-open').data('file');
-    socket.send('debug-file', {file: file});
+    occEditor.send_message('debug-file', {file: file});
   };
 
   occEditor.debug_message = function(message) {
@@ -1158,54 +1222,7 @@
       }
     }
 
-    function debug_file_response(data) {
-      occEditor.debug_toggle_buttons(true);
-      occEditor.debug_message('Ready');
-      //console.log(data);
-      if (data.cmd === "NEXT" || data.cmd === "STEP" || data.cmd === "DEBUG" || data.cmd === "RUN") {
-        var Range = require("ace/range").Range;
-        var rg = new Range(data.line_no - 1, 0, data.line_no, 0);
-        editor.session.removeMarker(markerId);
-        markerId = editor.session.addMarker(rg, "debug-line", "line", false);
-        if (data.locals) {
-          populate_variables(data.locals);
-        }
-        editor.renderer.scrollToLine(data.line_no, true, true, function() {
-        });
-      } else if (data.cmd === "STDOUT") {
-        //console.log(data.content);
-        $('#editor-output #pre-wrapper pre').append(document.createTextNode(data.content));
-      } else if (data.cmd === "EXCEPTION") {
-        if (data.content) {
-          for (var d in data.content) {
-            $('#editor-output #pre-wrapper pre').append(document.createTextNode(data.content[d]));
-          }
-        }
 
-
-      } else if (data.cmd === "COMPLETE" || data.cmd === "ERROR_COMPLETE") {
-        occEditor.debug_toggle_buttons(false, true);
-        var markers = editor.session.getMarkers();
-        for (var id in markers) {
-          if (markers[id].clazz === "debug-line") {
-            editor.session.removeMarker(id);
-          }
-        }
-
-        var message = "";
-        if (data.cmd === "COMPLETE") {
-          message = "--- Program Completed Successfully ---\n";
-        } else {
-          message = "--- Program Exited with an Exception ---\n";
-        }
-
-        $('#editor-output #pre-wrapper pre').append(document.createTextNode(message));
-      }
-
-      $("#pre-wrapper").animate({ scrollTop: $(document).height() }, "fast");
-      $("#pre-wrapper").scrollTop($(document).height());
-      editor.focus();
-    }
 
     function get_breakpoints() {
       var editor_breakpoints = editor.getSession().getBreakpoints();
@@ -1226,7 +1243,7 @@
         occEditor.debug_toggle_buttons(false);
         occEditor.debug_message('Running');
 
-        socket.send('debug-command', {command: "RUN"});
+        occEditor.send_message('debug-command', {command: "RUN"});
       }
     }
 
@@ -1236,7 +1253,7 @@
         occEditor.debug_toggle_buttons(false);
         occEditor.debug_message('Stepping');
         //console.log('step over');
-        socket.send('debug-command', {command: "NEXT"});
+        occEditor.send_message('debug-command', {command: "NEXT"});
       }
     }
 
@@ -1246,7 +1263,7 @@
         occEditor.debug_toggle_buttons(false);
         occEditor.debug_message('Stepping');
         //console.log('step in');
-        socket.send('debug-command', {command: "STEP"});
+        occEditor.send_message('debug-command', {command: "STEP"});
       }
     }
 
@@ -1259,11 +1276,7 @@
     occEditor.show_editor_output();
     editor.resize();
     $('#editor-bar').html(templates.editor_bar_debug_file);
-    socket.send('debug-file', {file: file});
-
-    //clear out any listeners hanging around before creating a new one for this debug session.
-    socket.removeAllListeners('debug-file-response');
-    socket.addEventListener('debug-file-response', debug_file_response);
+    occEditor.send_message('debug-file', {file: file});
 
     $(document).off('click touchstart', '.debug-run');
     $(document).off('click touchstart', '.debug-step-over');
@@ -1289,7 +1302,7 @@
     $('#editor-output-wrapper').hide();
 
     //$('#editor-wrapper').show();
-    socket.send('debug-command', {command: "QUIT"});
+    occEditor.send_message('debug-command', {command: "QUIT"});
     var markers = editor.session.getMarkers();
     editor.session.removeMarker(markers);
     occEditor.hide_editor_output();
@@ -1316,7 +1329,7 @@
       event.preventDefault();
       var file = $('.file-open').data('file');
       var comment = $('input[name="comment"]').val();
-      socket.send('commit-file', { file: file, message: comment});
+      occEditor.send_message('commit-file', { file: file, message: comment});
       $('.git-file').remove();
       $('#manual-git-modal').modal('hide');
       $('#manual-git-modal .modal-submit').text('Commit and Push');
@@ -1354,7 +1367,7 @@
       }
       command += file.name;
       //$('#editor-output div pre').append('------------------------------------------------------------\n');
-      //socket.send('commit-run-file', { file: file});
+      //occEditor.send_message('commit-run-file', { file: file});
       occEditor.open_terminal(occEditor.cwd(), command);
     }
 
@@ -1386,7 +1399,7 @@
       var destination = '/filesystem/my-pi-projects/' + directory;
 
       davFS.copy(source, destination, false, function(err, status) {
-        socket.send('commit-file', { file: {path: destination, name: directory}, message: "Copied to my-pi-projects " + directory});
+        occEditor.send_message('commit-file', { file: {path: destination, name: directory}, message: "Copied to my-pi-projects " + directory});
         $('.copy-project').replaceWith($("<span>Project copy completed...</span>"));
       });
     }
@@ -1420,7 +1433,7 @@
           $('.scheduler-error').html('Invalid Schedule: ' + schedule_good + '<strong>' + schedule_bad + '</strong>');
         } else {
           //all is good, submit schedule to backend
-          socket.send('submit-schedule', {text: schedule_text, schedule: parsed_schedule, file: file});
+          occEditor.send_message('submit-schedule', {text: schedule_text, schedule: parsed_schedule, file: file});
           $('#schedule-modal').modal('hide');
 
           $('.schedule-file').html('<i class="icon-time"></i> Scheduled').delay(100).fadeOut().fadeIn('slow');
@@ -1480,13 +1493,13 @@
       event.preventDefault();
 
       var key = $(this).attr('id');
-      socket.send('schedule-delete-job', key);
+      occEditor.send_message('schedule-delete-job', key);
       $(this).parents('tr').remove();
     }
 
     function toggle_scheduled_job(event) {
       var key = $(this).val();
-      socket.send('schedule-toggle-job', key);
+      occEditor.send_message('schedule-toggle-job', key);
     }
 
     function format_schedule_last_run(date) {
@@ -1540,21 +1553,25 @@
   }
 
   function handle_scheduler_events() {
-    socket.addEventListener('scheduler-start', function(data) {
-      //console.log(data);
-      $('.schedule-status').text('Initializing Job: ' + data.file.name);
-    });
-    socket.addEventListener('scheduler-executing', function(data) {
-      //console.log('scheduler-executing');
-      $('.schedule-status').text('Ran Job: ' + data.file.name);
-    });
-    socket.addEventListener('scheduler-error', function(data) {
-      //console.log('scheduler-error');
-      $('.schedule-status').text('Job Error: ' + data.file.name);
-    });
-    socket.addEventListener('scheduler-exit', function(data) {
-      //console.log('scheduler-exit');
-      $('.schedule-status').text('Last Run Job: ' + data.file.name);
+    socket.addEventListener('message', function(event) {
+      var message = JSON.parse(event.data);
+      var type = message.type;
+      var data = message.data;
+
+      switch (type) {
+        case 'scheduler-start':
+          $('.schedule-status').text('Initializing Job: ' + data.file.name);
+          break;
+        case 'scheduler-executing':
+          $('.schedule-status').text('Ran Job: ' + data.file.name);
+          break;
+        case 'scheduler-error':
+          $('.schedule-status').text('Job Error: ' + data.file.name);
+          break;
+        case 'scheduler-exit':
+          $('.schedule-status').text('Last Run Job: ' + data.file.name);
+          break;
+      }
     });
   }
 
@@ -1567,35 +1584,38 @@
     function update_editor(event) {
       event.preventDefault();
       $(this).hide();
-      socket.send('editor-update');
+      occEditor.send_message('editor-update');
       $('.connection-state').text('Updating');
       updating = true;
       load_update_notes();
     }
 
-    socket.addEventListener('editor-update-download-start', function() {
-      $('.connection-state').text('Downloading (~30 seconds)');
-    });
+    socket.addEventListener('message', function(event) {
+      var message = JSON.parse(event.data);
+      var type = message.type;
+      var data = message.data;
 
-    socket.addEventListener('editor-update-download-end', function() {
-      //console.log(data);
-    });
+      switch (type) {
+        case 'editor-update-download-start':
+          $('.connection-state').text('Downloading (~30 seconds)');
+          break;
+        case 'editor-update-download-end':
+          break;
+        case 'editor-update-unpack-start':
+          $('.connection-state').text('Unpacking (~60 seconds)');
+          break;
+        case 'editor-update-unpack-end':
+          $('.connection-state').text('Restarting (~30 seconds)');
+          break;
+        case 'editor-update-complete':
+          $('.connection-state').text('Update Complete, Refreshing Browser');
+          updating = false;
 
-    socket.addEventListener('editor-update-unpack-start', function() {
-      $('.connection-state').text('Unpacking (~60 seconds)');
-    });
-
-    socket.addEventListener('editor-update-unpack-end', function() {
-      $('.connection-state').text('Restarting (~30 seconds)');
-    });
-
-    socket.addEventListener('editor-update-complete', function(data) {
-      $('.connection-state').text('Update Complete, Refreshing Browser');
-      updating = false;
-
-      setTimeout(function() {
-        location.reload(true);
-      }, 1500);
+          setTimeout(function() {
+            location.reload(true);
+          }, 1500);
+          break;
+      }
     });
 
     $(document).on('click touchstart', '.editor-update-link', update_editor);
@@ -1746,7 +1766,7 @@
           if (settings.offline || settings.manual_git === 'on') {
             //don't push folders
           } else {
-            socket.send('git-delete', { file: file});
+            occEditor.send_message('git-delete', { file: file});
           }
        });
       } else {
@@ -1754,7 +1774,7 @@
           if (settings.offline || settings.manual_git === 'on') {
             //don't push folders
           } else {
-            socket.send('git-delete', { file: file});
+            occEditor.send_message('git-delete', { file: file});
           }
         });
       }
@@ -1809,7 +1829,7 @@
         }
         settings = $.extend({}, settings, value);
         //console.log(settings);
-        socket.send("set-settings", value);
+        occEditor.send_message("set-settings", value);
         $('.saved-setting').html('<i class="icon-ok"></i> Saved').delay(100).fadeIn('slow').fadeOut();
       }
 
@@ -2030,7 +2050,7 @@
         if (settings.offline || settings.manual_git === 'on') {
           //don't push folders
         } else {
-          socket.send('commit-file', { file: item });
+          occEditor.send_message('commit-file', { file: item });
         }
         create_fs_response(err, status, $create_wrapper, item);
       });
