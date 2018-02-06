@@ -95,31 +95,6 @@ If for any reason you need to restart the editor, you can execute the following 
 
 Sudo is required to restart due to the editor running as the 'webide' user.
 
-Advanced Options
-============
-
-Offline Mode Installation:
-
-    curl https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/alpha/scripts/install.sh | sudo sh -s - --offline
-
-Note: Offline mode does not setup git in any way other than installing it.  You'll want to git config your
-email and name, and setup your ssh keys.
-
-GitHub Mode Installation:
-
-    curl https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/alpha/scripts/install.sh | sudo sh -s - --github
-
-Note: GitHub mode does not automatically create, and post an ssh key to your GitHub account.  It requires
-a bit more manual setup at this time.
-
-Enable support for Makefiles (execute on the Pi in the terminal, post-installation):
-
-    redis-cli hmset editor:settings enable_make "on"
-
-Disable:
-
-    redis-cli hmset editor:settings enable_make "off"
-
 License
 ============
 
