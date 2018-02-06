@@ -640,7 +640,7 @@
           $editor_bar.html(templates.editor_bar_interpreted_file);
 
           //manually committing and pushing of git files is enabled
-          if (settings.offline || settings.manual_git === 'on') {
+          if (settings.manual_git === 'on') {
             $('.save-file i').removeClass().addClass('icon-save');
             occEditor.send_message("git-is-modified", { file: file});
 
@@ -776,7 +776,7 @@
       //console.log(status);
 
       //$('.save-file i').removeClass('icon-cloud').addClass('icon-ok');
-      if (settings.offline || settings.manual_git === 'on') {
+      if (settings.manual_git === 'on') {
         //don't commit and push files
       } else {
         occEditor.send_message('commit-file', { file: file});
@@ -1877,9 +1877,9 @@
 
       if (typeof settings !== 'undefined') {
         if (settings.font_size) {
-          $('.font-size-value.' + settings.font_size + 'px').addClass('selected');
+          $('.font-size-value._' + settings.font_size + 'px').addClass('selected');
         } else {
-          $('.font-size-value.12px').addClass('selected');
+          $('.font-size-value._12px').addClass('selected');
         }
         if (settings.use_soft_tabs) {
           $('.soft-tab-value.' + settings.use_soft_tabs).addClass('selected');
@@ -1887,9 +1887,9 @@
           $('.soft-tab-value.on').addClass('selected');
         }
         if (settings.tab_size) {
-          $('.tab-size-value.' + settings.tab_size + "-value").addClass('selected');
+          $('.tab-size-value._' + settings.tab_size + "-value").addClass('selected');
         } else {
-          $('.tab-size-value.4-value').addClass('selected');
+          $('.tab-size-value._4-value').addClass('selected');
         }
         if (settings.show_invisibles) {
           $('.invisibles-value.' + settings.show_invisibles).addClass('selected');

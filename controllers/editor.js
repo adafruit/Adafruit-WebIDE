@@ -8,7 +8,7 @@ var fs_helper = require('../helpers/fs_helper'),
     debug_helper = require('../helpers/python/debug_helper'),
     exec_helper = require('../helpers/exec_helper'),
     config = require('../config/config'),
-    check = require('validator').check,
+    db = require('../models/webideModel'),
     sanitize = require('validator');
 
 var REPOSITORY_PATH = path.resolve(process.env.PWD, "/repositories")
@@ -28,8 +28,6 @@ exports.index = function(req, res) {
 
 exports.editor = function(ws, req) {
   winston.debug('socket io connection completed');
-  //socket.set('username', socket.request.session.username);
-  winston.debug("after username set");
 
   function send_message(type, data) {
     ws.send(JSON.stringify({type: type, data: data}));
@@ -123,9 +121,12 @@ exports.editor = function(ws, req) {
         scheduler.toggle_job(key, ws, ws.request.session);
         break;
       case 'set-settings':
-        value["type"] = "editor:settings";
-        db.update({type: "editor:settings"}, value, { upsert: true }, function(err) {
-          if (err) winston.error(err);
+        data["type"] = "editor:settings";
+        db.findOne({type: "editor:settings"}, function(err, settings) {
+          db.update({type: "editor:settings"}, Object.assign(settings || {}, data ||  {}), { upsert: true }, function(err) {
+            data["type"] = "editor:settings";
+            if (err) winston.error(err);
+          });
         });
         break;
 
