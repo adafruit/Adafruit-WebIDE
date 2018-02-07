@@ -1,13 +1,11 @@
 (function( occEditor, $, undefined ) {
   var editor, modes = [], max_reconnects = 50,
-      socket = new WebSocket('ws://' + location.hostname + ((location.port) ? (':' + location.port) : '') + '/editor'),
+      socket,
       dirname, updating = false,
       editor_output_visible = false,
       is_terminal_open = false,
       terminal_win,
       job_list, settings = {};
-
-      console.log(socket.readyState == socket.OPEN);
 
   var templates = {
     "editor_bar_init":              '<p class="editor-bar-actions">' +
@@ -116,20 +114,13 @@
     editor.setTheme("ace/theme/merbivore_soft");
     editor.getSession().setMode("ace/mode/python");
 
+    occEditor.connect_websockets();
     occEditor.init_commands(editor);
     occEditor.init_events(editor);
 
     context_menu.init();
 
     occEditor.populate_editor_bar();
-    socket.onopen = function(event) {
-      console.log('websocket opened');
-      occEditor.websockets(function() {
-        occEditor.populate_navigator();
-        occEditor.open_readme();
-      });
-    }
-
 
     handle_navigator_actions();
     handle_editor_bar_actions();
@@ -137,6 +128,41 @@
     handle_program_output();
     handle_scheduler_events();
     handle_update_action();
+  };
+
+  occEditor.connect_websockets = function(reconnect) {
+    socket = new WebSocket('ws://' + location.hostname + ((location.port) ? (':' + location.port) : '') + '/editor');
+
+    socket.onopen = function(event) {
+      console.log('websocket opened');
+      occEditor.websockets(function() {
+        if (!reconnect) {
+          console.log('populating editor');
+          occEditor.populate_navigator();
+          occEditor.open_readme();
+        }
+      });
+    }
+
+    socket.onclose = function(event) {
+      console.log('Connection closed, attempting to re-connect.', event.reason);
+      setTimeout(function() {
+        occEditor.connect_websockets(true);
+      }, 2000);
+    };
+
+    socket.addEventListener('open', function () {
+      $('.connection-state').removeClass('disconnected').addClass('connected').text('Connected');
+      occEditor.check_for_updates();
+      occEditor.load_scheduled_jobs();
+    });
+    socket.addEventListener('close', function () {
+      if (updating) {
+        $('.connection-state').text('Restarting');
+      } else {
+        $('.connection-state').removeClass('connected').addClass('disconnected').text('Disconnected');
+      }
+    });
   };
 
   occEditor.get_socket = function() {
@@ -371,19 +397,6 @@
       $("#pre-wrapper").scrollTop($(document).height());
       editor.focus();
     }
-
-    socket.addEventListener('open', function () {
-      $('.connection-state').removeClass('disconnected').addClass('connected').text('Connected');
-      occEditor.check_for_updates();
-      occEditor.load_scheduled_jobs();
-    });
-    socket.addEventListener('close', function () {
-      if (updating) {
-        $('.connection-state').text('Restarting');
-      } else {
-        $('.connection-state').removeClass('connected').addClass('disconnected').text('Disconnected');
-      }
-    });
 
     socket.addEventListener('message', function(event) {
       var message = JSON.parse(event.data);
@@ -1759,7 +1772,7 @@
 
       if (file.type === 'directory') {
         davFS.remove(file.path, function(err, status) {
-          if (settings.offline || settings.manual_git === 'on') {
+          if (settings.manual_git === 'on') {
             //don't push folders
           } else {
             occEditor.send_message('git-delete', { file: file});
@@ -1767,7 +1780,7 @@
        });
       } else {
         davFS.remove(file.path, function(err, status) {
-          if (settings.offline || settings.manual_git === 'on') {
+          if (settings.manual_git === 'on') {
             //don't push folders
           } else {
             occEditor.send_message('git-delete', { file: file});
@@ -2043,7 +2056,7 @@
       var item = {path: path, name: folder_name, type: "folder"};
 
       davFS.mkDir(path, function(err, status) {
-        if (settings.offline || settings.manual_git === 'on') {
+        if (settings.manual_git === 'on') {
           //don't push folders
         } else {
           occEditor.send_message('commit-file', { file: item });
@@ -2065,7 +2078,7 @@
       var file = {path: path, name: file_name, type: "file"};
 
       davFS.write(parent_folder.path + file_name, '', function(err, status) {
-        if (settings.offline || settings.manual_git === 'on') {
+        if (settings.manual_git === 'on') {
           //don't push files
         } else {
           socket.send('commit-file', { file: file});
