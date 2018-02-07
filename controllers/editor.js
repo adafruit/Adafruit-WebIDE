@@ -7,6 +7,7 @@ var fs_helper = require('../helpers/fs_helper'),
     scheduler = require('../helpers/scheduler'),
     debug_helper = require('../helpers/python/debug_helper'),
     exec_helper = require('../helpers/exec_helper'),
+    scheduler = require('../helpers/scheduler'),
     config = require('../config/config'),
     db = require('../models/webideModel'),
     sanitize = require('validator');
@@ -99,12 +100,8 @@ exports.editor = function(ws, req) {
         debug_helper.start_debug(data.file, ws);
         break;
       case 'commit-run-file':
-        if (data && data.file) {
-          data.file.username = ws.request.session.username;
-        }
-
         exec_helper.execute_program(data.file, false);
-        git_helper.commit_push_and_save(data.file, "Modified " + data.file.name, ws.request.session, function(err, status) {
+        git_helper.commit_push_and_save(data.file, "Modified " + data.file.name, function(err, status) {
           send_message('commit-file-complete', {message: "Save was successful"});
         });
         break;
@@ -112,13 +109,13 @@ exports.editor = function(ws, req) {
         exec_helper.stop_program(data.file, false);
         break;
       case 'submit-schedule':
-        scheduler.add_schedule(schedule, ws, ws.request.session);
+        scheduler.add_schedule(data, ws);
         break;
       case 'schedule-delete-job':
-        scheduler.delete_job(key, ws, ws.request.session);
+        scheduler.delete_job(data, ws);
         break;
       case 'schedule-toggle-job':
-        scheduler.toggle_job(key, ws, ws.request.session);
+        scheduler.toggle_job(data, ws);
         break;
       case 'set-settings':
         data["type"] = "editor:settings";
