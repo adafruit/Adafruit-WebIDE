@@ -31,6 +31,8 @@ var davServer,
 
 var terminals = {}, logs = {};
 
+var editor_ws = null;
+
 //check for the existence of the logs directory, if it doesn't
 //exist, create it prior to starting the child process.
 var exists = fs.existsSync(__dirname + '/logs');
@@ -126,6 +128,7 @@ app.post('/terminals/:pid/size', function (req, res) {
 });
 
 app.ws('/terminals/:pid', function (ws, req) {
+  editor_ws = ws;
   var term = terminals[parseInt(req.params.pid)];
   console.log('Connected to terminal ' + term.pid);
   ws.send(logs[term.pid]);
@@ -227,14 +230,8 @@ function mount_dav(server) {
   winston.info('webdav filesystem mounted');
 }
 
-exports.get_socket = function (username, cb) {
-  for (var socketId in io.sockets.sockets) {
-    io.sockets.sockets[socketId].get('username', function(err, sock_username) {
-      if (username === sock_username) {
-        cb(io.sockets.sockets[socketId]);
-      }
-    });
-  }
+exports.get_socket = function (cb) {
+  cb(editor_ws);
 };
 
 process.on('SIGINT', function() {

@@ -49,7 +49,7 @@ exports.editor = function(ws, req) {
         editor_setup.health_check(ws);
         break;
       case 'git-delete':
-        git_helper.remove_commit_push(data.file, ws.request.session, function(err, status) {
+        git_helper.remove_commit_push(data.file, function(err, status) {
           send_message('git-delete-complete', {err: err, status: status});
         });
         break;
@@ -73,12 +73,12 @@ exports.editor = function(ws, req) {
           commit_message = "Modified " + data.file.name;
         }
 
-        git_helper.commit_push_and_save(data.file, commit_message, ws.request.session, function(err, status) {
+        git_helper.commit_push_and_save(data.file, commit_message, function(err, status) {
           send_message('commit-file-complete', {err: err, status: status});
         });
         break;
       case 'move-file':
-        git_helper.move_commit_push(data.file, ws.request.session, function(err) {
+        git_helper.move_commit_push(data.file, function(err) {
           console.log('move-file', err);
           send_message('move-file-complete', {err: err});
         });
