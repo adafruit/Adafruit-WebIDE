@@ -301,6 +301,7 @@ a.navigator-settings i.settings-enabled {
 
 #create-modal .modal-body input[type="text"] {
   width: 97%;
+  height: 30px;
 }
 
 #confirm-modal p {
