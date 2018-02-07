@@ -12,7 +12,7 @@
     "express-ws": "3.0.0",
     "gitty": "git://github.com/jwcooper/Gitty.git",
     "jsDAV": "0.3.4",
-    "later": "git://github.com/jwcooper/later.git",
+    "later": "^1.2.0",
     "method-override": "2.3.10",
     "morgan": "1.9.0",
     "nedb": "1.8.0",

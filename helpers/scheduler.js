@@ -4,8 +4,7 @@ var path = require('path'),
     fs = require ('fs'),
     winston = require('winston'),
     exec_helper = require('./exec_helper'),
-    later = require('later').later;
-    enParser = require('later').enParser,
+    later = require('later').later,
     job_queue = [];
 
   fs.exists || (fs.exists = path.exists);
@@ -35,20 +34,20 @@ function execute_job(file) {
 
 function schedule_job(key, job) {
       var is_new_job = true,
-          l = later(60),
-          schedule = enParser().parse(job.text);
+          schedule = later.parse.text(job.text);
 
-      l.exec(schedule, new Date(), execute_job, job);
+      later.date.localTime();
+      var job_timer = later.setInterval(schedule, execute_job.bind(null, job));
       console.log("Job Scheduled: ", schedule);
 
       var len = job_queue.length;
       for (var i=0; i<len; i++) {
         if (job_queue[i].key === key) {
           //job already exists, but has been modified, let's stop the existing one
-          job_queue[i].later.stopExec();
+          job_queue[i].job_timer.clear();
 
           //replace it in the queue
-          job_queue[i] = {key: key, later: l};
+          job_queue[i] = {key: key, job_timer: job_timer};
 
           is_new_job = false;
           break;
@@ -56,7 +55,7 @@ function schedule_job(key, job) {
       }
 
       if (is_new_job) {
-        job_queue.push({key: key, later: l});
+        job_queue.push({key: key, job_timer: job_timer});
       }
 
       //console.log(job_queue);
