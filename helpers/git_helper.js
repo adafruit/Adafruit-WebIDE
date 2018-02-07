@@ -4,7 +4,7 @@ var path = require('path'),
     url = require('url'),
     winston = require('winston'),
     fs_helper = require('./fs_helper'),
-    ws_helper = require('./ws_helper'),
+    ws_helper = require('./websocket_helper'),
     config = require('../config/config');
 
 var REPOSITORY_PATH = path.resolve(__dirname + "/../repositories") + "/";
