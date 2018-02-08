@@ -92,8 +92,6 @@ exports.add_schedule = function(schedule, socket) {
   };
   console.log("add_schedule");
   console.log(job_data);
-  console.log("HERE");
-  console.log(key);
 
   db.update({key: key}, job_data, {upsert: true}, function(err, numReplaced, upsert) {
     schedule_job(key, job_data);

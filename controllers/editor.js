@@ -36,6 +36,7 @@ exports.editor = function(ws, req) {
 
   //emit on first connection
   send_message('cwd-init', {dirname: REPOSITORY_PATH});
+  scheduler.emit_scheduled_jobs(ws);
 
   ws.on('message', function(msg) {
     var message = JSON.parse(msg);
