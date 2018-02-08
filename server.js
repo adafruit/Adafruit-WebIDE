@@ -98,11 +98,13 @@ app.get('/set-datetime', user.set_datetime);
 app.post('/terminals', function (req, res) {
   var cols = parseInt(req.query.cols),
       rows = parseInt(req.query.rows),
-      term = pty.spawn(process.platform === 'win32' ? 'cmd.exe' : 'bash', [], {
+      cwd = req.query.cwd;
+
+  var term = pty.spawn(process.platform === 'win32' ? 'cmd.exe' : 'bash', [], {
         name: 'xterm-color',
         cols: cols || 80,
         rows: rows || 24,
-        cwd: process.env.PWD,
+        cwd: path.resolve(__dirname + cwd),
         env: process.env
       });
 
@@ -134,6 +136,7 @@ app.ws('/terminals/:pid', function (ws, req) {
   ws.send(logs[term.pid]);
 
   term.on('data', function(data) {
+    console.log('data', data);
     try {
       ws.send(data);
     } catch (ex) {
@@ -141,6 +144,7 @@ app.ws('/terminals/:pid', function (ws, req) {
     }
   });
   ws.on('message', function(msg) {
+    console.log('message', msg);
     term.write(msg);
   });
   ws.on('close', function () {

@@ -5,6 +5,7 @@
       editor_output_visible = false,
       is_terminal_open = false,
       terminal_win,
+      terminal_socket,
       job_list, settings = {};
 
   var templates = {
@@ -807,16 +808,17 @@
   };
 
   occEditor.send_terminal_command = function(command) {
-    // if (is_terminal_open) {
-    //   terminal_win.tabs[0].sendString(command);
-    //   editor.focus();
-    // }
+    if (is_terminal_open) {
+      window.term.writeln(command);
+      editor.focus();
+    }
   };
 
   occEditor.close_terminal = function() {
-    // if (is_terminal_open) {
-    //   terminal_win.destroy();
-    // }
+    if (is_terminal_open) {
+      websocket.close()
+      is_terminal_open = false;
+    }
   };
 
   occEditor.open_terminal = function(path, command) {
@@ -826,7 +828,6 @@
     var term,
         protocol,
         socketURL,
-        socket,
         pid;
 
     var terminalContainer = document.getElementById('editor-output');//,
@@ -893,6 +894,10 @@
     //   term.setOption('tabStopWidth', parseInt(optionElements.tabstopwidth.value, 10));
     // });
 
+    function run_command(command) {
+      console.log("sending command: " + command);
+      term.send(command);
+    }
 
     // Clean terminal
     while (terminalContainer.children.length) {
@@ -927,11 +932,16 @@
       // Set terminal size again to set the specific dimensions on the demo
       // setTerminalSize();
 
-      $.post('/terminals?cols=' + term.cols + '&rows=' + term.rows, function (processId) {
+      $.post('/terminals?cols=' + term.cols + '&rows=' + term.rows + '&cwd=' + path, function (processId) {
         pid = processId;
         socketURL += processId;
-        socket = new WebSocket(socketURL);
-        term.attach(socket);
+        terminal_socket = new WebSocket(socketURL);
+        term.attach(terminal_socket);
+        is_terminal_open = true;
+
+        if (command) {
+          terminal_socket.onopen = run_command.bind(null, command);
+        }
       });
     }, 0);
     // if (is_terminal_open) {
