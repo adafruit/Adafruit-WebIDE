@@ -4,7 +4,6 @@
       dirname, updating = false,
       editor_output_visible = false,
       is_terminal_open = false,
-      terminal_win,
       terminal_socket,
       job_list, settings = {};
 
@@ -240,16 +239,16 @@
 
     $(document).on('click', '#editor, #editor-bar, #navigator', function() {
       occEditor.focus_terminal(false);
-      if (terminal_win) {
-        terminal_win.blur();
-      }
+      //if (terminal_win) {
+        //terminal_win.blur();
+      //}
     });
 
     editor.on('focus', function() {
       occEditor.focus_terminal(false);
-      if (terminal_win) {
-        terminal_win.blur();
-      }
+      //if (terminal_win) {
+      //  terminal_win.blur();
+      //}
     });
 
     editor_startup("Initializing Editor Events");
@@ -816,8 +815,10 @@
 
   occEditor.close_terminal = function() {
     if (is_terminal_open) {
-      websocket.close()
+      terminal_socket.close()
       is_terminal_open = false;
+      occEditor.hide_editor_output();
+      editor.focus();
     }
   };
 
@@ -831,68 +832,6 @@
         pid;
 
     var terminalContainer = document.getElementById('editor-output');//,
-        // actionElements = {
-        //   findNext: document.querySelector('#find-next'),
-        //   findPrevious: document.querySelector('#find-previous')
-        // },
-        // optionElements = {
-        //   cursorBlink: document.querySelector('#option-cursor-blink'),
-        //   cursorStyle: document.querySelector('#option-cursor-style'),
-        //   macOptionIsMeta: document.querySelector('#option-mac-option-is-meta'),
-        //   scrollback: document.querySelector('#option-scrollback'),
-        //   tabstopwidth: document.querySelector('#option-tabstopwidth'),
-        //   bellStyle: document.querySelector('#option-bell-style')
-        // },
-        // colsElement = document.getElementById('cols'),
-        // rowsElement = document.getElementById('rows');
-
-    // function setTerminalSize() {
-    //   var cols = parseInt(colsElement.value, 10);
-    //   var rows = parseInt(rowsElement.value, 10);
-    //   var viewportElement = document.querySelector('.xterm-viewport');
-    //   var scrollBarWidth = viewportElement.offsetWidth - viewportElement.clientWidth;
-    //   var width = (cols * term.renderer.dimensions.actualCellWidth + 20 /*room for scrollbar*/).toString() + 'px';
-    //   var height = (rows * term.renderer.dimensions.actualCellHeight).toString() + 'px';
-    //
-    //   terminalContainer.style.width = width;
-    //   terminalContainer.style.height = height;
-    //   term.resize(cols, rows);
-    // }
-
-    // colsElement.addEventListener('change', setTerminalSize);
-    // rowsElement.addEventListener('change', setTerminalSize);
-
-    // actionElements.findNext.addEventListener('keypress', function (e) {
-    //   if (e.key === "Enter") {
-    //     e.preventDefault();
-    //     term.findNext(actionElements.findNext.value);
-    //   }
-    // });
-    // actionElements.findPrevious.addEventListener('keypress', function (e) {
-    //   if (e.key === "Enter") {
-    //     e.preventDefault();
-    //     term.findPrevious(actionElements.findPrevious.value);
-    //   }
-    // });
-
-    // optionElements.cursorBlink.addEventListener('change', function () {
-    //   term.setOption('cursorBlink', optionElements.cursorBlink.checked);
-    // });
-    // optionElements.cursorStyle.addEventListener('change', function () {
-    //   term.setOption('cursorStyle', optionElements.cursorStyle.value);
-    // });
-    // optionElements.bellStyle.addEventListener('change', function () {
-    //   term.setOption('bellStyle', optionElements.bellStyle.value);
-    // });
-    // optionElements.macOptionIsMeta.addEventListener('change', function () {
-    //   term.setOption('macOptionIsMeta', optionElements.macOptionIsMeta.checked);
-    // });
-    // optionElements.scrollback.addEventListener('change', function () {
-    //   term.setOption('scrollback', parseInt(optionElements.scrollback.value, 10));
-    // });
-    // optionElements.tabstopwidth.addEventListener('change', function () {
-    //   term.setOption('tabStopWidth', parseInt(optionElements.tabstopwidth.value, 10));
-    // });
 
     function run_command(command) {
       console.log("sending command: " + command);
@@ -920,17 +859,11 @@
 
     protocol = (location.protocol === 'https:') ? 'wss://' : 'ws://';
     socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + '/terminals/';
-    $('#editor-output').css('height', '500px');
+
     term.open(terminalContainer);
-    term.fit();
     term.focus();
 
     setTimeout(function () {
-      // colsElement.value = term.cols;
-      // rowsElement.value = term.rows;
-
-      // Set terminal size again to set the specific dimensions on the demo
-      // setTerminalSize();
 
       $.post('/terminals?cols=' + term.cols + '&rows=' + term.rows + '&cwd=' + path, function (processId) {
         pid = processId;
@@ -938,70 +871,14 @@
         terminal_socket = new WebSocket(socketURL);
         term.attach(terminal_socket);
         is_terminal_open = true;
+        occEditor.show_editor_output();
 
         if (command) {
           terminal_socket.onopen = run_command.bind(null, command);
         }
       });
     }, 0);
-    // if (is_terminal_open) {
-    //   if (command) {
-    //     terminal_win.tabs[0].sendString(command);
-    //     terminal_win.focus();
-    //   }
-    //   return;
-    // }
-    // is_terminal_open = true;
-    //
-    // occEditor.show_editor_output();
-    // terminal_win = new tty.Window(null, path);
-    //
-    // tty.on('open tab', function(){
-    //   tty.on('tab-ready', function() {
-    //     tty.off('open tab');
-    //     tty.off('tab-ready');
-    //
-    //     terminal_win.maximize();
-    //     terminal_win.tabs[0].sizeToFit();
-    //
-    //     $(window).smartresize(function() {
-    //       if (is_terminal_open) {
-    //         terminal_win.maximize();
-    //         terminal_win.tabs[0].sizeToFit();
-    //       }
-    //     });
-    //
-    //     if (typeof settings !== 'undefined' && settings.font_size) {
-    //       $('.terminal').css('font-size', settings.font_size + "px");
-    //     }
-    //
-    //     if (command) {
-    //       terminal_win.tabs[0].sendString(command);
-    //     }
-    //     terminal_win.focus();
-    //
-    //   });
-    // });
-    //
-    // terminal_win.on('focus', function() {
-    //   occEditor.focus_terminal(true);
-    // });
-    //
-    // tty.on('close window', function() {
-    //   tty.off('close window');
-    //   is_terminal_open = false;
-    //   terminal_win = undefined;
-    //   occEditor.hide_editor_output();
-    //   editor.focus();
-    // });
-
-    //var maskHeight = $(window).height();
-    //var maskWidth = $(window).width();
-    //var windowTop =  (maskHeight  - $('.window').height())/2;
-    //var windowLeft = (maskWidth - $('.window').width())/2;
-    //$('.window').css({ top: windowTop, left: windowLeft, position:"absolute"}).show();
   };
-
 
   occEditor.handle_navigator_scroll = function() {
     //pretty ugly, but seems to work in firefox and chrome so far
@@ -1397,10 +1274,14 @@
 
   function handle_editor_bar_actions() {
 
-    function open_terminal(event) {
+    function toggle_terminal(event) {
       event.preventDefault();
 
-      occEditor.open_terminal(occEditor.cwd(), null);
+      if (is_terminal_open) {
+        occEditor.close_terminal();
+      } else {
+        occEditor.open_terminal(occEditor.cwd(), null);
+      }
     }
 
     function copy_project(event) {
@@ -1474,7 +1355,7 @@
       $(document).on('click touchstart', '#schedule-modal .modal-submit', submit_schedule);
     }
 
-    $(document).on('click touchstart', '.open-terminal', open_terminal);
+    $(document).on('click touchstart', '.open-terminal', toggle_terminal);
     $(document).on('click touchstart', '.copy-project', copy_project);
     $(document).on('click touchstart', '.save-file', occEditor.save_file);
     $(document).on('click touchstart', '.trace-file', occEditor.trace_file);
@@ -1645,11 +1526,12 @@
       editor_output_visible = true;
       $('#editor-output-wrapper').show();
       $('#editor-output pre').html('');
-      $('#editor-output').height('325px');
+      $('#editor-output').css('height', '325px');
       $('.dragbar').show();
-      $('#editor-output #pre-wrapper, #editor-output #variables-wrapper').css('padding', '10px');
       $('#editor').css('bottom', '328px');
+      term.element.style.padding = 7;
       editor.resize();
+      window.term.fit();
     }
   };
 
@@ -1658,7 +1540,6 @@
       editor_output_visible = false;
       $('#editor-output').height('0px');
       $('.dragbar').hide();
-      $('#editor-output div').css('padding', '0px');
       $('#editor').css('bottom', '0px');
       editor.resize();
     }
@@ -1731,7 +1612,6 @@
         $(document).unbind('mousemove');
         editor.resize();
         dragging = false;
-        terminal_win.maximize();
       }
     }
 
