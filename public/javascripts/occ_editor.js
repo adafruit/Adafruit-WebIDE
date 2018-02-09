@@ -2091,7 +2091,7 @@
         if (settings.manual_git === 'on') {
           //don't push files
         } else {
-          socket.send('commit-file', { file: file});
+          occEditor.send_message('commit-file', { file: file});
         }
 
         create_fs_response(err, status, $create_wrapper, file);
