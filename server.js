@@ -254,3 +254,9 @@ process.on('SIGINT', function() {
   });
   process.exit();
 });
+
+// process.on('uncaughtException', function(err) {
+//   debug_helper.kill_debug(false, function() {
+//     //no need to wait for this
+//   });
+// });
