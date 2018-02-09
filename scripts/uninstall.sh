@@ -26,16 +26,6 @@ if [ "$?" -eq "0" ]; then
 fi
 rm /etc/sudoers.tmp
 
-echo "**** Removing access to port 80 for node ****"
-NODE_PATH=""
-ARCH=$(dpkg --print-architecture)
-if [ $ARCH = armhf ]; then
-  NODE_PATH="/usr/share/adafruit/webide/bin/node_hf/node"
-else
-  NODE_PATH="/usr/share/adafruit/webide/bin/node_sf/node"
-fi
-setcap -r "$NODE_PATH"
-
 echo "**** Stopping the Adafruit WebIDE ****"
 service adafruit-webide.sh stop
 sleep 5s

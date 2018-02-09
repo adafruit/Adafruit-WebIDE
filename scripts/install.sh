@@ -102,17 +102,6 @@ cp "$WEBIDE_ROOT/scripts/adafruit-webide.sh" "/etc/init.d"
 cd /etc/init.d
 chmod 755 adafruit-webide.sh
 
-NODE_PATH=""
-ARCH=$(dpkg --print-architecture)
-if [ $ARCH = armhf ]; then
-  NODE_PATH="\/usr\/share\/adafruit\/webide\/bin\/node_hf\/node"
-  chmod +x "$WEBIDE_ROOT/bin/node_hf/node"
-else
-  NODE_PATH="\/usr\/share\/adafruit\/webide\/bin\/node_sf\/node"
-  chmod +x "$WEBIDE_ROOT/bin/node_sf/node"
-fi
-sed -i "s/NODE_PATH/$NODE_PATH/g" adafruit-webide.sh
-
 update-rc.d adafruit-webide.sh defaults
 
 #set binaries as executable
