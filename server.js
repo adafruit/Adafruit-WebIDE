@@ -136,7 +136,6 @@ app.ws('/terminals/:pid', function (ws, req) {
   ws.send(logs[term.pid]);
 
   term.on('data', function(data) {
-    console.log('data', data);
     try {
       ws.send(data);
     } catch (ex) {
@@ -144,8 +143,17 @@ app.ws('/terminals/:pid', function (ws, req) {
     }
   });
   ws.on('message', function(msg) {
-    console.log('message', msg);
-    term.write(msg);
+    try {
+      msg = JSON.parse(msg);
+    } catch (e) {
+      //not json, just a string...
+    }
+
+    if (msg.type === 'input') {
+      term.write(msg.data.toString() + '\r');
+    } else {
+      term.write(msg.toString());
+    }
   });
   ws.on('close', function () {
     term.kill();

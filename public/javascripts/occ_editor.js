@@ -896,7 +896,7 @@
 
     function run_command(command) {
       console.log("sending command: " + command);
-      term.send(command);
+      term.send(JSON.stringify({type: "input", data: command}));
     }
 
     // Clean terminal
