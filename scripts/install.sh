@@ -70,61 +70,61 @@ curl -L https://adafruit-download.s3.amazonaws.com/webide-0.3.12.tar.gz | tar xz
 echo "**** Installing required libraries ****"
 echo "**** (redis-server git restartd libcap2-bin avahi-daemon i2c-tools python-smbus) ****"
 apt-get update
-apt-get install nodejs git restartd libcap2-bin i2c-tools python-smbus ntp -y
+apt-get install nodejs git libcap2-bin i2c-tools python-smbus ntp -y
 
-echo "**** Create webide user and group ****"
-groupadd webide || true
-useradd -g webide webide || true
-usermod -a -G i2c,sudo webide || true
+# echo "**** Create webide user and group ****"
+# groupadd webide || true
+# useradd -g webide webide || true
+# usermod -a -G i2c,sudo webide || true
+#
+# echo "**** Adding webide user to sudoers ****"
+# if [ -f "/etc/sudoers.tmp" ]; then
+#     rm /etc/sudoers.tmp
+# fi
+# cp /etc/sudoers /etc/sudoers.tmp
+# echo "webide ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.tmp
+# visudo -c -f /etc/sudoers.tmp
+# if [ "$?" -eq "0" ]; then
+#     cp /etc/sudoers.tmp /etc/sudoers
+# fi
+# rm /etc/sudoers.tmp
+#
+# chown -R webide:webide "$WEBIDE_HOME"
+# chown -R webide:webide "$WEBIDE_ROOT"
+# chmod 775 "$WEBIDE_ROOT"
 
-echo "**** Adding webide user to sudoers ****"
-if [ -f "/etc/sudoers.tmp" ]; then
-    rm /etc/sudoers.tmp
-fi
-cp /etc/sudoers /etc/sudoers.tmp
-echo "webide ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.tmp
-visudo -c -f /etc/sudoers.tmp
-if [ "$?" -eq "0" ]; then
-    cp /etc/sudoers.tmp /etc/sudoers
-fi
-rm /etc/sudoers.tmp
+# echo "**** Adding default .bashrc file for webide user ****"
+# cp "$WEBIDE_ROOT/scripts/.bashrc" "$WEBIDE_HOME"
 
-chown -R webide:webide "$WEBIDE_HOME"
-chown -R webide:webide "$WEBIDE_ROOT"
-chmod 775 "$WEBIDE_ROOT"
-
-echo "**** Adding default .bashrc file for webide user ****"
-cp "$WEBIDE_ROOT/scripts/.bashrc" "$WEBIDE_HOME"
-
-echo "**** Installing the WebIDE as a service ****"
-echo "**** (to uninstall service, execute: 'sudo update-rc.d -f adafruit-webide.sh remove') ****"
-cp "$WEBIDE_ROOT/scripts/adafruit-webide.sh" "/etc/init.d"
-cd /etc/init.d
-chmod 755 adafruit-webide.sh
-
-update-rc.d adafruit-webide.sh defaults
+# echo "**** Installing the WebIDE as a service ****"
+# echo "**** (to uninstall service, execute: 'sudo update-rc.d -f adafruit-webide.sh remove') ****"
+# cp "$WEBIDE_ROOT/scripts/adafruit-webide.sh" "/etc/init.d"
+# cd /etc/init.d
+# chmod 755 adafruit-webide.sh
+#
+# update-rc.d adafruit-webide.sh defaults
 
 #set binaries as executable
 
 echo "Attempting to force reload date and time from ntp server"
 /etc/init.d/ntp force-reload
 
-service adafruit-webide.sh start
+# service adafruit-webide.sh start
 
-if grep -q adafruit-webide.sh /etc/restartd.conf
-then
-  echo "restartd already configured"
-else
-  echo 'webide "node" "service adafruit-webide.sh restart" ""' >> /etc/restartd.conf
-fi
+# if grep -q adafruit-webide.sh /etc/restartd.conf
+# then
+#   echo "restartd already configured"
+# else
+#   echo 'webide "node" "service adafruit-webide.sh restart" ""' >> /etc/restartd.conf
+# fi
 
 #kill all restartd processes, and restart one
-pkill -f restartd || true
-sleep 5s
-restartd
+# pkill -f restartd || true
+# sleep 5s
+# restartd
 
 echo "**** Starting the server...(please wait) ****"
-sleep 20s
+# sleep 20s
 
 echo "**** The Adafruit WebIDE is installed and running! ****"
 echo "**** Commands: sudo service adafruit-webide.sh {start,stop,restart} ****"
