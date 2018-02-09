@@ -10,6 +10,25 @@ var path = require('path'),
 var REPOSITORY_PATH = path.resolve(__dirname + "/../repositories") + "/";
 var push_queue = [], pushInterval, PUSH_TIMER = 30000;
 
+/* extend gitty */
+git.prototype.remove_recursive = function(path, callback) {
+  var self = this;
+  var cmd  = new Command(self, 'rm', ['-r', '--cached'], path);
+
+  cmd.exec(function(error, stdout, stderr) {
+    callback(error || stderr || null);
+  });
+};
+
+git.prototype.move = function(source, destination, callback) {
+  var self = this;
+  var cmd  = new Command(self, 'mv', [], source, destination);
+
+  cmd.exec(function(error, stdout, stderr) {
+    callback(error || stderr || null);
+  });
+};
+
 /*
  * Creates a simple queue that is used for pushing git changes to the remote repositories.
  * The queue is currently set using the PUSH_TIMER to delay the remote pushes.
@@ -17,10 +36,11 @@ var push_queue = [], pushInterval, PUSH_TIMER = 30000;
 function push_queue_interval() {
   winston.debug('git push queue init');
   function push(repository_path, remote, branch, username) {
-    git.push(repository_path, remote, branch, function(obj) {
+    var repo = git(repository_path);
+    repo.push(remote, branch, function(err) {
       require('../server').get_socket(function(ws) {
-        if (obj.error) {
-          winston.error(obj);
+        if (err) {
+          winston.error(err);
           ws_helper.send_message(ws, 'git-push-error', {err: "Error: Failure pushing code to remote repository"});
         }
         //winston.debug(obj);
@@ -49,8 +69,9 @@ push_queue_interval();
 exports.clone_adafruit_libraries = function(adafruit_repository, remote, cb) {
   fs_helper.check_for_repository(adafruit_repository, function(err, status) {
     if (!err && !status) {
-      git.clone(REPOSITORY_PATH, remote, function(output) {
-        winston.debug(output);
+      var repo = git(REPOSITORY_PATH);
+      repo.clone(remote, function(err) {
+        winston.debug(err);
         cb(true);
       });
     } else {
@@ -75,21 +96,29 @@ exports.clone_repository = function(repository_path, cb) {
   var repository_url = url.parse(repository_path);
 
   winston.debug("cloning", repository_path);
-  git.clone(REPOSITORY_PATH, repository_url.href, function(output) {
-    cb(output.error, output.message);
+  var repo = git(REPOSITORY_PATH);
+  repo.clone(repository_url.href, function(err, output) {
+    cb(err, output);
   });
 };
 
 exports.create_local_repository = function(name, cb) {
   winston.debug("create_repository", name);
-  git.create(name, "", REPOSITORY_PATH, function(output) {
-    cb(output.error, output.message);
+  //create directory
+  var repository_path = REPOSITORY_PATH + repository;
+  if (!fs.existsSync(repository_path)){
+    fs.mkdirSync(repository_path);
+  }
+
+  var repo = git(repository_path);
+  repo.init(function(err, output) {
+    cb(err, output);
   });
 };
 
 exports.validate_config = function validate_config(cb) {
-  git.config("user.email", null, function(err, email) {
-    git.config("user.name", null, function(err, name) {
+  git.getConfig("user.email", function(err, email) {
+    git.getConfig("user.name", function(err, name) {
       if (err) winston.error("git_helper.validate_config err", err);
       if (name && email) {
         cb(true);
@@ -110,8 +139,8 @@ exports.set_config = function(cb) {
       winston.error('git config is invalid');
       db.findOne({type: "user"}, function (err, user) {
         winston.debug("set_config user", user);
-        git.config("user.email", user.email, function(err, email) {
-          git.config("user.name", user.name, function(err, name) {
+        git.setConfig("user.email", user.email, function(err, email) {
+          git.setConfig("user.name", user.name, function(err, name) {
             winston.debug("git config set", email, name);
             cb();
           });
@@ -126,9 +155,10 @@ exports.set_config = function(cb) {
  * Adds an additional remote to a repository.
  */
 exports.add_remote = function(repository, remote_name, remote_url, cb) {
-  git.remote.add(REPOSITORY_PATH + repository, remote_name, remote_url, function(output) {
-    //winston.debug(output);
-    cb(output.error, output.message);
+  var repo = git(REPOSITORY_PATH + repository);
+  repo.addRemote(remote_name, remote_url, function(err, message) {
+    winston.debug(err);
+    cb(err, message);
   });
 };
 
@@ -142,10 +172,10 @@ exports.add = function add(repository, files, cb) {
     files = [files];
   }
   var repository_path = REPOSITORY_PATH + repository;
-  git.add(repository_path, files, function(output) {
-    //winston.debug(output.errors);
-    //winston.debug(output);
-    cb(output.errors, output.added);
+  var repo = git(repository_path);
+  repo.add(files, function(err, added) {
+    winston.debug(err);
+    cb(err, added);
   });
 };
 
@@ -159,9 +189,10 @@ exports.remove = function remove(repository, files, cb) {
     files = [files];
   }
   var repository_path = REPOSITORY_PATH + repository;
-  git.remove(repository_path, files, function(output) {
-    //winston.debug(output.errors);
-    cb(output.errors, output.added);
+  var repo = git(repository_path);
+  repo.remove(files, function(err, added) {
+    winston.debug(err);
+    cb(err, added);
   });
 };
 
@@ -173,9 +204,10 @@ exports.remove = function remove(repository, files, cb) {
 exports.remove_recursive = function remove_recursive(repository, path, cb) {
   var repository_path = REPOSITORY_PATH + repository;
 
-  git.remove_recursive(repository_path, path, function(output) {
-    winston.debug(output);
-    cb(output.errors, output.added);
+  var repo = git(repository_path);
+  repo.remove_recursive(path, function(err, data) {
+    winston.debug(err);
+    cb(err, data);
   });
 };
 
@@ -185,9 +217,10 @@ exports.remove_recursive = function remove_recursive(repository, path, cb) {
  */
 exports.move = function move(repository, source, destination, cb) {
   var repository_path = REPOSITORY_PATH + repository;
-  git.move(repository_path, source, destination, function(obj) {
+  var repo = git(repository_path);
+  repo.move(source, destination, function(err, message) {
     //winston.debug(obj);
-    cb(obj.error, obj.message);
+    cb(err, message);
   });
 };
 
@@ -199,9 +232,10 @@ exports.move = function move(repository, source, destination, cb) {
 exports.commit = function commit(repository, message, cb) {
   var repository_path = REPOSITORY_PATH + repository;
   winston.debug(repository_path);
-  git.commit(repository_path, message, function(obj) {
+  var repo = git(repository_path);
+  repo.commit(message, function(err, message) {
     //winston.debug(obj);
-    cb(obj.error, obj.message);
+    cb(err, message);
   });
 };
 
@@ -216,9 +250,10 @@ exports.is_modified = function (file, cb) {
   var item_path = path_array.slice(3).join('/');
 
   var is_modified = false;
-  git.status(repository_path, function(output) {
+  var repo = git(repository_path);
+  repo.status(function(err, output) {
 
-    winston.debug(output);
+    winston.debug(err, output);
 
     if (output.not_staged.length > 0) {
       output.not_staged.forEach(function(item, index) {
@@ -232,7 +267,7 @@ exports.is_modified = function (file, cb) {
       is_modified = true;
     }
 
-    cb(output.errors, is_modified);
+    cb(err, is_modified);
   });
 };
 
@@ -249,15 +284,16 @@ exports.is_untracked = function (file, cb) {
   winston.debug(item_path);
 
   var is_untracked = false;
-  git.status(repository_path, function(output) {
+  var repo = git(repository_path);
+  repo.status(function(err, output) {
 
-    winston.debug(output);
+    winston.debug(err, output);
 
     if (output.untracked.indexOf(item_path) !== -1) {
       is_untracked = true;
     }
 
-    cb(output.errors, is_untracked);
+    cb(err, is_untracked);
   });
 };
 
@@ -304,13 +340,13 @@ exports.push = function push(repository, remote, branch, cb) {
  */
 exports.pull = function pull(repository, remote, branch, cb) {
   var repository_path = REPOSITORY_PATH + repository;
-  git.pull(repository_path, remote, branch, function(obj) {
-    //winston.debug(obj);
-    if (obj.error) {
-      winston.error(obj.error);
-      cb("Error: Failure updating from remote repository", obj.message);
+  var repo = git(repository_path);
+  repo.pull(remote, branch, function(err, message) {
+    if (err) {
+      winston.error(err);
+      cb("Error: Failure updating from remote repository", message);
     } else {
-      cb(null, obj.message);
+      cb(null, message);
     }
 
   });
