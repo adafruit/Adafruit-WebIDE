@@ -51,18 +51,11 @@ set -e
 WEBIDE_ROOT="/usr/share/adafruit/webide"
 
 #needed for SSH key and config access at this point.
-WEBIDE_HOME="/home/webide"
-
-#NODE_PATH="/usr/local/lib/node"
-
-#if [ ! -d "$NODE_PATH" ]; then
-#  mkdir -p "$NODE_PATH"
-#    # Control will enter here if $DIRECTORY doesn't exist.
-#fi
+# WEBIDE_HOME="/home/webide"
 
 mkdir -p "$WEBIDE_ROOT"
-mkdir -p "$WEBIDE_HOME"
-cd "$WEBIDE_ROOT"
+# mkdir -p "$WEBIDE_HOME"
+# cd "$WEBIDE_ROOT"
 
 echo "**** Downloading the latest version of the WebIDE ****"
 curl -L https://adafruit-download.s3.amazonaws.com/webide-0.3.12.tar.gz | tar xzf -
@@ -70,7 +63,7 @@ curl -L https://adafruit-download.s3.amazonaws.com/webide-0.3.12.tar.gz | tar xz
 echo "**** Installing required libraries ****"
 echo "**** (redis-server git restartd libcap2-bin avahi-daemon i2c-tools python-smbus) ****"
 apt-get update
-apt-get install nodejs git libcap2-bin i2c-tools python-smbus ntp -y
+apt-get install nodejs-legacy git libcap2-bin i2c-tools python-smbus ntp -y
 
 # echo "**** Create webide user and group ****"
 # groupadd webide || true
@@ -92,39 +85,22 @@ apt-get install nodejs git libcap2-bin i2c-tools python-smbus ntp -y
 # chown -R webide:webide "$WEBIDE_HOME"
 # chown -R webide:webide "$WEBIDE_ROOT"
 # chmod 775 "$WEBIDE_ROOT"
-
+#
 # echo "**** Adding default .bashrc file for webide user ****"
 # cp "$WEBIDE_ROOT/scripts/.bashrc" "$WEBIDE_HOME"
-
-# echo "**** Installing the WebIDE as a service ****"
-# echo "**** (to uninstall service, execute: 'sudo update-rc.d -f adafruit-webide.sh remove') ****"
-# cp "$WEBIDE_ROOT/scripts/adafruit-webide.sh" "/etc/init.d"
-# cd /etc/init.d
-# chmod 755 adafruit-webide.sh
-#
-# update-rc.d adafruit-webide.sh defaults
-
-#set binaries as executable
 
 echo "Attempting to force reload date and time from ntp server"
 /etc/init.d/ntp force-reload
 
-# service adafruit-webide.sh start
+# echo "**** Installing the WebIDE as a service ****"
+# echo "**** (to uninstall service, execute: 'sudo update-rc.d -f adafruit-webide.sh remove') ****"
+cp "$WEBIDE_ROOT/scripts/adafruit-webide.service" "/etc/systemd/system/adafruit-webide.service"
+systemctl enable adafruit-webide.service
+systemctl start adafruit-webide.service
 
-# if grep -q adafruit-webide.sh /etc/restartd.conf
-# then
-#   echo "restartd already configured"
-# else
-#   echo 'webide "node" "service adafruit-webide.sh restart" ""' >> /etc/restartd.conf
-# fi
-
-#kill all restartd processes, and restart one
-# pkill -f restartd || true
-# sleep 5s
-# restartd
 
 echo "**** Starting the server...(please wait) ****"
-# sleep 20s
+sleep 20s
 
 echo "**** The Adafruit WebIDE is installed and running! ****"
 echo "**** Commands: sudo service adafruit-webide.sh {start,stop,restart} ****"
