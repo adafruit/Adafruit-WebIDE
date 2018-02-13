@@ -12,7 +12,7 @@ var fs_helper = require('../helpers/fs_helper'),
     db = require('../models/webideModel'),
     sanitize = require('validator');
 
-var REPOSITORY_PATH = path.resolve(process.env.PWD, "/repositories")
+var REPOSITORY_PATH = path.resolve(__dirname, "../repositories")
 
 //Loads the editor
 exports.index = function(req, res) {

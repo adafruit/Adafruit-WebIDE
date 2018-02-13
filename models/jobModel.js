@@ -4,7 +4,7 @@ var Datastore = require('nedb'),
     path = require('path');
 
 var jobsDb = new Datastore({
-  filename: path.resolve(process.env.PWD, 'db/jobs_data_store'),
+  filename: path.resolve(__dirname, '../db/jobs_data_store'),
   autoload: true
 });
 
