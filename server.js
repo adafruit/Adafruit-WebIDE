@@ -219,9 +219,13 @@ function start_server(cb) {
 
     if (server_data && server_data.port) {
       port = server_data.port;
+    } else if (process.env.PORT) {
+      port = process.env.PORT
     } else {
       port = config.editor.port;
     }
+
+
 
     winston.info('listening on port ' + port);
     cb(app.listen(port));
