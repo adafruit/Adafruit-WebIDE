@@ -1,16 +1,17 @@
 [Unit]
 Description=Adafruit-WebIDE
 
-ExecStart=/usr/bin/nodejs server.js
-WorkingDirectory=/usr/local/webide
+[Service]
+ExecStart=/usr/bin/node /usr/share/adafruit/webide/server.js
+WorkingDirectory=/usr/share/adafruit/webide
 Restart=always
 RestartSec=10
 StandardOutput=syslog
 StandardError=syslog
 SyslogIdentifier=webide
 # Change to a non-root user
-# User=webide
-# Group=webide
+User=webide
+Group=webide
 # Set environment options
 Environment=NODE_ENV=production PORT=8080
 
