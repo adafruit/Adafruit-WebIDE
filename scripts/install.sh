@@ -51,11 +51,11 @@ set -e
 WEBIDE_ROOT="/usr/share/adafruit/webide"
 
 #needed for SSH key and config access at this point.
-# WEBIDE_HOME="/home/webide"
+WEBIDE_HOME="/home/webide"
 
 mkdir -p "$WEBIDE_ROOT"
-# mkdir -p "$WEBIDE_HOME"
-# cd "$WEBIDE_ROOT"
+mkdir -p "$WEBIDE_HOME/tmp"
+cd "$WEBIDE_ROOT"
 
 echo "**** Downloading the latest version of the WebIDE ****"
 curl -L https://adafruit-download.s3.amazonaws.com/webide-0.3.12.tar.gz | tar xzf -
@@ -63,31 +63,40 @@ curl -L https://adafruit-download.s3.amazonaws.com/webide-0.3.12.tar.gz | tar xz
 echo "**** Installing required libraries ****"
 echo "**** (redis-server git restartd libcap2-bin avahi-daemon i2c-tools python-smbus) ****"
 apt-get update
-apt-get install nodejs-legacy git libcap2-bin i2c-tools python-smbus ntp -y
+apt-get install nodejs-legacy npm git libcap2-bin i2c-tools python-smbus ntp libkrb5-dev -y
 
-# echo "**** Create webide user and group ****"
-# groupadd webide || true
-# useradd -g webide webide || true
-# usermod -a -G i2c,sudo webide || true
-#
-# echo "**** Adding webide user to sudoers ****"
-# if [ -f "/etc/sudoers.tmp" ]; then
-#     rm /etc/sudoers.tmp
-# fi
-# cp /etc/sudoers /etc/sudoers.tmp
-# echo "webide ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.tmp
-# visudo -c -f /etc/sudoers.tmp
-# if [ "$?" -eq "0" ]; then
-#     cp /etc/sudoers.tmp /etc/sudoers
-# fi
-# rm /etc/sudoers.tmp
-#
-# chown -R webide:webide "$WEBIDE_HOME"
-# chown -R webide:webide "$WEBIDE_ROOT"
-# chmod 775 "$WEBIDE_ROOT"
-#
-# echo "**** Adding default .bashrc file for webide user ****"
-# cp "$WEBIDE_ROOT/scripts/.bashrc" "$WEBIDE_HOME"
+echo "**** Create webide user and group ****"
+groupadd webide || true
+useradd -g webide webide || true
+usermod -a -G i2c,sudo webide || true
+chsh -s /bin/bash webide
+
+echo "**** Adding webide user to sudoers ****"
+if [ -f "/etc/sudoers.tmp" ]; then
+    rm /etc/sudoers.tmp
+fi
+cp /etc/sudoers /etc/sudoers.tmp
+echo "webide ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.tmp
+visudo -c -f /etc/sudoers.tmp
+if [ "$?" -eq "0" ]; then
+    cp /etc/sudoers.tmp /etc/sudoers
+fi
+rm /etc/sudoers.tmp
+
+echo "**** Installing webide dependencies ****"
+npm config set tmp "$WEBIDE_HOME/tmp"
+npm install
+
+chown -R webide:webide "$WEBIDE_HOME"
+chown -R webide:webide "$WEBIDE_ROOT"
+chmod 775 "$WEBIDE_ROOT"
+
+echo "**** Adding default .bashrc file for webide user ****"
+cp "$WEBIDE_ROOT/scripts/.bashrc" "$WEBIDE_HOME"
+
+echo "**** Installing webide dependencies ****"
+npm install -g npm
+npm install
 
 echo "Attempting to force reload date and time from ntp server"
 /etc/init.d/ntp force-reload
