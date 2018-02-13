@@ -2,8 +2,7 @@ var path = require('path'),
     db = require('../models/webideModel'),
     scripts_helper = require('../helpers/scripts_helper'),
     config = require('../config/config'),
-    check = require('validator').check,
-    sanitize = require('validator').sanitize;
+    sanitize = require('validator');
 
 // Instructional page that displays the setup steps
 exports.setup = function(req, res) {
@@ -30,9 +29,9 @@ exports.submit_setup = function(req, res) {
   }
 
   try {
-    name = sanitize(req.body.name).trim();
-    email = sanitize(req.body.email).trim();
-    check(email).isEmail();
+    name = sanitize.trim(req.body.name);
+    email = sanitize.trim(req.body.email);
+    sanitize.isEmail(email);
   } catch (e) {
     req.session.message = e.message;
     console.log(e.message);
@@ -71,10 +70,10 @@ exports.submit_config = function(req, res) {
   req.session.message = undefined;
 
   try {
-    hostname = sanitize(req.body.hostname).trim();
-    wifi_ssid = sanitize(req.body.wifi_ssid).trim();
-    wifi_password = sanitize(req.body.wifi_password).trim();
-    port = sanitize(req.body.port).trim();
+    hostname = sanitize.trim(req.body.hostname);
+    wifi_ssid = sanitize.trim(req.body.wifi_ssid);
+    wifi_password = sanitize.trim(req.body.wifi_password);
+    port = sanitize.trim(req.body.port);
     if (hostname) {
       check(hostname).len(3, 25);
     }
