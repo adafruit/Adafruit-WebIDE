@@ -16,15 +16,15 @@ var REPOSITORY_PATH = path.resolve(__dirname, "../repositories")
 
 //Loads the editor
 exports.index = function(req, res) {
-  //var shown_notification = false;
-  //client.get('editor:shown_notification', function(err, result) {
-  //  if (result) {
-  //    shown_notification = result;
-  //  } else {
-  //    client.set('editor:shown_notification', true);
-  //  }
-    res.render('editor/index', {profile: req.user, version: config.editor.version, shown_notification: false});
-  //});
+  req.session.message = undefined;
+  db.findOne({"type": "user"}, function(err, user) {
+    if (!user) {
+      req.session.message = "Set your name and email prior to continuing to the editor.";
+      res.redirect('/setup');
+    } else {
+      res.render('editor/index', {profile: req.user, version: config.editor.version, shown_notification: false});
+    }
+  });
 };
 
 exports.editor = function(ws, req) {
