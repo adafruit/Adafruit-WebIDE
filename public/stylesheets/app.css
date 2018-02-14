@@ -690,6 +690,7 @@ a.navigator-settings i.settings-enabled {
 
 #setup-content form input[type='text'], #setup-content form input[type='password'] {
   width: 350px;
+  height: 30px;
 }
 
 #setup-content form .skip-button {
