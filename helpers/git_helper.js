@@ -1,6 +1,7 @@
 var path = require('path'),
     db = require('../models/webideModel'),
     git = require('gitty'),
+    Command = require('../node_modules/gitty/lib/command'),
     url = require('url'),
     winston = require('winston'),
     fs = require('fs'),
