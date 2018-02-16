@@ -3,6 +3,7 @@ var path = require('path'),
     git = require('gitty'),
     url = require('url'),
     winston = require('winston'),
+    fs = require('fs'),
     fs_helper = require('./fs_helper'),
     ws_helper = require('./websocket_helper'),
     config = require('../config/config');
@@ -69,8 +70,7 @@ push_queue_interval();
 exports.clone_adafruit_libraries = function(adafruit_repository, remote, cb) {
   fs_helper.check_for_repository(adafruit_repository, function(err, status) {
     if (!err && !status) {
-      var repo = git(REPOSITORY_PATH);
-      repo.clone(remote, function(err) {
+      git.clone(REPOSITORY_PATH, remote, function(err) {
         winston.debug(err);
         cb(true);
       });
@@ -105,7 +105,7 @@ exports.clone_repository = function(repository_path, cb) {
 exports.create_local_repository = function(name, cb) {
   winston.debug("create_repository", name);
   //create directory
-  var repository_path = REPOSITORY_PATH + repository;
+  var repository_path = REPOSITORY_PATH + name;
   if (!fs.existsSync(repository_path)){
     fs.mkdirSync(repository_path);
   }

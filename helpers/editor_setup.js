@@ -56,7 +56,7 @@ var path = require('path'),
                 winston.debug(file);
                 if (err) winston.error(err);
 
-                git_helper.commit_push_and_save(file, "Added README.md and .gitignore", null, function(err, response) {
+                git_helper.commit_push_and_save(file, "Added README.md and .gitignore", function(err, response) {
                   ws_helper.send_message(ws, "self-check-message", "Pushed changes to my-pi-projects");
                   ws_helper.send_message(ws, 'self-check-complete');
                 });
