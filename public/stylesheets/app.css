@@ -334,7 +334,7 @@ a.navigator-settings i.settings-enabled {
   color: #E4E5E7 !important;
   background-color: #087BD1;
   font-size: 11px;
-  margin: 2px 2px 0 0;
+  margin: 6px 6px 0 0;
   padding: 3px 7px 3px 7px;
   -webkit-border-radius: 3px;
      -moz-border-radius: 3px;
@@ -346,6 +346,9 @@ a.navigator-settings i.settings-enabled {
 }
 
 .create-input-wrapper input[type='text'], .rename-input-wrapper input[type='text'] {
+  width: 185px;
+  margin: 5px;
+  height: 30px;
   background-color: #FFFFFF;
   border: none;
   -webkit-box-shadow: none;
@@ -355,11 +358,6 @@ a.navigator-settings i.settings-enabled {
   -moz-transition: none;
   -o-transition: none;
   transition: none;
-}
-
-.create-input-wrapper input[type='text'] {
-  width: 185px;
-  margin: 5px;
 }
 
 .rename-input-wrapper {

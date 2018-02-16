@@ -237,20 +237,6 @@
       return "Please confirm that you would like to leave the editor.";
     });
 
-    $(document).on('click', '#editor, #editor-bar, #navigator', function() {
-      occEditor.focus_terminal(false);
-      //if (terminal_win) {
-        //terminal_win.blur();
-      //}
-    });
-
-    editor.on('focus', function() {
-      occEditor.focus_terminal(false);
-      //if (terminal_win) {
-      //  terminal_win.blur();
-      //}
-    });
-
     editor_startup("Initializing Editor Events");
     editor.on('change', function() {
       var $file_element = $('.filesystem li.file-open');
@@ -583,12 +569,8 @@
   occEditor.focus_terminal = function(should_focus) {
     if (should_focus) {
       $('.bar').css('background-color', '#2c58bd');
-      //$('#editor-output-wrapper').css({ 'opacity' : 1 });
-      //$('#editor, #editor-bar').css({ 'opacity' : 0.95 });
     } else {
       $('.bar').css('background-color', '#323233');
-      //$('#editor-output-wrapper').css({ 'opacity' : 0.95 });
-      //$('#editor, #editor-bar').css({ 'opacity' : 1 });
     }
   };
 
@@ -808,8 +790,7 @@
 
   occEditor.send_terminal_command = function(command) {
     if (is_terminal_open) {
-      window.term.writeln(command);
-      editor.focus();
+      term.send(JSON.stringify({type: "input", data: command}));
     }
   };
 
@@ -835,7 +816,7 @@
 
     function run_command(command) {
       console.log("sending command: " + command);
-      term.send(JSON.stringify({type: "input", data: command}));
+      occEditor.send_terminal_command(command);
     }
 
     // Clean terminal
