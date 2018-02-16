@@ -100,11 +100,13 @@ app.post('/terminals', function (req, res) {
       rows = parseInt(req.query.rows),
       cwd = req.query.cwd;
 
+  console.log(cwd);
+
   var term = pty.spawn(process.platform === 'win32' ? 'cmd.exe' : 'bash', [], {
         name: 'xterm-color',
         cols: cols || 80,
         rows: rows || 24,
-        cwd: path.resolve(__dirname + cwd),
+        cwd: path.resolve(cwd),
         env: process.env
       });
 
