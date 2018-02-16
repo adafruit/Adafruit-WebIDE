@@ -8,7 +8,7 @@ var spawn = require('child_process').spawn,
 };*/
 
 exports.execute_program = function(file, is_job) {
-  
+
   console.log(file);
   if (file.extension === 'py') {
     execute_program(file, "python", is_job);
@@ -31,7 +31,7 @@ exports.stop_program = function(file, is_job) {
 
 exports.trace_program = function(file, socket) {
   var file_path = path.resolve(__dirname + "/../repositories/" + file.path.replace('/filesystem/', ''));
-  console.log(file_path);  
+  console.log(file_path);
   if (file.extension === 'py') {
     execute_python_trace(file_path, socket);
   } else if (file.extension === 'rb') {
@@ -104,17 +104,15 @@ function execute_program(file, type, is_job) {
   console.log('execute_program');
   console.log(file_path);
 
-  require('../server').get_socket(file.username, function(socket) {
-    console.log(file);
-    var cwd = get_cwd(file_path);
-    var prog = spawn("sudo", [type, file_path], {cwd: cwd});
-    var key = get_key(file);
-    spawn_list.push({key: key, prog: prog});
-    if (socket) {
-      console.log('found socket, executing');
-      handle_output(prog, file, is_job, socket);
-    }
-  });
+  console.log(file);
+  var cwd = get_cwd(file_path);
+  var prog = spawn("sudo", [type, file_path], {cwd: cwd});
+  var key = get_key(file);
+  spawn_list.push({key: key, prog: prog});
+  if (socket) {
+    console.log('found socket, executing');
+    handle_output(prog, file, is_job, socket);
+  }
 }
 
 function handle_output(prog, file, is_job, socket) {
