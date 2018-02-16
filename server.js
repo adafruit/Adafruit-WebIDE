@@ -7,6 +7,8 @@ var express = require('express'),
     morgan = require('morgan'),
     app = express(),
     expressWs = require('express-ws')(app),
+    multer  = require('multer'),
+    upload = multer({ dest: './uploads' }),
     util = require('util'),
     util = require('util'),
     site = require('./controllers/site'),
@@ -83,7 +85,8 @@ app.get('/', site.index);
 
 app.get('/editor', editor.index);
 app.get('/editor/image', editor.image);
-app.post('/editor/upload', editor.upload_file);
+
+app.post('/editor/upload', upload.single('obj'), editor.upload_file);
 
 app.post('/create/repository', editor.create_repository);
 

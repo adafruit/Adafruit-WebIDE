@@ -89,7 +89,7 @@
     "upload_file_form":           '<form class="upload-form" id="upload-file-form" action="/editor/upload" enctype="multipart/form-data">' +
                                     '<span class="fileinput-button">' +
                                       '<span>+ Upload File</span>' +
-                                      '<input id="fileupload" type="file" name="files[]" data-url="/editor/upload" multiple>' +
+                                      '<input id="fileupload" type="file" name="obj" data-url="/editor/upload" multiple>' +
                                     '</span>' +
                                   '</form>'
   };
@@ -816,7 +816,8 @@
 
     function run_command(command) {
       console.log("sending command: " + command);
-      occEditor.send_terminal_command(command);
+      term.send(JSON.stringify({type: "input", data: command}));
+      //occEditor.send_terminal_command(command);
     }
 
     // Clean terminal
