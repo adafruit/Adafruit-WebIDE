@@ -12,7 +12,7 @@ var fs_helper = require('../helpers/fs_helper'),
     db = require('../models/webideModel'),
     sanitize = require('validator');
 
-var REPOSITORY_PATH = path.resolve(__dirname, "../repositories")
+var REPOSITORY_PATH = path.resolve(__dirname, "../repositories");
 
 //Loads the editor
 exports.index = function(req, res) {
@@ -28,6 +28,7 @@ exports.index = function(req, res) {
 };
 
 exports.editor = function(ws, req) {
+  config.editor_ws = ws;
   winston.debug('socket io connection completed');
 
   function send_message(type, data) {

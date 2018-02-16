@@ -39,13 +39,11 @@ function push_queue_interval() {
   function push(repository_path, remote, branch, username) {
     var repo = git(repository_path);
     repo.push(remote, branch, function(err) {
-      require('../server').get_socket(function(ws) {
-        if (err) {
-          winston.error(err);
-          ws_helper.send_message(ws, 'git-push-error', {err: "Error: Failure pushing code to remote repository"});
-        }
-        //winston.debug(obj);
-      });
+      if (err) {
+        winston.error(err);
+        ws_helper.send_message(null, 'git-push-error', {err: "Error: Failure pushing code to remote repository"});
+      }
+      //winston.debug(obj);
     });
   }
 
