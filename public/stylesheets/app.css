@@ -175,7 +175,7 @@ a.navigator-settings i.settings-enabled {
   float: right;
   color: #fff;
   text-decoration: none;
-  padding-right: 15px;
+  padding: 4px 15px 0 0;
 }
 
 #navigator-folder .refresh-directory:hover {
