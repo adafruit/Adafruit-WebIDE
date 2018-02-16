@@ -3,9 +3,9 @@
 //Change offline in /config.
 //Change github in /config.
 exports.editor = {
-  "port": 80,
-  "version": "0.3.12",
-  "version_url": "https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/alpha/release/version.txt"
+  "port": 3000,
+  "version": "0.5.0",
+  "version_url": "https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/beta/release/version.txt"
 };
 
 exports.adafruit = {

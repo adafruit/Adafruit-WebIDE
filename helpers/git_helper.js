@@ -96,8 +96,8 @@ exports.clone_repository = function(repository_path, cb) {
   var repository_url = url.parse(repository_path);
 
   winston.debug("cloning", repository_path);
-  var repo = git(REPOSITORY_PATH);
-  repo.clone(repository_url.href, function(err, output) {
+
+  git.clone(REPOSITORY_PATH, repository_url.href, function(err, output) {
     cb(err, output);
   });
 };
