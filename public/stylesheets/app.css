@@ -6,7 +6,6 @@ body {
 }
 
 #container {
-  padding-top: 40px;
   width: 100%;
   height: 100%;
 }
@@ -400,7 +399,8 @@ a.navigator-settings i.settings-enabled {
   left: 300px;
   right: 0;
   top: 50px;
-  bottom: 40px;
+  bottom: 0px;
+  margin-bottom: 40px;
   border-bottom: 1px solid #EDEDED;
 }
 
@@ -455,6 +455,7 @@ a.navigator-settings i.settings-enabled {
   right: 0;
   top: 40px;
   bottom: 0;
+  margin-bottom: -40px;
   border-top: 1px solid #EDEDED;
   border-right: 1px solid #EDEDED;
 }
