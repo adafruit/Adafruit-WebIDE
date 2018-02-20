@@ -804,6 +804,18 @@
   };
 
   occEditor.open_terminal = function(path, command) {
+    function run_command(command, delay) {
+      console.log("sending command: " + command);
+      setTimeout(function () {
+        occEditor.send_terminal_command(command);
+      }, delay);
+    }
+
+    if (is_terminal_open) {
+      run_command(command, 0);
+      return;
+    }
+
     Terminal.applyAddon(fit);
     Terminal.applyAddon(attach);
 
@@ -813,12 +825,6 @@
         pid;
 
     var terminalContainer = document.getElementById('editor-output');//,
-
-    function run_command(command) {
-      console.log("sending command: " + command);
-      term.send(JSON.stringify({type: "input", data: command}));
-      //occEditor.send_terminal_command(command);
-    }
 
     // Clean terminal
     while (terminalContainer.children.length) {
@@ -856,7 +862,7 @@
         occEditor.show_editor_output();
 
         if (command) {
-          terminal_socket.onopen = run_command.bind(null, command);
+          terminal_socket.onopen = run_command.bind(null, command, 1500);
         }
       });
     }, 0);
