@@ -245,25 +245,28 @@ function mount_dav(server) {
   winston.info('webdav filesystem mounted');
 }
 
-process.on('SIGINT', function() {
-  winston.info("\nShutting down from  SIGINT");
-  console.log(terminals);
-
+function cleanup() {
+  winston.info("process and worker cleanup");
   Object.keys(terminals).forEach(function (pid) {
       var term = terminals[pid];
       console.log('Closed terminal ' + term.pid);
       term.kill();
   });
 
-  // some other closing procedures go here
   debug_helper.kill_debug(false, function() {
     //no need to wait for this
   });
+}
+
+process.on('SIGINT', function() {
+  winston.info("Shutting down from  SIGINT");
+  cleanup();
   process.exit();
 });
 
-// process.on('uncaughtException', function(err) {
-//   debug_helper.kill_debug(false, function() {
-//     //no need to wait for this
-//   });
-// });
+process.on('uncaughtException', function(err) {
+  winston.error("Shutting down from uncaughtException");
+  winston.error(err.stack);
+  cleanup();
+  process.exit();
+});
