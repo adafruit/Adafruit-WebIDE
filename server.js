@@ -101,8 +101,6 @@ app.post('/terminals', function (req, res) {
       rows = parseInt(req.query.rows),
       cwd = req.query.cwd;
 
-  console.log(cwd);
-
   var term = pty.spawn(process.platform === 'win32' ? 'cmd.exe' : 'bash', [], {
         name: 'xterm-color',
         cols: cols || 80,
@@ -171,7 +169,6 @@ app.ws('/editor', editor.editor);
 app.use(errorHandler);
 
 serverInitialization(app);
-
 
 function errorHandler(err, req, res, next) {
   winston.error(err);
@@ -250,6 +247,14 @@ function mount_dav(server) {
 
 process.on('SIGINT', function() {
   winston.info("\nShutting down from  SIGINT");
+  console.log(terminals);
+
+  Object.keys(terminals).forEach(function (pid) {
+      var term = terminals[pid];
+      console.log('Closed terminal ' + term.pid);
+      term.kill();
+  });
+
   // some other closing procedures go here
   debug_helper.kill_debug(false, function() {
     //no need to wait for this
