@@ -2,6 +2,7 @@ var spawn = require('child_process').spawn,
     exec = require('child_process').exec,
     net = require('net'),
     path = require('path'),
+    ws_helper = require('../websocket_helper'),
     debug_program, debug_client,
     client_connected = false,
     HOST = '127.0.0.1',
@@ -45,7 +46,7 @@ exports.start_debug = function start_debug(file, socket) {
 
     debug_program.stderr.on('data', function(data) {
       console.log(data.toString());
-      socket.emit('debug-error', {file: file, error: data});
+      ws_helper.send_message(socket, 'debug-error', {file: file, error: data});
     });
 
     debug_program.on('error', function(data) {
@@ -82,6 +83,7 @@ function connect_client(file, socket) {
     debug_client = new net.Socket();
     debug_client.connect(PORT, HOST, function() {
       socket.emit('debug-client-connected');
+      ws_helper.send_message(socket, 'debug-client-connected', "");
       client_connected = true;
       console.log('connected to python debugger: ' + HOST + ':' + PORT);
       console.log(file_path);
@@ -95,7 +97,7 @@ function connect_client(file, socket) {
         var temp_buff = buffer.split('\n');
         for (var i=0; i<temp_buff.length-1; i++) {
           console.log(JSON.parse(temp_buff[i]));
-          socket.emit('debug-file-response', JSON.parse(temp_buff[i]));
+          ws_helper.send_message(socket, 'debug-file-response', JSON.parse(temp_buff[i]));
         }
 
         buffer = temp_buff.slice(temp_buff.length);

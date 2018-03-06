@@ -232,6 +232,7 @@
 
   occEditor.init_events = function(editor) {
     var reconnect_attempts = 0;
+    var markerId;
 
     $(window).bind("beforeunload",function(event) {
       return "Please confirm that you would like to leave the editor.";
@@ -421,7 +422,7 @@
           move_file_callback(data);
           break;
         case 'debug-file-response':
-          move_file_callback(data);
+          debug_file_response(data);
           break;
       }
 
@@ -1089,7 +1090,6 @@
     event.preventDefault();
 
     var file = $('.file-open').data('file');
-    var markerId;
 
     function is_link_active($link) {
       return !$link.hasClass('debug-link-disabled');
@@ -1517,9 +1517,10 @@
       $('#editor-output').css('height', '325px');
       $('.dragbar').show();
       $('#editor').css('bottom', '328px');
-      term.element.style.padding = 7;
       editor.resize();
-      window.term.fit();
+      if (window.term) {
+        window.term.fit();
+      }
     }
   };
 
