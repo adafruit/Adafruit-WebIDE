@@ -58,7 +58,7 @@ mkdir -p "$WEBIDE_HOME/tmp"
 cd "$WEBIDE_ROOT"
 
 echo "**** Downloading the latest version of the WebIDE ****"
-curl -L https://github.com/adafruit/Adafruit-WebIDE/archive/0.4.tar.gz | tar xzf - --strip-components=1
+curl -L https://github.com/adafruit/Adafruit-WebIDE/archive/0.5.tar.gz | tar xzf - --strip-components=1
 
 echo "**** Installing required libraries ****"
 echo "**** (nodejs-legacy npm git libcap2-bin i2c-tools python-smbus ntp libkrb5-dev) ****"
@@ -109,7 +109,7 @@ sleep 20s
 
 echo "**** The Adafruit WebIDE is installed and running! ****"
 echo "**** Commands: sudo service adafruit-webide.sh {start,stop,restart} ****"
-echo "**** Navigate to http://$(hostname).local$PORT_USED to use the WebIDE"
+echo "**** Navigate to http://$(hostname).local:8080 to use the WebIDE"
 #echo "**** To run the editor: ****"
 #echo "**** cd ~/Adafruit/WebIDE ****"
 #echo "**** node webide ****"
