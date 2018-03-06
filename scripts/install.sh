@@ -61,7 +61,7 @@ echo "**** Downloading the latest version of the WebIDE ****"
 curl -L https://github.com/adafruit/Adafruit-WebIDE/archive/0.4.tar.gz | tar xzf - --strip-components=1
 
 echo "**** Installing required libraries ****"
-echo "**** (redis-server git restartd libcap2-bin avahi-daemon i2c-tools python-smbus) ****"
+echo "**** (nodejs-legacy npm git libcap2-bin i2c-tools python-smbus ntp libkrb5-dev) ****"
 apt-get update
 apt-get install nodejs-legacy npm git libcap2-bin i2c-tools python-smbus ntp libkrb5-dev -y
 
@@ -83,14 +83,13 @@ if [ "$?" -eq "0" ]; then
 fi
 rm /etc/sudoers.tmp
 
-echo "**** Installing webide dependencies ****"
-npm install -g npm
-npm config set tmp "$WEBIDE_HOME/tmp"
-npm install
-
 chown -R webide:webide "$WEBIDE_HOME"
 chown -R webide:webide "$WEBIDE_ROOT"
 chmod 775 "$WEBIDE_ROOT"
+
+echo "**** Installing webide dependencies ****"
+sudo -u webide npm config set tmp "$WEBIDE_HOME/tmp"
+sudo -u webide npm install
 
 echo "**** Adding default .bashrc file for webide user ****"
 cp "$WEBIDE_ROOT/scripts/.bashrc" "$WEBIDE_HOME"
