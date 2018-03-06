@@ -84,6 +84,7 @@ fi
 rm /etc/sudoers.tmp
 
 echo "**** Installing webide dependencies ****"
+npm install -g npm
 npm config set tmp "$WEBIDE_HOME/tmp"
 npm install
 
@@ -93,10 +94,6 @@ chmod 775 "$WEBIDE_ROOT"
 
 echo "**** Adding default .bashrc file for webide user ****"
 cp "$WEBIDE_ROOT/scripts/.bashrc" "$WEBIDE_HOME"
-
-echo "**** Installing webide dependencies ****"
-npm install -g npm
-npm install
 
 echo "Attempting to force reload date and time from ntp server"
 /etc/init.d/ntp force-reload
