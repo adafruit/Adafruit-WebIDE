@@ -87,7 +87,8 @@ exports.editor = function(ws, req) {
         });
         break;
       case 'editor-check-updates':
-        updater.check_for_updates(ws);
+        // TODO: Explore adding auto-updater again
+        // updater.check_for_updates(ws);
         break;
       case 'editor-update':
         updater.update(ws);

@@ -4,8 +4,8 @@
 //Change github in /config.
 exports.editor = {
   "port": 3000,
-  "version": "0.5.0",
-  "version_url": "https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/beta/release/version.txt"
+  "version": "0.6.0",
+  "version_url": "https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/rework/release/version.txt"
 };
 
 exports.adafruit = {

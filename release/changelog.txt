@@ -1,3 +1,6 @@
+-0.6.0
+Initial pre-release of the simplified webide
+
 -0.3.12
 Add missing cookie package
 
