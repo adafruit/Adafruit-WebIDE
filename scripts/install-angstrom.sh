@@ -73,7 +73,7 @@ curl -L https://adafruit-download.s3.amazonaws.com/webide-0.3.12.tar.gz | tar xz
 echo "**** Installing required libraries ****"
 echo "**** (redis-server git avahi-daemon i2c-tools python-smbus openssh-keygen) ****"
 opkg update
-opkg install nodejs git avahi-daemon i2c-tools python-smbus libcap2 libcap-bin openssh-keygen
+opkg install nodejs git avahi-daemon i2c-tools python-smbus openssh-keygen
 
 if ! redis-cli PING
 then

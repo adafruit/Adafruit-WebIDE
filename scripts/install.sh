@@ -61,9 +61,9 @@ echo "**** Downloading the latest version of the WebIDE ****"
 curl -L https://github.com/adafruit/Adafruit-WebIDE/archive/0.7.0.tar.gz | tar xzf - --strip-components=1
 
 echo "**** Installing required libraries ****"
-echo "**** (nodejs-legacy npm git libcap2-bin i2c-tools python-smbus ntp libkrb5-dev) ****"
+echo "**** (nodejs-legacy npm git i2c-tools python-smbus ntp libkrb5-dev) ****"
 apt-get update
-apt-get install nodejs-legacy npm git libcap2-bin i2c-tools python-smbus ntp libkrb5-dev -y
+apt-get install nodejs-legacy npm git i2c-tools python-smbus ntp libkrb5-dev -y
 
 echo "**** Create webide user and group ****"
 groupadd webide || true
