@@ -3,7 +3,7 @@
 # curl https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/alpha/scripts/uninstall.sh | sudo sh
 
 
-WEBIDE_ROOT="/usr/share/adafruit"
+WEBIDE_ROOT="/usr/share/adafruit/webide"
 WEBIDE_HOME="/home/webide"
 NODE_PATH=""
 
@@ -31,11 +31,13 @@ systemctl daemon-reload
 systemctl reset-failed
 
 echo "**** Removing the WebIDE Folder ****"
-rm -rf "$WEBIDE_ROOT"
+shopt -s extglob
+rm -rf "$WEBIDE_ROOT"/!(repositories)
 echo "**** Removing webide user ****"
 userdel -r webide
 
 echo "**** The Adafruit WebIDE is now uninstalled! ****"
+echo "**** Your code and repositories remain at $WEBIDE_ROOT ****"
 echo "**** During the installation process, there were a few ****"
 echo "**** libraries installed that we did not uninstall as ****"
 echo "**** we're not able to determine if other applications are dependent ****"
