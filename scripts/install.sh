@@ -58,7 +58,7 @@ mkdir -p "$WEBIDE_HOME/tmp"
 cd "$WEBIDE_ROOT"
 
 echo "**** Downloading the latest version of the WebIDE ****"
-curl -L https://github.com/adafruit/Adafruit-WebIDE/archive/0.6.tar.gz | tar xzf - --strip-components=1
+curl -L https://github.com/adafruit/Adafruit-WebIDE/archive/0.6.0.tar.gz | tar xzf - --strip-components=1
 
 echo "**** Installing required libraries ****"
 echo "**** (nodejs-legacy npm git libcap2-bin i2c-tools python-smbus ntp libkrb5-dev) ****"
