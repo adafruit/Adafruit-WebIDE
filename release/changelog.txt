@@ -1,3 +1,10 @@
+-0.7.0
+Update pug dependency
+Updates to installer and uninstaller
+
+-0.6.0
+Initial pre-release of the simplified webide
+
 -0.3.12
 Add missing cookie package
 

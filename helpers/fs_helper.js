@@ -1,16 +1,14 @@
 var path = require('path'),
     fs = require('fs'),
-    util = require('util'),
-    config = require('../config/config');
+    config = require('../config/config'),
+    winston = require('winston'),
     exec = require('child_process').exec;
 
-    fs.exists || (fs.exists = path.exists);
-
 /*
- * Checks to see if a bitbucket ssh key exists already.
+ * Checks to see if an ssh key exists already.
  */
-exports.has_ssh_key = function has_ssh_key(cb) {
-  fs.exists(process.env['HOME'] + '/.ssh/id_rsa_bitbucket.pub', function(exists) {
+exports.has_ssh_key = function has_ssh_key(key_name, cb) {
+  fs.exists(path.resolve(process.env['HOME'], '/.ssh/', key_name), function(exists) {
     if (exists) {
       cb(true);
     } else {
@@ -20,15 +18,15 @@ exports.has_ssh_key = function has_ssh_key(cb) {
 };
 
 /*
- * Generates an ssh key for Bitbucket
+ * Generates an ssh key
  */
-exports.generate_ssh_key = function(cb) {
+exports.generate_ssh_key = function(key_name, cb) {
   var self = this;
-  self.has_ssh_key(function(exists) {
+  self.has_ssh_key(key_name, function(exists) {
     if (exists) {
       cb();
     } else {
-      exec("ssh-keygen -b 2048 -N '' -f ~/.ssh/id_rsa_bitbucket -t rsa -q", function(err, stdout, stderr) {
+      exec("ssh-keygen -b 2048 -N '' -f ~/.ssh/" + key_name + "-t rsa -q", function(err, stdout, stderr) {
         //console.log(err, stdout, stderr);
         self.append_to_ssh_config(function() {
           cb();
@@ -38,46 +36,17 @@ exports.generate_ssh_key = function(cb) {
   });
 };
 
-/*
- * Append bitbucket.org to the ssh config file to disable StrictHostKeyChecking.
- * This isn't great, but we need a way for beginners to get past the known_host checks.
- */
-exports.append_to_ssh_config = function append_to_ssh_config(cb) {
-  var ssh_config_file = process.env['HOME'] + '/.ssh/config';
-  var identity_info = "Host bitbucket.org \r\n\tHostName bitbucket.org\r\n\tStrictHostKeyChecking no\r\n\tPreferredAuthentications publickey\r\n\tIdentityFile ~/.ssh/id_rsa_bitbucket";
 
-  fs.exists(ssh_config_file, function(exists) {
-    if (exists) {
-      //file exists, let's check if it has the bitbucket host in it, otherwise add it
-      fs.readFile(ssh_config_file, 'ascii', function(err, data) {
-        if (data.indexOf('bitbucket.org') !== -1) {
-          cb();
-        } else {
-          var file = fs.createWriteStream(ssh_config_file, {'flags': 'a'});
-          file.write(identity_info, function() {
-            cb();
-          });
-        }
-      });
-    } else {
-      fs.writeFile(ssh_config_file, identity_info, function(err) {
-        if(err) console.log(err);
-        cb();
-      });
-    }
-  });
-};
-
-exports.read_or_generate_key = function(cb) {
+exports.read_or_generate_key = function(key_name, cb) {
   var self = this;
-  self.has_ssh_key(function(has_key) {
+  self.has_ssh_key(key_name, function(has_key) {
     if (has_key) {
-      fs.readFile(process.env['HOME'] + '/.ssh/id_rsa_bitbucket.pub', 'ascii', function(err,data){
+      fs.readFile(process.env['HOME'] + '/.ssh/' + key_name, 'ascii', function(err,data){
         cb(data);
       });
     } else {
-      self.generate_ssh_key(function() {
-        fs.readFile(process.env['HOME'] + '/.ssh/id_rsa_bitbucket.pub', 'ascii', function(err,data){
+      self.generate_ssh_key(key_name, function() {
+        fs.readFile(process.env['HOME'] + '/.ssh/' + key_name, 'ascii', function(err,data){
           cb(data);
         });
       });
@@ -111,9 +80,11 @@ exports.move_uploaded_file = function(temp_path, new_path, cb) {
   var is = fs.createReadStream(temp_path);
   var os = fs.createWriteStream(new_path);
 
-  util.pump(is, os, function() {
-      fs.unlinkSync(temp_path);
-      cb();
+  is.pipe(os);
+
+  is.on("close", function() {
+    fs.unlinkSync(temp_path);
+    cb();
   });
 };
 
@@ -145,9 +116,11 @@ exports.create_project_readme = function(cb) {
 
     var is = fs.createReadStream(source);
     var os = fs.createWriteStream(destination);
-    util.pump(is, os, function(err) {
-      console.log(err);
-      cb(err, file);
+
+    is.pipe(os);
+
+    is.on("close", function() {
+      cb(null, file);
     });
 
   });
@@ -166,9 +139,11 @@ exports.create_project_gitignore = function(cb) {
 
     var is = fs.createReadStream(source);
     var os = fs.createWriteStream(destination);
-    util.pump(is, os, function(err) {
-      console.log(err);
-      cb(err, file);
+    is.pipe(os);
+
+    is.on("close", function() {
+      winston.debug("IN OS END");
+      cb(null, file);
     });
 
   });

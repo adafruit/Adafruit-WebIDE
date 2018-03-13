@@ -1,0 +1,24 @@
+extends ../layout
+
+block content
+  #setup-wrapper
+    #setup-content
+      h3 Welcome to the Adafruit webIDE powered by the Adafruit Learning System
+      if (typeof(session.message) != 'undefined')
+        div.alert.alert-error
+          p #{session.message}
+      p Setting up your Raspberry Pi or Beaglebone will only take a few minutes.  Let's get started.
+      p Are you setting up more than one Raspberry Pi or Beaglebone?  Visit the config to 
+        a(href="/config") change hostname and WiFi.
+      form(method="post", action="/setup", class="form-horizontal")
+        p Add your Name and Email for git config
+        div.control-group
+          label(for="name", class="control-label") Full Name:
+          div.controls
+            input(type="text", name="name", value=name)
+        div.control-group
+          label(for="email", class="control-label") Email:
+          div.controls
+            input(type="text", name="email", value=email)
+        p
+          input(type="submit", class="btn btn-primary btn-large", name="Submit")

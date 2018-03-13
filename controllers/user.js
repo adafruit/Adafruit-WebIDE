@@ -1,68 +1,44 @@
-var redis = require("redis"),
-    client = redis.createClient(),
+var path = require('path'),
+    db = require('../models/webideModel'),
     scripts_helper = require('../helpers/scripts_helper'),
     config = require('../config/config'),
-    check = require('validator').check,
-    sanitize = require('validator').sanitize;
+    sanitize = require('validator');
 
-exports.login = function(req, res){
-  res.render('users/login', { title: 'test', user: req.user, github: config.editor.github });
-};
-
-exports.logout = function(req, res){
-  req.logout();
-  res.redirect('/');
-};
-
-// Instructional page that displays the bitbucket setup steps,
-// and inputs for OAuth and Git config
+// Instructional page that displays the setup steps
 exports.setup = function(req, res) {
   var locals = {
-    consumer_key: "",
-    consumer_secret: "",
     name: "",
     email: "",
-    hostname: "",
-    github: config.editor.github
+    hostname: ""
   };
 
   res.render('users/setup', locals);
 };
 
-// Saves the bitbucket and git config setup information in Redis,
+// Saves the git config setup information in nedb,
 // submitted as a post from /setup
 exports.submit_setup = function(req, res) {
-  var key, secret, name, email, message;
+  var name, email, message;
   req.session.message = undefined;
 
   function common_setup(name, email) {
-    client.hmset("user", "name", name, "email", email, function() {
+    db.update({"type": "user"}, {"type": "user", "name": name, "email": email}, { upsert: true }, function() {
       req.session.message = "Settings Successfully Configured.";
-      res.redirect('/login');
+      res.redirect('/editor');
     });
   }
 
   try {
-    key = sanitize(req.body.key).xss().trim();
-    secret = sanitize(req.body.secret).xss().trim();
-    name = sanitize(req.body.name).xss().trim();
-    email = sanitize(req.body.email).xss().trim();
-    check(email).isEmail();
+    name = sanitize.trim(req.body.name);
+    email = sanitize.trim(req.body.email);
+    sanitize.isEmail(email);
   } catch (e) {
     req.session.message = e.message;
     console.log(e.message);
   }
 
-  if (key && secret && name && email) {
-    if (config.editor.github) {
-      client.hmset("github_oauth", "consumer_key", key, "consumer_secret", secret, function() {
-        common_setup(name, email);
-      });
-    } else {
-      client.hmset("bitbucket_oauth", "consumer_key", key, "consumer_secret", secret, function() {
-        common_setup(name, email);
-      });
-    }
+  if (name && email) {
+    common_setup(name, email);
   } else {
     if (!req.session.message) {
       req.session.message = "Please set all fields, at the bottom of this page, in order to continue.";
@@ -73,31 +49,31 @@ exports.submit_setup = function(req, res) {
 
 
 exports.config = function(req, res) {
-  client.hgetall('server', function (err, server) {
+  db.findOne({type: "server"}, function (err, server) {
       var locals = {
         hostname: "",
         wifi_ssid: "",
         wifi_password: "",
         port: (server ? (server.port || "") : "")
       };
-      
+
       res.render('users/config', locals);
   });
 };
 
-// Saves the bitbucket and git config setup information in Redis,
+// Saves the git config setup information in nedb,
 // submitted as a post from /setup
 
 //TODO: Refactor this...it's out of control!
 exports.submit_config = function(req, res) {
-  var key, secret, name, email, message;
+  var name, email, message;
   req.session.message = undefined;
 
   try {
-    hostname = sanitize(req.body.hostname).xss().trim();
-    wifi_ssid = sanitize(req.body.wifi_ssid).xss().trim();
-    wifi_password = sanitize(req.body.wifi_password).xss().trim();
-    port = sanitize(req.body.port).xss().trim();
+    hostname = sanitize.trim(req.body.hostname);
+    wifi_ssid = sanitize.trim(req.body.wifi_ssid);
+    wifi_password = sanitize.trim(req.body.wifi_password);
+    port = sanitize.trim(req.body.port);
     if (hostname) {
       check(hostname).len(3, 25);
     }
@@ -119,7 +95,8 @@ exports.submit_config = function(req, res) {
       });
     }
     if (port) {
-      client.hmset("server", "port", port, function() {
+      db.update({type: "server"}, { $set: {"port": port}}, {}, function() {
+
       });
     }
 

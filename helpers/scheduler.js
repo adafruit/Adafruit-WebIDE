@@ -1,13 +1,12 @@
-var exec = require('child_process').exec,
-  fs = require ('fs'),
-  path = require('path'),
-  winston = require('winston'),
-  exec_helper = require('./exec_helper'),
-  redis = require('redis'),
-  client = redis.createClient(),
-  later = require('later').later;
-  enParser = require('later').enParser,
-  job_queue = [];
+var path = require('path'),
+    db = require('../models/jobModel'),
+    exec = require('child_process').exec,
+    fs = require ('fs'),
+    winston = require('winston'),
+    exec_helper = require('./exec_helper'),
+    ws_helper = require('./websocket_helper'),
+    later = require('later'),
+    job_queue = [];
 
   fs.exists || (fs.exists = path.exists);
 
@@ -20,96 +19,88 @@ function execute_job(file) {
       console.log("execute_job");
       console.log(file.key);
 
-      client.hmset(file.key, "last_run", new Date(), function() {
-        //repopulate the job list in the editor
+      file.last_run = new Date();
+      db.update({key: file.key}, file, {upsert: true}, function(err) {
+
       });
     } else {
       winston.info('scheduled job no longer exists, deleting from queue: ' + file_path);
-      client.del(file.key);
-      client.srem("jobs", file.key);
+      //TODO redis to nedb
+      db.remove({key: file.key});
     }
   });
 
 }
 
 function schedule_job(key, job) {
-      var is_new_job = true,
-          l = later(60),
-          schedule = enParser().parse(job.text);
+  if (!key) {
+    return;
+  }
 
-      l.exec(schedule, new Date(), execute_job, job);
-      console.log("Job Scheduled: ", schedule);
+  var is_new_job = true,
+      schedule = later.parse.text(job.text);
 
-      var len = job_queue.length;
-      for (var i=0; i<len; i++) {
-        if (job_queue[i].key === key) {
-          //job already exists, but has been modified, let's stop the existing one
-          job_queue[i].later.stopExec();
+  later.date.localTime();
+  var job_timer = later.setInterval(execute_job.bind(null, job), schedule);
+  console.log("Job Scheduled: ", schedule);
 
-          //replace it in the queue
-          job_queue[i] = {key: key, later: l};
+  var len = job_queue.length;
+  for (var i=0; i<len; i++) {
+    if (job_queue[i].key === key) {
+      //job already exists, but has been modified, let's stop the existing one
+      job_queue[i].job_timer.clear();
 
-          is_new_job = false;
-          break;
-        }
-      }
+      //replace it in the queue
+      job_queue[i] = {key: key, job_timer: job_timer};
 
-      if (is_new_job) {
-        job_queue.push({key: key, later: l});
-      }
+      is_new_job = false;
+      break;
+    }
+  }
 
-      //console.log(job_queue);
+  if (is_new_job) {
+    job_queue.push({key: key, job_timer: job_timer});
+  }
+
+  //console.log(job_queue);
 }
 
 
-exports.emit_scheduled_jobs = function emit_scheduled_jobs(username, socket) {
-  var job_list = [];
-  client.smembers("jobs", function(err, res) {
-    res.forEach(function(key, i) {
-      client.hgetall(key, function(err, job_data) {
-        if (job_data.username === username) {
-          job_list.push(job_data);
-        }
-
-        if (res.length === (i+1)) {
-          socket.emit('scheduled-job-list', job_list);
-        }
-      });
-    });
+exports.emit_scheduled_jobs = function emit_scheduled_jobs(socket) {
+  winston.debug("emit_scheduled_jobs");
+  db.find({type: "job"}, function(err, data) {
+    ws_helper.send_message(socket, 'scheduled-job-list', data);
   });
 };
 
 /*
  * Create new schedule
  */
-exports.add_schedule = function(schedule, socket, session) {
+exports.add_schedule = function(schedule, socket) {
   var self = this;
-  schedule.file.username = session.username;
   var file_path = schedule.file.path.replace('\/filesystem\/', '\/repositories\/');
   var key = "jobs:" + file_path.replace(/\W/g, '');  //keep only alphanumeric for key
   var job_data = {
+      type: "job",
       text: schedule.text,
       name: schedule.file.name,
       key: key,
       last_run: "",
       active: "1",
       path: file_path,
-      extension: schedule.file.extension,
-      username: schedule.file.username
+      extension: schedule.file.extension
   };
   console.log("add_schedule");
   console.log(job_data);
 
-  client.sadd("jobs", key, function() {
-    client.hmset(key, job_data, function() {
-      schedule_job(key, job_data);
-      //repopulate the job list in the editor
-      self.emit_scheduled_jobs(session.username, socket);
-    });
+  db.update({key: key}, job_data, {upsert: true}, function(err, numReplaced, upsert) {
+    schedule_job(key, job_data);
+    //repopulate the job list in the editor
+    self.emit_scheduled_jobs(socket);
   });
 };
 
-exports.delete_job = function(key, socket, session) {
+exports.delete_job = function(key, socket) {
   var self = this;
   var len = job_queue.length;
   for (var i=0; i<len; i++) {
@@ -119,24 +110,21 @@ exports.delete_job = function(key, socket, session) {
       //remove from array
       job_queue.splice(i, 1);
       //remove from redis
-      client.del(key);
-      client.srem("jobs", key);
+      db.remove({key: key});
       //emit change to front-end
-      self.emit_scheduled_jobs(session.username, socket);
+      self.emit_scheduled_jobs(socket);
       break;
     }
   }
 };
 
-exports.toggle_job = function(key, socket, session) {
+exports.toggle_job = function(key, socket) {
   var self = this;
   console.log(key);
-  client.hgetall(key, function(err, job) {
-    console.log(job);
-    //toggle status
+  db.findOne({key: key}, function(err, job) {
     job.active = 1-job.active;
 
-    client.hmset(key, "active", job.active, function() {
+    db.update({key: key}, job, function() {
       if (!job.active) {
         //remove job from queue, but not redis
         var len = job_queue.length;
@@ -147,31 +135,24 @@ exports.toggle_job = function(key, socket, session) {
             //remove from array
             job_queue.splice(i, 1);
             //emit change to front-end
-            self.emit_scheduled_jobs(session.username, socket);
+            self.emit_scheduled_jobs(socket);
             break;
           }
         }
       } else {
         schedule_job(key, job);
         //repopulate the job list in the editor
-        self.emit_scheduled_jobs(session.username, socket);
+        self.emit_scheduled_jobs(socket);
       }
-
-
     });
   });
-
 };
 
 /*
  * Jobs initialized at server startup
  */
 exports.initialize_jobs = function() {
-  client.smembers("jobs", function(err, res) {
-    res.forEach(function(key) {
-      client.hgetall(key, function(err, job_data) {
-        schedule_job(key, job_data);
-      });
-    });
+  db.find({type: "job"}, function(err, data) {
+    schedule_job(data.key, data);
   });
 };

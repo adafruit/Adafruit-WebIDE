@@ -2,7 +2,7 @@
 
 node_modules
 repositories
-users.db
+database/webide_data_store
 
 /editor.tar.gz
 __MACOSX

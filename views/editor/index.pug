@@ -1,0 +1,149 @@
+extends ../layout
+
+block content
+  #editor-startup
+    p Initializing Editor...
+  #editor-container
+    #navigator
+      if profile
+        input(type="hidden", name="username", value="#{profile.username}")
+
+      #navigator-top
+        p
+      #navigator-folder
+        p
+      ul.filesystem
+      #navigator-bottom
+        p.navigator-item-create
+          a + Clone Repository
+    #trace-wrapper
+      #trace-bar
+      #trace-loader
+        div
+      #trace-container
+    #editor-wrapper
+      #editor-bar
+      #schedule-manager
+      #settings-manager
+        form(method="post", action="/editor/settings")
+          .settings-element
+            span Select Font Size (px):
+            span.font-size-value._10px 10
+            span.font-size-value._12px 12
+            span.font-size-value._14px 14
+            span.font-size-value._16px 16
+            span.font-size-value._20px 20
+          .settings-element
+            span Use Soft Tabs:
+            span.soft-tab-value.on On
+            span.soft-tab-value.off Off
+          .settings-element
+            span Tab Size:
+            span.tab-size-value._2-value 2
+            span.tab-size-value._4-value 4
+            span.tab-size-value._6-value 6
+            span.tab-size-value._8-value 8
+          .settings-element
+            span Show Invisibles:
+            span.invisibles-value.on On
+            span.invisibles-value.off Off
+          .settings-element
+            span Manual Git commit and push (advanced)
+            span.manual-git-value.on On
+            span.manual-git-value.off Off
+          .settings-element
+            span Python Version:
+            span.python-version._2 2
+            span.python-version._3 3
+      #editor
+      #editor-output-wrapper
+        .dragbar
+        #editor-output
+          .outputTitleBar
+            .left-title
+            .right-title
+          #pre-wrapper
+            pre
+          #variables-wrapper
+            pre
+    .navbar.navbar-fixed-bottom.navbar-inverse
+      .navbar-inner
+        div.editor-version Adafruit WebIDE v#{version} /
+          a(href="https://github.com/adafruit/Adafruit-WebIDE/issues", class="", target="_blank") Report Bug
+        div.schedule-footer
+          span.schedule-status Scheduler Active
+          a(href="", class="schedule-manager-link") Schedule Manager
+    #confirm-modal(class="modal hide")
+      .modal-body
+        p You have unsaved files in this project.  Would you like to save them?
+      .modal-footer
+        button.btn.btn-primary.modal-yes Save Files
+        button.btn.btn-danger.modal-no Don't Save
+        button.btn.modal-cancel Cancel
+    #manual-git-modal(class="modal hide fade")
+      .modal-header
+        button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+        h3#create-modal-label Git Commit and Push
+      .modal-body
+        p Add a comment to your edited filed, and click Commit and Push.
+        div.scheduler-form
+          form
+            input(type="text", name="comment", value="")
+      .modal-footer
+        button.btn(data-dismiss="modal", aria-hidden="true") Close
+        button.btn.btn-primary.modal-submit Commit and Push
+    #create-modal(class="modal hide fade")
+      .modal-header
+        button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+        h3#create-modal-label
+      .modal-body
+        p
+      .modal-footer
+        button.btn(data-dismiss="modal", aria-hidden="true") Close
+        button.btn.btn-primary.modal-submit Save
+    #schedule-modal(class="modal hide fade")
+      .modal-header
+        button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+        h3#create-modal-label Job Scheduler
+      .modal-body
+        p Schedule your script to run at specific time periods.  There are many combinations you can use to schedule.
+          | For example, by typing "every 5 minutes" into the input, your script will run every 5 minutes until you tell
+          | it to stop.
+        p You can click a few of the pre-set combinations we've provided to give you an idea of the flexibility
+          | of the parser.
+        div.scheduler-error
+        div.scheduler-form
+          form(method="post", action="/editor/schedule")
+            label(for="schedule") Type in your schedule, or click a preset link listed below
+            input(type="text", name="schedule", value="")
+        div.scheduler-links
+          a(href="", class="btn btn-small") every 5 minutes
+          a(href="", class="btn btn-small") every 15 minutes
+          a(href="", class="btn btn-small") after 1 hour
+          a(href="", class="btn btn-small") every 5 hours on the first min
+          a(href="", class="btn btn-small") every weekday
+          a(href="", class="btn btn-small") every 2 weeks of the year
+          a(href="", class="btn btn-small") on tuesday at 11:00 am
+          a(href="", class="btn btn-small") on the 1st day of the month
+          a(href="", class="btn btn-small") on the 15,18,20 minute
+      .modal-footer
+        button.btn(data-dismiss="modal", aria-hidden="true") Close
+        button.btn.btn-primary.modal-submit Submit
+  script(src="/javascripts/ace/ace.js")
+  script(src="/javascripts/trace/d3.v2.min.js")
+  script(src="/javascripts/trace/jquery.ba-bbq.min.js")
+  script(src="/javascripts/trace/jquery.jsPlumb-1.3.10-all-min.js")
+  script(src="/javascripts/trace/pytutor.js")
+  script(src="/javascripts/fileupload/js/vendor/jquery.ui.widget.js")
+  script(src="/javascripts/fileupload/js/jquery.fileupload.js")
+  script(src="/javascripts/fileupload/js/jquery.fileupload-ui.js")
+  script(src="/javascripts/davFS.js")
+  script(src="/xterm.js")
+  script(src="/addons/fit/fit.js")
+  script(src="/addons/attach/attach.js")
+  script(src="/javascripts/later/later-recur.min.js")
+  script(src="/javascripts/later/later.min.js")
+  script(src="/javascripts/jquery.colorbox-min.js")
+  script(src="/javascripts/context_menu.js")
+  script(src="/javascripts/webide_utils.js")
+  script(src="/javascripts/editor.js")

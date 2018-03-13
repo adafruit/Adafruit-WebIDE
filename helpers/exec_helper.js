@@ -1,4 +1,5 @@
 var spawn = require('child_process').spawn,
+    ws_helper = require('./websocket_helper'),
     //pty = require('pty.js'),
     path = require('path'),
     ipython, spawn_list = [];
@@ -8,7 +9,7 @@ var spawn = require('child_process').spawn,
 };*/
 
 exports.execute_program = function(file, is_job) {
-  
+
   console.log(file);
   if (file.extension === 'py') {
     execute_program(file, "python", is_job);
@@ -31,7 +32,7 @@ exports.stop_program = function(file, is_job) {
 
 exports.trace_program = function(file, socket) {
   var file_path = path.resolve(__dirname + "/../repositories/" + file.path.replace('/filesystem/', ''));
-  console.log(file_path);  
+  console.log(file_path);
   if (file.extension === 'py') {
     execute_python_trace(file_path, socket);
   } else if (file.extension === 'rb') {
@@ -54,12 +55,12 @@ function execute_python_trace(file_path, socket) {
   });
 
   prog.stderr.on('data', function(data) {
-    socket.emit('trace-program-stderr', {output: data.toString()});
+    ws_helper.send_message(socket, 'trace-program-stderr', {output: data.toString()});
     console.log(data.toString());
   });
 
   prog.on('exit', function(code) {
-    socket.emit('trace-program-exit', {output: program_output});
+    ws_helper.send_message(socket, 'trace-program-exit', {output: program_output});
   });
 }
 
@@ -68,16 +69,16 @@ function execute_python_trace(file_path, socket) {
   ipython.removeAllListeners('data');
   require('../server').get_socket(file.username, function(socket) {
     if (is_job) {
-      socket.emit('scheduler-start', {file: file});
+      ws_helper.send_message(socket, 'scheduler-start', {file: file});
     }
     ipython.on('data', function(data) {
       console.log(data);
       //data = data.replace(/\[0;.*?In\s\[.*?\[0m/, '~-prompt-~');
       //data = data.replace(/In\s\[.*?\]:/, '~-prompt-~');
       if (is_job) {
-        socket.emit('scheduler-executing', {file: file});
+        ws_helper.send_message(socket, 'scheduler-executing', {file: file});
       } else {
-        socket.emit('program-stdout', {output: data});
+        ws_helper.send_message(socket, 'program-stdout', {output: data});
       }
     });
   });
@@ -104,41 +105,39 @@ function execute_program(file, type, is_job) {
   console.log('execute_program');
   console.log(file_path);
 
-  require('../server').get_socket(file.username, function(socket) {
-    console.log(file);
-    var cwd = get_cwd(file_path);
-    var prog = spawn("sudo", [type, file_path], {cwd: cwd});
-    var key = get_key(file);
-    spawn_list.push({key: key, prog: prog});
-    if (socket) {
-      console.log('found socket, executing');
-      handle_output(prog, file, is_job, socket);
-    }
-  });
+  console.log(file);
+  var cwd = get_cwd(file_path);
+  var prog = spawn("sudo", [type, file_path], {cwd: cwd});
+  var key = get_key(file);
+  spawn_list.push({key: key, prog: prog});
+  if (socket) {
+    console.log('found socket, executing');
+    handle_output(prog, file, is_job, socket);
+  }
 }
 
 function handle_output(prog, file, is_job, socket) {
   if (is_job) {
-    socket.emit('scheduler-start', {file: file});
+    ws_helper.send_message(socket, 'scheduler-start', {file: file});
   }
 
   prog.stdout.on('data', function(data) {
     if (is_job) {
       console.log(data.toString());
-      socket.emit('scheduler-executing', {file: file});
+      ws_helper.send_message(socket, 'scheduler-executing', {file: file});
     } else {
       console.log(data.toString());
-      socket.emit('program-stdout', {output: data.toString()});
+      ws_helper.send_message(socket, 'program-stdout', {output: data.toString()});
     }
   });
 
   prog.stderr.on('data', function(data) {
     if (is_job) {
       console.log(data.toString());
-      socket.emit('scheduler-error', {file: file, error: data});
+      ws_helper.send_message(socket, 'scheduler-error', {file: file, error: data});
     } else {
       console.log(data.toString());
-      socket.emit('program-stderr', {output: data.toString()});
+      ws_helper.send_message(socket, 'program-stderr', {output: data.toString()});
     }
   });
 
@@ -151,9 +150,9 @@ function handle_output(prog, file, is_job, socket) {
     }
 
     if (is_job) {
-      socket.emit('scheduler-exit', {code: code, file: file});
+      ws_helper.send_message(socket, 'scheduler-exit', {code: code, file: file});
     } else {
-      socket.emit('program-exit', {code: code});
+      ws_helper.send_message(socket, 'program-exit', {code: code});
     }
 
   });

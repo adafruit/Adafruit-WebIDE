@@ -1,0 +1,14 @@
+html
+  include header
+  body
+    .navbar.navbar-fixed-top.navbar-inverse
+      .navbar-inner
+        .container-fluid
+          a.brand(href="/")
+            img(src="/images/WebIDE_Logo_Beta@2x.png", style="height:30px;")
+          p.update-wrapper
+          div.connection-state
+
+    #container
+      block content
+    script(src='/javascripts/bootstrap.min.js')

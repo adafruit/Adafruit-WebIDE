@@ -33,7 +33,7 @@ set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Adafruit")
 set(CPACK_DEBIAN_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION}-ubuntu")
 set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
 set(CPACK_DEBIAN_PACKAGE_SECTION "misc")
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "nodejs, nodejs-legacy, redis-server, git, restartd, libcap2-bin, avahi-daemon, i2c-tools, python-smbus")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "nodejs, nodejs-legacy, redis-server, git, avahi-daemon, i2c-tools, python-smbus")
 set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${CMAKE_CURRENT_SOURCE_DIR}/postinst;${CMAKE_CURRENT_SOURCE_DIR}/prerm;${CMAKE_CURRENT_SOURCE_DIR}/postrm;")
 set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "armhf")
 

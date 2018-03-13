@@ -1,7 +1,9 @@
 var spawn = require('child_process').spawn,
     exec = require('child_process').exec,
+    db = require('../../models/webideModel'),
     net = require('net'),
     path = require('path'),
+    ws_helper = require('../websocket_helper'),
     debug_program, debug_client,
     client_connected = false,
     HOST = '127.0.0.1',
@@ -28,39 +30,46 @@ exports.start_debug = function start_debug(file, socket) {
   console.log(!debug_program);
   if (!debug_program) {
     console.log('spawn debugger');
-    debug_program = spawn("sudo", ["python", "debugger.py"], {cwd: __dirname});
-    var buffer = "";
-    debug_program.stdout.on('data', function(data) {
-      console.log(data.toString());
-
-      buffer += data.toString();
-
-      if (buffer.indexOf("DEBUGGER READY") !== -1 && !client_connected) {
-        console.log("DEBUGGER READY");
-        connect_client(file, socket);
-        console.log("after connect_client");
+    db.findOne({type: "editor:settings"}, function(err, settings) {
+      var command = 'python';
+      if (typeof settings !== 'undefined' && settings.python_version === '3') {
+        command = 'python3';
       }
 
-    });
+      debug_program = spawn("sudo", [command, "debugger.py"], {cwd: __dirname});
+      var buffer = "";
+      debug_program.stdout.on('data', function(data) {
+        console.log(data.toString());
 
-    debug_program.stderr.on('data', function(data) {
-      console.log(data.toString());
-      socket.emit('debug-error', {file: file, error: data});
-    });
+        buffer += data.toString();
 
-    debug_program.on('error', function(data) {
-      console.log("DEBUG PROGRAM ERROR:");
-      console.log(data);
-    });
+        if (buffer.indexOf("DEBUGGER READY") !== -1 && !client_connected) {
+          console.log("DEBUGGER READY");
+          connect_client(file, socket);
+          console.log("after connect_client");
+        }
 
-    debug_program.on('exit', function(code) {
-      console.log('Debug Program Exit');
-      console.log(code);
-      debug_program = null;
+      });
 
-      if (enable_debug) {
-        self.start_debug(file, socket);
-      }
+      debug_program.stderr.on('data', function(data) {
+        console.log(data.toString());
+        ws_helper.send_message(socket, 'debug-error', {file: file, error: data});
+      });
+
+      debug_program.on('error', function(data) {
+        console.log("DEBUG PROGRAM ERROR:");
+        console.log(data);
+      });
+
+      debug_program.on('exit', function(code) {
+        console.log('Debug Program Exit');
+        console.log(code);
+        debug_program = null;
+
+        if (enable_debug) {
+          self.start_debug(file, socket);
+        }
+      });
     });
   } else {
     //console.log('resetting debugger');
@@ -82,6 +91,7 @@ function connect_client(file, socket) {
     debug_client = new net.Socket();
     debug_client.connect(PORT, HOST, function() {
       socket.emit('debug-client-connected');
+      ws_helper.send_message(socket, 'debug-client-connected', "");
       client_connected = true;
       console.log('connected to python debugger: ' + HOST + ':' + PORT);
       console.log(file_path);
@@ -95,7 +105,7 @@ function connect_client(file, socket) {
         var temp_buff = buffer.split('\n');
         for (var i=0; i<temp_buff.length-1; i++) {
           console.log(JSON.parse(temp_buff[i]));
-          socket.emit('debug-file-response', JSON.parse(temp_buff[i]));
+          ws_helper.send_message(socket, 'debug-file-response', JSON.parse(temp_buff[i]));
         }
 
         buffer = temp_buff.slice(temp_buff.length);
