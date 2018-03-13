@@ -108,7 +108,7 @@ echo "**** Starting the server...(please wait) ****"
 sleep 20s
 
 echo "**** The Adafruit WebIDE is installed and running! ****"
-echo "**** Commands: sudo service adafruit-webide.sh {start,stop,restart} ****"
+echo "**** Commands: sudo systemctl {start,stop,restart} adafruit-webide ****"
 echo "**** Navigate to http://$(hostname).local:8080 to use the WebIDE"
 #echo "**** To run the editor: ****"
 #echo "**** cd ~/Adafruit/WebIDE ****"

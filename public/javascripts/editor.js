@@ -663,6 +663,7 @@
           if (is_script(file.extension)) {
             $(templates.editor_bar_run_link).appendTo('.editor-bar-actions');
             $(templates.editor_bar_debug_link).appendTo('.editor-bar-actions');
+            
             //$(templates.editor_bar_trace_link).appendTo('.editor-bar-actions');
           }
 
@@ -1243,7 +1244,13 @@
       //var command;
       //Running as sudo is temporary.  It's a necessary evil to access GPIO at this point.
       if (file.extension === 'py') {
-        command = "sudo python ";
+        if (typeof settings !== 'undefined') {
+          if (settings.python_version === '3') {
+            command = "sudo python3 ";
+          } else {
+            command = "sudo python ";
+          }
+        }
       } else if (file.extension === 'rb') {
         command = "sudo ruby ";
       } else if (file.extension === 'js') {
@@ -1767,6 +1774,12 @@
         set_settings({"manual_git": $(this).text().toLowerCase()});
       }
 
+      function set_python_version(event) {
+        $('.python-version').removeClass('selected');
+        $(this).addClass('selected');
+        set_settings({"python_version": $(this).text().replace('_', '')});
+      }
+
       if (typeof settings !== 'undefined') {
         if (settings.font_size) {
           $('.font-size-value._' + settings.font_size + 'px').addClass('selected');
@@ -1793,12 +1806,18 @@
         } else {
           $('.manual-git-value.off').addClass('selected');
         }
+        if (settings.python_version) {
+          $('.python-version._' + settings.python_version).addClass('selected');
+        } else {
+          $('.python-version._2').addClass('selected');
+        }
       } else {
         $('.font-size-value.12px').addClass('selected');
         $('.soft-tab-value.on').addClass('selected');
         $('.tab-size.4').addClass('selected');
         $('.invisibles-value.off').addClass('selected');
         $('.manual-git-value.off').addClass('selected');
+        $('.python-version.python').addClass('selected');
       }
 
       $('#editor').hide();
@@ -1810,6 +1829,7 @@
       $(document).on('click touchstart', '.tab-size-value', set_tab_size);
       $(document).on('click touchstart', '.invisibles-value', set_show_invisibles);
       $(document).on('click touchstart', '.manual-git-value', set_manual_git);
+      $(document).on('click touchstart', '.python-version', set_python_version);
       $(document).on('click touchstart', '.close-settings-manager', close_settings_manager);
     }
 
