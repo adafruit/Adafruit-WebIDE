@@ -11,7 +11,7 @@
     "express-session": "1.12.1",
     "express-ws": "3.0.0",
     "gitty": "^3.6.0",
-    "jsDAV": "0.3.4",
+    "jsDAV": "jwcooper/jsDAV#9b41675",
     "later": "^1.2.0",
     "method-override": "2.3.10",
     "morgan": "1.9.0",
