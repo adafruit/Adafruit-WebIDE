@@ -1,3 +1,7 @@
+-0.8.0
+Add simple python3 support
+Fix debug populating variables
+
 -0.7.0
 Update pug dependency
 Updates to installer and uninstaller
