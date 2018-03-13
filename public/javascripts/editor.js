@@ -337,6 +337,17 @@
     }
 
     function debug_file_response(data) {
+      function populate_variables(data) {
+        $('#variables-wrapper pre').text("");
+        for (var i=0; i<data.length; i++) {
+          if (data[i].name && data[i].content && data[i].type) {
+            var content = data[i].name + ": " + data[i].content + '\n';
+            $('#variables-wrapper pre').append(document.createTextNode(content));
+          }
+
+        }
+      }
+
       occEditor.debug_toggle_buttons(true);
       occEditor.debug_message('Ready');
       //console.log(data);
@@ -663,7 +674,7 @@
           if (is_script(file.extension)) {
             $(templates.editor_bar_run_link).appendTo('.editor-bar-actions');
             $(templates.editor_bar_debug_link).appendTo('.editor-bar-actions');
-            
+
             //$(templates.editor_bar_trace_link).appendTo('.editor-bar-actions');
           }
 
@@ -1096,19 +1107,6 @@
       return !$link.hasClass('debug-link-disabled');
     }
 
-    function populate_variables(data) {
-      $('#variables-wrapper pre').text("");
-      for (var i=0; i<data.length; i++) {
-        if (data[i].name && data[i].content && data[i].type) {
-          var content = data[i].name + ": " + data[i].content + '\n';
-          $('#variables-wrapper pre').append(document.createTextNode(content));
-        }
-
-      }
-    }
-
-
-
     function get_breakpoints() {
       var editor_breakpoints = editor.getSession().getBreakpoints();
       var breakpoints = "";
@@ -1198,7 +1196,6 @@
     occEditor.populate_editor(file);
 
     //clean up listeners
-    socket.removeAllListeners('debug-file-response');
     $(document).off('click touchstart', '.debug-step-over');
     $(document).off('click touchstart', '.debug-step-in');
     $(document).off('click touchstart', '.debug-run');
