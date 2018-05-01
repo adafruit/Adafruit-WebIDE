@@ -62,8 +62,10 @@ curl -L https://github.com/adafruit/Adafruit-WebIDE/archive/0.8.0.tar.gz | tar x
 
 echo "**** Installing required libraries ****"
 echo "**** (nodejs-legacy npm git i2c-tools python-smbus ntp libkrb5-dev) ****"
+curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 apt-get update
-apt-get install nodejs-legacy npm git i2c-tools python-smbus ntp libkrb5-dev -y
+apt-get install nodejs git i2c-tools python-smbus ntp libkrb5-dev -y
+npm install -g npm
 
 echo "**** Create webide user and group ****"
 groupadd webide || true
@@ -88,7 +90,6 @@ chown -R webide:webide "$WEBIDE_ROOT"
 chmod 775 "$WEBIDE_ROOT"
 
 echo "**** Installing webide dependencies ****"
-sudo -u webide npm config set tmp "$WEBIDE_HOME/tmp"
 sudo -u webide npm install
 
 echo "**** Adding default .bashrc file for webide user ****"
