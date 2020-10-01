@@ -23,7 +23,7 @@ If you don't need these features, feel free to manually install the editor below
 
 Note: This is also the default installation for any Debian or Ubuntu operating systems
 
-Manual Installation
+Basic Installation
 ============
 
 Follow along in the [installation script][1] and pick and choose
